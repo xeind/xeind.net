@@ -78,14 +78,14 @@ export default function Button({
       {/* Top-Left Corner */}
       <div className="absolute top-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-accent-hover h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         />
         <div
-          className="bg-accent group-hover:bg-accent-hover h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -96,14 +96,14 @@ export default function Button({
       {/* Top-Right Corner */}
       <div className="absolute top-0 right-0 z-10">
         <div
-          className="bg-accent group-hover:bg-accent-hover ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         />
         <div
-          className="bg-accent group-hover:bg-accent-hover ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -114,14 +114,14 @@ export default function Button({
       {/* Bottom-Left Corner */}
       <div className="absolute bottom-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-accent-hover h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         />
         <div
-          className="bg-accent group-hover:bg-accent-hover h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -132,14 +132,14 @@ export default function Button({
       {/* Bottom-Right Corner */}
       <div className="absolute right-0 bottom-0 z-10">
         <div
-          className="bg-accent group-hover:bg-accent-hover ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         />
         <div
-          className="bg-accent group-hover:bg-accent-hover ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -186,7 +186,7 @@ export default function Button({
         </span>
         {badge && (
           <span
-            className="bg-accent/10 text-accent-hover/90 group-hover:text-accent-hover group-hover:ring-accent/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all"
+            className="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary-hover group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all"
             style={{
               transitionDuration: `${DURATION.normal}s`,
               transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,

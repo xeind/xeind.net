@@ -8,7 +8,9 @@ export default function ArtPage() {
         <p className="text-foreground/80 leading-relaxed">
           Visual explorations, design experiments, and creative work.
         </p>
-        <p className="text-foreground/60 mt-8 font-mono text-sm">Coming soon...</p>
+        <p className="text-foreground/60 mt-8 font-mono text-sm">
+          Coming soon...
+        </p>
       </div>
     </div>
   );

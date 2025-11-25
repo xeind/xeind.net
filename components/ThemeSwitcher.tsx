@@ -12,37 +12,37 @@ const themes = [
   {
     value: "system",
     label: "System",
-    colors: ["#FFFFFF", "#000000", "#333333"], // Light bg, Dark bg, Accent
+    colors: ["#333333", "#595959", "#7A7A7A"], // Accent, Secondary, Tertiary (monochrome)
     icon: Monitor,
   },
   {
     value: "light",
     label: "Light",
-    colors: ["#FFFFFF", "#000000", "#333333"], // Monochrome Light
+    colors: ["#333333", "#595959", "#4D4D4D"], // Accent, Secondary, Tertiary (monochrome)
     icon: undefined,
   },
   {
     value: "dark",
     label: "Dark",
-    colors: ["#1A1A1A", "#FFFFFF", "#B8B8B8"], // Monochrome Dark
+    colors: ["#B8B8B8", "#999999", "#808080"], // Accent, Secondary, Tertiary (monochrome)
     icon: undefined,
   },
   {
     value: "tokyo-night",
     label: "Tokyo Night",
-    colors: ["#1A1B26", "#7DCFFF", "#C0CAF5"], // Background, Text, Cyan Accent
+    colors: ["#7DCFFF", "#E0AF68", "#BB9AF7"], // Accent (cyan), Secondary (gold), Tertiary (purple)
     icon: undefined,
   },
   {
     value: "gruvbox",
     label: "Gruvbox",
-    colors: ["#282828", "#FABD2F", "#EBDBB2"], // Background, Cream Text, Yellow/Gold Accent
+    colors: ["#FABD2F", "#FE8019", "#FB4934"], // Accent (yellow), Secondary (orange), Tertiary (red)
     icon: undefined,
   },
   {
     value: "kanagawa",
     label: "Kanagawa",
-    colors: ["#1F1F28", "#957FB8", "#98BB6C"], // Background, Fuji White, Oni Violet (ICONIC 💜)
+    colors: ["#957FB8", "#E6C384", "#98BB6C"], // Accent (purple), Secondary (orange), Tertiary (green)
     icon: undefined,
   },
 ] as const;
@@ -235,12 +235,10 @@ export default function ThemeSwitcher() {
                   ) : (
                     <div className="flex gap-0.5">
                       {theme.colors.map((color, i) => (
-                        <motion.div
+                        <div
                           key={i}
                           className="ring-border/50 h-3 w-3 ring-1"
                           style={{ backgroundColor: color }}
-                          whileHover={{ scale: 1.2 }}
-                          transition={SPRING_CONFIG.noBounce}
                         />
                       ))}
                     </div>

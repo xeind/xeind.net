@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import CornerDiamond from "@/components/ui/CornerDiamond";
 import { DURATION, EASING } from "@/lib/config";
@@ -42,7 +44,7 @@ export default function CalloutLink({
       <div className="pointer-events-none absolute inset-0">
         {/* Default state: masked gradient glow (clickable indicator) */}
         <div
-          className="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0"
+          className="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -52,7 +54,7 @@ export default function CalloutLink({
               "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12.5%, rgba(0,0,0,0.40) 37.5%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.40) 62.5%, rgba(0,0,0,0.15) 87.5%, transparent 100%)",
           }}
         />
-        {/* Hover state: full fill at 20% opacity */}
+        {/* Hover state: full fill at 30% opacity */}
         <div
           className="bg-accent/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
           style={{
@@ -60,11 +62,19 @@ export default function CalloutLink({
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         />
+        {/* Active/Click state: intense gradient pulse */}
+        <div
+          className="bg-accent/30 absolute inset-0 opacity-0 transition-opacity group-active:opacity-20"
+          style={{
+            transitionDuration: "0.1s",
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+          }}
+        />
       </div>
 
       <div className="relative z-10 flex items-center justify-center gap-2">
         <span
-          className="font-serif text-sm transition-transform [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)] group-hover:translate-x-0.5"
+          className="font-serif text-sm transition-transform [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)] group-hover:translate-x-0.5 group-active:translate-x-1"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -74,7 +84,7 @@ export default function CalloutLink({
         </span>
         {icon && (
           <span
-            className="text-accent-hover flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+            className="text-accent group-hover:text-tertiary flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-2 group-active:-translate-y-2"
             style={{
               transitionDuration: `${DURATION.normal}s`,
               transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,

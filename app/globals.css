@@ -70,14 +70,19 @@
   --color-success: hsl(0 0% 30%);
 
   /* Extended color variants for richer UI */
-  --color-primary: hsl(0 0% 20%); /* Main accent (same as accent) */
+  --color-primary: hsl(0 0% 20%);
+  /* Main accent (same as accent) */
   --color-primary-hover: hsl(0 0% 10%);
-  --color-secondary: hsl(0 0% 35%); /* Secondary accent */
+  --color-secondary: hsl(0 0% 35%);
+  /* Secondary accent */
   --color-secondary-hover: hsl(0 0% 25%);
-  --color-tertiary: hsl(0 0% 30%); /* Third accent */
+  --color-tertiary: hsl(0 0% 10%);
+  /* Third accent */
   --color-tertiary-hover: hsl(0 0% 20%);
-  --color-info: hsl(0 0% 45%); /* Info states */
-  --color-warning: hsl(0 0% 40%); /* Warning states */
+  --color-info: hsl(0 0% 45%);
+  /* Info states */
+  --color-warning: hsl(0 0% 40%);
+  /* Warning states */
 
   --font-family-serif: "Latin Modern Roman", Georgia, serif;
   --font-family-sans: "Inter", system-ui, sans-serif;
@@ -106,7 +111,7 @@
   --color-primary-hover: hsl(0 0% 82%);
   --color-secondary: hsl(0 0% 60%);
   --color-secondary-hover: hsl(0 0% 70%);
-  --color-tertiary: hsl(0 0% 50%);
+  --color-tertiary: hsl(0 0% 100%);
   --color-tertiary-hover: hsl(0 0% 60%);
   --color-info: hsl(0 0% 65%);
   --color-warning: hsl(0 0% 55%);
@@ -115,88 +120,112 @@
 /* Tokyo Night Theme */
 [data-theme="tokyo-night"] {
   --color-background: hsl(235 18% 14%);
+  /* #1a1b26 */
   --color-foreground: hsl(218 18% 84%);
+  /* #c0caf5 */
   --color-card: hsl(235 16% 18%);
+  /* #24283b */
   --color-border: hsl(235 12% 28%);
-  --color-muted: hsl(235 15% 20%);
+  /* #414868 */
+  --color-muted: hsl(235 15% 16%);
+  /* #16161e */
   --color-accent: hsl(187 47% 55%);
-  --color-accent-hover: hsl(187 47% 45%);
+  /* #7dcfff - cyan */
+  --color-accent-hover: hsl(187 47% 65%);
+  /* Lighter cyan on hover */
   --color-destructive: hsl(0 72% 65%);
+  /* #f7768e - red */
   --color-success: hsl(158 64% 52%);
+  /* #9ece6a - green */
 
-  /* Extended Tokyo Night palette - Cyan/Purple/Green */
-  --color-primary: hsl(187 47% 55%); /* Cyan - main accent */
-  --color-primary-hover: hsl(187 47% 45%);
-  --color-secondary: hsl(267 51% 70%); /* Purple - secondary */
-  --color-secondary-hover: hsl(267 51% 60%);
-  --color-tertiary: hsl(158 64% 52%); /* Green - success */
-  --color-tertiary-hover: hsl(158 64% 42%);
-  --color-info: hsl(215 58% 70%); /* Blue - info */
-  --color-warning: hsl(32 86% 65%); /* Orange - warning */
+  /* Extended Tokyo Night palette - Cyan/Purple */
+  --color-primary: hsl(187 47% 55%);
+  /* Cyan - main accent */
+  --color-primary-hover: hsl(187 47% 65%);
+  --color-secondary: hsl(267 51% 70%);
+  /* Purple - secondary */
+  --color-secondary-hover: hsl(267 51% 80%);
+  --color-tertiary: hsl(261 85% 78%);
+  /* Purple #BB9AF7 - vibrant purple */
+  --color-tertiary-hover: hsl(261 85% 88%);
+  --color-info: hsl(215 58% 70%);
+  /* Blue - info */
+  --color-warning: hsl(32 86% 65%);
+  /* Orange - warning */
 }
 
 /* Gruvbox Dark Theme */
 [data-theme="gruvbox"] {
-  --color-background: hsl(0 0% 16%);
-  /* #282828 */
+  --color-background: hsl(30 9% 16%);
+  /* #282828 - actual gruvbox bg */
   --color-foreground: hsl(40 23% 81%);
-  /* #ebdbb2 */
-  --color-card: hsl(20 9% 21%);
-  /* #3c3836 */
-  --color-border: hsl(40 23% 35%);
-  /* Warm brown border */
-  --color-muted: hsl(20 8% 18%);
-  /* Darker muted */
+  /* #ebdbb2 - fg */
+  --color-card: hsl(30 9% 21%);
+  /* #3c3836 - bg1 */
+  --color-border: hsl(30 7% 35%);
+  /* #504945 - bg4 */
+  --color-muted: hsl(30 9% 13%);
+  /* #1d2021 - bg0_h */
   --color-accent: hsl(43 94% 59%);
-  /* #fabd2f - Yellow/Gold */
-  --color-accent-hover: hsl(43 94% 49%);
-  /* Darker yellow */
+  /* #fabd2f - bright yellow */
+  --color-accent-hover: hsl(43 94% 69%);
+  /* Lighter yellow on hover */
   --color-destructive: hsl(4 89% 60%);
-  /* #fb4934 - Red */
+  /* #fb4934 - bright red */
   --color-success: hsl(62 71% 45%);
-  /* #b8bb26 - Green */
+  /* #b8bb26 - bright green */
 
-  /* Extended Gruvbox palette - Yellow/Orange/Green/Aqua */
-  --color-primary: hsl(43 94% 59%); /* Yellow - main accent */
-  --color-primary-hover: hsl(43 94% 49%);
-  --color-secondary: hsl(27 75% 57%); /* Orange - secondary */
-  --color-secondary-hover: hsl(27 75% 47%);
-  --color-tertiary: hsl(62 71% 45%); /* Green - success */
-  --color-tertiary-hover: hsl(62 71% 35%);
-  --color-info: hsl(180 25% 55%); /* Aqua - info */
-  --color-warning: hsl(27 75% 57%); /* Orange - warning */
+  /* Extended Gruvbox palette - Yellow/Orange/Red */
+  --color-primary: hsl(43 94% 59%);
+  /* Yellow - main accent */
+  --color-primary-hover: hsl(43 94% 69%);
+  --color-secondary: hsl(27 75% 57%);
+  /* Orange - secondary */
+  --color-secondary-hover: hsl(27 75% 67%);
+  --color-tertiary: hsl(3 84% 60%);
+  /* Red/Maroon #fb4934 - vibrant red */
+  --color-tertiary-hover: hsl(3 84% 70%);
+  --color-info: hsl(180 25% 55%);
+  /* Aqua - info */
+  --color-warning: hsl(27 75% 57%);
+  /* Orange - warning */
 }
 
 /* Kanagawa Theme - Official Palette */
 [data-theme="kanagawa"] {
   --color-background: hsl(240 17% 15%);
-  /* #1F1F28 - sumiInk3 (deep charcoal) */
+  /* #1F1F28 - sumiInk3 */
   --color-foreground: hsl(42 27% 80%);
-  /* #DCD7BA - fujiWhite (warm white) */
+  /* #DCD7BA - fujiWhite */
   --color-card: hsl(240 17% 18%);
-  /* Slightly lighter card */
-  --color-border: hsl(263 28% 60%);
-  /* oniViolet border tint */
-  --color-muted: hsl(240 17% 13%);
-  /* Darker muted background */
+  /* #2A2A37 - slightly lighter */
+  --color-border: hsl(240 10% 30%);
+  /* #54546D - waveBlue2 (subtle) */
+  --color-muted: hsl(240 17% 12%);
+  /* #16161D - sumiInk0 */
   --color-accent: hsl(263 28% 60%);
-  /* #957FB8 - oniViolet (PURPLE 💜) */
-  --color-accent-hover: hsl(38 66% 70%);
-  /* #E6C384 - carpYellow (warm orange 🍑) */
+  /* #957FB8 - oniViolet */
+  --color-accent-hover: hsl(263 28% 70%);
+  /* Lighter purple on hover */
   --color-destructive: hsl(353 69% 65%);
   /* #E46876 - waveRed */
   --color-success: hsl(86 36% 57%);
-  /* #98BB6C - springGreen (vibrant green 🌿) */
+  /* #98BB6C - springGreen */
 
   /* Extended Kanagawa palette - Purple/Orange/Green trio */
-  --color-primary: hsl(263 28% 60%); /* 💜 oniViolet - main accent */
-  --color-primary-hover: hsl(263 28% 50%); /* Darker purple */
-  --color-secondary: hsl(38 66% 70%); /* 🍑 carpYellow - warm orange */
-  --color-secondary-hover: hsl(38 66% 60%); /* Darker orange */
-  --color-tertiary: hsl(86 36% 57%); /* 🌿 springGreen - vibrant green */
-  --color-tertiary-hover: hsl(86 36% 47%); /* Darker green */
-  --color-info: hsl(194 32% 63%); /* 💧 springBlue - teal/cyan */
-  --color-warning: hsl(27 68% 70%); /* 🦐 surimiOrange - warm alert */
+  --color-primary: hsl(263 28% 60%);
+  /* oniViolet - main accent */
+  --color-primary-hover: hsl(263 28% 70%);
+  --color-secondary: hsl(38 66% 70%);
+  /* carpYellow - warm orange */
+  --color-secondary-hover: hsl(38 66% 80%);
+  --color-tertiary: hsl(86 36% 57%);
+  /* springGreen */
+  --color-tertiary-hover: hsl(86 36% 67%);
+  --color-info: hsl(194 32% 63%);
+  /* springBlue - teal/cyan */
+  --color-warning: hsl(27 68% 70%);
+  /* surimiOrange */
 }
 
 :root {

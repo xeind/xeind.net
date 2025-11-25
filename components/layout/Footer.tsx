@@ -9,11 +9,13 @@ const BUILD_INFO = {
 };
 
 export default function Footer() {
-  const buildDate = new Date(BUILD_INFO.date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  const buildDate = new Date(BUILD_INFO.date)
+    .toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replace(/\//g, ""); // Format as YYYYMMDD
 
   return (
     <footer
@@ -36,8 +38,8 @@ export default function Footer() {
         />
       </div>
 
-      {/* Border container - only footer height with vertical borders */}
-      <div className="border-accent/20 relative mx-auto h-full w-full max-w-5xl border-x">
+      {/* Border container - only footer height without vertical borders */}
+      <div className="relative mx-auto h-full w-full max-w-5xl">
         {/* Content container */}
         <div className="relative z-10 h-full p-8 px-12">
           <div className="flex h-full items-center justify-between">
