@@ -1,26 +1,307 @@
+/* ========================================
+   FONT LOADING (OPTIMIZED WOFF2)
+   Self-hosted fonts with manual preloading in layout.tsx
+   Preloading critical fonts: Inter-Regular, LatinModernRoman-Regular, CommitMono-Regular
+   ======================================== */
+
+/* Latin Modern Roman - Serif Font (Headings, Names) */
+@font-face {
+  font-family: "Latin Modern Roman";
+  src: url("/fonts/LatinModernRoman-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Latin Modern Roman";
+  src: url("/fonts/LatinModernRoman-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter - Sans-serif Font (Body, UI) */
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Commit Mono - Monospace Font (Code, Meta) */
+@font-face {
+  font-family: "Commit Mono";
+  src: url("/fonts/CommitMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Commit Mono";
+  src: url("/fonts/CommitMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 
+@theme {
+  /* Light mode (default) - Monochrome Light */
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(0 0% 0%);
+  --color-card: hsl(0 0% 100%);
+  --color-border: hsl(0 0% 85%);
+  --color-muted: hsl(0 0% 96%);
+  --color-accent: hsl(0 0% 20%);
+  --color-accent-hover: hsl(0 0% 10%);
+  --color-destructive: hsl(0 0% 40%);
+  --color-success: hsl(0 0% 30%);
+
+  /* Extended color variants for richer UI */
+  --color-primary: hsl(0 0% 20%); /* Main accent (same as accent) */
+  --color-primary-hover: hsl(0 0% 10%);
+  --color-secondary: hsl(0 0% 35%); /* Secondary accent */
+  --color-secondary-hover: hsl(0 0% 25%);
+  --color-tertiary: hsl(0 0% 30%); /* Third accent */
+  --color-tertiary-hover: hsl(0 0% 20%);
+  --color-info: hsl(0 0% 45%); /* Info states */
+  --color-warning: hsl(0 0% 40%); /* Warning states */
+
+  --font-family-serif: "Latin Modern Roman", Georgia, serif;
+  --font-family-sans: "Inter", system-ui, sans-serif;
+  --font-family-mono: "Commit Mono", Menlo, Monaco, monospace;
+}
+
+/* ========================================
+   THEME VARIANTS
+   Each theme overrides the same 9 tokens
+   ======================================== */
+
+/* Dark Theme - Monochrome Dark */
+[data-theme="dark"] {
+  --color-background: hsl(0 0% 10%);
+  --color-foreground: hsl(0 0% 100%);
+  --color-card: hsl(0 0% 13%);
+  --color-border: hsl(0 0% 25%);
+  --color-muted: hsl(0 0% 15%);
+  --color-accent: hsl(0 0% 72%);
+  --color-accent-hover: hsl(0 0% 82%);
+  --color-destructive: hsl(0 0% 50%);
+  --color-success: hsl(0 0% 60%);
+
+  /* Extended monochrome palette */
+  --color-primary: hsl(0 0% 72%);
+  --color-primary-hover: hsl(0 0% 82%);
+  --color-secondary: hsl(0 0% 60%);
+  --color-secondary-hover: hsl(0 0% 70%);
+  --color-tertiary: hsl(0 0% 50%);
+  --color-tertiary-hover: hsl(0 0% 60%);
+  --color-info: hsl(0 0% 65%);
+  --color-warning: hsl(0 0% 55%);
+}
+
+/* Tokyo Night Theme */
+[data-theme="tokyo-night"] {
+  --color-background: hsl(235 18% 14%);
+  --color-foreground: hsl(218 18% 84%);
+  --color-card: hsl(235 16% 18%);
+  --color-border: hsl(235 12% 28%);
+  --color-muted: hsl(235 15% 20%);
+  --color-accent: hsl(187 47% 55%);
+  --color-accent-hover: hsl(187 47% 45%);
+  --color-destructive: hsl(0 72% 65%);
+  --color-success: hsl(158 64% 52%);
+
+  /* Extended Tokyo Night palette - Cyan/Purple/Green */
+  --color-primary: hsl(187 47% 55%); /* Cyan - main accent */
+  --color-primary-hover: hsl(187 47% 45%);
+  --color-secondary: hsl(267 51% 70%); /* Purple - secondary */
+  --color-secondary-hover: hsl(267 51% 60%);
+  --color-tertiary: hsl(158 64% 52%); /* Green - success */
+  --color-tertiary-hover: hsl(158 64% 42%);
+  --color-info: hsl(215 58% 70%); /* Blue - info */
+  --color-warning: hsl(32 86% 65%); /* Orange - warning */
+}
+
+/* Gruvbox Dark Theme */
+[data-theme="gruvbox"] {
+  --color-background: hsl(0 0% 16%);
+  /* #282828 */
+  --color-foreground: hsl(40 23% 81%);
+  /* #ebdbb2 */
+  --color-card: hsl(20 9% 21%);
+  /* #3c3836 */
+  --color-border: hsl(40 23% 35%);
+  /* Warm brown border */
+  --color-muted: hsl(20 8% 18%);
+  /* Darker muted */
+  --color-accent: hsl(43 94% 59%);
+  /* #fabd2f - Yellow/Gold */
+  --color-accent-hover: hsl(43 94% 49%);
+  /* Darker yellow */
+  --color-destructive: hsl(4 89% 60%);
+  /* #fb4934 - Red */
+  --color-success: hsl(62 71% 45%);
+  /* #b8bb26 - Green */
+
+  /* Extended Gruvbox palette - Yellow/Orange/Green/Aqua */
+  --color-primary: hsl(43 94% 59%); /* Yellow - main accent */
+  --color-primary-hover: hsl(43 94% 49%);
+  --color-secondary: hsl(27 75% 57%); /* Orange - secondary */
+  --color-secondary-hover: hsl(27 75% 47%);
+  --color-tertiary: hsl(62 71% 45%); /* Green - success */
+  --color-tertiary-hover: hsl(62 71% 35%);
+  --color-info: hsl(180 25% 55%); /* Aqua - info */
+  --color-warning: hsl(27 75% 57%); /* Orange - warning */
+}
+
+/* Kanagawa Theme - Official Palette */
+[data-theme="kanagawa"] {
+  --color-background: hsl(240 17% 15%);
+  /* #1F1F28 - sumiInk3 (deep charcoal) */
+  --color-foreground: hsl(42 27% 80%);
+  /* #DCD7BA - fujiWhite (warm white) */
+  --color-card: hsl(240 17% 18%);
+  /* Slightly lighter card */
+  --color-border: hsl(263 28% 60%);
+  /* oniViolet border tint */
+  --color-muted: hsl(240 17% 13%);
+  /* Darker muted background */
+  --color-accent: hsl(263 28% 60%);
+  /* #957FB8 - oniViolet (PURPLE 💜) */
+  --color-accent-hover: hsl(38 66% 70%);
+  /* #E6C384 - carpYellow (warm orange 🍑) */
+  --color-destructive: hsl(353 69% 65%);
+  /* #E46876 - waveRed */
+  --color-success: hsl(86 36% 57%);
+  /* #98BB6C - springGreen (vibrant green 🌿) */
+
+  /* Extended Kanagawa palette - Purple/Orange/Green trio */
+  --color-primary: hsl(263 28% 60%); /* 💜 oniViolet - main accent */
+  --color-primary-hover: hsl(263 28% 50%); /* Darker purple */
+  --color-secondary: hsl(38 66% 70%); /* 🍑 carpYellow - warm orange */
+  --color-secondary-hover: hsl(38 66% 60%); /* Darker orange */
+  --color-tertiary: hsl(86 36% 57%); /* 🌿 springGreen - vibrant green */
+  --color-tertiary-hover: hsl(86 36% 47%); /* Darker green */
+  --color-info: hsl(194 32% 63%); /* 💧 springBlue - teal/cyan */
+  --color-warning: hsl(27 68% 70%); /* 🦐 surimiOrange - warm alert */
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Font Rendering for that "High-End Editor" look */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Unified Grid System: 16px base unit */
+  --grid-cell-size: 16px;
+
+  /* Custom CSS Variables */
+  --footer-height: 128px;
+  /* 8 cells × 16px = scroll reveal distance */
+  --footer-bg-height: 100vh;
+  /* Background extends full viewport */
+  --radius: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  overscroll-behavior: contain;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overscroll-behavior: contain;
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+  font-family: var(--font-family-sans);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* PAPER BACKGROUND - Outermost container with noise */
+.paper-background {
+  position: relative;
+  background-color: var(--color-muted);
+  min-height: 100dvh;
+}
+
+/* Paper grain texture on background */
+.paper-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/grain-texture.webp");
+  background-size: 200px 200px;
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: 99;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+/* ========================================
+   UNIFIED GRID SYSTEM
+   Base unit: 16px × 16px cells
+   All spacing must be multiples of 16px
+   ======================================== */
+
+/* Grid Pattern for Footer - 16px cells */
+.bg-grid-pattern {
+  background-size: 16px 16px;
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  mask-image: linear-gradient(to top, black 60%, transparent 100%);
+}
+
+/* Hero Grid Background - 16px cells, fades left to right */
+.bg-hero-grid {
+  background-size: 16px 16px;
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  mask-image: linear-gradient(to right, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
+}
+
+/* S-Tier Compositor-Only Animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hide scrollbar but keep scroll functionality */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
 }
