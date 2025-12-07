@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbo -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -13,7 +13,6 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.554.0",
     "motion": "^12.23.24",
-    "next": "16.0.3",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "react": "19.2.0",
@@ -27,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
+    "next": "^16.0.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -18,31 +18,31 @@ const themes = [
   {
     value: "light",
     label: "Light",
-    colors: ["#333333", "#595959", "#4D4D4D"], // Accent, Secondary, Tertiary (monochrome)
+    colors: ["#E2E2E2", "#ECECEC", "#4D4D4D"], // Accent, Secondary, Tertiary (monochrome)
     icon: undefined,
   },
   {
     value: "dark",
     label: "Dark",
-    colors: ["#B8B8B8", "#999999", "#808080"], // Accent, Secondary, Tertiary (monochrome)
+    colors: ["#1E1E1E", "#232323", "#808080"], // Accent, Secondary, Tertiary (monochrome)
     icon: undefined,
   },
   {
     value: "tokyo-night",
     label: "Tokyo Night",
-    colors: ["#7DCFFF", "#E0AF68", "#BB9AF7"], // Accent (cyan), Secondary (gold), Tertiary (purple)
+    colors: ["#242531", "#7DCFFF", "#BB9AF7"], // Accent (cyan), Secondary (gold), Tertiary (purple)
     icon: undefined,
   },
   {
     value: "gruvbox",
     label: "Gruvbox",
-    colors: ["#FABD2F", "#FE8019", "#FB4934"], // Accent (yellow), Secondary (orange), Tertiary (red)
+    colors: ["#36322E", "#FABD2F", "#FB4934"], // Accent (yellow), Secondary (orange), Tertiary (red)
     icon: undefined,
   },
   {
     value: "kanagawa",
     label: "Kanagawa",
-    colors: ["#957FB8", "#E6C384", "#98BB6C"], // Accent (purple), Secondary (orange), Tertiary (green)
+    colors: ["#232332", "#957FB8", "#98BB6C"], // Accent (purple), Secondary (orange), Tertiary (green)
     icon: undefined,
   },
 ] as const;
@@ -143,7 +143,7 @@ export default function ThemeSwitcher() {
             animate={{ rotate: 0 }}
             whileHover={{ rotate: 12 }}
             transition={{
-              duration: DURATION.normal,
+              duration: DURATION.fast,
               ease: EASING.easeOutCubic as any,
             }}
           >

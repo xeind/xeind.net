@@ -40,7 +40,7 @@ export default function Button({
       }}
       whileTap={disabled ? {} : { scale: 0.98 }}
       transition={{
-        duration: DURATION.fast,
+        duration: DURATION.normal,
       }}
       {...props}
     >
@@ -163,7 +163,7 @@ export default function Button({
         />
         {/* Hover state: full fill at 30% opacity */}
         <div
-          className="bg-accent/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
+          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -186,7 +186,7 @@ export default function Button({
         </span>
         {badge && (
           <span
-            className="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary-hover group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all"
+            className="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all"
             style={{
               transitionDuration: `${DURATION.normal}s`,
               transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
