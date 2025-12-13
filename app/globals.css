@@ -334,3 +334,43 @@ body {
     /* Chrome, Safari, Opera */
   }
 }
+
+/* ========================================
+   VIEW TRANSITIONS - Theme Toggle Animation
+   Bottom-to-top wipe effect on theme change
+   ======================================== */
+
+::view-transition-group(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  /* expo-out easing */
+}
+
+::view-transition-new(root) {
+  animation: theme-wipe-up 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+}
+
+@keyframes theme-wipe-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-new(root),
+  ::view-transition-old(root) {
+    animation-duration: 0.01ms !important;
+  }
+}

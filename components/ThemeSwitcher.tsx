@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion, AnimatePresence } from "motion/react";
 import { Palette, Check, Monitor } from "lucide-react";
@@ -56,25 +56,7 @@ export default function ThemeSwitcher() {
   // Apply scrollbar compensation when dropdown is open
   useScrollbarCompensation(open);
 
-  useEffect(() => {
-    setMounted(true);
-    // Load saved theme from localStorage
-    const savedTheme = localStorage.getItem("theme") || "system";
-    setCurrentTheme(savedTheme);
-
-    // Apply theme immediately
-    applyTheme(savedTheme);
-
-    // Listen for system theme changes if using system
-    if (savedTheme === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      const handleChange = () => applyTheme("system");
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
-  }, []);
-
-  const applyTheme = (theme: string) => {
+  const applyThemeInstantly = useCallback((theme: string) => {
     if (theme === "system") {
       // Detect system preference
       const prefersDark = window.matchMedia(
@@ -92,7 +74,48 @@ export default function ThemeSwitcher() {
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-  };
+  }, []);
+
+  const applyTheme = useCallback(
+    (theme: string, skipAnimation = false) => {
+      // Check if View Transitions API is supported and animation is not skipped
+      if (
+        !skipAnimation &&
+        typeof document !== "undefined" &&
+        "startViewTransition" in document
+      ) {
+        // Animate theme change with View Transitions
+        const doc = document as Document & {
+          startViewTransition: (callback: () => void) => void;
+        };
+        doc.startViewTransition(() => {
+          applyThemeInstantly(theme);
+        });
+      } else {
+        // Fallback: instant theme change
+        applyThemeInstantly(theme);
+      }
+    },
+    [applyThemeInstantly],
+  );
+
+  useEffect(() => {
+    setMounted(true);
+    // Load saved theme from localStorage
+    const savedTheme = localStorage.getItem("theme") || "system";
+    setCurrentTheme(savedTheme);
+
+    // Apply theme immediately without animation on initial load
+    applyTheme(savedTheme, true);
+
+    // Listen for system theme changes if using system
+    if (savedTheme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = () => applyTheme("system", true);
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+  }, [applyTheme]);
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
@@ -108,8 +131,8 @@ export default function ThemeSwitcher() {
     setCurrentTheme(theme);
     applyTheme(theme);
     localStorage.setItem("theme", theme);
+    // Close the dropdown - AnimatePresence will handle exit animation
     setOpen(false);
-    triggerRef.current?.blur();
   };
 
   // Prevent hydration mismatch
@@ -164,90 +187,103 @@ export default function ThemeSwitcher() {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          className="bg-card ring-border z-50 min-w-[220px] overflow-hidden p-1 shadow-lg ring-1"
-          sideOffset={5}
-          align="end"
-          asChild
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={SPRING_CONFIG.noBounce}
-          >
-            {themes.map((theme, index) => (
-              <DropdownMenu.Item
-                key={theme.value}
-                className="text-foreground hover:bg-muted focus:bg-muted group relative flex cursor-pointer items-center gap-3 px-3 py-2 font-mono text-xs outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50"
-                onSelect={() => handleThemeChange(theme.value)}
-                style={{
-                  transition: `all ${DURATION.fast}s cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+        <AnimatePresence>
+          {open && (
+            <DropdownMenu.Content
+              className="bg-card ring-border z-50 min-w-[220px] overflow-hidden p-1 shadow-lg ring-1"
+              sideOffset={5}
+              align="end"
+              asChild
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                transition={SPRING_CONFIG.noBounce}
+                onAnimationComplete={(definition) => {
+                  // Close after exit animation completes
+                  if (definition === "exit") {
+                    setOpen(false);
+                  }
                 }}
               >
-                <motion.div
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    delay: index * 0.03,
-                    ...SPRING_CONFIG.noBounce,
-                  }}
-                  className="contents"
-                >
-                  {/* Checkmark with animation */}
-                  <div className="w-4">
-                    <AnimatePresence mode="wait">
-                      {currentTheme === theme.value && (
+                {themes.map((theme, index) => (
+                  <DropdownMenu.Item
+                    key={theme.value}
+                    className="text-foreground hover:bg-muted focus:bg-muted group relative flex cursor-pointer items-center gap-3 px-3 py-2 font-mono text-xs outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50"
+                    onSelect={(event) => {
+                      event.preventDefault(); // Prevent Radix auto-close
+                      handleThemeChange(theme.value);
+                    }}
+                    style={{
+                      transition: `all ${DURATION.fast}s cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+                    }}
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: index * 0.03,
+                        ...SPRING_CONFIG.noBounce,
+                      }}
+                      className="contents"
+                    >
+                      {/* Checkmark with animation */}
+                      <div className="w-4">
+                        <AnimatePresence mode="wait">
+                          {currentTheme === theme.value && (
+                            <motion.div
+                              initial={{ scale: 0, x: -10, opacity: 0 }}
+                              animate={{ scale: 1, x: 0, opacity: 1 }}
+                              exit={{ scale: 0, x: 10, opacity: 0 }}
+                              transition={SPRING_CONFIG.noBounce}
+                            >
+                              <Check
+                                size={ICON_CONFIG.sizes.sm}
+                                strokeWidth={ICON_CONFIG.strokeWidth}
+                                className="text-accent"
+                              />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* Theme Name */}
+                      <span className="flex-1">{theme.label}</span>
+
+                      {/* Color Preview or Icon */}
+                      {theme.icon ? (
                         <motion.div
-                          initial={{ scale: 0, x: -10, opacity: 0 }}
-                          animate={{ scale: 1, x: 0, opacity: 1 }}
-                          exit={{ scale: 0, x: 10, opacity: 0 }}
-                          transition={SPRING_CONFIG.noBounce}
+                          whileHover={{ scale: 1.1 }}
+                          transition={{
+                            duration: DURATION.fast,
+                            ease: EASING.easeOutCubic as any,
+                          }}
                         >
-                          <Check
+                          <theme.icon
                             size={ICON_CONFIG.sizes.sm}
                             strokeWidth={ICON_CONFIG.strokeWidth}
-                            className="text-accent"
+                            className="text-foreground/70"
                           />
                         </motion.div>
+                      ) : (
+                        <div className="flex gap-0.5">
+                          {theme.colors.map((color, i) => (
+                            <div
+                              key={i}
+                              className="ring-border/50 h-3 w-3 ring-1"
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
                       )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Theme Name */}
-                  <span className="flex-1">{theme.label}</span>
-
-                  {/* Color Preview or Icon */}
-                  {theme.icon ? (
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      transition={{
-                        duration: DURATION.fast,
-                        ease: EASING.easeOutCubic as any,
-                      }}
-                    >
-                      <theme.icon
-                        size={ICON_CONFIG.sizes.sm}
-                        strokeWidth={ICON_CONFIG.strokeWidth}
-                        className="text-foreground/70"
-                      />
                     </motion.div>
-                  ) : (
-                    <div className="flex gap-0.5">
-                      {theme.colors.map((color, i) => (
-                        <div
-                          key={i}
-                          className="ring-border/50 h-3 w-3 ring-1"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              </DropdownMenu.Item>
-            ))}
-          </motion.div>
-        </DropdownMenu.Content>
+                  </DropdownMenu.Item>
+                ))}
+              </motion.div>
+            </DropdownMenu.Content>
+          )}
+        </AnimatePresence>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );

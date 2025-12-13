@@ -29,6 +29,7 @@ export const experiences: Experience[] = [
     achievements: [
       "Engineered finance module features in X++ (C#/SQL blend) within Microsoft Dynamics 365",
       "Resolved critical bug tickets and optimized custom modules, collaborating with co-interns to ensure alignment",
+      "Collaborated with co-interns to debug issues and align codebases for the new module to roll-out",
       "Streamlined workflows by automating address synchronization across forms and enforcing safe record deletion",
     ],
     technologies: ["Microsoft Dynamics 365", "X++"],
