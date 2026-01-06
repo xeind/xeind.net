@@ -1,5 +1,5 @@
 interface SectionDividerProps {
-  direction?: "right" | "left"; // Direction of diagonal lines
+  direction?: "right" | "left";
 }
 
 export default function SectionDivider({

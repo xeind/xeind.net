@@ -158,8 +158,8 @@
 [data-theme="gruvbox"] {
   --color-background: hsl(30 9% 16%);
   /* #282828 - actual gruvbox bg */
-  --color-foreground: hsl(40 23% 81%);
-  /* #ebdbb2 - fg */
+  --color-foreground: hsl(68 25% 76%);
+  /* #CDD0B3 - fg */
   --color-card: hsl(30 9% 21%);
   /* #3c3836 - bg1 */
   --color-border: hsl(30 7% 35%);

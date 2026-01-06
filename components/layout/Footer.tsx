@@ -46,7 +46,7 @@ export default function Footer() {
             <div className="flex flex-col gap-1">
               <p className="text-background font-mono text-xs">© 2025 XD</p>
               <p className="text-background font-mono text-xs">
-                Served by Bun ⋅ Next.js
+                Served with Bun ⋅ Next.js
               </p>
               <p className="text-background font-mono text-xs">
                 Fonts: Latin Modern · Inter · Commit Mono
