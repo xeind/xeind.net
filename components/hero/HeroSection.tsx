@@ -15,7 +15,7 @@ export default function HeroSection() {
           <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
             {personalInfo.name}
           </h1>
-          <div className="text-foreground/70 my-1 flex items-center gap-1 font-serif text-sm">
+          <div className="text-foreground/70 my-1 flex items-center gap-1 text-sm">
             <MapPin
               size={ICON_CONFIG.sizes.sm}
               strokeWidth={ICON_CONFIG.strokeWidth}
@@ -35,7 +35,9 @@ export default function HeroSection() {
         <Button href={personalInfo.cvUrl} download badge="D">
           Download CV
         </Button>
-        <Button href={`mailto:${personalInfo.email}`}>Send Email</Button>
+        <Button href={personalInfo.calComUrl} badge="C">
+          Schedule Call
+        </Button>
       </div>
     </>
   );

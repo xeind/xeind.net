@@ -28,7 +28,7 @@ export default function CalloutLink({
   return (
     <Component
       href={href}
-      className="bg-card group relative block px-12 py-2 transition-colors focus:outline-none"
+      className="bg-card group relative block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{
         transitionDuration: `${DURATION.normal}s`,
         transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,

@@ -32,7 +32,7 @@ export default function SectionBlock({
       {showGrid && (
         <div className="bg-hero-grid pointer-events-none absolute inset-0 opacity-20" />
       )}
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-10 mx-auto max-w-7xl">{children}</div>
     </div>
   );
 }

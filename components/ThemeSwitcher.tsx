@@ -5,7 +5,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion, AnimatePresence } from "motion/react";
 import { Palette, Check, Monitor } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
-import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
+import { useScrollbarCompensation, useReducedMotion } from "@/lib/hooks";
 import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
 
 const themes = [
@@ -45,13 +45,20 @@ const themes = [
     colors: ["#232332", "#957FB8", "#98BB6C"], // Accent (purple), Secondary (orange), Tertiary (green)
     icon: undefined,
   },
+  {
+    value: "nightingale",
+    label: "Nightingale",
+    colors: ["#202020", "#98BB6C", "#f5a284"], // Background, Green, Orange
+    icon: undefined,
+  },
 ] as const;
 
 export default function ThemeSwitcher() {
-  const [mounted, setMounted] = useState(false);
+  // Always start with "system" to avoid hydration mismatch
   const [currentTheme, setCurrentTheme] = useState("system");
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   // Apply scrollbar compensation when dropdown is open
   useScrollbarCompensation(open);
@@ -100,10 +107,11 @@ export default function ThemeSwitcher() {
   );
 
   useEffect(() => {
-    setMounted(true);
-    // Load saved theme from localStorage
+    // Load saved theme from localStorage on client only
     const savedTheme = localStorage.getItem("theme") || "system";
-    setCurrentTheme(savedTheme);
+    if (savedTheme !== currentTheme) {
+      setCurrentTheme(savedTheme);
+    }
 
     // Apply theme immediately without animation on initial load
     applyTheme(savedTheme, true);
@@ -115,7 +123,8 @@ export default function ThemeSwitcher() {
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
-  }, [applyTheme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
@@ -135,11 +144,6 @@ export default function ThemeSwitcher() {
     setOpen(false);
   };
 
-  // Prevent hydration mismatch
-  if (!mounted) {
-    return <div className="bg-card ring-border inline-flex h-8 w-24 ring-1" />;
-  }
-
   const currentThemeData = themes.find((t) => t.value === currentTheme);
 
   return (
@@ -147,27 +151,29 @@ export default function ThemeSwitcher() {
       <DropdownMenu.Trigger asChild>
         <button
           ref={triggerRef}
-          className="bg-card text-foreground hover:bg-muted group relative inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs focus:outline-none"
+          className="bg-card text-foreground hover:bg-muted group relative inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          suppressHydrationWarning
+          aria-label="Select theme"
         >
           {/* Top border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute top-0 right-0 left-0 h-px border-t border-dashed transition-all duration-200 group-hover:border-solid" />
+          <div className="border-accent/30 pointer-events-none absolute top-0 right-0 left-0 h-px border-t border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
 
           {/* Bottom border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute right-0 bottom-0 left-0 h-px border-b border-dashed transition-all duration-200 group-hover:border-solid" />
+          <div className="border-accent/30 pointer-events-none absolute right-0 bottom-0 left-0 h-px border-b border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
 
           {/* Left border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute top-0 bottom-0 left-0 w-px border-l border-dashed transition-all duration-200 group-hover:border-solid" />
+          <div className="border-accent/30 pointer-events-none absolute top-0 bottom-0 left-0 w-px border-l border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
 
           {/* Right border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute top-0 right-0 bottom-0 w-px border-r border-dashed transition-all duration-200 group-hover:border-solid" />
+          <div className="border-accent/30 pointer-events-none absolute top-0 right-0 bottom-0 w-px border-r border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
 
           <motion.span
             className="relative z-10 inline-flex"
             animate={{ rotate: 0 }}
-            whileHover={{ rotate: 12 }}
+            whileHover={prefersReducedMotion ? {} : { rotate: 12 }}
             transition={{
               duration: DURATION.fast,
-              ease: EASING.easeOutCubic as any,
+              ease: EASING.easeOutCubic as [number, number, number, number],
             }}
           >
             {currentThemeData?.icon ? (
@@ -196,10 +202,24 @@ export default function ThemeSwitcher() {
               asChild
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                transition={SPRING_CONFIG.noBounce}
+                initial={
+                  prefersReducedMotion
+                    ? {}
+                    : { opacity: 0, scale: 0.95, y: -10 }
+                }
+                animate={
+                  prefersReducedMotion ? {} : { opacity: 1, scale: 1, y: 0 }
+                }
+                exit={
+                  prefersReducedMotion
+                    ? {}
+                    : { opacity: 0, scale: 0.95, y: -10 }
+                }
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : SPRING_CONFIG.noBounce
+                }
                 onAnimationComplete={(definition) => {
                   // Close after exit animation completes
                   if (definition === "exit") {
@@ -220,12 +240,18 @@ export default function ThemeSwitcher() {
                     }}
                   >
                     <motion.div
-                      initial={{ opacity: 0, x: -5 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: index * 0.03,
-                        ...SPRING_CONFIG.noBounce,
-                      }}
+                      initial={
+                        prefersReducedMotion ? {} : { opacity: 0, x: -5 }
+                      }
+                      animate={prefersReducedMotion ? {} : { opacity: 1, x: 0 }}
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : {
+                              delay: index * 0.03,
+                              ...SPRING_CONFIG.noBounce,
+                            }
+                      }
                       className="contents"
                     >
                       {/* Checkmark with animation */}
@@ -233,10 +259,26 @@ export default function ThemeSwitcher() {
                         <AnimatePresence mode="wait">
                           {currentTheme === theme.value && (
                             <motion.div
-                              initial={{ scale: 0, x: -10, opacity: 0 }}
-                              animate={{ scale: 1, x: 0, opacity: 1 }}
-                              exit={{ scale: 0, x: 10, opacity: 0 }}
-                              transition={SPRING_CONFIG.noBounce}
+                              initial={
+                                prefersReducedMotion
+                                  ? {}
+                                  : { scale: 0, x: -10, opacity: 0 }
+                              }
+                              animate={
+                                prefersReducedMotion
+                                  ? {}
+                                  : { scale: 1, x: 0, opacity: 1 }
+                              }
+                              exit={
+                                prefersReducedMotion
+                                  ? {}
+                                  : { scale: 0, x: 10, opacity: 0 }
+                              }
+                              transition={
+                                prefersReducedMotion
+                                  ? { duration: 0 }
+                                  : SPRING_CONFIG.noBounce
+                              }
                             >
                               <Check
                                 size={ICON_CONFIG.sizes.sm}
@@ -254,10 +296,17 @@ export default function ThemeSwitcher() {
                       {/* Color Preview or Icon */}
                       {theme.icon ? (
                         <motion.div
-                          whileHover={{ scale: 1.1 }}
+                          whileHover={
+                            prefersReducedMotion ? {} : { scale: 1.1 }
+                          }
                           transition={{
                             duration: DURATION.fast,
-                            ease: EASING.easeOutCubic as any,
+                            ease: EASING.easeOutCubic as [
+                              number,
+                              number,
+                              number,
+                              number,
+                            ],
                           }}
                         >
                           <theme.icon

@@ -2,7 +2,23 @@ import type { Experience } from "../types";
 
 export const experiences: Experience[] = [
   {
-    id: "exp-1",
+    id: "exp-3",
+    company: "Pioneer Dev AI",
+    role: "Full-Stack Engineer",
+    location: "Remote",
+    period: {
+      start: "Dec 2025",
+      end: "Now",
+    },
+    achievements: [
+      "Trained in advanced Gen AI prompting techniques, including chain-of-thought, multi-agent, and structured output",
+      "Explored Azure AI services through guided workshops, gaining insight into model deployment and management",
+      "Built GraphQL APIs in Ruby on Rails and integrated Vue.js components for AI-driven client workflows",
+    ],
+    technologies: ["TypeScript", "Remix", "Prisma", "GraphQL"],
+  },
+  {
+    id: "exp-2",
     company: "ChatGenie.PH (Techstars '23)",
     role: "Full Stack Developer – Intern",
     location: "Remote",
@@ -18,7 +34,7 @@ export const experiences: Experience[] = [
     technologies: ["Ruby", "Ruby on Rails", "Vue.js", "GraphQL"],
   },
   {
-    id: "exp-2",
+    id: "exp-1",
     company: "Creative Dynamix, Inc.",
     role: "Developer – Intern",
     location: "Remote",

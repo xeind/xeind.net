@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { DURATION, EASING } from "@/lib/config";
 import { GAP_SPACING } from "@/lib/config/spacing";
+import { useReducedMotion } from "@/lib/hooks";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export default function Button({
   download,
   badge,
 }: ButtonProps) {
+  const prefersReducedMotion = useReducedMotion();
   const Component = href ? motion.a : motion.button;
   const props = href
     ? { href, ...(download && { download }) }
@@ -33,12 +35,12 @@ export default function Button({
   return (
     <Component
       onClick={onClick}
-      className={`bg-card group relative inline-block px-12 py-2 transition-colors focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`bg-card group relative inline-block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       style={{
         transitionDuration: `${DURATION.normal}s`,
         transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
       }}
-      whileTap={disabled ? {} : { scale: 0.98 }}
+      whileTap={disabled || prefersReducedMotion ? {} : { scale: 0.98 }}
       transition={{
         duration: DURATION.normal,
       }}

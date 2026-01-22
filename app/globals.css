@@ -57,6 +57,36 @@
 
 @import "tailwindcss";
 
+/* ========================================
+   CSS RESET - Normalize browser defaults
+   Applied after Tailwind to preserve utilities
+   ======================================== */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  min-height: 100vh;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
 @theme {
   /* Light mode (default) - Monochrome Light */
   --color-background: hsl(0 0% 100%);
@@ -87,6 +117,19 @@
   --font-family-serif: "Latin Modern Roman", Georgia, serif;
   --font-family-sans: "Inter", system-ui, sans-serif;
   --font-family-mono: "Commit Mono", Menlo, Monaco, monospace;
+
+  /* Typography scale - uniform, minimal variation */
+  --font-size-xs: 0.75rem; /* 12px - Meta (mono only) */
+  --font-size-sm: 0.875rem; /* 14px - Body & UI */
+  --font-size-base: 1rem; /* 16px - Emphasis */
+  --font-size-lg: 1.125rem; /* 18px - H2 */
+  --font-size-xl: 1.25rem; /* 20px - H1 */
+  --font-size-2xl: 1.5rem; /* 24px - Display */
+
+  /* Line heights for readability */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
 }
 
 /* ========================================
@@ -98,23 +141,23 @@
 [data-theme="dark"] {
   --color-background: hsl(0 0% 10%);
   --color-foreground: hsl(0 0% 100%);
-  --color-card: hsl(0 0% 13%);
-  --color-border: hsl(0 0% 25%);
+  --color-card: hsl(0 0% 16%);
+  --color-border: hsl(0 0% 30%);
   --color-muted: hsl(0 0% 15%);
-  --color-accent: hsl(0 0% 72%);
-  --color-accent-hover: hsl(0 0% 82%);
+  --color-accent: hsl(0 0% 85%);
+  --color-accent-hover: hsl(0 0% 95%);
   --color-destructive: hsl(0 0% 50%);
   --color-success: hsl(0 0% 60%);
 
   /* Extended monochrome palette */
-  --color-primary: hsl(0 0% 72%);
-  --color-primary-hover: hsl(0 0% 82%);
-  --color-secondary: hsl(0 0% 60%);
-  --color-secondary-hover: hsl(0 0% 70%);
+  --color-primary: hsl(0 0% 85%);
+  --color-primary-hover: hsl(0 0% 95%);
+  --color-secondary: hsl(0 0% 70%);
+  --color-secondary-hover: hsl(0 0% 80%);
   --color-tertiary: hsl(0 0% 100%);
-  --color-tertiary-hover: hsl(0 0% 60%);
-  --color-info: hsl(0 0% 65%);
-  --color-warning: hsl(0 0% 55%);
+  --color-tertiary-hover: hsl(0 0% 90%);
+  --color-info: hsl(0 0% 70%);
+  --color-warning: hsl(0 0% 60%);
 }
 
 /* Tokyo Night Theme */
@@ -226,6 +269,43 @@
   /* springBlue - teal/cyan */
   --color-warning: hsl(27 68% 70%);
   /* surimiOrange */
+}
+
+/* Nightingale Theme - Warm contrast from nightingale.nvim */
+[data-theme="nightingale"] {
+  --color-background: hsl(0 0% 12.5%);
+  /* #202020 - warm dark */
+  --color-foreground: hsl(42 27% 80%);
+  /* #DCD7BA - cream/beige */
+  --color-card: hsl(0 0% 15.6%);
+  /* #282828 - bg2 */
+  --color-border: hsl(0 0% 21.5%);
+  /* #363636 - bg4 */
+  --color-muted: hsl(0 0% 9.4%);
+  /* #181818 - bg1 darker */
+  --color-accent: hsl(86 36% 57%);
+  /* #98BB6C - green (strings, nature) */
+  --color-accent-hover: hsl(86 36% 67%);
+  /* Lighter green on hover */
+  --color-destructive: hsl(3 96% 65%);
+  /* #E82424 - red (errors) */
+  --color-success: hsl(86 36% 57%);
+  /* #98BB6C - green (strings) */
+
+  /* Extended Nightingale palette - Green/Orange/Yellow trio */
+  --color-primary: hsl(86 36% 57%);
+  /* #98BB6C - green (main accent, strings) */
+  --color-primary-hover: hsl(86 36% 67%);
+  --color-secondary: hsl(17 87% 75%);
+  /* #f5a284 - orange (constants, warm) */
+  --color-secondary-hover: hsl(17 87% 85%);
+  --color-tertiary: hsl(43 74% 72%);
+  /* #E6C384 - yellow (bright highlights) */
+  --color-tertiary-hover: hsl(43 74% 82%);
+  --color-info: hsl(214 45% 69%);
+  /* #85a8da - blue (functions) */
+  --color-warning: hsl(32 86% 65%);
+  /* #FF9E3B - orange warning */
 }
 
 :root {
@@ -373,4 +453,27 @@ body {
   ::view-transition-old(root) {
     animation-duration: 0.01ms !important;
   }
+}
+
+/* ========================================
+   INLINE CODE STYLING
+   Matches dashed border design system
+   ======================================== */
+
+code {
+  font-family: var(--font-family-mono);
+  font-size: 0.875em;
+  padding: 0.125rem 0.375rem;
+  border: 1px dashed hsl(var(--color-accent) / 0.3);
+  border-radius: var(--radius);
+  background-color: hsl(var(--color-muted) / 0.5);
+  color: hsl(var(--color-foreground) / 0.8);
+}
+
+/* Code within pre blocks (code blocks) should not have extra padding */
+pre code {
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
 }

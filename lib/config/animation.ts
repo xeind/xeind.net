@@ -43,6 +43,9 @@ export const SPRING_CONFIG = {
 
 // Easing functions - custom cubic-bezier curves
 export const EASING = {
+  // Standard CSS ease - best for hover effects
+  ease: [0.25, 0.1, 0.25, 1],
+
   // ease-out: Best for elements entering the screen
   easeOutQuad: [0.25, 0.46, 0.45, 0.94],
   easeOutCubic: [0.215, 0.61, 0.355, 1],
