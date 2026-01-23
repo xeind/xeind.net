@@ -35,13 +35,14 @@ export interface Project {
 export interface Experience {
   id: string;
   company: string;
+  companyUrl?: string;
   role: string;
   location: string;
   period: {
     start: string;
     end: string | "Present";
   };
-  achievements: string[];
+  description: string;
   technologies?: string[];
 }
 

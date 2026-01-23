@@ -324,6 +324,10 @@ svg {
   --footer-bg-height: 100vh;
   /* Background extends full viewport */
   --radius: 0.5rem;
+  /* Divider dash pattern (consistent across horizontal and vertical dividers) */
+  --divider-dash-length: 8px; /* visible dash length */
+  --divider-dash-gap: 8px; /* gap between dashes */
+  --divider-thickness: 2px; /* default thickness for dividers (use even px for easy centering) */
 }
 
 html {

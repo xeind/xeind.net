@@ -32,8 +32,8 @@ export default function HeroSection() {
 
       {/* CTAs */}
       <div className="flex flex-wrap gap-8">
-        <Button href={personalInfo.cvUrl} download badge="D">
-          Download CV
+        <Button href={personalInfo.cvUrl} badge="V">
+          View Resume
         </Button>
         <Button href={personalInfo.calComUrl} badge="C">
           Schedule Call

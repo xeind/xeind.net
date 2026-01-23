@@ -4,50 +4,43 @@ export const experiences: Experience[] = [
   {
     id: "exp-3",
     company: "Pioneer Dev AI",
+    companyUrl: "https://www.pioneerdev.ai/",
     role: "Full-Stack Engineer",
-    location: "Remote",
+    location: "Boulder, Colorado",
     period: {
       start: "Dec 2025",
       end: "Now",
     },
-    achievements: [
-      "Trained in advanced Gen AI prompting techniques, including chain-of-thought, multi-agent, and structured output",
-      "Explored Azure AI services through guided workshops, gaining insight into model deployment and management",
-      "Built GraphQL APIs in Ruby on Rails and integrated Vue.js components for AI-driven client workflows",
-    ],
-    technologies: ["TypeScript", "Remix", "Prisma", "GraphQL"],
+    description:
+      "Built full-stack features for a B2B intelligence platform including dynamic data tables, operator dashboards, menu analysis tools, and automated enrichment workflows",
+    technologies: ["TypeScript", "React", "Remix", "Prisma"],
   },
   {
     id: "exp-2",
-    company: "ChatGenie.PH (Techstars '23)",
-    role: "Full Stack Developer – Intern",
-    location: "Remote",
+    company: "ChatGenie",
+    companyUrl: "https://www.chatgenie.ph/",
+    role: "Full-Stack Developer – Intern",
+    location: "Pasig City, Metro Manila",
     period: {
       start: "Aug 2025",
       end: "Sep 2025",
     },
-    achievements: [
-      "Trained in advanced Gen AI prompting techniques, including chain-of-thought, multi-agent, and structured output",
-      "Explored Azure AI services through guided workshops, gaining insight into model deployment and management",
-      "Built GraphQL APIs in Ruby on Rails and integrated Vue.js components for AI-driven client workflows",
-    ],
+    description:
+      "Trained in advanced Gen AI prompting techniques including chain-of-thought and multi-agent systems, and explored Azure AI services for model deployment",
     technologies: ["Ruby", "Ruby on Rails", "Vue.js", "GraphQL"],
   },
   {
     id: "exp-1",
     company: "Creative Dynamix, Inc.",
+    companyUrl: "https://www.cdynamix.net/",
     role: "Developer – Intern",
-    location: "Remote",
+    location: "Pasig City, Metro Manila",
     period: {
       start: "Aug 2024",
       end: "Sep 2024",
     },
-    achievements: [
-      "Engineered finance module features in X++ (C#/SQL blend) within Microsoft Dynamics 365",
-      "Resolved critical bug tickets and optimized custom modules, collaborating with co-interns to ensure alignment",
-      "Collaborated with co-interns to debug issues and align codebases for the new module to roll-out",
-      "Streamlined workflows by automating address synchronization across forms and enforcing safe record deletion",
-    ],
+    description:
+      "Worked as an Intern, developing and maintaining finance modules in Microsoft Dynamics 365 using X++, resolving bugs and optimizing workflows",
     technologies: ["Microsoft Dynamics 365", "X++"],
   },
 ];
