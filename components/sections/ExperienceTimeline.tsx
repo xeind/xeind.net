@@ -43,18 +43,40 @@ function ExperienceItem({
               delay: index * 0.1,
             }
       }
-      className="relative mb-8 flex gap-6 last:mb-0"
+      className="group relative mb-8 flex gap-6 last:mb-0"
     >
       {index < experiences.length - 1 && (
         <div
           aria-hidden="true"
-          className="absolute top-3 bottom-0 border-l border-dashed border-accent/30 translate-y-5 z-0"
+          className="absolute top-3 bottom-0 translate-y-5 z-0"
           style={{
             left: "0.52rem",
             width: 0,
             marginLeft: "calc(var(--divider-thickness) / -2)",
           }}
-        />
+        >
+          {/* dashed base layer (use same color as overlay so the transition
+              from dashed -> solid appears seamless) */}
+          <div
+            className="absolute inset-y-0 left-0 border-l border-dashed border-foreground/30 h-full opacity-100 group-hover:opacity-0 group-focus-within:opacity-0 transition-opacity"
+            style={{
+              transitionDuration: prefersReducedMotion
+                ? "0s"
+                : `${DURATION.normal}s`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            }}
+          />
+
+          <div
+            className="absolute inset-y-0 left-0 h-full border-l border-solid border-foreground/30 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
+            style={{
+              transitionDuration: prefersReducedMotion
+                ? "0s"
+                : `${DURATION.normal}s`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            }}
+          />
+        </div>
       )}
 
       <div className="relative mt-1 h-4 w-4 shrink-0">
@@ -68,7 +90,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -77,7 +99,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -86,7 +108,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -97,7 +119,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -106,7 +128,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -115,7 +137,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -126,7 +148,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -135,7 +157,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -144,7 +166,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -155,7 +177,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -164,7 +186,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -173,7 +195,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.ease.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>

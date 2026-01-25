@@ -35,7 +35,7 @@ export default function Button({
   return (
     <Component
       onClick={onClick}
-      className={`bg-card group relative inline-block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`bg-card group relative inline-flex items-center justify-center gap-3 px-4 md:px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       style={{
         transitionDuration: `${DURATION.normal}s`,
         transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -175,7 +175,7 @@ export default function Button({
 
       {/* Content */}
       <div
-        className={`relative z-10 flex items-center justify-center ${GAP_SPACING.xs}`}
+        className={`relative z-10 flex items-center justify-center gap-3 ${GAP_SPACING.xs}`}
       >
         <span
           className="font-serif text-sm transition-all [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)]"

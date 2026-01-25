@@ -3,9 +3,9 @@ import { PersonalInfo } from "@/lib/types";
 export const personalInfo: PersonalInfo = {
   name: "Xein Deniel",
   location: "Philippines",
-  tagline: "Building interfaces that feel right to use.",
-  bio: "Full-Stack Engineer specializing in frontend development, focused on creating intuitive user experiences and thoughtful design.",
-  email: "xeindeniel@email.com",
+  tagline: "Designing interfaces that just feel right",
+  bio: "I am a Full-Stack Engineer who loves crafting beautiful UIs. I obsess over microinteractions, motion, and polish to make products feel effortless.",
+  email: "xd@xeind.net",
   cvUrl: "/cv.pdf",
   calComUrl: "https://cal.com/xeind",
 };

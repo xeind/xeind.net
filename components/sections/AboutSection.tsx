@@ -24,17 +24,14 @@ export default function AboutSection() {
         className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}
       >
         <p>
-          Full-stack engineer specializing in frontend development. Focused on
-          creating intuitive user experiences, thoughtful design, and building
-          interfaces that feel right to use.
+          I&apos;m a full‑stack engineer who loves building beautiful UIs. I
+          obsess over microinteractions, motion, and polish. Currently working
+          at <InlineLink href="https://www.pioneerdev.ai/">Pioneer</InlineLink>.
         </p>
+
         <p>
-          Enjoys working with{" "}
-          <InlineLink href="https://github.com/xeind">
-            open-source tools
-          </InlineLink>
-          , experimenting with custom configurations, and self-hosted
-          environments to improve developer workflows.
+          I enjoy using open‑source tools and experiment with custom configs and
+          self‑hosted environments to improve developer workflows.
         </p>
       </div>
     </motion.div>

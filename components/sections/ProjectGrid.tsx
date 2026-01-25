@@ -273,7 +273,7 @@ export default function ProjectGrid() {
               {/* Card content with layoutId */}
               <motion.div
                 layoutId={`content-${project.id}`}
-                className="absolute inset-x-0 bottom-0 flex h-1/3 flex-col justify-end px-8 py-4"
+                className="absolute inset-x-0 bottom-0 flex h-1/3 flex-col justify-end p-4 md:px-8 md:py-4"
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }

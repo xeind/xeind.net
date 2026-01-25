@@ -8,20 +8,21 @@ export default function HeroSection() {
   return (
     <>
       {/* Logo, Name and Location */}
-      <div className="mb-6 flex items-center gap-8 [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)]">
+      <div className="mb-6 flex flex-row items-center gap-6 [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)]">
         <XeinLogo size={64} className="text-foreground shrink-0" />
 
-        <div>
+        <div className="flex flex-col gap-1 items-start text-left">
           <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
             {personalInfo.name}
           </h1>
-          <div className="text-foreground/70 my-1 flex items-center gap-1 text-sm">
+          <address className="not-italic text-foreground/70 flex items-center gap-1 text-sm">
             <MapPin
               size={ICON_CONFIG.sizes.sm}
               strokeWidth={ICON_CONFIG.strokeWidth}
+              aria-hidden
             />
             <span>{personalInfo.location}</span>
-          </div>
+          </address>
         </div>
       </div>
 

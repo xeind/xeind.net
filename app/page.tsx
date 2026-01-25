@@ -24,19 +24,19 @@ export default function Home() {
         <HeroSection />
       </SectionBlock>
 
-      <SectionDivider direction="right" />
+      <SectionDivider />
 
       <SectionBlock>
         <AboutSection />
       </SectionBlock>
 
-      <SectionDivider direction="left" />
+      <SectionDivider />
 
       <SectionBlock>
         <ExperienceTimeline />
       </SectionBlock>
 
-      <SectionDivider direction="right" />
+      <SectionDivider />
 
       <SectionBlock>
         <ProjectGrid />

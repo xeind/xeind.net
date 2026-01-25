@@ -41,13 +41,17 @@ export default function Badge({
     <span
       className={`
         relative
-        inline-block
+        inline-flex
+        items-center
+        justify-center
+        gap-2
         bg-card
         bg-accent/8
         border
         border-dashed
         px-2
         py-0.5
+        min-h-[1.25rem]
         font-mono
         text-[0.6875rem]
         leading-tight

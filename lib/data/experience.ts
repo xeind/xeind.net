@@ -12,8 +12,8 @@ export const experiences: Experience[] = [
       end: "Now",
     },
     description:
-      "Built full-stack features for a B2B intelligence platform including dynamic data tables, operator dashboards, menu analysis tools, and automated enrichment workflows",
-    technologies: ["TypeScript", "React", "Remix", "Prisma"],
+      "Building primarily UI with full-stack features including dynamic data tables, operator dashboards, menu analysis tools, and automated enrichment workflows",
+    technologies: ["TypeScript", "React", "Prisma"],
   },
   {
     id: "exp-2",

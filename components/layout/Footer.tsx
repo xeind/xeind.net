@@ -17,6 +17,9 @@ export default function Footer() {
     })
     .replace(/\//g, ""); // Format as YYYYMMDD
 
+  // Dynamic current year for the copyright line
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer
       className="text-foreground fixed right-0 bottom-0 left-0 -z-10 flex flex-col justify-end"
@@ -42,9 +45,11 @@ export default function Footer() {
       <div className="relative mx-auto h-full w-full max-w-5xl">
         {/* Content container */}
         <div className="relative z-10 h-full p-8 px-12">
-          <div className="flex h-full items-center justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-4">
             <div className="flex flex-col gap-1">
-              <p className="text-background font-mono text-xs">© 2025 XD</p>
+              <p className="text-background font-mono text-xs">
+                © {currentYear} XD
+              </p>
               <p className="text-background font-mono text-xs">
                 Served with Bun ⋅ Next.js
               </p>
@@ -57,7 +62,7 @@ export default function Footer() {
             </div>
 
             {/* Theme Switcher */}
-            <div>
+            <div className="flex items-center gap-4">
               <ThemeSwitcher />
             </div>
           </div>
