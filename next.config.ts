@@ -7,6 +7,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  env: {
+    NEXT_PUBLIC_GIT_COMMIT_HASH:
+      process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",
+    NEXT_PUBLIC_BUILD_DATE: new Date().toISOString(),
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);
