@@ -24,14 +24,14 @@ export default function AboutSection() {
         className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}
       >
         <p>
-          I&apos;m a full‑stack engineer who loves building beautiful UIs. I
-          obsess over microinteractions, motion, and polish. Currently working
-          at <InlineLink href="https://www.pioneerdev.ai/">Pioneer</InlineLink>.
+          I&apos;m a full-stack engineer specializing in UI craft, motion, and
+          microinteractions. Currently working for{" "}
+          <InlineLink href="https://www.pioneerdev.ai/">Pioneer</InlineLink>.
         </p>
 
         <p>
           I enjoy using open‑source tools and experiment with custom configs and
-          self‑hosted environments to improve developer workflows.
+          self‑hosted environments to improve my developer workflow.
         </p>
       </div>
     </motion.div>

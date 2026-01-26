@@ -74,7 +74,7 @@ export default function CalloutLink({
 
       <div className="relative z-10 flex items-center justify-center gap-2">
         <span
-          className="font-serif text-sm transition-transform [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)] group-hover:translate-x-0.5 group-active:translate-x-1"
+          className="font-serif text-sm transition-transform group-hover:translate-x-0.5 group-active:translate-x-1"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,

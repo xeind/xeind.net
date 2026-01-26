@@ -8,7 +8,7 @@ export default function HeroSection() {
   return (
     <>
       {/* Logo, Name and Location */}
-      <div className="mb-6 flex flex-row items-center gap-6 [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)]">
+      <div className="mb-6 flex flex-row items-center gap-6">
         <XeinLogo size={64} className="text-foreground shrink-0" />
 
         <div className="flex flex-col gap-1 items-start text-left">

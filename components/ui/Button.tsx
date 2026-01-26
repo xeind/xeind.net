@@ -178,7 +178,7 @@ export default function Button({
         className={`relative z-10 flex items-center justify-center gap-3 ${GAP_SPACING.xs}`}
       >
         <span
-          className="font-serif text-sm transition-all [text-shadow:0px_1px_1.5px_rgba(0,0,0,0.16)]"
+          className="font-serif text-sm transition-all"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,

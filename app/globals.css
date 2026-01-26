@@ -328,6 +328,14 @@ svg {
   --divider-dash-length: 8px; /* visible dash length */
   --divider-dash-gap: 8px; /* gap between dashes */
   --divider-thickness: 2px; /* default thickness for dividers (use even px for easy centering) */
+
+  /* Text shadow tokens
+     Disabled for LCP/contentful elements to reduce paint cost. If
+     you need a decorative shadow on non-LCP elements, add a custom
+     utility that is not applied to hero/LCP content. */
+  --text-shadow-subtle: none;
+  --text-shadow-strong: none;
+  --text-shadow-on-image: none;
 }
 
 html {

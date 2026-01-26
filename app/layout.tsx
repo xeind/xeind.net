@@ -74,6 +74,24 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Inline critical CSS to prevent render blocking */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:swap}
+              @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:swap}
+              @font-face{font-family:Inter;src:url(/fonts/Inter-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:swap}
+              @font-face{font-family:Inter;src:url(/fonts/Inter-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:swap}
+              @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:swap}
+              @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:swap}
+              :root{--color-background:#fff;--color-foreground:#000;--color-card:#fff;--color-border:#d9d9d9;--color-muted:#f5f5f5;--color-accent:#333;--font-family-sans:"Inter",system-ui,sans-serif;--font-family-mono:"Commit Mono",Menlo,Monaco,monospace;--footer-height:128px}
+              [data-theme=dark]{--color-background:#1a1a1a;--color-foreground:#fff;--color-card:#292929;--color-border:#4d4d4d;--color-muted:#262626;--color-accent:#d9d9d9}
+              html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;box-sizing:border-box}
+              *,:before,:after{box-sizing:inherit}
+              body{min-height:100vh;background-color:var(--color-muted);color:var(--color-foreground);font-family:var(--font-family-sans)}
+            `,
+          }}
+        />
         {/* Theme script - must run before body renders to prevent FOUC */}
         <script
           dangerouslySetInnerHTML={{
@@ -94,7 +112,7 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Preload critical fonts for faster FCP/LCP */}
+        {/* Preload the primary UI font to speed up FCP/LCP */}
         <link
           rel="preload"
           href="/fonts/Inter-Regular.woff2"
@@ -102,19 +120,15 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        {/* Preload only Inter (primary UI font). Latin Modern is used for headings but
+            is not critical for first paint; keep as non-preloaded to reduce blocking. */}
+        {/* Commit Mono is only used for meta/code UI; avoid preloading to reduce critical fetches */}
+        {/* Preload LCP image - grain texture in footer */}
         <link
           rel="preload"
-          href="/fonts/LatinModernRoman-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/CommitMono-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
+          href="/grain-texture.webp"
+          as="image"
+          fetchPriority="high"
         />
         {/* Structured data for SEO */}
         <StructuredData />

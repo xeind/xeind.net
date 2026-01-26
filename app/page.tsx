@@ -1,7 +1,10 @@
-import ProjectGrid from "@/components/sections/ProjectGrid";
 import HeroSection from "@/components/hero/HeroSection";
-import ExperienceTimeline from "@/components/sections/ExperienceTimeline";
-import AboutSection from "@/components/sections/AboutSection";
+// Client-only lazy sections are placed in a client boundary component.
+import {
+  ProjectGrid,
+  ExperienceTimeline,
+  AboutSection,
+} from "@/components/sections/LazySections";
 import { SectionBlock, SectionDivider, CalloutLink } from "@/components/ui";
 import { ArrowUpRight } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";

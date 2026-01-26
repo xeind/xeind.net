@@ -2,10 +2,11 @@
 
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
-// Build-time git info (set during build)
+// Build-time git info (set during build). Avoid runtime Date fallbacks to keep SSR
+// deterministic — the build pipeline should set NEXT_PUBLIC_BUILD_DATE.
 const BUILD_INFO = {
   commit: process.env.NEXT_PUBLIC_GIT_COMMIT_HASH || "dev",
-  date: process.env.NEXT_PUBLIC_BUILD_DATE || new Date().toISOString(),
+  date: process.env.NEXT_PUBLIC_BUILD_DATE || "1970-01-01T00:00:00Z",
 };
 
 export default function Footer() {
@@ -17,8 +18,8 @@ export default function Footer() {
     })
     .replace(/\//g, ""); // Format as YYYYMMDD
 
-  // Dynamic current year for the copyright line
-  const currentYear = new Date().getFullYear();
+  // Derive year from the build date so server and client render identically.
+  const currentYear = new Date(BUILD_INFO.date).getFullYear();
 
   return (
     <footer

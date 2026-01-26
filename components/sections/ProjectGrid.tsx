@@ -268,6 +268,11 @@ export default function ProjectGrid() {
                 }
               >
                 <div className="bg-grid-pattern absolute inset-0 opacity-5" />
+                <div className="absolute inset-0 flex items-end justify-start p-4">
+                  <h3 className="font-serif text-lg text-foreground">
+                    {project.title}
+                  </h3>
+                </div>
               </motion.div>
 
               {/* Card content with layoutId */}

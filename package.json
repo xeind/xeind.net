@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo -p 3000",
+    "dev": "next dev --turbo -p 3180",
     "build": "next build",
-    "start": "next start",
+    "build:analyze": "ANALYZE=true next build",
+    "start": "next start -p 3181",
     "lint": "eslint",
-    "lighthouse": "lighthouse http://localhost:3000 --view --chrome-flags=\"--headless\"",
-    "lighthouse:mobile": "lighthouse http://localhost:3000 --preset=mobile --view --chrome-flags=\"--headless\"",
+    "lighthouse": "lighthouse http://localhost:3181 --view --chrome-flags=\"--headless\"",
+    "lighthouse:mobile": "lighthouse http://localhost:3181 --preset=mobile --view --chrome-flags=\"--headless\"",
     "lighthouse:ci": "lighthouse http://localhost:3000 --output=json --output=html --output-path=./lighthouse-report --chrome-flags=\"--headless\""
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
