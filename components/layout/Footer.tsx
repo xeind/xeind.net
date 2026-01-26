@@ -43,7 +43,7 @@ export default function Footer() {
       </div>
 
       {/* Border container - only footer height without vertical borders */}
-      <div className="relative mx-auto h-full w-full max-w-5xl">
+      <div className="relative mx-auto h-full max-w-5xl">
         {/* Content container */}
         <div className="relative z-10 h-full p-8 px-12">
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-4">

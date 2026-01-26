@@ -15,10 +15,10 @@ export default function SectionBlock({
 }: SectionBlockProps) {
   return (
     <div
-      className={`bg-card after:bg-accent/20 relative px-12 py-8 after:absolute after:right-[-100vw] after:bottom-0 after:left-[-100vw] after:h-px after:content-[''] ${
+      className={`bg-card after:bg-accent/20 relative px-12 py-8 after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:h-px after:content-[''] ${
         hideTopBorder
           ? ""
-          : "before:bg-accent/20 before:absolute before:top-0 before:right-[-100vw] before:left-[-100vw] before:h-px before:content-['']"
+          : "before:bg-accent/20 before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-['']"
       }`}
     >
       {bottomDiamondsOnly ? (

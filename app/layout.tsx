@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import CornerDiamond from "@/components/ui/CornerDiamond";
@@ -64,6 +64,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://xeind.net",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
@@ -140,7 +147,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <div className="paper-background min-h-dvh" tabIndex={-1}>
           <div className="relative mx-auto max-w-5xl">
-            <main className="bg-card border-accent/20 before:bg-accent/20 after:bg-accent/20 relative z-10 mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-100vw] before:left-[-100vw] before:h-px before:content-[''] after:absolute after:right-[-100vw] after:bottom-0 after:left-[-100vw] after:h-px after:content-['']">
+            <main className="bg-card border-accent/20 before:bg-accent/20 after:bg-accent/20 relative z-10 mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:h-px after:content-['']">
               <CornerDiamond position="all" variant="accent" />
               {children}
             </main>
