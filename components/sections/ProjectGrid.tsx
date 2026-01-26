@@ -159,7 +159,7 @@ export default function ProjectGrid() {
                 }
               >
                 <div className="bg-grid-pattern absolute inset-0 opacity-10" />
-                <div className="text-foreground/40 font-mono text-sm">
+                <div className="text-foreground/60 font-mono text-sm">
                   IMG_{activeProject.id}
                 </div>
               </motion.div>
@@ -204,7 +204,7 @@ export default function ProjectGrid() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                  className="text-foreground/70 mb-4 leading-relaxed"
+                  className="text-foreground/80 mb-4 leading-relaxed"
                 >
                   {activeProject.longDescription || activeProject.description}
                 </motion.p>
@@ -253,7 +253,7 @@ export default function ProjectGrid() {
                 <ArrowUpRight
                   size={ICON_CONFIG.sizes.md}
                   strokeWidth={ICON_CONFIG.strokeWidth}
-                  className="text-foreground/50"
+                  className="text-foreground/60"
                 />
               </div>
 

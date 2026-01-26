@@ -14,7 +14,7 @@ export default function HeroSection() {
           <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
             {personalInfo.name}
           </h1>
-          <address className="not-italic text-foreground/70 flex items-center gap-1 text-sm">
+          <address className="not-italic text-foreground/60 flex items-center gap-1 text-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
