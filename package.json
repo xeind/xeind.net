@@ -13,6 +13,7 @@
     "lighthouse:ci": "lighthouse http://localhost:3000 --output=json --output=html --output-path=./lighthouse-report --chrome-flags=\"--headless\""
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "clsx": "^2.1.1",
     "lucide-react": "^0.554.0",

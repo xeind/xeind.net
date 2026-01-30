@@ -3,7 +3,6 @@
 import { motion } from "motion/react";
 import { DURATION, EASING } from "@/lib/config";
 import { GAP_SPACING } from "@/lib/config/spacing";
-import { useReducedMotion } from "@/lib/hooks";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -14,6 +13,8 @@ interface ButtonProps {
   className?: string;
   download?: boolean | string;
   badge?: string; // Optional badge text (e.g., "D", "↓", "⌘K")
+  target?: string;
+  rel?: string;
 }
 
 export default function Button({
@@ -25,11 +26,19 @@ export default function Button({
   className = "",
   download,
   badge,
+  target,
+  rel,
 }: ButtonProps) {
-  const prefersReducedMotion = useReducedMotion();
   const Component = href ? motion.a : motion.button;
   const props = href
-    ? { href, ...(download && { download }) }
+    ? {
+        href,
+        ...(download && { download }),
+        // Default to opening in new tab if target not specified
+        target: target || "_blank",
+        // Default to noopener noreferrer for security if rel not specified
+        rel: rel || "noopener noreferrer",
+      }
     : { type, disabled };
 
   return (
@@ -39,10 +48,6 @@ export default function Button({
       style={{
         transitionDuration: `${DURATION.normal}s`,
         transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-      }}
-      whileTap={disabled || prefersReducedMotion ? {} : { scale: 0.98 }}
-      transition={{
-        duration: DURATION.normal,
       }}
       {...props}
     >
@@ -153,7 +158,7 @@ export default function Button({
       <div className="pointer-events-none absolute inset-0">
         {/* Default state: center glow gradient (0-15-40-60-40-15-0) */}
         <div
-          className="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0"
+          className="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -165,10 +170,22 @@ export default function Button({
         />
         {/* Hover state: full fill at 30% opacity */}
         <div
-          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
+          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0"
           style={{
             transitionDuration: `${DURATION.normal}s`,
             transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+          }}
+        />
+        {/* Active/Tap state: inverted center gradient - edges bright, center dark, edges not transparent */}
+        <div
+          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-active:opacity-100"
+          style={{
+            transitionDuration: `${DURATION.fast}s`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            maskImage:
+              "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
           }}
         />
       </div>

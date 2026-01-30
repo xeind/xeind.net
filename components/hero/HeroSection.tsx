@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/ui/Button";
 import XeinLogo from "@/components/XeinLogo";
 import { personalInfo } from "@/lib/data";
@@ -44,7 +46,12 @@ export default function HeroSection() {
         <Button href={personalInfo.cvUrl} badge="V">
           View Resume
         </Button>
-        <Button href={personalInfo.calComUrl} badge="C">
+        <Button
+          href={personalInfo.calComUrl || "https://cal.com/xeind"}
+          target="_blank"
+          rel="noopener noreferrer"
+          badge="C"
+        >
           Schedule Call
         </Button>
       </div>
