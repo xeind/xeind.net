@@ -82,6 +82,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Preload the primary UI font before declaring @font-face so the browser
+            can reuse the preloaded resource for the font-face and avoid the
+            "preload was not used" console warning. */}
+        <link
+          rel="preload"
+          href="/fonts/Inter-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+        />
+
         {/* Inline critical CSS to prevent render blocking */}
         <style
           dangerouslySetInnerHTML={{
@@ -124,14 +136,7 @@ export default function RootLayout({
         {/* Meta description for search engines / Lighthouse */}
         <meta name="description" content={metadata.description ?? undefined} />
 
-        {/* Preload the primary UI font to speed up FCP/LCP */}
-        <link
-          rel="preload"
-          href="/fonts/Inter-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
+        {/* Preload marker moved above the critical inline CSS so the preload is used. */}
         {/* Preload only Inter (primary UI font). Latin Modern is used for headings but
             is not critical for first paint; keep as non-preloaded to reduce blocking. */}
         {/* Commit Mono is only used for meta/code UI; avoid preloading to reduce critical fetches */}
