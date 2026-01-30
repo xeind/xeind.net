@@ -6,7 +6,6 @@ export const personalInfo: PersonalInfo = {
   tagline: "Designing interfaces that just feel right",
   bio: "I am a Full-Stack Engineer who loves crafting beautiful UIs. I obsess over microinteractions, motion, and polish to make products feel effortless.",
   email: "xd@xeind.net",
-  // Updated to match the actual file placed in public/
   cvUrl: "/virgines-resume.pdf",
   calComUrl: "https://cal.com/xeind",
 };
