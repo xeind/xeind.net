@@ -202,7 +202,7 @@ function ExperienceItem({
       <div className="flex-1">
         <div className="mb-4">
           <h3 className="text-foreground font-serif text-base">{exp.role}</h3>
-          <div className="text-foreground/60 mt-1 flex items-center justify-between gap-4 text-sm">
+          <div className="text-foreground/60 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-sm">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               {exp.companyUrl ? (
                 <span {...hoverHandlers} className="inline-block">

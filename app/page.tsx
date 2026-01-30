@@ -43,8 +43,7 @@ export default function Home() {
         <ProjectGrid />
       </SectionBlock>
 
-      {/* Spacer to reveal footer on scroll - matches footer height */}
-      <div className="h-(--footer-height)" aria-hidden="true" />
+      {/* <div className="h-(--footer-height)" aria-hidden="true" /> */}
     </>
   );
 }

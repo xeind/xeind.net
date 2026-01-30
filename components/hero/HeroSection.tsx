@@ -5,7 +5,7 @@ import { ICON_CONFIG } from "@/lib/config/design";
 
 export default function HeroSection() {
   return (
-    <>
+    <div className="flex flex-col items-center md:items-start">
       {/* Logo, Name and Location */}
       <div className="mb-6 flex flex-row items-center gap-6">
         <XeinLogo size={64} className="text-foreground shrink-0" />
@@ -35,12 +35,12 @@ export default function HeroSection() {
       </div>
 
       {/* Tagline */}
-      <p className="text-foreground/80 mb-6 max-w-xl text-sm">
+      <p className="text-foreground/80 mb-6 max-w-xl text-center md:text-left text-sm">
         {personalInfo.tagline}
       </p>
 
       {/* CTAs */}
-      <div className="flex flex-wrap gap-8">
+      <div className="flex flex-wrap justify-center md:justify-start gap-4 md:gap-8">
         <Button href={personalInfo.cvUrl} badge="V">
           View Resume
         </Button>
@@ -48,6 +48,6 @@ export default function HeroSection() {
           Schedule Call
         </Button>
       </div>
-    </>
+    </div>
   );
 }

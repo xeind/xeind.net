@@ -145,14 +145,17 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className="font-sans antialiased">
-        <div className="paper-background min-h-dvh" tabIndex={-1}>
+        <div
+          className="paper-background min-h-dvh overflow-x-clip"
+          tabIndex={-1}
+        >
           <div className="relative mx-auto max-w-5xl">
             <main className="bg-card border-accent/20 before:bg-accent/20 after:bg-accent/20 relative z-10 mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:h-px after:content-['']">
               <CornerDiamond position="all" variant="accent" />
               {children}
             </main>
-            <Footer />
           </div>
+          <Footer />
         </div>
       </body>
     </html>

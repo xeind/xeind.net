@@ -28,24 +28,6 @@ const themes = [
     icon: undefined,
   },
   {
-    value: "tokyo-night",
-    label: "Tokyo Night",
-    colors: ["#242531", "#7DCFFF", "#BB9AF7"], // Accent (cyan), Secondary (gold), Tertiary (purple)
-    icon: undefined,
-  },
-  {
-    value: "gruvbox",
-    label: "Gruvbox",
-    colors: ["#36322E", "#FABD2F", "#FB4934"], // Accent (yellow), Secondary (orange), Tertiary (red)
-    icon: undefined,
-  },
-  {
-    value: "kanagawa",
-    label: "Kanagawa",
-    colors: ["#232332", "#957FB8", "#98BB6C"], // Accent (purple), Secondary (orange), Tertiary (green)
-    icon: undefined,
-  },
-  {
     value: "nightingale",
     label: "Nightingale",
     colors: ["#202020", "#98BB6C", "#f5a284"], // Background, Green, Orange

@@ -29,7 +29,7 @@ export default function Footer() {
         height: "var(--footer-height)", // Footer only takes 128px
       }}
     >
-      {/* Background - covers only footer height */}
+      {/* Background - covers full screen width */}
       <div className="bg-accent absolute inset-0">
         {/* Paper grain texture overlay */}
         <div
@@ -42,11 +42,10 @@ export default function Footer() {
         />
       </div>
 
-      {/* Border container - only footer height without vertical borders */}
-      <div className="relative mx-auto h-full max-w-5xl">
-        {/* Content container */}
-        <div className="relative z-10 h-full p-8 px-12">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-4">
+      {/* Content container - constrained width */}
+      <div className="relative mx-auto h-full w-full max-w-5xl">
+        <div className="relative z-10 h-full p-6 px-6 sm:px-8 md:p-8 md:px-12">
+          <div className="grid grid-cols-[1fr_auto] items-center gap-4 sm:gap-6 md:gap-8">
             <div className="flex flex-col gap-1">
               <p className="text-background font-mono text-xs">
                 © {currentYear} XD
@@ -62,7 +61,7 @@ export default function Footer() {
               </p>
             </div>
 
-            {/* Theme Switcher */}
+            {/* Theme Switcher - Always side-by-side on all screen sizes */}
             <div className="flex items-center gap-4">
               <ThemeSwitcher />
             </div>
