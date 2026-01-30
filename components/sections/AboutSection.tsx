@@ -26,7 +26,10 @@ export default function AboutSection() {
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and
           microinteractions. Currently working at{" "}
-          <InlineLink href="https://www.pioneerdev.ai/">Pioneer</InlineLink>.
+          <InlineLink href="https://www.pioneerdev.ai/" external>
+            Pioneer
+          </InlineLink>
+          .
         </p>
 
         <p>
