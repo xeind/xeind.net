@@ -1,24 +1,11 @@
 "use client";
 
-import { motion } from "motion/react";
-import { SPRING_CONFIG } from "@/lib/config/animation";
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineLink from "@/components/ui/InlineLink";
-import { useReducedMotion } from "@/lib/hooks";
 
 export default function AboutSection() {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
-    <motion.div
-      initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-      whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={
-        prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.default
-      }
-      className={STACK_SPACING.normal}
-    >
+    <div className={STACK_SPACING.normal}>
       <h2 className="text-foreground font-serif text-2xl">About</h2>
       <div
         className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}
@@ -37,6 +24,6 @@ export default function AboutSection() {
           self‑hosted environments to improve my developer workflow.
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }

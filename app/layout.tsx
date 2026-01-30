@@ -3,6 +3,7 @@ import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import CornerDiamond from "@/components/ui/CornerDiamond";
 import StructuredData from "@/components/StructuredData";
+import ClientBoundaryLoader from "@/components/ClientBoundaryLoader";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://xeind.net"),
@@ -120,6 +121,9 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Meta description for search engines / Lighthouse */}
+        <meta name="description" content={metadata.description ?? undefined} />
+
         {/* Preload the primary UI font to speed up FCP/LCP */}
         <link
           rel="preload"
@@ -149,7 +153,9 @@ export default function RootLayout({
           <div className="relative mx-auto max-w-5xl">
             <main className="bg-card border-accent/20 before:bg-accent/20 after:bg-accent/20 relative z-10 mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:h-px after:content-['']">
               <CornerDiamond position="all" variant="accent" />
-              {children}
+              {/* Client-side error boundary to catch runtime errors in production and
+                  provide a friendly fallback while we debug the underlying issue. */}
+              <ClientBoundaryLoader>{children}</ClientBoundaryLoader>
             </main>
           </div>
           <Footer />

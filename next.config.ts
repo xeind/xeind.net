@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",
     NEXT_PUBLIC_BUILD_DATE: new Date().toISOString(),
   },
+  // Enable production source maps temporarily to map minified React errors
+  // Remove or set to false when finished to avoid exposing source maps publicly.
+  productionBrowserSourceMaps: true,
 };
 
 export default withBundleAnalyzer(nextConfig);

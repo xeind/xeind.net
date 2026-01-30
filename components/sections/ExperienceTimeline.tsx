@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
 import { experiences } from "@/lib/data";
 import { Badge, InlineLink } from "@/components/ui";
 import { Experience } from "@/lib/types";
@@ -30,21 +29,7 @@ function ExperienceItem({
   };
 
   return (
-    <motion.article
-      key={exp.id}
-      initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-      whileInView={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={
-        prefersReducedMotion
-          ? { duration: 0 }
-          : {
-              ...SPRING_CONFIG.default,
-              delay: index * 0.1,
-            }
-      }
-      className="group relative mb-8 flex gap-6 last:mb-0"
-    >
+    <article key={exp.id} className="group relative mb-8 flex gap-6 last:mb-0">
       {index < experiences.length - 1 && (
         <div
           aria-hidden="true"
@@ -61,7 +46,7 @@ function ExperienceItem({
               transitionDuration: prefersReducedMotion
                 ? "0s"
                 : `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
 
@@ -71,7 +56,7 @@ function ExperienceItem({
               transitionDuration: prefersReducedMotion
                 ? "0s"
                 : `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -88,7 +73,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -97,7 +82,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -106,7 +91,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -117,7 +102,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -126,7 +111,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -135,7 +120,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -146,7 +131,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -155,7 +140,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -164,7 +149,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -175,7 +160,7 @@ function ExperienceItem({
           }`}
           style={{
             transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
           }}
         >
           <div
@@ -184,7 +169,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
           <div
@@ -193,7 +178,7 @@ function ExperienceItem({
             }`}
             style={{
               transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
             }}
           />
         </div>
@@ -241,7 +226,7 @@ function ExperienceItem({
           </div>
         )}
       </div>
-    </motion.article>
+    </article>
   );
 }
 
