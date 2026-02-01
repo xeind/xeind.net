@@ -82,7 +82,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preload the primary UI font before declaring @font-face so the browser
+        {/* Preload the primary UI font before loading the external font CSS so the browser
             can reuse the preloaded resource for the font-face and avoid the
             "preload was not used" console warning. */}
         <link
@@ -98,12 +98,7 @@ export default function RootLayout({
         <style
           dangerouslySetInnerHTML={{
             __html: `
-              @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:swap}
-              @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:swap}
-              @font-face{font-family:Inter;src:url(/fonts/Inter-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:swap}
-              @font-face{font-family:Inter;src:url(/fonts/Inter-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:swap}
-              @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:swap}
-              @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:swap}
+              /* non-font critical css retained inline (colors, layout) */
               :root{--color-background:hsl(0 0% 100%);--color-foreground:hsl(0 0% 0%);--color-card:hsl(0 0% 100%);--color-border:hsl(0 0% 85%);--color-muted:hsl(0 0% 96%);--color-accent:hsl(0 0% 20%);--color-accent-hover:hsl(0 0% 10%);--color-destructive:hsl(0 0% 40%);--color-success:hsl(0 0% 30%);--color-primary:hsl(0 0% 20%);--color-primary-hover:hsl(0 0% 10%);--color-secondary:hsl(0 0% 35%);--color-secondary-hover:hsl(0 0% 25%);--color-tertiary:hsl(0 0% 10%);--color-tertiary-hover:hsl(0 0% 20%);--color-info:hsl(0 0% 45%);--color-warning:hsl(0 0% 40%);--font-family-sans:"Inter",system-ui,sans-serif;--font-family-mono:"Commit Mono",Menlo,Monaco,monospace;--footer-height:128px}
               [data-theme=dark]{--color-background:hsl(0 0% 10%);--color-foreground:hsl(0 0% 100%);--color-card:hsl(0 0% 16%);--color-border:hsl(0 0% 30%);--color-muted:hsl(0 0% 15%);--color-accent:hsl(0 0% 85%);--color-accent-hover:hsl(0 0% 95%);--color-destructive:hsl(0 0% 50%);--color-success:hsl(0 0% 60%);--color-primary:hsl(0 0% 85%);--color-primary-hover:hsl(0 0% 95%);--color-secondary:hsl(0 0% 70%);--color-secondary-hover:hsl(0 0% 80%);--color-tertiary:hsl(0 0% 100%);--color-tertiary-hover:hsl(0 0% 90%);--color-info:hsl(0 0% 70%);--color-warning:hsl(0 0% 60%)}
               [data-theme=nightingale]{--color-background:hsl(0 0% 12.5%);--color-foreground:hsl(42 27% 80%);--color-card:hsl(0 0% 15.6%);--color-border:hsl(0 0% 21.5%);--color-muted:hsl(0 0% 9.4%);--color-accent:hsl(86 36% 57%);--color-accent-hover:hsl(86 36% 67%);--color-destructive:hsl(3 96% 65%);--color-success:hsl(86 36% 57%);--color-primary:hsl(86 36% 57%);--color-primary-hover:hsl(86 36% 67%);--color-secondary:hsl(17 87% 75%);--color-secondary-hover:hsl(17 87% 85%);--color-tertiary:hsl(43 74% 72%);--color-tertiary-hover:hsl(43 74% 82%);--color-info:hsl(214 45% 69%);--color-warning:hsl(32 86% 65%)}
