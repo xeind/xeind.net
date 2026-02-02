@@ -2,26 +2,14 @@
 
 import dynamic from "next/dynamic";
 
-// Lazy-loaded sections with loading states to prevent CLS.
-// These are client components but still SSR to avoid layout shift.
+// Lazy-loaded ProjectGrid with loading state to prevent CLS.
+// This is below-fold content and contains motion animations for modals.
+// About and Experience sections are imported directly in app/page.tsx
+// because they are above-fold and should render immediately.
 export const ProjectGrid = dynamic(
   () => import("@/components/sections/ProjectGrid"),
   {
     loading: () => <div className="min-h-[400px]" />,
-  },
-);
-
-export const ExperienceTimeline = dynamic(
-  () => import("@/components/sections/ExperienceTimeline"),
-  {
-    loading: () => <div className="min-h-[600px]" />,
-  },
-);
-
-export const AboutSection = dynamic(
-  () => import("@/components/sections/AboutSection"),
-  {
-    loading: () => <div className="min-h-[200px]" />,
   },
 );
 

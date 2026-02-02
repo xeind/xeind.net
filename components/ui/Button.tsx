@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { DURATION, EASING } from "@/lib/config";
 import { GAP_SPACING } from "@/lib/config/spacing";
 
@@ -29,7 +28,7 @@ export default function Button({
   target,
   rel,
 }: ButtonProps) {
-  const Component = href ? motion.a : motion.button;
+  const Component = href ? "a" : "button";
   const props = href
     ? {
         href,
