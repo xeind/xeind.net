@@ -327,6 +327,7 @@ pre code {
 /* ========================================
    XEIN LOGO - Per-Shape Hover Effect
    Each shape independently crossfades on hover
+   Matches Button hover behavior exactly
    ======================================== */
 
 .xein-logo {
@@ -345,6 +346,13 @@ pre code {
   transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+/* Fill overlay - hidden by default, appears on hover at 30% like Button */
+.shape-fill-overlay {
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+
 /* Outline shape - hidden by default */
 .shape-outline {
   opacity: 0;
@@ -352,9 +360,13 @@ pre code {
   pointer-events: none;
 }
 
-/* Hover state - crossfade from filled to outline for individual shape */
+/* Hover state - matches Button: fill at 30%, outline fully visible */
 .logo-shape:hover .shape-filled {
   opacity: 0;
+}
+
+.logo-shape:hover .shape-fill-overlay {
+  opacity: 0.3;
 }
 
 .logo-shape:hover .shape-outline {
@@ -364,6 +376,7 @@ pre code {
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .shape-filled,
+  .shape-fill-overlay,
   .shape-outline {
     transition: none;
   }
