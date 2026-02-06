@@ -142,7 +142,7 @@ export default function RootLayout({
         {/* Structured data for SEO */}
         <StructuredData />
       </head>
-      <body className="font-sans antialiased">
+      <body suppressHydrationWarning className="font-sans antialiased">
         <div
           className="paper-background min-h-dvh overflow-x-clip"
           tabIndex={-1}
