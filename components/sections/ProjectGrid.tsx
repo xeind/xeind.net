@@ -477,7 +477,7 @@ export default function ProjectGrid() {
               >
                 <motion.p
                   layoutId={`type-${project.id}`}
-                  className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
+                  className="text-accent mb-1 hidden font-mono text-[0.6875rem] tracking-wide md:block"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
@@ -497,7 +497,7 @@ export default function ProjectGrid() {
                 >
                   {project.title}
                 </motion.h3>
-                <p className="text-foreground/60 mt-auto text-xs leading-relaxed line-clamp-2 md:line-clamp-2 lg:text-sm">
+                <p className="text-foreground/60 mt-auto hidden text-xs leading-relaxed line-clamp-2 md:block lg:text-sm">
                   {project.description}
                 </p>
               </motion.div>
