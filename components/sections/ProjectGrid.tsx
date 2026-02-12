@@ -273,7 +273,7 @@ export default function ProjectGrid() {
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               layoutId={`card-${activeProject.id}`}
-              className="bg-card pointer-events-auto relative flex h-[70vh] w-full max-w-3xl flex-col overflow-hidden"
+              className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
               style={{ borderRadius: 0 }}
               ref={modalRef}
               transition={
@@ -327,9 +327,9 @@ export default function ProjectGrid() {
               >
                 {/* Header — same order as card: type then title */}
                 <div className="mb-4">
-                  <motion.p
+                  <motion.div
                     layoutId={`type-${activeProject.id}`}
-                    className="mb-1 font-mono text-[0.6875rem] tracking-wide"
+                    className="mb-1 flex items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
                     transition={
                       prefersReducedMotion
                         ? { duration: 0 }
@@ -337,38 +337,53 @@ export default function ProjectGrid() {
                     }
                   >
                     <span className="text-accent">{activeProject.type}</span>
-                    <span className="text-foreground/60"> · </span>
+                    <span className="text-foreground/60">·</span>
                     <span className="text-tertiary">{activeProject.year}</span>
+                  </motion.div>
+                  <div className="flex items-center gap-2">
+                    <motion.h3
+                      id="modal-title"
+                      layoutId={`title-${activeProject.id}`}
+                      className="text-foreground font-serif text-xl"
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : SPRING_CONFIG.noBounce
+                      }
+                    >
+                      {activeProject.title}
+                    </motion.h3>
                     {(activeProject.liveUrl || activeProject.githubUrl) && (
-                      <>
-                        <span className="text-foreground/60"> · </span>
-                        <a
-                          href={activeProject.liveUrl || activeProject.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-accent hover:text-tertiary inline-flex items-center transition-colors motion-reduce:transition-none"
-                          style={tFast}
-                        >
-                          <ArrowUpRight
-                            size={ICON_CONFIG.sizes.sm}
-                            strokeWidth={ICON_CONFIG.strokeWidth}
-                          />
-                        </a>
-                      </>
+                      <a
+                        href={activeProject.liveUrl || activeProject.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent hover:text-tertiary flex items-center transition-colors motion-reduce:transition-none"
+                        style={tFast}
+                        aria-label={`Open ${activeProject.title} in new tab`}
+                      >
+                        <ArrowUpRight
+                          size={ICON_CONFIG.sizes.md}
+                          strokeWidth={ICON_CONFIG.strokeWidth}
+                        />
+                      </a>
                     )}
-                  </motion.p>
-                  <motion.h3
-                    id="modal-title"
-                    layoutId={`title-${activeProject.id}`}
-                    className="text-foreground font-serif text-xl"
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0 }
-                        : SPRING_CONFIG.noBounce
-                    }
-                  >
-                    {activeProject.title}
-                  </motion.h3>
+                  </div>
+
+                  {/* Technologies */}
+                  {activeProject.technologies && activeProject.technologies.length > 0 && (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                      className={`mt-2 flex flex-wrap ${GAP_SPACING.xs}`}
+                    >
+                      {activeProject.technologies.map((tech) => (
+                        <Badge key={tech}>{tech}</Badge>
+                      ))}
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Dashed separator */}
@@ -384,21 +399,6 @@ export default function ProjectGrid() {
                 >
                   {activeProject.longDescription || activeProject.description}
                 </motion.p>
-
-                {/* Technologies */}
-                {activeProject.technologies && (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                    className={`mt-auto flex flex-wrap ${GAP_SPACING.xs}`}
-                  >
-                    {activeProject.technologies.map((tech) => (
-                      <Badge key={tech}>{tech}</Badge>
-                    ))}
-                  </motion.div>
-                )}
               </motion.div>
             </motion.div>
           </div>
