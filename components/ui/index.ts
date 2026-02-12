@@ -5,3 +5,4 @@ export { default as CornerDiamond } from "./CornerDiamond";
 export { default as InlineLink } from "./InlineLink";
 export { default as SectionBlock } from "./SectionBlock";
 export { default as SectionDivider } from "./SectionDivider";
+export { default as Tooltip } from "./Tooltip";

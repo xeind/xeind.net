@@ -2,6 +2,7 @@
 
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineLink from "@/components/ui/InlineLink";
+import Tooltip from "@/components/ui/Tooltip";
 
 export default function AboutSection() {
   return (
@@ -20,8 +21,14 @@ export default function AboutSection() {
         </p>
 
         <p>
-          I enjoy using open‑source tools and experiment with custom configs and
-          self‑hosted environments to improve my developer workflow.
+          I enjoy using{" "}
+          <Tooltip label="my dotfiles">
+            <InlineLink href="https://github.com/xeind/dotfiles" external>
+              open‑source tools
+            </InlineLink>
+          </Tooltip>{" "}
+          and experiment with custom configs and self‑hosted environments to
+          improve my developer workflow.
         </p>
       </div>
     </div>

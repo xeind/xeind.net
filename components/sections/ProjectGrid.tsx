@@ -6,13 +6,160 @@ import { X, ArrowUpRight } from "lucide-react";
 import { projects } from "@/lib/data";
 import { Badge } from "@/components/ui";
 import { ICON_CONFIG } from "@/lib/config/design";
-import { SPRING_CONFIG } from "@/lib/config/animation";
+import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
 import {
   useScrollbarCompensation,
   useFocusTrap,
   useReducedMotion,
 } from "@/lib/hooks";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
+
+const t = {
+  transitionDuration: `${DURATION.normal}s`,
+  transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+};
+
+const tFast = {
+  transitionDuration: `${DURATION.fast}s`,
+  transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+};
+
+const invertedGradientMask = {
+  maskImage:
+    "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
+  WebkitMaskImage:
+    "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
+};
+
+/** Dashed borders (4 sides) that become solid on group hover */
+function DashedBorders() {
+  return (
+    <>
+      <div
+        className="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        style={t}
+      />
+      <div
+        className="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        style={t}
+      />
+      <div
+        className="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        style={t}
+      />
+      <div
+        className="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        style={t}
+      />
+    </>
+  );
+}
+
+/** L-shaped corner brackets that change color on group hover */
+function CornerBrackets() {
+  return (
+    <>
+      {/* Top-Left */}
+      <div className="absolute top-0 left-0 z-10">
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-px w-2 transition-all"
+          style={t}
+        />
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-2 w-px transition-all"
+          style={t}
+        />
+      </div>
+      {/* Top-Right */}
+      <div className="absolute top-0 right-0 z-10">
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-px w-2 transition-all"
+          style={t}
+        />
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-2 w-px transition-all"
+          style={t}
+        />
+      </div>
+      {/* Bottom-Left */}
+      <div className="absolute bottom-0 left-0 z-10">
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-2 w-px transition-all"
+          style={t}
+        />
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-px w-2 transition-all"
+          style={t}
+        />
+      </div>
+      {/* Bottom-Right */}
+      <div className="absolute right-0 bottom-0 z-10">
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-2 w-px transition-all"
+          style={t}
+        />
+        <div
+          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-px w-2 transition-all"
+          style={t}
+        />
+      </div>
+    </>
+  );
+}
+
+/** Hover + active gradient background layers */
+function GradientBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {/* Hover wash */}
+      <div
+        className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0"
+        style={t}
+      />
+      {/* Click flash — brighter wash that carries into the layout animation */}
+      <div
+        className="bg-tertiary/15 absolute inset-0 opacity-0 transition-opacity group-active:opacity-100"
+        style={tFast}
+      />
+    </div>
+  );
+}
+
+/** Static borders for the modal (no hover effects) */
+function ModalBorders() {
+  return (
+    <>
+      <div className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-solid" />
+      <div className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-solid" />
+      <div className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-solid" />
+      <div className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-solid" />
+    </>
+  );
+}
+
+/** Static corner brackets for the modal */
+function ModalCornerBrackets() {
+  return (
+    <>
+      <div className="absolute top-0 left-0 z-20">
+        <div className="bg-tertiary h-px w-2" />
+        <div className="bg-tertiary h-2 w-px" />
+      </div>
+      <div className="absolute top-0 right-0 z-20">
+        <div className="bg-tertiary ml-auto h-px w-2" />
+        <div className="bg-tertiary ml-auto h-2 w-px" />
+      </div>
+      <div className="absolute bottom-0 left-0 z-20">
+        <div className="bg-tertiary h-2 w-px" />
+        <div className="bg-tertiary h-px w-2" />
+      </div>
+      <div className="absolute right-0 bottom-0 z-20">
+        <div className="bg-tertiary ml-auto h-2 w-px" />
+        <div className="bg-tertiary ml-auto h-px w-2" />
+      </div>
+    </>
+  );
+}
 
 export default function ProjectGrid() {
   const [activeProject, setActiveProject] = useState<
@@ -105,7 +252,7 @@ export default function ProjectGrid() {
 
   return (
     <>
-      {/* Overlay - S-Tier: opacity only, compositor-accelerated */}
+      {/* Overlay */}
       <AnimatePresence>
         {activeProject && (
           <motion.div
@@ -120,14 +267,14 @@ export default function ProjectGrid() {
         )}
       </AnimatePresence>
 
-      {/* Modal - S-Tier: layoutId uses compositor transforms */}
+      {/* Modal */}
       <AnimatePresence>
         {activeProject && (
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               layoutId={`card-${activeProject.id}`}
-              className="ring-accent bg-card pointer-events-auto relative flex h-[70vh] w-full max-w-3xl flex-col overflow-hidden ring-1"
-              style={{ borderRadius: "var(--radius)" }}
+              className="bg-card pointer-events-auto relative flex h-[70vh] w-full max-w-3xl flex-col overflow-hidden"
+              style={{ borderRadius: 0 }}
               ref={modalRef}
               transition={
                 prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
@@ -136,22 +283,26 @@ export default function ProjectGrid() {
               aria-modal="true"
               aria-labelledby="modal-title"
             >
+              <ModalBorders />
+              <ModalCornerBrackets />
+
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="bg-card/80 hover:bg-muted focus:ring-accent absolute top-4 right-4 z-10 rounded-full p-2 transition-all duration-150 ease-out will-change-transform hover:scale-110 focus:ring-2 focus:outline-none motion-reduce:transition-none motion-reduce:hover:scale-100"
+                className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 absolute top-4 right-4 z-30 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent motion-reduce:transition-none"
+                style={tFast}
                 aria-label="Close modal"
               >
                 <X
-                  size={ICON_CONFIG.sizes.md}
+                  size={ICON_CONFIG.sizes.sm}
                   strokeWidth={ICON_CONFIG.strokeWidth}
                 />
               </button>
 
-              {/* Image area - layoutId for smooth transition */}
+              {/* Image area */}
               <motion.div
                 layoutId={`image-${activeProject.id}`}
-                className="ring-accent bg-muted relative flex h-2/5 items-center justify-center ring-1"
+                className="bg-muted relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed border-accent/30"
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
@@ -159,52 +310,77 @@ export default function ProjectGrid() {
                 }
               >
                 <div className="bg-grid-pattern absolute inset-0 opacity-10" />
-                <div className="text-foreground/60 font-mono text-sm">
+                <div className="text-foreground/60 font-mono text-[0.6875rem]">
                   IMG_{activeProject.id}
                 </div>
               </motion.div>
 
-              {/* Content - layoutId for text animations */}
+              {/* Content */}
               <motion.div
                 layoutId={`content-${activeProject.id}`}
-                className="scrollbar-hide overflow-y-auto p-8"
+                className="scrollbar-hide flex flex-col overflow-y-auto px-8 py-6"
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
                     : SPRING_CONFIG.noBounce
                 }
               >
-                <motion.h3
-                  id="modal-title"
-                  layoutId={`title-${activeProject.id}`}
-                  className="mb-4 font-serif text-lg"
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0 }
-                      : SPRING_CONFIG.noBounce
-                  }
-                >
-                  {activeProject.title}
-                </motion.h3>
-                <motion.p
-                  layoutId={`type-${activeProject.id}`}
-                  className="text-foreground/60 mb-4 font-mono text-sm uppercase"
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0 }
-                      : SPRING_CONFIG.noBounce
-                  }
-                >
-                  {activeProject.type}
-                </motion.p>
+                {/* Header — same order as card: type then title */}
+                <div className="mb-4">
+                  <motion.p
+                    layoutId={`type-${activeProject.id}`}
+                    className="mb-1 font-mono text-[0.6875rem] tracking-wide"
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0 }
+                        : SPRING_CONFIG.noBounce
+                    }
+                  >
+                    <span className="text-accent">{activeProject.type}</span>
+                    <span className="text-foreground/60"> · </span>
+                    <span className="text-tertiary">{activeProject.year}</span>
+                    {(activeProject.liveUrl || activeProject.githubUrl) && (
+                      <>
+                        <span className="text-foreground/60"> · </span>
+                        <a
+                          href={activeProject.liveUrl || activeProject.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent hover:text-tertiary inline-flex items-center transition-colors motion-reduce:transition-none"
+                          style={tFast}
+                        >
+                          <ArrowUpRight
+                            size={ICON_CONFIG.sizes.sm}
+                            strokeWidth={ICON_CONFIG.strokeWidth}
+                          />
+                        </a>
+                      </>
+                    )}
+                  </motion.p>
+                  <motion.h3
+                    id="modal-title"
+                    layoutId={`title-${activeProject.id}`}
+                    className="text-foreground font-serif text-xl"
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0 }
+                        : SPRING_CONFIG.noBounce
+                    }
+                  >
+                    {activeProject.title}
+                  </motion.h3>
+                </div>
 
-                {/* Long description - fade in after layout animation */}
+                {/* Dashed separator */}
+                <div className="border-accent/20 mb-4 border-t border-dashed" />
+
+                {/* Description */}
                 <motion.p
                   layout
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                  className="text-foreground/80 mb-4 leading-relaxed"
+                  className="text-foreground/80 mb-4 text-sm leading-relaxed"
                 >
                   {activeProject.longDescription || activeProject.description}
                 </motion.p>
@@ -216,7 +392,7 @@ export default function ProjectGrid() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                    className={`flex flex-wrap ${GAP_SPACING.xs}`}
+                    className={`mt-auto flex flex-wrap ${GAP_SPACING.xs}`}
                   >
                     {activeProject.technologies.map((tech) => (
                       <Badge key={tech}>{tech}</Badge>
@@ -234,33 +410,52 @@ export default function ProjectGrid() {
         <h2 className="text-foreground font-serif text-2xl">Projects</h2>
 
         <div
-          className={`grid w-full grid-cols-1 ${GAP_SPACING.sm} md:grid-cols-3`}
+          className={`grid w-full grid-cols-2 ${GAP_SPACING.sm} md:grid-cols-3`}
         >
           {projects.map((project) => (
             <motion.button
               layoutId={`card-${project.id}`}
               key={project.id}
               onClick={() => handleProjectClick(project)}
-              className="group bg-card ring-accent relative h-64 cursor-pointer overflow-hidden text-left ring-1 transition-colors duration-150 hover:ring-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
-              style={{ borderRadius: "var(--radius)" }}
+              className="group bg-card relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+              style={{ borderRadius: 0 }}
               transition={
                 prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
               }
               aria-label={`View details for ${project.title}`}
             >
-              {/* Hover arrow indicator */}
-              <div className="absolute top-4 right-4 opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 motion-reduce:transition-none">
-                <ArrowUpRight
-                  size={ICON_CONFIG.sizes.md}
-                  strokeWidth={ICON_CONFIG.strokeWidth}
-                  className="text-foreground/60"
-                />
-              </div>
+              <DashedBorders />
+              <CornerBrackets />
+              <GradientBackground />
+
+              {/* External link indicator */}
+              {(project.liveUrl || project.githubUrl) && (
+                <div
+                  className="absolute top-4 right-4 z-10 opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none"
+                  style={t}
+                >
+                  <a
+                    href={project.liveUrl || project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    className="text-accent hover:text-tertiary inline-flex transition-colors motion-reduce:transition-none"
+                    style={tFast}
+                    aria-label={`Open ${project.title} in new tab`}
+                  >
+                    <ArrowUpRight
+                      size={ICON_CONFIG.sizes.md}
+                      strokeWidth={ICON_CONFIG.strokeWidth}
+                    />
+                  </a>
+                </div>
+              )}
 
               {/* Image area with layoutId */}
               <motion.div
                 layoutId={`image-${project.id}`}
-                className="absolute inset-x-0 top-0 h-2/3"
+                className="absolute inset-x-0 top-0 h-1/2 border-b border-dashed border-accent/20"
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
@@ -268,17 +463,12 @@ export default function ProjectGrid() {
                 }
               >
                 <div className="bg-grid-pattern absolute inset-0 opacity-5" />
-                <div className="absolute inset-0 flex items-end justify-start p-4">
-                  <h3 className="font-serif text-lg text-foreground">
-                    {project.title}
-                  </h3>
-                </div>
               </motion.div>
 
               {/* Card content with layoutId */}
               <motion.div
                 layoutId={`content-${project.id}`}
-                className="absolute inset-x-0 bottom-0 flex h-1/3 flex-col justify-end p-4 md:px-8 md:py-4"
+                className="absolute inset-x-0 bottom-0 flex h-1/2 flex-col p-3 md:p-5"
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
@@ -287,7 +477,7 @@ export default function ProjectGrid() {
               >
                 <motion.p
                   layoutId={`type-${project.id}`}
-                  className="text-foreground/60 mb-2 font-mono text-sm uppercase"
+                  className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
@@ -298,7 +488,7 @@ export default function ProjectGrid() {
                 </motion.p>
                 <motion.h3
                   layoutId={`title-${project.id}`}
-                  className="font-serif text-lg"
+                  className="text-foreground font-serif text-base"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
@@ -307,6 +497,9 @@ export default function ProjectGrid() {
                 >
                   {project.title}
                 </motion.h3>
+                <p className="text-foreground/60 mt-auto text-xs leading-relaxed line-clamp-2 md:line-clamp-2 lg:text-sm">
+                  {project.description}
+                </p>
               </motion.div>
             </motion.button>
           ))}
