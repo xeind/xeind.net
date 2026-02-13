@@ -5,6 +5,7 @@ interface SectionBlockProps {
   showGrid?: boolean;
   hideTopBorder?: boolean;
   bottomDiamondsOnly?: boolean;
+  className?: string;
 }
 
 export default function SectionBlock({
@@ -12,6 +13,7 @@ export default function SectionBlock({
   showGrid = false,
   hideTopBorder = false,
   bottomDiamondsOnly = false,
+  className = "",
 }: SectionBlockProps) {
   return (
     <div
@@ -19,7 +21,7 @@ export default function SectionBlock({
         hideTopBorder
           ? ""
           : "before:bg-accent/20 before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-['']"
-      }`}
+      } ${className}`}
     >
       {bottomDiamondsOnly ? (
         <>

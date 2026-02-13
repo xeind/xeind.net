@@ -4,3 +4,4 @@ export * from "./skills";
 export * from "./projects";
 export * from "./social";
 export * from "./experience";
+export * from "./blogs";

@@ -11,8 +11,8 @@ export default function Home() {
   return (
     <>
       <CalloutLink
-        href="/art"
-        label="Visit my Design Portfolio"
+        href="/blog"
+        label="Visit my blogs!"
         icon={<ArrowUpRight size={16} strokeWidth={ICON_CONFIG.strokeWidth} />}
         external={true}
       />

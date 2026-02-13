@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { SPRING_CONFIG } from "@/lib/config/animation";
 import { useReducedMotion } from "@/lib/hooks";
 
 interface TooltipProps {
@@ -11,7 +10,7 @@ interface TooltipProps {
   children: React.ReactNode;
 }
 
-const GAP = 4;
+const GAP = 0;
 const TAIL_W = 6;
 const TAIL_H = 5;
 const PAD_X = 8;
@@ -99,11 +98,15 @@ export default function Tooltip({ label, children }: TooltipProps) {
               <motion.div
                 ref={tooltipRef}
                 initial={
-                  prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.97 }
+                  prefersReducedMotion
+                    ? { opacity: 1 }
+                    : { opacity: 0, scale: 0.97 }
                 }
                 animate={{ opacity: 1, scale: 1 }}
                 exit={
-                  prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.97 }
+                  prefersReducedMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, scale: 0.97 }
                 }
                 transition={
                   prefersReducedMotion

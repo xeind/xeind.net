@@ -55,6 +55,15 @@ export interface SocialLink {
   label: string;
 }
 
+// Blog Post
+export interface BlogPost {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  tags: string[];
+}
+
 // Site Configuration
 export interface SiteConfig {
   name: string;

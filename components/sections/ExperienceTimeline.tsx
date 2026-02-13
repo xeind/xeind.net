@@ -4,7 +4,7 @@ import { useState } from "react";
 import { experiences } from "@/lib/data";
 import { Badge, InlineLink } from "@/components/ui";
 import { Experience } from "@/lib/types";
-import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
+import { DURATION, EASING } from "@/lib/config/animation";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 import { useReducedMotion } from "@/lib/hooks";
 
