@@ -18,7 +18,7 @@ export const projects: Project[] = [
     id: "nightingale-nvim",
     title: "nightingale.nvim",
     type: "Theme",
-    description: "Neovim color scheme with warm tones.",
+    description: "Neovim color scheme.",
     longDescription:
       "A Neovim color scheme ported from the Nightingale VS Code theme. Features dark and light variants, full TreeSitter support, 26+ LSP semantic token types, 27+ plugin integrations, and 540+ highlight groups. Optimized for minimal startup overhead.",
     technologies: ["Lua", "Neovim", "TreeSitter"],

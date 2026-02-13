@@ -340,35 +340,34 @@ export default function ProjectGrid() {
                     <span className="text-foreground/60">·</span>
                     <span className="text-tertiary">{activeProject.year}</span>
                   </motion.div>
-                  <div className="flex items-center gap-2">
-                    <motion.h3
-                      id="modal-title"
-                      layoutId={`title-${activeProject.id}`}
-                      className="text-foreground font-serif text-xl"
-                      transition={
-                        prefersReducedMotion
-                          ? { duration: 0 }
-                          : SPRING_CONFIG.noBounce
-                      }
-                    >
-                      {activeProject.title}
-                    </motion.h3>
-                    {(activeProject.liveUrl || activeProject.githubUrl) && (
+                  <motion.h3
+                    id="modal-title"
+                    layoutId={`title-${activeProject.id}`}
+                    className="text-foreground font-serif text-xl"
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0 }
+                        : SPRING_CONFIG.noBounce
+                    }
+                  >
+                    {(activeProject.liveUrl || activeProject.githubUrl) ? (
                       <a
                         href={activeProject.liveUrl || activeProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-accent hover:text-tertiary flex items-center transition-colors motion-reduce:transition-none"
+                        className="hover:text-tertiary inline-flex items-center gap-1 transition-colors motion-reduce:transition-none"
                         style={tFast}
-                        aria-label={`Open ${activeProject.title} in new tab`}
                       >
+                        {activeProject.title}
                         <ArrowUpRight
-                          size={ICON_CONFIG.sizes.md}
+                          size={ICON_CONFIG.sizes.sm}
                           strokeWidth={ICON_CONFIG.strokeWidth}
                         />
                       </a>
+                    ) : (
+                      activeProject.title
                     )}
-                  </div>
+                  </motion.h3>
 
                   {/* Technologies */}
                   {activeProject.technologies && activeProject.technologies.length > 0 && (

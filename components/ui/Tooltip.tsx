@@ -24,6 +24,7 @@ export default function Tooltip({ label, children }: TooltipProps) {
   const triggerRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<SVGTextElement>(null);
+
   const prefersReducedMotion = useReducedMotion();
 
   const updatePosition = useCallback(() => {
@@ -48,10 +49,11 @@ export default function Tooltip({ label, children }: TooltipProps) {
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(updatePosition);
     });
-    window.addEventListener("scroll", updatePosition, true);
+    const hideOnScroll = () => setVisible(false);
+    window.addEventListener("scroll", hideOnScroll, true);
     return () => {
       cancelAnimationFrame(id);
-      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("scroll", hideOnScroll, true);
     };
   }, [visible, textSize, updatePosition]);
 
@@ -82,6 +84,12 @@ export default function Tooltip({ label, children }: TooltipProps) {
       onMouseLeave={() => setVisible(false)}
       onFocus={() => setVisible(true)}
       onBlur={() => setVisible(false)}
+      onClick={() => {
+        setVisible(false);
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      }}
     >
       {children}
       {typeof document !== "undefined" &&
