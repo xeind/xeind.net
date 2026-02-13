@@ -22,7 +22,7 @@ export interface Project {
   title: string;
   type: string;
   description: string;
-  longDescription?: string;
+  longDescription?: string[];
   technologies: string[];
   imageUrl?: string;
   liveUrl?: string;

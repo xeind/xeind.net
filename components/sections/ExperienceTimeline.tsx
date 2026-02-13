@@ -204,7 +204,7 @@ function ExperienceItem({
                   {exp.company}
                 </span>
               )}
-              <span>·</span>
+              <div className="bg-foreground/30 h-1 w-1 shrink-0" />
               <span>{exp.location}</span>
             </div>
 

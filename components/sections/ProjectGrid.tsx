@@ -36,19 +36,19 @@ function DashedBorders() {
   return (
     <>
       <div
-        className="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
         style={t}
       />
     </>
@@ -343,7 +343,7 @@ export default function ProjectGrid() {
                   <motion.h3
                     id="modal-title"
                     layoutId={`title-${activeProject.id}`}
-                    className="text-foreground font-serif text-xl mb-1"
+                    className="text-foreground font-serif text-xl"
                     transition={
                       prefersReducedMotion
                         ? { duration: 0 }
@@ -356,7 +356,7 @@ export default function ProjectGrid() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-tertiary border-b border-dashed border-accent/30 hover:border-solid pb-px transition-all motion-reduce:transition-none"
-                        style={tFast}
+                        style={t}
                       >
                         {activeProject.title}
                       </a>
@@ -372,7 +372,7 @@ export default function ProjectGrid() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                      className={`mt-2 flex flex-wrap ${GAP_SPACING.xs}`}
+                      className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
                     >
                       {activeProject.technologies.map((tech) => (
                         <Badge key={tech}>{tech}</Badge>
@@ -385,15 +385,20 @@ export default function ProjectGrid() {
                 <div className="border-accent/20 mb-4 border-t border-dashed" />
 
                 {/* Description */}
-                <motion.p
+                <motion.ul
                   layout
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                  className="text-foreground/80 mb-4 text-sm leading-relaxed"
+                  className={`text-foreground/80 mb-4 text-sm leading-relaxed ${STACK_SPACING.tight}`}
                 >
-                  {activeProject.longDescription || activeProject.description}
-                </motion.p>
+                  {(activeProject.longDescription || [activeProject.description]).map((point, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </motion.ul>
               </motion.div>
             </motion.div>
           </div>
@@ -450,14 +455,17 @@ export default function ProjectGrid() {
               {/* Image area with layoutId */}
               <motion.div
                 layoutId={`image-${project.id}`}
-                className="absolute inset-x-0 top-0 h-1/2 border-b border-dashed border-accent/20"
+                className="bg-muted absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed border-accent/30"
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
                     : SPRING_CONFIG.noBounce
                 }
               >
-                <div className="bg-grid-pattern absolute inset-0 opacity-5" />
+                <div className="bg-grid-pattern absolute inset-0 opacity-10" />
+                <div className="text-foreground/60 font-mono text-[0.6875rem]">
+                  IMG_{project.id}
+                </div>
               </motion.div>
 
               {/* Card content with layoutId */}
@@ -472,7 +480,7 @@ export default function ProjectGrid() {
               >
                 <motion.p
                   layoutId={`type-${project.id}`}
-                  className="text-accent mb-1 hidden font-mono text-[0.6875rem] tracking-wide md:block"
+                  className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
@@ -492,7 +500,7 @@ export default function ProjectGrid() {
                 >
                   {project.title}
                 </motion.h3>
-                <p className="text-foreground/60 mt-auto hidden text-xs leading-relaxed line-clamp-2 md:block lg:text-sm">
+                <p className="text-foreground/60 mt-auto hidden text-xs leading-relaxed line-clamp-2 min-[864px]:block lg:text-sm">
                   {project.description}
                 </p>
               </motion.div>
