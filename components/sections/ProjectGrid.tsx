@@ -343,7 +343,7 @@ export default function ProjectGrid() {
                   <motion.h3
                     id="modal-title"
                     layoutId={`title-${activeProject.id}`}
-                    className="text-foreground font-serif text-xl"
+                    className="text-foreground font-serif text-xl mb-1"
                     transition={
                       prefersReducedMotion
                         ? { duration: 0 }
@@ -355,14 +355,10 @@ export default function ProjectGrid() {
                         href={activeProject.liveUrl || activeProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:text-tertiary inline-flex items-center gap-1 transition-colors motion-reduce:transition-none"
+                        className="hover:text-tertiary border-b border-dashed border-accent/30 hover:border-solid pb-px transition-all motion-reduce:transition-none"
                         style={tFast}
                       >
                         {activeProject.title}
-                        <ArrowUpRight
-                          size={ICON_CONFIG.sizes.sm}
-                          strokeWidth={ICON_CONFIG.strokeWidth}
-                        />
                       </a>
                     ) : (
                       activeProject.title
