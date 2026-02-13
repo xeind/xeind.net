@@ -27,7 +27,7 @@ export const experiences: Experience[] = [
     },
     description:
       "Trained in advanced Gen AI prompting techniques including chain-of-thought and multi-agent systems, and explored Azure AI services for model deployment",
-    technologies: ["Ruby", "Ruby on Rails", "Vue.js", "GraphQL"],
+    technologies: ["Ruby on Rails", "Vue.js", "GraphQL"],
   },
   {
     id: "exp-1",
