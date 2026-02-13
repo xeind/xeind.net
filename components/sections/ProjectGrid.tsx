@@ -262,7 +262,7 @@ export default function ProjectGrid() {
             transition={
               prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
             }
-            className="fixed inset-0 z-40 bg-black/20"
+            className="fixed inset-0 z-40 bg-black/30"
           />
         )}
       </AnimatePresence>
@@ -350,7 +350,7 @@ export default function ProjectGrid() {
                         : SPRING_CONFIG.noBounce
                     }
                   >
-                    {(activeProject.liveUrl || activeProject.githubUrl) ? (
+                    {activeProject.liveUrl || activeProject.githubUrl ? (
                       <a
                         href={activeProject.liveUrl || activeProject.githubUrl}
                         target="_blank"
@@ -366,19 +366,20 @@ export default function ProjectGrid() {
                   </motion.h3>
 
                   {/* Technologies */}
-                  {activeProject.technologies && activeProject.technologies.length > 0 && (
-                    <motion.div
-                      layout
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                      className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
-                    >
-                      {activeProject.technologies.map((tech) => (
-                        <Badge key={tech}>{tech}</Badge>
-                      ))}
-                    </motion.div>
-                  )}
+                  {activeProject.technologies &&
+                    activeProject.technologies.length > 0 && (
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                        className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
+                      >
+                        {activeProject.technologies.map((tech) => (
+                          <Badge key={tech}>{tech}</Badge>
+                        ))}
+                      </motion.div>
+                    )}
                 </div>
 
                 {/* Dashed separator */}
@@ -392,7 +393,9 @@ export default function ProjectGrid() {
                   exit={{ opacity: 0, transition: { duration: 0.05 } }}
                   className={`text-foreground/80 mb-4 text-sm leading-relaxed ${STACK_SPACING.tight}`}
                 >
-                  {(activeProject.longDescription || [activeProject.description]).map((point, i) => (
+                  {(
+                    activeProject.longDescription || [activeProject.description]
+                  ).map((point, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
                       <span>{point}</span>
