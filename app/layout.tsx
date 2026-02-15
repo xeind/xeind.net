@@ -32,10 +32,10 @@ export const metadata: Metadata = {
     title: "Xein Deniel - Creative Developer",
     description:
       "Full-stack engineer who sweats the details – pixel-perfect UI, smooth motion, and clean architecture.",
-    siteName: "Xein Deniel Portfolio",
+    siteName: "Xein Deniel",
     images: [
       {
-        url: "/opengraph-img.png",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Xein Deniel - Creative Developer",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     description:
       "Full-stack developer specializing in high-performance web applications with expertise in TypeScript, React, and Rust.",
     creator: "@xeinvi",
-    images: ["/opengraph-image.jpg"],
+    images: ["/opengraph-image.png"],
   },
   robots: {
     index: true,
