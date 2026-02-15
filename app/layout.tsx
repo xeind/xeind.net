@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     url: "https://xeind.net",
     title: "Xein Deniel - Creative Developer",
     description:
-      "Full-stack developer specializing in high-performance web applications. Building digital systems with precision and clarity.",
+      "Full-stack engineer who sweats the details – pixel-perfect UI, smooth motion, and clean architecture.",
     siteName: "Xein Deniel Portfolio",
     images: [
       {
-        url: "/opengraph-image.jpg",
+        url: "/opengraph-img.png",
         width: 1200,
         height: 630,
         alt: "Xein Deniel - Creative Developer",
