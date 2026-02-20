@@ -86,6 +86,7 @@ export default function RootLayout({
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
+          media="(min-width: 768px)"
         />
         <link
           rel="preload"
@@ -93,6 +94,7 @@ export default function RootLayout({
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
+          media="(min-width: 768px)"
         />
 
         {/* Inline critical CSS to prevent render blocking */}
@@ -137,12 +139,12 @@ export default function RootLayout({
         {/* Meta description for search engines / Lighthouse */}
         <meta name="description" content={metadata.description ?? undefined} />
 
-        {/* Preload LCP image - grain texture in footer */}
+        {/* Preload grain texture on desktop only — CSS background, not needed in mobile critical path */}
         <link
           rel="preload"
           href="/grain-texture.webp"
           as="image"
-          fetchPriority="high"
+          media="(min-width: 768px)"
         />
         {/* Structured data for SEO */}
         <StructuredData />
