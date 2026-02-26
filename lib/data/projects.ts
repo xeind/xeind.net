@@ -39,7 +39,6 @@ export const projects: Project[] = [
     longDescription: [
       "Chaotic-map encryption scheme achieving high diffusion, randomness, and strong security",
       "Validated with Entropy 7.9982, UACI 33.46%, NPCR 99.61%, Correlation -0.0008, and 21ms runtime",
-      "Deployed via Docker on a self-hosted server",
     ],
     technologies: ["TypeScript", "Python", "React", "Docker"],
     liveUrl: "https://atax.dev",
