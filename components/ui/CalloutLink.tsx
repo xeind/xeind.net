@@ -84,7 +84,7 @@ export default function CalloutLink({
         </span>
         {icon && (
           <span
-            className="text-accent group-hover:text-tertiary flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-2 group-active:-translate-y-2"
+            className="text-accent group-hover:text-tertiary flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1"
             style={{
               transitionDuration: `${DURATION.normal}s`,
               transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
