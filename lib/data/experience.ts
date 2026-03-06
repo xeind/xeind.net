@@ -12,7 +12,7 @@ export const experiences: Experience[] = [
       end: "Now",
     },
     description:
-      "Primarily building UI with full-stack features for our services",
+      "Designing and implementing user interfaces that prioritize seamless interactions and intuitive experiences across different projects and platform",
     technologies: ["TypeScript", "React", "Prisma"],
   },
   {
