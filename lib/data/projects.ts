@@ -21,11 +21,7 @@ export const projects: Project[] = [
     title: "nightingale.nvim",
     type: "Theme",
     description: "Neovim color scheme.",
-    longDescription: [
-      "Dark and light variants with full TreeSitter support",
-      "26+ LSP semantic token types and 27+ plugin integrations",
-      "540+ highlight groups, optimized for minimal startup overhead",
-    ],
+    longDescription: ["Dark and light variants with full TreeSitter support"],
     technologies: ["Lua", "Neovim", "TreeSitter"],
     githubUrl: "https://github.com/xeind/nightingale.nvim",
     featured: true,
