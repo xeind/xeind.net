@@ -2,6 +2,7 @@
 
 import { DURATION, EASING } from "@/lib/config";
 import { GAP_SPACING } from "@/lib/config/spacing";
+import { useClickSound } from "@/lib/hooks";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ export default function Button({
   target,
   rel,
 }: ButtonProps) {
+  const { tick, tap } = useClickSound();
   const Component = href ? "a" : "button";
   const props = href
     ? {
@@ -42,7 +44,11 @@ export default function Button({
 
   return (
     <Component
-      onClick={onClick}
+      onMouseEnter={tap}
+      onClick={() => {
+        tick();
+        onClick?.();
+      }}
       className={`bg-card group relative inline-flex items-center justify-center gap-3 px-4 md:px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       style={{
         transitionDuration: `${DURATION.normal}s`,

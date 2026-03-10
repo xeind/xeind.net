@@ -64,6 +64,18 @@ export interface BlogPost {
   tags: string[];
 }
 
+// Tools
+export interface Tool {
+  name: string;
+  description: string;
+  url?: string;
+}
+
+export interface ToolCategory {
+  label: string;
+  tools: Tool[];
+}
+
 // Site Configuration
 export interface SiteConfig {
   name: string;

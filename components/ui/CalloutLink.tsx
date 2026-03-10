@@ -3,6 +3,7 @@
 import Link from "next/link";
 import CornerDiamond from "@/components/ui/CornerDiamond";
 import { DURATION, EASING } from "@/lib/config";
+import { useClickSound } from "@/lib/hooks";
 
 interface CalloutLinkProps {
   href: string;
@@ -17,6 +18,7 @@ export default function CalloutLink({
   icon,
   external = false,
 }: CalloutLinkProps) {
+  const { chime, tick } = useClickSound();
   const Component = external ? "a" : Link;
   const externalProps = external
     ? {
@@ -28,6 +30,8 @@ export default function CalloutLink({
   return (
     <Component
       href={href}
+      onMouseEnter={chime}
+      onClick={tick}
       className="bg-card group relative block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{
         transitionDuration: `${DURATION.normal}s`,

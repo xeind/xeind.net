@@ -6,7 +6,7 @@ import { Badge, InlineLink } from "@/components/ui";
 import { Experience } from "@/lib/types";
 import { DURATION, EASING } from "@/lib/config/animation";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
-import { useReducedMotion } from "@/lib/hooks";
+import { useReducedMotion, useClickSound } from "@/lib/hooks";
 
 interface ExperienceItemProps {
   exp: Experience;
@@ -20,11 +20,29 @@ function ExperienceItem({
   prefersReducedMotion,
 }: ExperienceItemProps) {
   const [isCompanyHovered, setIsCompanyHovered] = useState(false);
+  const { nudge } = useClickSound();
 
   const hoverHandlers = {
-    onMouseEnter: () => setIsCompanyHovered(true),
+    onMouseEnter: () => {
+      setIsCompanyHovered(true);
+    },
     onMouseLeave: () => setIsCompanyHovered(false),
-    onFocus: () => setIsCompanyHovered(true),
+    onFocus: () => {
+      setIsCompanyHovered(true);
+    },
+    onBlur: () => setIsCompanyHovered(false),
+  };
+
+  const plainHoverHandlers = {
+    onMouseEnter: () => {
+      setIsCompanyHovered(true);
+      nudge();
+    },
+    onMouseLeave: () => setIsCompanyHovered(false),
+    onFocus: () => {
+      setIsCompanyHovered(true);
+      nudge();
+    },
     onBlur: () => setIsCompanyHovered(false),
   };
 
@@ -194,13 +212,14 @@ function ExperienceItem({
                   <InlineLink
                     href={exp.companyUrl}
                     external
+                    onHoverSound={nudge}
                     className="font-medium"
                   >
                     {exp.company}
                   </InlineLink>
                 </span>
               ) : (
-                <span className="font-medium" {...hoverHandlers}>
+                <span className="font-medium" {...plainHoverHandlers}>
                   {exp.company}
                 </span>
               )}

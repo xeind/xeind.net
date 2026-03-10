@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { DURATION, EASING } from "@/lib/config";
+import { useClickSound } from "@/lib/hooks";
 
 interface InlineLinkProps {
   href: string;
   children: React.ReactNode;
   external?: boolean;
   className?: string;
+  onHoverSound?: () => void;
 }
 
 /**
@@ -29,7 +31,10 @@ export default function InlineLink({
   children,
   external = false,
   className = "",
+  onHoverSound,
 }: InlineLinkProps) {
+  const { hover, tick } = useClickSound();
+  const soundHandler = onHoverSound ?? hover;
   const Component = external ? "a" : Link;
   const externalProps = external
     ? {
@@ -42,6 +47,8 @@ export default function InlineLink({
   return (
     <Component
       href={href}
+      onMouseEnter={soundHandler}
+      onClick={tick}
       className={`
         inline
         text-accent

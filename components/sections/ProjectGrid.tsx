@@ -11,6 +11,7 @@ import {
   useScrollbarCompensation,
   useFocusTrap,
   useReducedMotion,
+  useClickSound,
 } from "@/lib/hooks";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
@@ -168,6 +169,7 @@ export default function ProjectGrid() {
   const modalRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
+  const { tick, pop, hover } = useClickSound();
 
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
@@ -179,19 +181,22 @@ export default function ProjectGrid() {
   const handleClose = useCallback(() => {
     if (isAnimatingRef.current) return;
 
+    pop();
     isAnimatingRef.current = true;
     setActiveProject(null);
 
     setTimeout(() => {
       isAnimatingRef.current = false;
     }, 400);
-  }, []);
+  }, [pop]);
 
   // Handle project click with animation guard
   const handleProjectClick = useCallback(
     (project: (typeof projects)[0]) => {
       // Prevent clicks during animation
       if (isAnimatingRef.current) return;
+
+      tick();
 
       // If modal is currently open, close it first, then open new one
       if (activeProject) {
@@ -215,7 +220,7 @@ export default function ProjectGrid() {
         }, 300);
       }
     },
-    [activeProject],
+    [activeProject, tick],
   );
 
   // Handle Escape key
@@ -355,6 +360,7 @@ export default function ProjectGrid() {
                         href={activeProject.liveUrl || activeProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onMouseEnter={hover}
                         className="hover:text-tertiary border-b border-dashed border-accent/30 hover:border-solid pb-px transition-all motion-reduce:transition-none"
                         style={t}
                       >
@@ -419,6 +425,7 @@ export default function ProjectGrid() {
             <motion.button
               layoutId={`card-${project.id}`}
               key={project.id}
+              onMouseEnter={hover}
               onClick={() => handleProjectClick(project)}
               className="group bg-card relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
               style={{ borderRadius: 0 }}
