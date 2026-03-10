@@ -2,6 +2,16 @@ import { Project } from "@/lib/types";
 
 export const projects: Project[] = [
   {
+    id: "slavicmeet",
+    title: "slavicmeet",
+    type: "Contribution",
+    description: "Upcoming landing page for slavicmeet",
+    technologies: ["React", "TypeScript"],
+    liveUrl: "https://slavicmeet.com",
+    featured: true,
+    year: 2026,
+  },
+  {
     id: "filipinameet",
     title: "filipinameet",
     type: "Contribution",
