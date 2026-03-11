@@ -1,3 +1,4 @@
+// Experience data for the portfolio site
 import type { Experience } from "../types";
 
 export const experiences: Experience[] = [
