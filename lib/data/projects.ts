@@ -48,7 +48,7 @@ export const projects: Project[] = [
     type: "Work",
     description: "Upcoming landing page for slavicmeet",
     technologies: ["React", "TypeScript"],
-    liveUrl: "https://slavicmeet.com",
+    liveUrl: "https://slavicmeet.app",
     featured: true,
     year: 2026,
   },
