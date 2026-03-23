@@ -59,6 +59,12 @@ const tFast = {
   transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
 };
 
+const ICON_SIZES = {
+  compact: { grid: "h-8 sm:h-9", modal: "h-9 sm:h-10" },
+  normal: { grid: "h-10 sm:h-12", modal: "h-12 sm:h-14" },
+  large: { grid: "h-12 sm:h-14", modal: "h-14 sm:h-16" },
+};
+
 const invertedGradientMask = {
   maskImage:
     "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
@@ -375,7 +381,7 @@ export default function ProjectGrid() {
                   <img
                     src={getThemedProjectImageUrl(activeProject, resolvedTheme)}
                     alt={activeProject.title}
-                    className="relative z-10 h-12 w-auto sm:h-14"
+                    className={`relative z-10 w-auto ${ICON_SIZES[activeProject.iconSize || "normal"].modal}`}
                   />
                 ) : (
                   <div className="text-foreground/60 font-mono text-[0.6875rem]">
@@ -505,7 +511,7 @@ export default function ProjectGrid() {
               {/* External link indicator */}
               {(project.liveUrl || project.githubUrl) && (
                 <div
-                  className="absolute top-4 right-4 z-10 opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none"
+                  className="absolute top-4 right-4 z-10 opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none leading-none"
                   style={t}
                 >
                   <a
@@ -514,7 +520,7 @@ export default function ProjectGrid() {
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
-                    className="text-accent hover:text-tertiary inline-flex transition-colors motion-reduce:transition-none"
+                    className="text-accent hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
                     style={tFast}
                     aria-label={`Open ${project.title} in new tab`}
                   >
@@ -541,7 +547,7 @@ export default function ProjectGrid() {
                   <img
                     src={getThemedProjectImageUrl(project, resolvedTheme)}
                     alt={project.title}
-                    className="relative z-10 h-10 w-auto sm:h-12"
+                    className={`relative z-10 w-auto ${ICON_SIZES[project.iconSize || "normal"].grid}`}
                   />
                 ) : (
                   <div className="text-foreground/60 font-mono text-[0.6875rem]">

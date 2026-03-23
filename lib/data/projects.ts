@@ -55,6 +55,7 @@ export const projects: Project[] = [
     featured: true,
     year: 2026,
     imageUrl: "/projects/smeet-seo.svg",
+    iconSize: "compact",
   },
   {
     id: "filipinameet",

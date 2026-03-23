@@ -29,6 +29,7 @@ export interface Project {
   githubUrl?: string;
   featured?: boolean;
   year?: number;
+  iconSize?: "compact" | "normal" | "large";
 }
 
 // Experience
