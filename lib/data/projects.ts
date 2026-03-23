@@ -15,6 +15,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/xeind/nightingale-zed",
     featured: true,
     year: 2025,
+    imageUrl: "/projects/nightingale-zed.svg",
   },
   {
     id: "nightingale-nvim",
@@ -26,6 +27,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/xeind/nightingale.nvim",
     featured: true,
     year: 2025,
+    imageUrl: "/projects/nightingale-nvim.svg",
   },
   {
     id: "atax",
@@ -51,6 +53,7 @@ export const projects: Project[] = [
     liveUrl: "https://slavicmeet.app",
     featured: true,
     year: 2026,
+    imageUrl: "/projects/smeet-seo.svg",
   },
   {
     id: "filipinameet",
@@ -61,6 +64,7 @@ export const projects: Project[] = [
     liveUrl: "https://filipinameet.com",
     featured: true,
     year: 2026,
+    imageUrl: "/projects/fmeet-seo.svg",
   },
   {
     id: "pioneerdev-ai",
@@ -71,6 +75,7 @@ export const projects: Project[] = [
     liveUrl: "https://pioneerdev.ai",
     featured: true,
     year: 2026,
+    imageUrl: "/projects/pioneer.svg",
   },
 ];
 

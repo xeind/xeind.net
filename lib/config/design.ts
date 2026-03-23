@@ -14,7 +14,7 @@ export const ICON_CONFIG = {
    * Icon sizes aligned with typography scale
    */
   sizes: {
-    sm: 14, // Inline with text-sm
+    sm: 10, // Inline with text-sm
     md: 20, // UI elements (buttons, cards)
     lg: 24, // Prominent elements
     xl: 64, // Logos and hero elements
