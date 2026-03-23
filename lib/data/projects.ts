@@ -42,6 +42,7 @@ export const projects: Project[] = [
     liveUrl: "https://atax.dev",
     featured: true,
     year: 2024,
+    imageUrl: "/projects/atax.svg",
   },
 
   {

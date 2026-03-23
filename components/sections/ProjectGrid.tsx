@@ -15,6 +15,40 @@ import {
 } from "@/lib/hooks";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
+type ResolvedTheme = "light" | "dark" | "nightingale";
+
+const THEMED_PROJECT_IDS = new Set([
+  "atax",
+  "filipinameet",
+  "slavicmeet",
+  "nightingale-nvim",
+  "nightingale-zed",
+  "pioneerdev-ai",
+]);
+
+function getResolvedTheme(): ResolvedTheme {
+  if (typeof document === "undefined") return "light";
+
+  const themeAttr = document.documentElement.getAttribute("data-theme");
+
+  if (themeAttr === "dark" || themeAttr === "nightingale") {
+    return themeAttr;
+  }
+
+  return "light";
+}
+
+function getThemedProjectImageUrl(
+  project: (typeof projects)[0],
+  theme: ResolvedTheme,
+) {
+  if (!project.imageUrl || !THEMED_PROJECT_IDS.has(project.id)) {
+    return project.imageUrl;
+  }
+
+  return project.imageUrl.replace(/\.svg$/, `-${theme}.svg`);
+}
+
 const t = {
   transitionDuration: `${DURATION.normal}s`,
   transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
@@ -168,6 +202,7 @@ export default function ProjectGrid() {
   >(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
   const prefersReducedMotion = useReducedMotion();
   const { hover, click, clickSharp } = useClickSound();
 
@@ -236,6 +271,27 @@ export default function ProjectGrid() {
       return () => window.removeEventListener("keydown", onKeyDown);
     }
   }, [activeProject, handleClose]);
+
+  // Keep project logo variants in sync with theme switcher
+  useEffect(() => {
+    const syncTheme = () => setResolvedTheme(getResolvedTheme());
+
+    syncTheme();
+
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", syncTheme);
+
+    return () => {
+      observer.disconnect();
+      mediaQuery.removeEventListener("change", syncTheme);
+    };
+  }, []);
 
   // Handle click outside
   useEffect(() => {
@@ -314,12 +370,12 @@ export default function ProjectGrid() {
                     : SPRING_CONFIG.noBounce
                 }
               >
-                <div className="bg-grid-pattern absolute inset-0 opacity-10" />
+                <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                 {activeProject.imageUrl ? (
                   <img
-                    src={activeProject.imageUrl}
+                    src={getThemedProjectImageUrl(activeProject, resolvedTheme)}
                     alt={activeProject.title}
-                    className="h-16 w-auto text-tertiary [filter:brightness(0)_saturate(100%)_invert(76%)_sepia(11%)_saturate(1164%)_hue-rotate(356deg)_brightness(92%)_contrast(84%)]"
+                    className="relative z-10 h-12 w-auto sm:h-14"
                   />
                 ) : (
                   <div className="text-foreground/60 font-mono text-[0.6875rem]">
@@ -480,12 +536,12 @@ export default function ProjectGrid() {
                     : SPRING_CONFIG.noBounce
                 }
               >
-                <div className="bg-grid-pattern absolute inset-0 opacity-10" />
+                <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                 {project.imageUrl ? (
                   <img
-                    src={project.imageUrl}
+                    src={getThemedProjectImageUrl(project, resolvedTheme)}
                     alt={project.title}
-                    className="h-16 w-auto text-tertiary [filter:brightness(0)_saturate(100%)_invert(76%)_sepia(11%)_saturate(1164%)_hue-rotate(356deg)_brightness(92%)_contrast(84%)]"
+                    className="relative z-10 h-10 w-auto sm:h-12"
                   />
                 ) : (
                   <div className="text-foreground/60 font-mono text-[0.6875rem]">
