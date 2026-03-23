@@ -169,7 +169,7 @@ export default function ProjectGrid() {
   const modalRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
-  const { tick, pop, hover } = useClickSound();
+  const { hover, click, projectPop } = useClickSound();
 
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
@@ -181,14 +181,14 @@ export default function ProjectGrid() {
   const handleClose = useCallback(() => {
     if (isAnimatingRef.current) return;
 
-    pop();
+    projectPop();
     isAnimatingRef.current = true;
     setActiveProject(null);
 
     setTimeout(() => {
       isAnimatingRef.current = false;
     }, 400);
-  }, [pop]);
+  }, [projectPop]);
 
   // Handle project click with animation guard
   const handleProjectClick = useCallback(
@@ -196,7 +196,7 @@ export default function ProjectGrid() {
       // Prevent clicks during animation
       if (isAnimatingRef.current) return;
 
-      tick();
+      click();
 
       // If modal is currently open, close it first, then open new one
       if (activeProject) {
@@ -220,7 +220,7 @@ export default function ProjectGrid() {
         }, 300);
       }
     },
-    [activeProject, tick],
+    [activeProject, click],
   );
 
   // Handle Escape key

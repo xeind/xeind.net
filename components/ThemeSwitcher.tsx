@@ -5,7 +5,11 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion, AnimatePresence } from "motion/react";
 import { Palette, Check, Monitor } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
-import { useScrollbarCompensation, useReducedMotion, useClickSound } from "@/lib/hooks";
+import {
+  useScrollbarCompensation,
+  useReducedMotion,
+  useClickSound,
+} from "@/lib/hooks";
 import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
 
 const themes = [
@@ -41,7 +45,7 @@ export default function ThemeSwitcher() {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const { tick, hover, pop } = useClickSound();
+  const { click, hover } = useClickSound();
 
   // Apply scrollbar compensation when dropdown is open
   useScrollbarCompensation(open);
@@ -120,7 +124,7 @@ export default function ThemeSwitcher() {
   };
 
   const handleThemeChange = (theme: string) => {
-    pop();
+    click();
     setCurrentTheme(theme);
     applyTheme(theme);
     localStorage.setItem("theme", theme);
