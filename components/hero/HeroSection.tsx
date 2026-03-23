@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/ui/Button";
-import XeinLogo from "@/components/XeinLogo";
+import LogoCopyDropdown from "@/components/LogoCopyDropdown";
 import { personalInfo } from "@/lib/data";
 import { ICON_CONFIG } from "@/lib/config/design";
 
@@ -10,7 +10,7 @@ export default function HeroSection() {
     <div className="flex flex-col items-center md:items-start">
       {/* Logo, Name and Location */}
       <div className="mb-6 flex flex-row items-center gap-6">
-        <XeinLogo size={64} className="text-foreground shrink-0" />
+        <LogoCopyDropdown size={64} className="text-foreground shrink-0" />
 
         <div className="flex flex-col gap-1 items-start text-left">
           <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">

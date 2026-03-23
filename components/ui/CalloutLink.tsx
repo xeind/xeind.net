@@ -18,7 +18,7 @@ export default function CalloutLink({
   icon,
   external = false,
 }: CalloutLinkProps) {
-  const { chime, tick } = useClickSound();
+  const { chime, clickSoft } = useClickSound();
   const Component = external ? "a" : Link;
   const externalProps = external
     ? {
@@ -31,7 +31,7 @@ export default function CalloutLink({
     <Component
       href={href}
       onMouseEnter={chime}
-      onClick={tick}
+      onClick={clickSoft}
       className="bg-card group relative block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{
         transitionDuration: `${DURATION.normal}s`,

@@ -91,7 +91,7 @@ function playHover() {
     ctx.currentTime + 0.08,
   );
 
-  gain.gain.setValueAtTime(0.03, ctx.currentTime);
+  gain.gain.setValueAtTime(0.015, ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
 
   oscillator.start(ctx.currentTime);
@@ -149,7 +149,7 @@ function playTap() {
     ctx.currentTime + 0.06,
   );
 
-  gain.gain.setValueAtTime(0.04, ctx.currentTime);
+  gain.gain.setValueAtTime(0.03, ctx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
 
   oscillator.start(ctx.currentTime);
@@ -214,7 +214,7 @@ function playClick() {
   filter.Q.value = 3;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.16 + Math.random() * 0.05;
+  gain.gain.value = 0.24 + Math.random() * 0.08;
 
   noise.connect(filter);
   filter.connect(gain);
@@ -247,6 +247,126 @@ function playProjectPop() {
   gain.connect(ctx.destination);
   oscillator.start(ctx.currentTime);
   oscillator.stop(ctx.currentTime + 0.055);
+}
+
+function playClickHigh() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.006, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 30);
+  }
+  noise.buffer = buf;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 5200 + Math.random() * 800;
+  filter.Q.value = 4;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.18 + Math.random() * 0.06;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(ctx.currentTime);
+}
+
+function playClickLow() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.01, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 60);
+  }
+  noise.buffer = buf;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 2200 + Math.random() * 300;
+  filter.Q.value = 2.5;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.26 + Math.random() * 0.06;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(ctx.currentTime);
+}
+
+function playClickSharp() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.004, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 20);
+  }
+  noise.buffer = buf;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 4000 + Math.random() * 500;
+  filter.Q.value = 5;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.2 + Math.random() * 0.05;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(ctx.currentTime);
+}
+
+function playClickSoft() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.012, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 80);
+  }
+  noise.buffer = buf;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 3000 + Math.random() * 400;
+  filter.Q.value = 2;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.12 + Math.random() * 0.03;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(ctx.currentTime);
 }
 
 export function useClickSound() {
@@ -288,10 +408,43 @@ export function useClickSound() {
     playClick();
   }, [prefersReducedMotion]);
 
+  const clickHigh = useCallback(() => {
+    if (prefersReducedMotion || !enabled.current) return;
+    playClickHigh();
+  }, [prefersReducedMotion]);
+
+  const clickLow = useCallback(() => {
+    if (prefersReducedMotion || !enabled.current) return;
+    playClickLow();
+  }, [prefersReducedMotion]);
+
+  const clickSharp = useCallback(() => {
+    if (prefersReducedMotion || !enabled.current) return;
+    playClickSharp();
+  }, [prefersReducedMotion]);
+
+  const clickSoft = useCallback(() => {
+    if (prefersReducedMotion || !enabled.current) return;
+    playClickSoft();
+  }, [prefersReducedMotion]);
+
   const projectPop = useCallback(() => {
     if (prefersReducedMotion || !enabled.current) return;
     playProjectPop();
   }, [prefersReducedMotion]);
 
-  return { tick, pop, hover, chime, tap, nudge, click, projectPop };
+  return {
+    tick,
+    pop,
+    hover,
+    chime,
+    tap,
+    nudge,
+    click,
+    clickHigh,
+    clickLow,
+    clickSharp,
+    clickSoft,
+    projectPop,
+  };
 }

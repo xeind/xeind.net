@@ -169,7 +169,7 @@ export default function ProjectGrid() {
   const modalRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
-  const { hover, click, projectPop } = useClickSound();
+  const { hover, click, clickSharp } = useClickSound();
 
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
@@ -181,14 +181,14 @@ export default function ProjectGrid() {
   const handleClose = useCallback(() => {
     if (isAnimatingRef.current) return;
 
-    projectPop();
+    clickSharp();
     isAnimatingRef.current = true;
     setActiveProject(null);
 
     setTimeout(() => {
       isAnimatingRef.current = false;
     }, 400);
-  }, [projectPop]);
+  }, [clickSharp]);
 
   // Handle project click with animation guard
   const handleProjectClick = useCallback(
@@ -315,9 +315,17 @@ export default function ProjectGrid() {
                 }
               >
                 <div className="bg-grid-pattern absolute inset-0 opacity-10" />
-                <div className="text-foreground/60 font-mono text-[0.6875rem]">
-                  IMG_{activeProject.id}
-                </div>
+                {activeProject.imageUrl ? (
+                  <img
+                    src={activeProject.imageUrl}
+                    alt={activeProject.title}
+                    className="h-16 w-auto text-tertiary [filter:brightness(0)_saturate(100%)_invert(76%)_sepia(11%)_saturate(1164%)_hue-rotate(356deg)_brightness(92%)_contrast(84%)]"
+                  />
+                ) : (
+                  <div className="text-foreground/60 font-mono text-[0.6875rem]">
+                    {activeProject.id}
+                  </div>
+                )}
               </motion.div>
 
               {/* Content */}
@@ -473,9 +481,17 @@ export default function ProjectGrid() {
                 }
               >
                 <div className="bg-grid-pattern absolute inset-0 opacity-10" />
-                <div className="text-foreground/60 font-mono text-[0.6875rem]">
-                  IMG_{project.id}
-                </div>
+                {project.imageUrl ? (
+                  <img
+                    src={project.imageUrl}
+                    alt={project.title}
+                    className="h-16 w-auto text-tertiary [filter:brightness(0)_saturate(100%)_invert(76%)_sepia(11%)_saturate(1164%)_hue-rotate(356deg)_brightness(92%)_contrast(84%)]"
+                  />
+                ) : (
+                  <div className="text-foreground/60 font-mono text-[0.6875rem]">
+                    {project.id}
+                  </div>
+                )}
               </motion.div>
 
               {/* Card content with layoutId */}

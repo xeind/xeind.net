@@ -34,7 +34,7 @@ const themes = [
   {
     value: "nightingale",
     label: "Nightingale",
-    colors: ["#202020", "#98BB6C", "#f5a284"], // Background, Green, Orange
+    colors: ["#202020", "#98BB6C", "#E6C384"], // Background, Green, Yellow
     icon: undefined,
   },
 ] as const;

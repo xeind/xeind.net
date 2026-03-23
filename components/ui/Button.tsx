@@ -29,7 +29,7 @@ export default function Button({
   target,
   rel,
 }: ButtonProps) {
-  const { tick, tap } = useClickSound();
+  const { clickLow, tap } = useClickSound();
   const Component = href ? "a" : "button";
   const props = href
     ? {
@@ -46,7 +46,7 @@ export default function Button({
     <Component
       onMouseEnter={tap}
       onClick={() => {
-        tick();
+        clickLow();
         onClick?.();
       }}
       className={`bg-card group relative inline-flex items-center justify-center gap-3 px-4 md:px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
