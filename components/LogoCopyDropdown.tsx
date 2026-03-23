@@ -180,8 +180,9 @@ export default function LogoCopyDropdown({
                   <text
                     ref={textRef}
                     x={cx}
-                    y={TAIL_H + PAD_Y + textSize.h * 0.82}
+                    y={TAIL_H + boxH / 2}
                     textAnchor="middle"
+                    dominantBaseline="middle"
                     className={`font-mono text-[0.6875rem] ${copied ? "fill-success" : "fill-foreground"}`}
                   >
                     {label}
