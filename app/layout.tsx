@@ -147,44 +147,6 @@ export default function RootLayout({
           media="(min-width: 768px)"
         />
 
-        {/* Preload project SVG light variants (dark/nightingale swapped via body script after DOM loads) */}
-        <link
-          rel="preload"
-          href="/projects/atax-light.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-        <link
-          rel="preload"
-          href="/projects/fmeet-seo-light.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-        <link
-          rel="preload"
-          href="/projects/smeet-seo-light.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-        <link
-          rel="preload"
-          href="/projects/nightingale-nvim-light.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-        <link
-          rel="preload"
-          href="/projects/nightingale-zed-light.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-        <link
-          rel="preload"
-          href="/projects/pioneer-light.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-
         {/* Structured data for SEO */}
         <StructuredData />
       </head>
@@ -201,55 +163,6 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
-
-        {/* Pre-swap project image sources to themed variants — runs after DOM loads so images exist */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme') || 'system';
-                  var resolvedTheme = 'light';
-                  if (theme === 'system') {
-                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                      resolvedTheme = 'dark';
-                    }
-                  } else if (theme !== 'light') {
-                    resolvedTheme = theme;
-                  }
-
-                  // Map project IDs → base filename in /projects/
-                  var projectFileMap = {
-                    'atax': 'atax',
-                    'filipinameet': 'fmeet-seo',
-                    'slavicmeet': 'smeet-seo',
-                    'nightingale-nvim': 'nightingale-nvim',
-                    'nightingale-zed': 'nightingale-zed',
-                    'pioneerdev-ai': 'pioneer'
-                  };
-
-                  document.querySelectorAll('img[src*="/projects/"]').forEach(function(img) {
-                    var src = img.getAttribute('src') || '';
-                    if (!src) return;
-
-                    // Find matching project by base filename
-                    var matchedProjectId = null;
-                    for (var id in projectFileMap) {
-                      if (src.includes('/projects/' + projectFileMap[id] + '.svg')) {
-                        matchedProjectId = id;
-                        break;
-                      }
-                    }
-
-                    if (matchedProjectId && !src.includes('-' + resolvedTheme + '.svg')) {
-                      img.setAttribute('src', src.replace(/\.svg$/, '-' + resolvedTheme + '.svg'));
-                    }
-                  });
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
       </body>
     </html>
   );

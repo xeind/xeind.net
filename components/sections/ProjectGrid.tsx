@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowUpRight } from "lucide-react";
 import { projects } from "@/lib/data";
 import { Badge } from "@/components/ui";
+import ProjectLogo from "@/components/sections/ProjectLogo";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
 import {
@@ -17,15 +18,6 @@ import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
-const THEMED_PROJECT_IDS = new Set([
-  "atax",
-  "filipinameet",
-  "slavicmeet",
-  "nightingale-nvim",
-  "nightingale-zed",
-  "pioneerdev-ai",
-]);
-
 function getResolvedTheme(): ResolvedTheme {
   if (typeof document === "undefined") return "light";
 
@@ -36,17 +28,6 @@ function getResolvedTheme(): ResolvedTheme {
   }
 
   return "light";
-}
-
-function getThemedProjectImageUrl(
-  project: (typeof projects)[0],
-  theme: ResolvedTheme
-) {
-  if (!project.imageUrl || !THEMED_PROJECT_IDS.has(project.id)) {
-    return project.imageUrl;
-  }
-
-  return project.imageUrl.replace(/\.svg$/, `-${theme}.svg`);
 }
 
 const t = {
@@ -63,13 +44,6 @@ const ICON_SIZES = {
   compact: { grid: "h-8 sm:h-9", modal: "h-9 sm:h-10" },
   normal: { grid: "h-10 sm:h-12", modal: "h-12 sm:h-14" },
   large: { grid: "h-12 sm:h-14", modal: "h-14 sm:h-16" },
-};
-
-const invertedGradientMask = {
-  maskImage:
-    "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
-  WebkitMaskImage:
-    "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
 };
 
 /** Dashed borders (4 sides) that become solid on group hover */
@@ -378,10 +352,11 @@ export default function ProjectGrid() {
               >
                 <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                 {activeProject.imageUrl ? (
-                  <img
-                    src={getThemedProjectImageUrl(activeProject, resolvedTheme)}
+                  <ProjectLogo
+                    projectId={activeProject.id}
+                    theme={resolvedTheme}
                     alt={activeProject.title}
-                    className={`relative z-10 w-auto ${ICON_SIZES[activeProject.iconSize || "normal"].modal}`}
+                    className={`relative z-10 ${ICON_SIZES[activeProject.iconSize || "normal"].modal}`}
                   />
                 ) : (
                   <div className="text-foreground/60 font-mono text-[0.6875rem]">
@@ -544,10 +519,11 @@ export default function ProjectGrid() {
               >
                 <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                 {project.imageUrl ? (
-                  <img
-                    src={getThemedProjectImageUrl(project, resolvedTheme)}
+                  <ProjectLogo
+                    projectId={project.id}
+                    theme={resolvedTheme}
                     alt={project.title}
-                    className={`relative z-10 w-auto ${ICON_SIZES[project.iconSize || "normal"].grid}`}
+                    className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
                   />
                 ) : (
                   <div className="text-foreground/60 font-mono text-[0.6875rem]">
