@@ -1,4 +1,7 @@
+"use client";
+
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
@@ -54,12 +57,125 @@ interface ProjectLogoProps {
   alt: string;
 }
 
+const ATAX_X = [3, 13, 23, 33, 43] as const;
+const ATAX_Y = [0, 10, 20, 30, 40] as const;
+const ATAX_COORDS = ATAX_Y.flatMap((y) => ATAX_X.map((x) => ({ x, y })));
+const ATAX_PRIMARY_OPACITY = [
+  0.52, 0.72, 0.72, 0.72, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.52, 0.52, 0.92,
+  0.52, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.72, 0.32, 0.32, 0.32, 0.72,
+] as const;
+
+const ATAX_THEME = {
+  light: {
+    primaryFill: "#2E2E2E",
+    secondaryFill: "#5A6472",
+    secondaryOpacity: 0.38,
+  },
+  dark: {
+    primaryFill: "#E6E6E6",
+    secondaryFill: "#FFFFFF",
+    secondaryOpacity: 0.3,
+  },
+  nightingale: {
+    primaryFill: "#DCD7BA",
+    secondaryFill: "#98BB6C",
+    secondaryOpacity: 0.4,
+  },
+} as const;
+
+function shuffleIndices(length: number) {
+  const arr = Array.from({ length }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function AtaxLogo({
+  theme,
+  className,
+  alt,
+}: {
+  theme: ResolvedTheme;
+  className?: string;
+  alt: string;
+}) {
+  const [primaryOrder, setPrimaryOrder] = useState<number[]>(() =>
+    Array.from({ length: ATAX_COORDS.length }, (_, i) => i)
+  );
+  const [secondaryOrder, setSecondaryOrder] = useState<number[]>([
+    0, 4, 6, 8, 12, 16, 18, 20, 24,
+  ]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const shuffled = shuffleIndices(ATAX_COORDS.length);
+      setPrimaryOrder(shuffled);
+      setSecondaryOrder(shuffled.slice(0, 9));
+    }, 250);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const colors = ATAX_THEME[theme];
+
+  return (
+    <span
+      role="img"
+      aria-label={alt}
+      className={clsx("inline-flex items-center justify-center", className)}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 54 48"
+        className="h-full w-auto max-w-full"
+      >
+        <g fill={colors.primaryFill}>
+          {ATAX_PRIMARY_OPACITY.map((opacity, i) => {
+            const coord = ATAX_COORDS[primaryOrder[i]];
+            return (
+              <rect
+                key={`a-${i}`}
+                x={coord.x}
+                y={coord.y}
+                width="8"
+                height="8"
+                fillOpacity={opacity}
+              />
+            );
+          })}
+        </g>
+        <g fill={colors.secondaryFill}>
+          {secondaryOrder.map((coordIdx, i) => {
+            const coord = ATAX_COORDS[coordIdx];
+            return (
+              <rect
+                key={`b-${i}`}
+                x={coord.x}
+                y={coord.y}
+                width="8"
+                height="8"
+                fillOpacity={colors.secondaryOpacity}
+              />
+            );
+          })}
+        </g>
+      </svg>
+    </span>
+  );
+}
+
 export default function ProjectLogo({
   projectId,
   theme,
   className,
   alt,
 }: ProjectLogoProps) {
+  if (projectId === "atax") {
+    return <AtaxLogo theme={theme} className={className} alt={alt} />;
+  }
+
   const logoSvg = PROJECT_LOGO_SVGS[projectId]?.[theme];
 
   if (!logoSvg) {
