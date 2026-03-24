@@ -40,10 +40,7 @@ const themes = [
 ] as const;
 
 export default function ThemeSwitcher() {
-  // Mobile uses ICON_CONFIG.sizes.xs (8px), desktop uses ICON_CONFIG.sizes.sm (10px)
-  const mobileIconSize = `size-[${ICON_CONFIG.sizes.xs}px]`;
-  const desktopIconSize = `sm:size-[${ICON_CONFIG.sizes.sm}px]`;
-  const iconSizeClass = `${mobileIconSize} ${desktopIconSize}`;
+  const themeIconSize = ICON_CONFIG.sizes.sm;
 
   // Always start with "system" to avoid hydration mismatch
   const [currentTheme, setCurrentTheme] = useState("system");
@@ -172,12 +169,12 @@ export default function ThemeSwitcher() {
           >
             {currentThemeData?.icon ? (
               <currentThemeData.icon
-                className={iconSizeClass}
+                size={themeIconSize}
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             ) : (
               <Palette
-                className={iconSizeClass}
+                size={themeIconSize}
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             )}
@@ -275,7 +272,8 @@ export default function ThemeSwitcher() {
                               }
                             >
                               <Check
-                                className={`${iconSizeClass} text-accent`}
+                                size={themeIconSize}
+                                className="text-accent"
                                 strokeWidth={ICON_CONFIG.strokeWidth}
                               />
                             </motion.div>
@@ -303,7 +301,8 @@ export default function ThemeSwitcher() {
                           }}
                         >
                           <theme.icon
-                            className={`${iconSizeClass} text-foreground/70`}
+                            size={themeIconSize}
+                            className="text-foreground/70"
                             strokeWidth={ICON_CONFIG.strokeWidth}
                           />
                         </motion.div>
