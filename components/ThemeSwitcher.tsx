@@ -40,7 +40,7 @@ const themes = [
 ] as const;
 
 export default function ThemeSwitcher() {
-  const themeIconSize = ICON_CONFIG.sizes.sm;
+  const themeIconSize = 16;
 
   // Always start with "system" to avoid hydration mismatch
   const [currentTheme, setCurrentTheme] = useState("system");
