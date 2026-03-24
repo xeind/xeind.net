@@ -72,7 +72,7 @@ export const projects: Project[] = [
     id: "pioneerdev-ai",
     title: "Pioneer Dev",
     type: "Work",
-    description: "Our company making AI solutions",
+    description: "Company focusing on AI solutions",
     technologies: ["React", "TypeScript", "Motion"],
     liveUrl: "https://pioneerdev.ai",
     featured: true,
