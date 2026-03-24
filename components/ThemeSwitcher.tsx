@@ -40,6 +40,11 @@ const themes = [
 ] as const;
 
 export default function ThemeSwitcher() {
+  // Mobile uses ICON_CONFIG.sizes.xs (8px), desktop uses ICON_CONFIG.sizes.sm (10px)
+  const mobileIconSize = `size-[${ICON_CONFIG.sizes.xs}px]`;
+  const desktopIconSize = `sm:size-[${ICON_CONFIG.sizes.sm}px]`;
+  const iconSizeClass = `${mobileIconSize} ${desktopIconSize}`;
+
   // Always start with "system" to avoid hydration mismatch
   const [currentTheme, setCurrentTheme] = useState("system");
   const [open, setOpen] = useState(false);
@@ -167,12 +172,12 @@ export default function ThemeSwitcher() {
           >
             {currentThemeData?.icon ? (
               <currentThemeData.icon
-                className="size-[8px] sm:size-[10px]"
+                className={iconSizeClass}
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             ) : (
               <Palette
-                className="size-[8px] sm:size-[10px]"
+                className={iconSizeClass}
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             )}
@@ -270,7 +275,7 @@ export default function ThemeSwitcher() {
                               }
                             >
                               <Check
-                                className="size-[8px] text-accent sm:size-[10px]"
+                                className={`${iconSizeClass} text-accent`}
                                 strokeWidth={ICON_CONFIG.strokeWidth}
                               />
                             </motion.div>
@@ -298,7 +303,7 @@ export default function ThemeSwitcher() {
                           }}
                         >
                           <theme.icon
-                            className="size-[8px] text-foreground/70 sm:size-[10px]"
+                            className={`${iconSizeClass} text-foreground/70`}
                             strokeWidth={ICON_CONFIG.strokeWidth}
                           />
                         </motion.div>
