@@ -65,7 +65,7 @@ export default function LogoCopyDropdown({
       cancelAnimationFrame(id);
       window.removeEventListener("scroll", hideOnScroll, true);
     };
-  }, [visible]);
+  }, [visible, copied]);
 
   const handleClick = useCallback(() => {
     click();
