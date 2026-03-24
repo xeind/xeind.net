@@ -136,6 +136,42 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Pre-set project image sources to themed variants before React hydration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('theme') || 'system';
+                  let resolvedTheme = 'light';
+                  if (theme === 'system') {
+                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                      resolvedTheme = 'dark';
+                    }
+                  } else if (theme !== 'light') {
+                    resolvedTheme = theme;
+                  }
+                  
+                  // Theme-aware project IDs
+                  const themedProjects = ['atax', 'filipinameet', 'slavicmeet', 'nightingale-nvim', 'nightingale-zed', 'pioneerdev-ai'];
+                  
+                  // Swap image sources immediately
+                  document.querySelectorAll('img[src*="/projects/"]').forEach(function(img) {
+                    const src = img.getAttribute('src') || '';
+                    // Only swap if it's a themed project and not already themed
+                    const isThemedProject = themedProjects.some(function(id) {
+                      return src.includes(id);
+                    });
+                    if (isThemedProject && !src.includes('-' + resolvedTheme + '.svg')) {
+                      const themedSrc = src.replace(/\.svg$/, '-' + resolvedTheme + '.svg');
+                      img.setAttribute('src', themedSrc);
+                    }
+                  });
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         {/* Meta description for search engines / Lighthouse */}
         <meta name="description" content={metadata.description ?? undefined} />
 
