@@ -167,12 +167,12 @@ export default function ThemeSwitcher() {
           >
             {currentThemeData?.icon ? (
               <currentThemeData.icon
-                size={ICON_CONFIG.sizes.sm}
+                className="size-[8px] sm:size-[10px]"
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             ) : (
               <Palette
-                size={ICON_CONFIG.sizes.sm}
+                className="size-[8px] sm:size-[10px]"
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             )}
@@ -270,9 +270,8 @@ export default function ThemeSwitcher() {
                               }
                             >
                               <Check
-                                size={ICON_CONFIG.sizes.sm}
+                                className="size-[8px] text-accent sm:size-[10px]"
                                 strokeWidth={ICON_CONFIG.strokeWidth}
-                                className="text-accent"
                               />
                             </motion.div>
                           )}
@@ -299,9 +298,8 @@ export default function ThemeSwitcher() {
                           }}
                         >
                           <theme.icon
-                            size={ICON_CONFIG.sizes.sm}
+                            className="size-[8px] text-foreground/70 sm:size-[10px]"
                             strokeWidth={ICON_CONFIG.strokeWidth}
-                            className="text-foreground/70"
                           />
                         </motion.div>
                       ) : (
