@@ -145,7 +145,7 @@ export default function Tooltip({ label, children }: TooltipProps) {
               </motion.div>
             )}
           </AnimatePresence>,
-          document.body,
+          document.body
         )}
     </span>
   );

@@ -23,6 +23,6 @@ export function useReducedMotion(): boolean {
       }
     },
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => false,
+    () => false
   );
 }

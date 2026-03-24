@@ -54,7 +54,7 @@ export default function ThemeSwitcher() {
     if (theme === "system") {
       // Detect system preference
       const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
+        "(prefers-color-scheme: dark)"
       ).matches;
       const actualTheme = prefersDark ? "dark" : "light";
 
@@ -90,7 +90,7 @@ export default function ThemeSwitcher() {
         applyThemeInstantly(theme);
       }
     },
-    [applyThemeInstantly],
+    [applyThemeInstantly]
   );
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { useEffect, RefObject } from "react";
  */
 export function useFocusTrap(
   containerRef: RefObject<HTMLElement | null>,
-  isActive: boolean,
+  isActive: boolean
 ) {
   useEffect(() => {
     if (!isActive || !containerRef.current) return;
@@ -19,7 +19,7 @@ export function useFocusTrap(
 
     const getFocusableElements = () => {
       return Array.from(
-        container.querySelectorAll<HTMLElement>(focusableSelector),
+        container.querySelectorAll<HTMLElement>(focusableSelector)
       );
     };
 

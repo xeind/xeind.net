@@ -40,7 +40,7 @@ function getResolvedTheme(): ResolvedTheme {
 
 function getThemedProjectImageUrl(
   project: (typeof projects)[0],
-  theme: ResolvedTheme,
+  theme: ResolvedTheme
 ) {
   if (!project.imageUrl || !THEMED_PROJECT_IDS.has(project.id)) {
     return project.imageUrl;
@@ -261,7 +261,7 @@ export default function ProjectGrid() {
         }, 300);
       }
     },
-    [activeProject, click],
+    [activeProject, click]
   );
 
   // Handle Escape key

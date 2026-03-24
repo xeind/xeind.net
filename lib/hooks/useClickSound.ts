@@ -32,7 +32,7 @@ function playTick() {
   oscillator.frequency.setValueAtTime(600, ctx.currentTime);
   oscillator.frequency.exponentialRampToValueAtTime(
     350,
-    ctx.currentTime + 0.06,
+    ctx.currentTime + 0.06
   );
 
   gain.gain.setValueAtTime(0.05, ctx.currentTime);
@@ -60,7 +60,7 @@ function playPop() {
   oscillator.frequency.setValueAtTime(400, ctx.currentTime);
   oscillator.frequency.exponentialRampToValueAtTime(
     150,
-    ctx.currentTime + 0.08,
+    ctx.currentTime + 0.08
   );
 
   gain.gain.setValueAtTime(0.06, ctx.currentTime);
@@ -88,7 +88,7 @@ function playHover() {
   oscillator.frequency.setValueAtTime(520, ctx.currentTime);
   oscillator.frequency.exponentialRampToValueAtTime(
     480,
-    ctx.currentTime + 0.08,
+    ctx.currentTime + 0.08
   );
 
   gain.gain.setValueAtTime(0.015, ctx.currentTime);
@@ -117,7 +117,7 @@ function playChime() {
   oscillator.frequency.setValueAtTime(260, ctx.currentTime);
   oscillator.frequency.exponentialRampToValueAtTime(
     220,
-    ctx.currentTime + 0.12,
+    ctx.currentTime + 0.12
   );
 
   gain.gain.setValueAtTime(0.04, ctx.currentTime);
@@ -146,7 +146,7 @@ function playTap() {
   oscillator.frequency.setValueAtTime(320, ctx.currentTime);
   oscillator.frequency.exponentialRampToValueAtTime(
     240,
-    ctx.currentTime + 0.06,
+    ctx.currentTime + 0.06
   );
 
   gain.gain.setValueAtTime(0.03, ctx.currentTime);
@@ -237,7 +237,7 @@ function playProjectPop() {
   oscillator.frequency.setValueAtTime(420, ctx.currentTime);
   oscillator.frequency.exponentialRampToValueAtTime(
     160,
-    ctx.currentTime + 0.045,
+    ctx.currentTime + 0.045
   );
 
   gain.gain.setValueAtTime(0.12, ctx.currentTime);

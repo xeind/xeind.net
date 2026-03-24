@@ -27,6 +27,6 @@ export const socialLinks: SocialLink[] = [
 // Helper function
 export const getSocialLinkByPlatform = (platform: string) => {
   return socialLinks.find(
-    (link) => link.platform.toLowerCase() === platform.toLowerCase(),
+    (link) => link.platform.toLowerCase() === platform.toLowerCase()
   );
 };

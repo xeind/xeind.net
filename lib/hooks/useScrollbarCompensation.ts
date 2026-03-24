@@ -17,7 +17,7 @@ export function useScrollbarCompensation(isOpen: boolean) {
       // Set CSS variable for fixed elements to use
       document.documentElement.style.setProperty(
         "--scrollbar-width",
-        `${scrollbarWidth}px`,
+        `${scrollbarWidth}px`
       );
 
       // Compensate body for scrollbar removal

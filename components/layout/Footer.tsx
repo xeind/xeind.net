@@ -51,13 +51,21 @@ export default function Footer() {
                 © {currentYear} XD
               </p>
               <p className="text-background flex items-center gap-2 font-mono text-xs">
-                Served with Bun <span className="bg-background inline-block h-1 w-1 shrink-0" /> Next.js
+                Served with Bun{" "}
+                <span className="bg-background inline-block h-1 w-1 shrink-0" />{" "}
+                Next.js
               </p>
-              <p className="text-background flex items-center gap-2 font-mono text-xs">
-                Fonts: Latin Modern <span className="bg-background inline-block h-1 w-1 shrink-0" /> Inter <span className="bg-background inline-block h-1 w-1 shrink-0" /> Commit Mono
+              <p className="text-background hidden items-center gap-2 font-mono text-xs sm:flex">
+                Fonts: Latin Modern{" "}
+                <span className="bg-background inline-block h-1 w-1 shrink-0" />{" "}
+                Inter{" "}
+                <span className="bg-background inline-block h-1 w-1 shrink-0" />{" "}
+                Commit Mono
               </p>
               <p className="text-background flex items-center gap-2 font-mono text-xs opacity-70">
-                {BUILD_INFO.commit} <span className="bg-background inline-block h-1 w-1 shrink-0" /> Last Built: {buildDate}
+                {BUILD_INFO.commit}{" "}
+                <span className="bg-background inline-block h-1 w-1 shrink-0" />{" "}
+                Last Built: {buildDate}
               </p>
             </div>
 

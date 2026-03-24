@@ -191,7 +191,7 @@ export default function LogoCopyDropdown({
               </motion.div>
             )}
           </AnimatePresence>,
-          document.body,
+          document.body
         )}
     </>
   );

@@ -10,7 +10,7 @@ export const ProjectGrid = dynamic(
   () => import("@/components/sections/ProjectGrid"),
   {
     loading: () => <div className="min-h-[400px]" />,
-  },
+  }
 );
 
 export default ProjectGrid;
