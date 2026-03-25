@@ -3,9 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Copy, Check } from "lucide-react";
 import { useReducedMotion, useClickSound } from "@/lib/hooks";
-import { ICON_CONFIG } from "@/lib/config/design";
 import XeinLogo from "./XeinLogo";
 
 interface LogoCopyDropdownProps {
@@ -26,51 +24,59 @@ export default function LogoCopyDropdown({
   const [visible, setVisible] = useState(false);
   const [copied, setCopied] = useState(false);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
-  const [textSize, setTextSize] = useState({ w: 0, h: 0 });
+  const [textSize, setTextSize] = useState({ w: 140, h: 16 }); // Default size to prevent jump
   const triggerRef = useRef<HTMLButtonElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<SVGTextElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { click } = useClickSound();
 
-  // Measure text
+  // Calculate position immediately (synchronous)
+  const calculatePosition = useCallback(() => {
+    if (!triggerRef.current) return { x: 0, y: 0 };
+    const rect = triggerRef.current.getBoundingClientRect();
+    const tooltipHeight = tooltipRef.current?.offsetHeight ?? 40; // Default height estimate
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.bottom + GAP + tooltipHeight,
+    };
+  }, []);
+
+  // Measure text after tooltip renders
   useEffect(() => {
     if (!textRef.current || !visible) return;
     const bbox = textRef.current.getBBox();
     setTextSize({ w: bbox.width, h: bbox.height });
   }, [visible, copied]);
 
-  // Update position when visible
+  // Update position on scroll/resize
   useEffect(() => {
     if (!visible || !triggerRef.current) return;
 
     const updatePosition = () => {
-      const rect = triggerRef.current!.getBoundingClientRect();
-      const tooltipHeight = tooltipRef.current?.offsetHeight ?? 0;
-      // Position BELOW the trigger (instead of above like Tooltip)
-      setCoords({
-        x: rect.left + rect.width / 2,
-        y: rect.bottom + GAP + tooltipHeight,
-      });
+      setCoords(calculatePosition());
     };
 
-    const id = requestAnimationFrame(() => {
-      requestAnimationFrame(updatePosition);
-    });
+    // Initial position update
+    updatePosition();
 
     const hideOnScroll = () => setVisible(false);
     window.addEventListener("scroll", hideOnScroll, true);
+    window.addEventListener("resize", updatePosition);
 
     return () => {
-      cancelAnimationFrame(id);
       window.removeEventListener("scroll", hideOnScroll, true);
+      window.removeEventListener("resize", updatePosition);
     };
-  }, [visible, copied]);
+  }, [visible, calculatePosition]);
 
   const handleClick = useCallback(() => {
     click();
 
     if (!visible) {
+      // Calculate position BEFORE showing to prevent jump
+      const pos = calculatePosition();
+      setCoords(pos);
       setVisible(true);
     } else if (!copied) {
       const svgElement = document.querySelector(".xein-logo svg");
@@ -85,7 +91,7 @@ export default function LogoCopyDropdown({
         }, 2000);
       }
     }
-  }, [click, visible, copied]);
+  }, [click, visible, copied, calculatePosition]);
 
   // Hide when clicking outside
   useEffect(() => {
@@ -107,8 +113,8 @@ export default function LogoCopyDropdown({
   }, [visible]);
 
   const label = copied ? "Copied!" : "Copy logo as SVG";
-  const boxW = textSize.w + PAD_X * 2;
-  const boxH = textSize.h + PAD_Y * 2;
+  const boxW = Math.max(textSize.w + PAD_X * 2, 120); // Min width to prevent jump
+  const boxH = Math.max(textSize.h + PAD_Y * 2, 20); // Min height to prevent jump
   const svgW = boxW + 2;
   const svgH = boxH + TAIL_H + 2;
   const cx = svgW / 2;
@@ -130,7 +136,7 @@ export default function LogoCopyDropdown({
       <button
         ref={triggerRef}
         onClick={handleClick}
-        className={`group relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
+        className={`m-0 cursor-pointer border-0 bg-transparent p-0 align-middle leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
         aria-label="Copy logo as SVG"
       >
         <XeinLogo size={size} />
@@ -161,7 +167,7 @@ export default function LogoCopyDropdown({
                 className="pointer-events-none fixed z-50"
                 style={{
                   left: coords.x,
-                  top: coords.y - (tooltipRef.current?.offsetHeight ?? 0),
+                  top: coords.y - svgH,
                   x: "-50%",
                 }}
               >
