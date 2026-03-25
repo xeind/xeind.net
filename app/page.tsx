@@ -1,8 +1,9 @@
 import HeroSection from "@/components/hero/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
-import ExperienceTimeline from "@/components/sections/ExperienceTimeline";
-// Keep ProjectGrid lazy-loaded (below-fold)
-import { ProjectGrid } from "@/components/sections/LazySections";
+import {
+  ExperienceTimeline,
+  ProjectGrid,
+} from "@/components/sections/LazySections";
 import { SectionBlock, SectionDivider, CalloutLink } from "@/components/ui";
 import { ArrowUpRight } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";

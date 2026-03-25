@@ -57,11 +57,11 @@ export const GAP_SPACING = {
  */
 export const MARGIN_SPACING = {
   none: "m-0",
-  xs: "m-2", // 8px  (0.5 cells)
-  sm: "m-4", // 16px (1 cell)
-  md: "m-8", // 32px (2 cells) ⭐
-  lg: "m-12", // 48px (3 cells)
-  xl: "m-16", // 64px (4 cells)
+  xs: "m-2", // 8px
+  sm: "m-4", // 16px
+  md: "m-8", // 32px
+  lg: "m-12", // 48px
+  xl: "m-16", // 64px
 } as const;
 
 /**
@@ -70,11 +70,11 @@ export const MARGIN_SPACING = {
  */
 export const PADDING_SPACING = {
   none: "p-0",
-  xs: "p-2", // 8px  (0.5 cells) - Tight padding
-  sm: "p-4", // 16px (1 cell)   - Button padding
-  md: "p-8", // 32px (2 cells)  - Card padding ⭐
-  lg: "p-12", // 48px (3 cells)  - Section padding ⭐
-  xl: "p-16", // 64px (4 cells)  - Hero padding
+  xs: "p-2", // 8px  (0.5 cells)
+  sm: "p-4", // 16px (1 cell)
+  md: "p-8", // 32px (2 cells)
+  lg: "p-12", // 48px (3 cells)
+  xl: "p-16", // 64px (4 cells)
 } as const;
 
 /**
