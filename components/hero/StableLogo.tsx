@@ -106,7 +106,7 @@ function LogoTooltip({
   copied: boolean;
   onClose: () => void;
 }) {
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [coords, setCoords] = useState<{ x: number; y: number } | null>(null);
   const label = copied ? "Copied!" : "Copy logo as SVG";
 
   useEffect(() => {
@@ -118,6 +118,9 @@ function LogoTooltip({
       y: rect.bottom + 8,
     });
   }, [triggerRef]);
+
+  // Don't render until coords are calculated (prevents flash at 0,0)
+  if (!coords) return null;
 
   return (
     <div
