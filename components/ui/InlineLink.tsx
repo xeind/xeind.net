@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { DURATION, EASING } from "@/lib/config";
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useClickSound } from "@/lib/hooks";
 
 interface InlineLinkProps {
@@ -66,8 +66,7 @@ export default function InlineLink({
         ${className}
       `}
       style={{
-        transitionDuration: `${DURATION.normal}s`,
-        transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+        ...CSS_TRANSITIONS.border,
         paddingBottom: "1px",
       }}
       {...externalProps}

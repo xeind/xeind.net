@@ -4,7 +4,7 @@ import { useState } from "react";
 import { experiences } from "@/lib/data";
 import { Badge, InlineLink } from "@/components/ui";
 import { Experience } from "@/lib/types";
-import { DURATION, EASING } from "@/lib/config/animation";
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 import { useReducedMotion, useClickSound } from "@/lib/hooks";
 
@@ -61,20 +61,14 @@ function ExperienceItem({
           <div
             className="absolute inset-y-0 left-0 border-l border-dashed border-foreground/30 h-full opacity-100 group-hover:opacity-0 group-focus-within:opacity-0 transition-opacity"
             style={{
-              transitionDuration: prefersReducedMotion
-                ? "0s"
-                : `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...(prefersReducedMotion ? {} : CSS_TRANSITIONS.border),
             }}
           />
 
           <div
             className="absolute inset-y-0 left-0 h-full border-l border-solid border-foreground/30 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
             style={{
-              transitionDuration: prefersReducedMotion
-                ? "0s"
-                : `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...(prefersReducedMotion ? {} : CSS_TRANSITIONS.border),
             }}
           />
         </div>
@@ -90,8 +84,7 @@ function ExperienceItem({
             isCompanyHovered ? "-translate-x-1 -translate-y-1" : ""
           }`}
           style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.border,
           }}
         >
           <div
@@ -99,8 +92,7 @@ function ExperienceItem({
               isCompanyHovered ? "w-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
           <div
@@ -108,8 +100,7 @@ function ExperienceItem({
               isCompanyHovered ? "h-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
         </div>
@@ -119,8 +110,7 @@ function ExperienceItem({
             isCompanyHovered ? "translate-x-1 -translate-y-1" : ""
           }`}
           style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.border,
           }}
         >
           <div
@@ -128,8 +118,7 @@ function ExperienceItem({
               isCompanyHovered ? "w-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
           <div
@@ -137,8 +126,7 @@ function ExperienceItem({
               isCompanyHovered ? "h-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
         </div>
@@ -148,8 +136,7 @@ function ExperienceItem({
             isCompanyHovered ? "-translate-x-1 translate-y-1" : ""
           }`}
           style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.border,
           }}
         >
           <div
@@ -157,8 +144,7 @@ function ExperienceItem({
               isCompanyHovered ? "h-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
           <div
@@ -166,8 +152,7 @@ function ExperienceItem({
               isCompanyHovered ? "w-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
         </div>
@@ -177,8 +162,7 @@ function ExperienceItem({
             isCompanyHovered ? "translate-x-1 translate-y-1" : ""
           }`}
           style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.border,
           }}
         >
           <div
@@ -186,8 +170,7 @@ function ExperienceItem({
               isCompanyHovered ? "h-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
           <div
@@ -195,8 +178,7 @@ function ExperienceItem({
               isCompanyHovered ? "w-2 bg-tertiary" : ""
             }`}
             style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+              ...CSS_TRANSITIONS.border,
             }}
           />
         </div>

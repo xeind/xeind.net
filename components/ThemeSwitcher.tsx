@@ -10,7 +10,12 @@ import {
   useReducedMotion,
   useClickSound,
 } from "@/lib/hooks";
-import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
+import {
+  SPRING_CONFIG,
+  DURATION,
+  EASING,
+  CSS_TRANSITIONS,
+} from "@/lib/config/animation";
 
 const themes = [
   {
@@ -226,9 +231,7 @@ export default function ThemeSwitcher() {
                       event.preventDefault(); // Prevent Radix auto-close
                       handleThemeChange(theme.value);
                     }}
-                    style={{
-                      transition: `all ${DURATION.fast}s cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-                    }}
+                    style={CSS_TRANSITIONS.fade}
                   >
                     <motion.div
                       initial={

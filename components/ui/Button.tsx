@@ -1,6 +1,6 @@
 "use client";
 
-import { DURATION, EASING } from "@/lib/config";
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { GAP_SPACING } from "@/lib/config/spacing";
 import { useClickSound } from "@/lib/hooks";
 
@@ -50,40 +50,25 @@ export default function Button({
         onClick?.();
       }}
       className={`bg-card group relative inline-flex items-center justify-center gap-3 px-4 md:px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-      style={{
-        transitionDuration: `${DURATION.normal}s`,
-        transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-      }}
+      style={CSS_TRANSITIONS.border}
       {...props}
     >
       {/* All 4 borders - dashed, become solid on hover */}
       <div
         className="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid"
-        style={{
-          transitionDuration: `${DURATION.normal}s`,
-          transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-        }}
+        style={CSS_TRANSITIONS.border}
       />
       <div
         className="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid"
-        style={{
-          transitionDuration: `${DURATION.normal}s`,
-          transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-        }}
+        style={CSS_TRANSITIONS.border}
       />
       <div
         className="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
-        style={{
-          transitionDuration: `${DURATION.normal}s`,
-          transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-        }}
+        style={CSS_TRANSITIONS.border}
       />
       <div
         className="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid"
-        style={{
-          transitionDuration: `${DURATION.normal}s`,
-          transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-        }}
+        style={CSS_TRANSITIONS.border}
       />
 
       {/* Camera focus corners - L-shaped brackets (above borders, 1px thin) */}
@@ -91,17 +76,11 @@ export default function Button({
       <div className="absolute top-0 left-0 z-10">
         <div
           className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
         <div
           className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
       </div>
 
@@ -109,17 +88,11 @@ export default function Button({
       <div className="absolute top-0 right-0 z-10">
         <div
           className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
         <div
           className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
       </div>
 
@@ -127,17 +100,11 @@ export default function Button({
       <div className="absolute bottom-0 left-0 z-10">
         <div
           className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
         <div
           className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
       </div>
 
@@ -145,17 +112,11 @@ export default function Button({
       <div className="absolute right-0 bottom-0 z-10">
         <div
           className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
         <div
           className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
       </div>
 
@@ -165,8 +126,7 @@ export default function Button({
         <div
           className="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0"
           style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.border,
             maskImage:
               "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.15) 87.5%, transparent 100%)",
             WebkitMaskImage:
@@ -176,17 +136,13 @@ export default function Button({
         {/* Hover state: full fill at 30% opacity */}
         <div
           className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
         {/* Active/Tap state: inverted center gradient - edges bright, center dark, edges not transparent */}
         <div
           className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-active:opacity-100"
           style={{
-            transitionDuration: `${DURATION.fast}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.fade,
             maskImage:
               "linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%)",
             WebkitMaskImage:
@@ -201,20 +157,14 @@ export default function Button({
       >
         <span
           className="font-serif text-sm transition-all"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         >
           {children}
         </span>
         {badge && (
           <span
             className="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all"
-            style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-            }}
+            style={CSS_TRANSITIONS.border}
           >
             {badge}
           </span>

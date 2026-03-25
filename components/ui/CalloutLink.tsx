@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import CornerDiamond from "@/components/ui/CornerDiamond";
-import { DURATION, EASING } from "@/lib/config";
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useClickSound } from "@/lib/hooks";
 
 interface CalloutLinkProps {
@@ -33,10 +33,7 @@ export default function CalloutLink({
       onMouseEnter={chime}
       onClick={clickSoft}
       className="bg-card group relative block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-      style={{
-        transitionDuration: `${DURATION.normal}s`,
-        transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-      }}
+      style={CSS_TRANSITIONS.border}
       {...externalProps}
     >
       <CornerDiamond position="all" variant="accent" />
@@ -50,8 +47,7 @@ export default function CalloutLink({
         <div
           className="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0"
           style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.border,
             maskImage:
               "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12.5%, rgba(0,0,0,0.40) 37.5%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.40) 62.5%, rgba(0,0,0,0.15) 87.5%, transparent 100%)",
             WebkitMaskImage:
@@ -61,17 +57,13 @@ export default function CalloutLink({
         {/* Hover state: full fill at 30% opacity */}
         <div
           className="bg-accent/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         />
         {/* Active/Click state: intense gradient pulse */}
         <div
           className="bg-accent/30 absolute inset-0 opacity-0 transition-opacity group-active:opacity-20"
           style={{
-            transitionDuration: "0.1s",
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+            ...CSS_TRANSITIONS.fade,
           }}
         />
       </div>
@@ -79,20 +71,14 @@ export default function CalloutLink({
       <div className="relative z-10 flex items-center justify-center gap-2">
         <span
           className="font-serif text-sm transition-transform group-hover:translate-x-0.5 group-active:translate-x-1"
-          style={{
-            transitionDuration: `${DURATION.normal}s`,
-            transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-          }}
+          style={CSS_TRANSITIONS.border}
         >
           {label}
         </span>
         {icon && (
           <span
             className="text-accent group-hover:text-tertiary flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-            style={{
-              transitionDuration: `${DURATION.normal}s`,
-              transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-            }}
+            style={CSS_TRANSITIONS.border}
           >
             {icon}
           </span>
@@ -105,8 +91,7 @@ export default function CalloutLink({
         style={{
           bottom: 0,
           zIndex: 5,
-          transitionDuration: `${DURATION.normal}s`,
-          transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+          ...CSS_TRANSITIONS.border,
         }}
       />
     </Component>

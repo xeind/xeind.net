@@ -7,7 +7,7 @@ import { projects } from "@/lib/data";
 import { Badge } from "@/components/ui";
 import ProjectLogo from "@/components/sections/ProjectLogo";
 import { ICON_CONFIG } from "@/lib/config/design";
-import { SPRING_CONFIG, DURATION, EASING } from "@/lib/config/animation";
+import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import {
   useScrollbarCompensation,
   useFocusTrap,
@@ -30,15 +30,8 @@ function getResolvedTheme(): ResolvedTheme {
   return "light";
 }
 
-const t = {
-  transitionDuration: `${DURATION.normal}s`,
-  transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-};
-
-const tFast = {
-  transitionDuration: `${DURATION.fast}s`,
-  transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-};
+const t = CSS_TRANSITIONS.border;
+const tFast = CSS_TRANSITIONS.fade;
 
 const ICON_SIZES = {
   compact: { grid: "h-8 sm:h-9", modal: "h-9 sm:h-10" },

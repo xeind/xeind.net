@@ -62,13 +62,76 @@ export const EASING = {
 
 // Duration (in seconds) - keep animations fast (0.2s-0.3s)
 export const DURATION = {
+  instant: 0,
   fast: 0.15,
   normal: 0.2,
   slow: 0.3,
+  slower: 0.5,
 };
 
-// Hover transition config
+// Pre-built transition objects for common patterns
+export const TRANSITIONS = {
+  // Border hover effects (dashed → solid)
+  border: {
+    duration: DURATION.normal,
+    ease: EASING.easeOutCubic,
+  },
+  // Quick fade transitions
+  fade: {
+    duration: DURATION.fast,
+    ease: EASING.easeOutCubic,
+  },
+  // Scale animations (modals, dropdowns)
+  scale: {
+    duration: DURATION.normal,
+    ease: EASING.easeOutQuart,
+  },
+  // Hover effects (buttons, links)
+  hover: {
+    duration: DURATION.normal,
+    ease: EASING.ease,
+  },
+  // Spring configurations
+  springModal: SPRING_CONFIG.noBounce,
+  springDropdown: SPRING_CONFIG.gentle,
+  springBouncy: SPRING_CONFIG.bouncy,
+};
+
+// CSS style objects for inline styles
+export const CSS_TRANSITIONS = {
+  border: {
+    transitionDuration: `${TRANSITIONS.border.duration}s`,
+    transitionTimingFunction: `cubic-bezier(${TRANSITIONS.border.ease.join(",")})`,
+  },
+  fade: {
+    transitionDuration: `${TRANSITIONS.fade.duration}s`,
+    transitionTimingFunction: `cubic-bezier(${TRANSITIONS.fade.ease.join(",")})`,
+  },
+  hover: {
+    transitionDuration: `${TRANSITIONS.hover.duration}s`,
+    transitionTimingFunction: `cubic-bezier(${TRANSITIONS.hover.ease.join(",")})`,
+  },
+};
+
+// Legacy hover transition config (for backwards compatibility)
 export const HOVER_TRANSITION = {
-  duration: 0.2,
+  duration: DURATION.normal,
   ease: "ease" as const,
+};
+
+// Animation presets for specific use cases
+export const ANIMATION_PRESETS = {
+  // For dashed borders that become solid on hover
+  borderInteractive: {
+    transition: `all ${DURATION.normal}s cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+  },
+  // For modals and overlays
+  modalEnter: SPRING_CONFIG.noBounce,
+  // For dropdown menus
+  dropdownEnter: SPRING_CONFIG.gentle,
+  // For quick micro-interactions
+  micro: {
+    duration: DURATION.fast,
+    ease: EASING.easeOutCubic,
+  },
 };
