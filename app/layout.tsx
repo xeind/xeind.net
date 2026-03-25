@@ -35,9 +35,9 @@ export const metadata: Metadata = {
     siteName: "Xein Deniel",
     images: [
       {
-        url: "/opengraph-img.jpg",
-        width: 1200,
-        height: 630,
+        url: "/opengraph-image.jpg",
+        width: 1204,
+        height: 632,
         alt: "Xein Deniel",
       },
     ],
