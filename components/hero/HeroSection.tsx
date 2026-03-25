@@ -1,11 +1,40 @@
 "use client";
 
+import { useEffect } from "react";
 import Button from "@/components/ui/Button";
 import StableLogo from "./StableLogo";
 import { personalInfo } from "@/lib/data";
 import { ICON_CONFIG } from "@/lib/config/design";
 
 export default function HeroSection() {
+  // Keyboard shortcuts: V = Resume, C = Call
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+
+      if (key === "v") {
+        window.open(personalInfo.cvUrl, "_blank");
+      } else if (key === "c") {
+        window.open(
+          personalInfo.calComUrl || "https://cal.com/xeind",
+          "_blank"
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
+
   return (
     <div className="flex flex-col items-center md:items-start">
       {/* Logo, Name and Location */}
