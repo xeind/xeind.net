@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { motion, AnimatePresence } from "motion/react";
+import { Check } from "lucide-react";
 import XeinLogo from "../XeinLogo";
 import { useClickSound } from "@/lib/hooks";
+import { SPRING_CONFIG } from "@/lib/config/animation";
 
 interface StableLogoProps {
   size?: number;
@@ -10,128 +14,95 @@ interface StableLogoProps {
 }
 
 /**
- * StableLogo - Logo with copy functionality (always mounted, no swap)
+ * StableLogo - Logo with right-click context menu
  *
- * Unlike SmartLogo which swaps components on hover (causing twitch),
- * this component is always mounted. The heavy tooltip functionality
- * is lazy-loaded only when needed, but the button and logo stay stable.
- *
- * This eliminates the hover twitch completely.
+ * Right-click on the logo to show a context menu with "Copy Logo SVG" option.
+ * Uses Radix DropdownMenu for accessibility and clean animations.
  */
 export default function StableLogo({
   size = 64,
   className = "",
 }: StableLogoProps) {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [tooltipLoaded, setTooltipLoaded] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const { click } = useClickSound();
+  const { click, nudge } = useClickSound();
 
-  // Lazy load tooltip component only when first needed
-  const handleClick = useCallback(() => {
+  const handleCopy = useCallback(() => {
     click();
+    nudge();
 
-    if (!tooltipLoaded) {
-      // First click: just load the tooltip, don't show yet
-      setTooltipLoaded(true);
-      setShowTooltip(true);
-    } else if (!copied) {
-      // Copy the SVG
-      const svgElement = document.querySelector(".xein-logo svg");
-      if (svgElement) {
-        const svgString = new XMLSerializer().serializeToString(svgElement);
-        navigator.clipboard.writeText(svgString);
-        setCopied(true);
-        setShowTooltip(true);
+    const svgElement = document.querySelector(".xein-logo svg");
+    if (svgElement) {
+      const svgString = new XMLSerializer().serializeToString(svgElement);
+      navigator.clipboard.writeText(svgString);
+      setCopied(true);
 
-        setTimeout(() => {
-          setShowTooltip(false);
-          setCopied(false);
-        }, 2000);
-      }
-    }
-  }, [click, tooltipLoaded, copied]);
-
-  // Hide tooltip when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node)
-      ) {
-        setShowTooltip(false);
+      setTimeout(() => {
         setCopied(false);
-      }
-    };
-
-    if (showTooltip) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+        setOpen(false);
+      }, 1500);
     }
-  }, [showTooltip]);
+  }, [click, nudge]);
+
+  // Handle right-click
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(true);
+  }, []);
 
   return (
-    <>
-      <button
-        ref={triggerRef}
-        onClick={handleClick}
-        className={`m-0 inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 align-middle leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
-        aria-label="Copy logo as SVG"
-        style={{ width: size, height: size }}
-      >
-        <XeinLogo size={size} />
-      </button>
+    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+      <DropdownMenu.Trigger asChild>
+        <button
+          onContextMenu={handleContextMenu}
+          onClick={() => {
+            nudge();
+          }}
+          className={`m-0 inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 align-middle leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
+          aria-label="Copy logo as SVG (right-click)"
+          style={{ width: size, height: size }}
+        >
+          <XeinLogo size={size} />
+        </button>
+      </DropdownMenu.Trigger>
 
-      {/* Tooltip - only renders when loaded and visible */}
-      {tooltipLoaded && showTooltip && (
-        <LogoTooltip
-          triggerRef={triggerRef}
-          copied={copied}
-          onClose={() => setShowTooltip(false)}
-        />
-      )}
-    </>
-  );
-}
-
-// Lightweight tooltip component (separate to avoid loading motion until needed)
-function LogoTooltip({
-  triggerRef,
-  copied,
-  onClose,
-}: {
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
-  copied: boolean;
-  onClose: () => void;
-}) {
-  const [coords, setCoords] = useState<{ x: number; y: number } | null>(null);
-  const label = copied ? "Copied!" : "Copy logo as SVG";
-
-  useEffect(() => {
-    if (!triggerRef.current) return;
-
-    const rect = triggerRef.current.getBoundingClientRect();
-    setCoords({
-      x: rect.left + rect.width / 2,
-      y: rect.bottom + 8,
-    });
-  }, [triggerRef]);
-
-  // Don't render until coords are calculated (prevents flash at 0,0)
-  if (!coords) return null;
-
-  return (
-    <div
-      className="pointer-events-none fixed z-50 rounded border border-dashed border-accent/30 bg-card px-2 py-1 font-mono text-xs"
-      style={{
-        left: coords.x,
-        top: coords.y,
-        transform: "translateX(-50%)",
-      }}
-    >
-      {label}
-    </div>
+      <DropdownMenu.Portal>
+        <AnimatePresence mode="wait">
+          {open && (
+            <DropdownMenu.Content
+              className="bg-card border-accent/30 z-50 w-fit min-w-fit overflow-hidden border border-dashed p-1 shadow-lg"
+              sideOffset={5}
+              align="start"
+              side="bottom"
+              asChild
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                transition={SPRING_CONFIG.noBounce}
+              >
+                <DropdownMenu.Item
+                  className="text-foreground hover:bg-muted focus:bg-muted cursor-pointer px-3 py-2 font-mono text-xs outline-none select-none"
+                  onSelect={(event) => {
+                    event.preventDefault();
+                    handleCopy();
+                  }}
+                >
+                  {copied ? (
+                    <span className="text-success flex items-center gap-2">
+                      <Check size={12} strokeWidth={1} />
+                      Copied!
+                    </span>
+                  ) : (
+                    <span>Copy Logo SVG</span>
+                  )}
+                </DropdownMenu.Item>
+              </motion.div>
+            </DropdownMenu.Content>
+          )}
+        </AnimatePresence>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }

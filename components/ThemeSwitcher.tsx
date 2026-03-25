@@ -192,7 +192,7 @@ export default function ThemeSwitcher() {
         <AnimatePresence>
           {open && (
             <DropdownMenu.Content
-              className="bg-card ring-border z-50 min-w-[220px] overflow-hidden p-1 shadow-lg ring-1"
+              className="bg-card border-accent/30 z-50 min-w-[220px] overflow-hidden border border-dashed p-1 shadow-lg"
               sideOffset={5}
               align="end"
               asChild
