@@ -69,6 +69,18 @@ export const projects: Project[] = [
     imageUrl: "/projects/fmeet-seo.svg",
   },
   {
+    id: "yield",
+    title: "Yield",
+    type: "Work",
+    description: "",
+    technologies: ["React", "TypeScript", "Prisma"],
+    liveUrl: "",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/yield.svg",
+    iconSize: "compact",
+  },
+  {
     id: "pioneerdev-ai",
     title: "Pioneer Dev",
     type: "Work",

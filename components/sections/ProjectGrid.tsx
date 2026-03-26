@@ -439,12 +439,14 @@ export default function ProjectGrid() {
                 >
                   {(
                     activeProject.longDescription || [activeProject.description]
-                  ).map((point, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
+                  )
+                    .filter((point) => point.trim().length > 0)
+                    .map((point, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
                 </motion.ul>
               </motion.div>
             </motion.div>
