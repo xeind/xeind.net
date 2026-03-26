@@ -8,7 +8,7 @@ import { ICON_CONFIG } from "@/lib/config/design";
 import { useClickSound } from "@/lib/hooks";
 
 export default function HeroSection() {
-  const { click } = useClickSound();
+  const { clickLow } = useClickSound();
 
   // Keyboard shortcuts: V = Resume, C = Call
   useEffect(() => {
@@ -25,10 +25,10 @@ export default function HeroSection() {
       const key = e.key.toLowerCase();
 
       if (key === "v") {
-        click();
+        clickLow();
         window.open(personalInfo.cvUrl, "_blank");
       } else if (key === "c") {
-        click();
+        clickLow();
         window.open(
           personalInfo.calComUrl || "https://cal.com/xeind",
           "_blank"
@@ -38,7 +38,7 @@ export default function HeroSection() {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [click]);
+  }, [clickLow]);
 
   return (
     <div className="flex flex-col items-center md:items-start">

@@ -25,7 +25,7 @@ export default function StableLogo({
 }: StableLogoProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const { click } = useClickSound();
+  const { clickSharp } = useClickSound();
 
   const getCleanSvgString = useCallback((svgElement: SVGSVGElement) => {
     const clonedSvg = svgElement.cloneNode(true) as SVGSVGElement;
@@ -88,7 +88,7 @@ export default function StableLogo({
   }, []);
 
   const handleCopy = useCallback(() => {
-    click();
+    clickSharp();
 
     const svgElement = document.querySelector(
       ".xein-logo svg"
@@ -103,16 +103,16 @@ export default function StableLogo({
         setOpen(false);
       }, 1500);
     }
-  }, [click, getCleanSvgString]);
+  }, [clickSharp, getCleanSvgString]);
 
   // Handle right-click
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      click();
+      clickSharp();
       setOpen(true);
     },
-    [click]
+    [clickSharp]
   );
 
   return (

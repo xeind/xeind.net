@@ -33,7 +33,7 @@ export default function InlineLink({
   className = "",
   onHoverSound,
 }: InlineLinkProps) {
-  const { hover, clickHigh } = useClickSound();
+  const { hover, clickSoft } = useClickSound();
   const soundHandler = onHoverSound ?? hover;
   const Component = external ? "a" : Link;
   const externalProps = external
@@ -48,7 +48,7 @@ export default function InlineLink({
     <Component
       href={href}
       onMouseEnter={soundHandler}
-      onClick={clickHigh}
+      onClick={clickSoft}
       className={`
         inline
         text-accent
