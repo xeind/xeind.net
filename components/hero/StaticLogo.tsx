@@ -1,4 +1,4 @@
-import XeinLogo from "../XeinLogo";
+import XeinLogoServer from "../XeinLogoServer";
 
 /**
  * StaticLogo - Non-interactive logo for immediate render
@@ -8,4 +8,4 @@ import XeinLogo from "../XeinLogo";
  *
  * For copy functionality, use CopyableLogo (lazy-loaded).
  */
-export default XeinLogo;
+export default XeinLogoServer;

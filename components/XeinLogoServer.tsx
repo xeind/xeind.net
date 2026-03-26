@@ -1,13 +1,4 @@
-"use client";
-
-import { memo } from "react";
-
-interface XeinLogoProps {
-  className?: string;
-  size?: number;
-}
-
-function XeinLogoComponent({ className = "", size = 48 }: XeinLogoProps) {
+function XeinLogoServer({ className = "", size = 48 }: XeinLogoProps) {
   return (
     <div
       className={`xein-logo ${className}`}
@@ -22,7 +13,6 @@ function XeinLogoComponent({ className = "", size = 48 }: XeinLogoProps) {
         height={size}
         style={{ position: "absolute", top: 0, left: 0 }}
       >
-        {/* Shape 1 - X top polygon (cls-1) */}
         <g className="logo-shape" data-shape="1">
           <polygon
             className="shape-filled"
@@ -43,7 +33,6 @@ function XeinLogoComponent({ className = "", size = 48 }: XeinLogoProps) {
           />
         </g>
 
-        {/* Shape 2 - X bottom polygon (cls-2) */}
         <g className="logo-shape" data-shape="2">
           <polygon
             className="shape-filled"
@@ -65,7 +54,6 @@ function XeinLogoComponent({ className = "", size = 48 }: XeinLogoProps) {
           />
         </g>
 
-        {/* Shape 3 - D right polygon (cls-3) */}
         <g className="logo-shape" data-shape="3">
           <polygon
             className="shape-filled"
@@ -87,7 +75,6 @@ function XeinLogoComponent({ className = "", size = 48 }: XeinLogoProps) {
           />
         </g>
 
-        {/* Shape 4 - D left polygon (cls-4) */}
         <g className="logo-shape" data-shape="4">
           <polygon
             className="shape-filled"
@@ -113,7 +100,9 @@ function XeinLogoComponent({ className = "", size = 48 }: XeinLogoProps) {
   );
 }
 
-const XeinLogo = memo(XeinLogoComponent);
-XeinLogo.displayName = "XeinLogo";
+interface XeinLogoProps {
+  className?: string;
+  size?: number;
+}
 
-export default XeinLogo;
+export default XeinLogoServer;

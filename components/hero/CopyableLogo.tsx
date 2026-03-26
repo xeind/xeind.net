@@ -1,68 +1,58 @@
 "use client";
 
-import { useState, lazy, Suspense } from "react";
+import { useState, useRef } from "react";
 import StaticLogo from "./StaticLogo";
-
-// Lazy load the interactive version with all the heavy features
-const LogoCopyDropdown = lazy(() => import("@/components/LogoCopyDropdown"));
+import LogoTooltipPortal from "@/components/LogoTooltipPortal";
+import { useClickSound } from "@/lib/hooks";
 
 interface CopyableLogoProps {
   size?: number;
   className?: string;
 }
 
-/**
- * CopyableLogo - Logo with copy functionality (lazy-loaded)
- *
- * Phase 1: Renders StaticLogo immediately for fast LCP
- * Phase 2: On hover/click, lazy-loads LogoCopyDropdown with:
- *   - Portal rendering
- *   - Framer Motion animations
- *   - Clipboard API integration
- *   - Sound effects
- *
- * This saves ~20-25KB from initial bundle since motion/react
- * and the dropdown logic are only loaded on interaction.
- */
 export default function CopyableLogo({
   size = 64,
   className = "",
 }: CopyableLogoProps) {
-  const [shouldLoadInteractive, setShouldLoadInteractive] = useState(false);
+  const [showPortal, setShowPortal] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { click } = useClickSound();
 
-  const handleInteraction = () => {
-    if (!shouldLoadInteractive) {
-      setShouldLoadInteractive(true);
+  const handleClick = () => {
+    if (!showPortal) {
+      click();
+
+      const svgElement = document.querySelector(".xein-logo svg");
+      if (svgElement) {
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+        navigator.clipboard.writeText(svgString);
+        setShowPortal(true);
+
+        setTimeout(() => {
+          setShowPortal(false);
+        }, 2000);
+      }
+    } else {
+      setShowPortal(false);
     }
   };
 
-  if (shouldLoadInteractive) {
-    return (
-      <Suspense
-        fallback={
-          <div style={{ width: size, height: size }}>
-            <StaticLogo size={size} className={className} />
-          </div>
-        }
-      >
-        <LogoCopyDropdown size={size} className={className} />
-      </Suspense>
-    );
-  }
-
-  // Wrap static logo in button-like div for interaction detection
   return (
-    <div
-      onMouseEnter={handleInteraction}
-      onClick={handleInteraction}
-      onFocus={handleInteraction}
-      className={`cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
-      role="button"
-      tabIndex={0}
-      aria-label="Load logo copy functionality"
-      style={{ display: "inline-block" }}
-    >
-      <StaticLogo size={size} />
-    </div>
+    <>
+      <button
+        ref={buttonRef}
+        onClick={handleClick}
+        className={`m-0 cursor-pointer border-0 bg-transparent p-0 align-middle leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${className}`}
+        aria-label="Copy logo as SVG"
+      >
+        <StaticLogo size={size} />
+      </button>
+
+      <LogoTooltipPortal
+        triggerRef={buttonRef}
+        visible={showPortal}
+        onClose={() => setShowPortal(false)}
+      />
+    </>
   );
 }

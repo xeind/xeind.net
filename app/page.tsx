@@ -1,8 +1,8 @@
 import HeroSection from "@/components/hero/HeroSection";
-import AboutSection from "@/components/sections/AboutSection";
 import {
   ExperienceTimeline,
   ProjectGrid,
+  AboutSection,
 } from "@/components/sections/LazySections";
 import { SectionBlock, SectionDivider, CalloutLink } from "@/components/ui";
 import { ArrowUpRight } from "lucide-react";

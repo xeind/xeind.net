@@ -21,4 +21,11 @@ export const ExperienceTimeline = dynamic(
   }
 );
 
+export const AboutSection = dynamic(
+  () => import("@/components/sections/AboutSection"),
+  {
+    loading: () => <div className="min-h-[200px]" />,
+  }
+);
+
 export default ProjectGrid;
