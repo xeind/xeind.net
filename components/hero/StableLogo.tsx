@@ -77,10 +77,15 @@ export default function StableLogo({
               asChild
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: -5 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
                 transition={SPRING_CONFIG.noBounce}
+                style={{
+                  transformOrigin:
+                    "var(--radix-dropdown-menu-content-transform-origin)",
+                  willChange: "transform, opacity",
+                }}
               >
                 <DropdownMenu.Item
                   className="text-foreground hover:bg-muted focus:bg-muted cursor-pointer px-3 py-2 font-mono text-xs outline-none select-none"
