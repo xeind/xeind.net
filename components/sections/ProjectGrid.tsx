@@ -177,7 +177,7 @@ export default function ProjectGrid() {
   const isAnimatingRef = useRef(false);
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
   const prefersReducedMotion = useReducedMotion();
-  const { hover, click, clickSharp } = useClickSound();
+  const { hover, clickLow, clickSharp } = useClickSound();
 
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
@@ -204,7 +204,7 @@ export default function ProjectGrid() {
       // Prevent clicks during animation
       if (isAnimatingRef.current) return;
 
-      click();
+      clickLow();
 
       // If modal is currently open, close it first, then open new one
       if (activeProject) {
@@ -228,7 +228,7 @@ export default function ProjectGrid() {
         }, 300);
       }
     },
-    [activeProject, click]
+    [activeProject, clickLow]
   );
 
   // Handle Escape key
