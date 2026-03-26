@@ -5,8 +5,11 @@ import Button from "@/components/ui/Button";
 import StableLogo from "./StableLogo";
 import { personalInfo } from "@/lib/data";
 import { ICON_CONFIG } from "@/lib/config/design";
+import { useClickSound } from "@/lib/hooks";
 
 export default function HeroSection() {
+  const { click } = useClickSound();
+
   // Keyboard shortcuts: V = Resume, C = Call
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -22,8 +25,10 @@ export default function HeroSection() {
       const key = e.key.toLowerCase();
 
       if (key === "v") {
+        click();
         window.open(personalInfo.cvUrl, "_blank");
       } else if (key === "c") {
+        click();
         window.open(
           personalInfo.calComUrl || "https://cal.com/xeind",
           "_blank"
@@ -33,7 +38,7 @@ export default function HeroSection() {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
+  }, [click]);
 
   return (
     <div className="flex flex-col items-center md:items-start">
