@@ -214,7 +214,7 @@ function playClick() {
   filter.Q.value = 3;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.24 + Math.random() * 0.08;
+  gain.gain.value = 0.5 + Math.random() * 0.08;
 
   noise.connect(filter);
   filter.connect(gain);
