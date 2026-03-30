@@ -53,7 +53,7 @@ export default function CalloutLinkStatic({
         />
       </div>
 
-      <div className="relative z-10 flex items-center justify-center gap-2">
+      <div className="relative z-10 flex items-center justify-center">
         <span
           className="font-serif text-sm transition-transform group-hover:translate-x-0.5 group-active:translate-x-1"
           style={CSS_TRANSITIONS.border}
