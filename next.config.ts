@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["motion", "lucide-react"],
   },
+  transpilePackages: ["@chenglou/pretext"],
   env: {
     NEXT_PUBLIC_GIT_COMMIT_HASH:
       process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",

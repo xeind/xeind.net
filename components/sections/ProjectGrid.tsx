@@ -550,7 +550,7 @@ export default function ProjectGrid() {
                 </motion.p>
                 <motion.h3
                   layoutId={`title-${project.id}`}
-                  className="text-foreground font-serif text-base"
+                  className="text-foreground line-clamp-2 pr-6 font-serif text-sm leading-tight md:text-base"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
@@ -559,7 +559,7 @@ export default function ProjectGrid() {
                 >
                   {project.title}
                 </motion.h3>
-                <p className="text-foreground/60 mt-auto hidden text-xs leading-relaxed line-clamp-2 min-[864px]:block lg:text-sm">
+                <p className="text-foreground/60 mt-2 hidden text-xs leading-relaxed line-clamp-2 min-[864px]:mt-auto min-[864px]:block lg:text-sm">
                   {project.description}
                 </p>
               </motion.div>
