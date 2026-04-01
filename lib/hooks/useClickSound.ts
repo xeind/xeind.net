@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useReducedMotion } from "./useReducedMotion";
 
 let audioContext: AudioContext | null = null;
+let audioPrimed = false;
 
 function getAudioContext(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -11,6 +12,28 @@ function getAudioContext(): AudioContext | null {
     audioContext = new AudioContext();
   }
   return audioContext;
+}
+
+async function primeAudioContext() {
+  const ctx = getAudioContext();
+  if (!ctx || audioPrimed) return;
+
+  if (ctx.state === "suspended") {
+    await ctx.resume();
+  }
+
+  const buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+  const source = ctx.createBufferSource();
+  const gain = ctx.createGain();
+
+  source.buffer = buffer;
+  gain.gain.value = 0.0001;
+
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(ctx.currentTime);
+
+  audioPrimed = true;
 }
 
 function playTick() {
@@ -372,6 +395,32 @@ function playClickSoft() {
 export function useClickSound() {
   const prefersReducedMotion = useReducedMotion();
   const enabled = useRef(true);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const unlockAudio = () => {
+      void primeAudioContext();
+    };
+
+    window.addEventListener("pointerenter", unlockAudio, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("pointermove", unlockAudio, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("pointerdown", unlockAudio, { once: true });
+    window.addEventListener("keydown", unlockAudio, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerenter", unlockAudio);
+      window.removeEventListener("pointermove", unlockAudio);
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+    };
+  }, []);
 
   const tick = useCallback(() => {
     if (prefersReducedMotion || !enabled.current) return;

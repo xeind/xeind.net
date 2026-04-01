@@ -71,6 +71,15 @@ const ATAX_PRIMARY_OPACITY = [
   0.52, 0.72, 0.72, 0.72, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.52, 0.52, 0.92,
   0.52, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.72, 0.32, 0.32, 0.32, 0.72,
 ] as const;
+const DEFAULT_ATAX_PRIMARY_ORDER = Array.from(
+  { length: ATAX_COORDS.length },
+  (_, i) => i
+);
+const DEFAULT_ATAX_SECONDARY_ORDER = [0, 4, 6, 8, 12, 16, 18, 20, 24];
+let lastAtaxFrame = {
+  primaryOrder: DEFAULT_ATAX_PRIMARY_ORDER,
+  secondaryOrder: DEFAULT_ATAX_SECONDARY_ORDER,
+};
 
 const ATAX_THEME = {
   light: {
@@ -108,19 +117,24 @@ function AtaxLogo({
   className?: string;
   alt: string;
 }) {
-  const [primaryOrder, setPrimaryOrder] = useState<number[]>(() =>
-    Array.from({ length: ATAX_COORDS.length }, (_, i) => i)
+  const [primaryOrder, setPrimaryOrder] = useState<number[]>(
+    () => lastAtaxFrame.primaryOrder
   );
-  const [secondaryOrder, setSecondaryOrder] = useState<number[]>([
-    0, 4, 6, 8, 12, 16, 18, 20, 24,
-  ]);
+  const [secondaryOrder, setSecondaryOrder] = useState<number[]>(
+    () => lastAtaxFrame.secondaryOrder
+  );
 
   useEffect(() => {
     const timer = window.setInterval(() => {
       const shuffled = shuffleIndices(ATAX_COORDS.length);
+      const nextSecondaryOrder = shuffled.slice(0, 9);
+      lastAtaxFrame = {
+        primaryOrder: shuffled,
+        secondaryOrder: nextSecondaryOrder,
+      };
       setPrimaryOrder(shuffled);
-      setSecondaryOrder(shuffled.slice(0, 9));
-    }, 250);
+      setSecondaryOrder(nextSecondaryOrder);
+    }, 750);
 
     return () => window.clearInterval(timer);
   }, []);
