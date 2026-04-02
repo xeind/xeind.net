@@ -134,7 +134,7 @@ function AtaxLogo({
       };
       setPrimaryOrder(shuffled);
       setSecondaryOrder(nextSecondaryOrder);
-    }, 750);
+    }, 500);
 
     return () => window.clearInterval(timer);
   }, []);
