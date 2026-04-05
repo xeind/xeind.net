@@ -1,4 +1,7 @@
+"use client";
+
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
+import { useClickSound } from "@/lib/hooks";
 import { GAP_SPACING } from "@/lib/config/spacing";
 import HeroLogo from "./HeroLogo";
 import { personalInfo } from "@/lib/data";
@@ -20,11 +23,14 @@ function HeroActionLink({
   target = "_blank",
   rel = "noopener noreferrer",
 }: HeroActionLinkProps) {
+  const { clickSoft } = useClickSound();
+
   return (
     <a
       href={href}
       target={target}
       rel={rel}
+      onClick={clickSoft}
       className="bg-card group relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background md:px-12"
       style={CSS_TRANSITIONS.border}
     >
