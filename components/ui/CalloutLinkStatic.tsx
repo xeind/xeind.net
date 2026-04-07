@@ -26,6 +26,7 @@ export default function CalloutLinkStatic({
   return (
     <Component
       href={href}
+      data-hero-sfx="click"
       className="bg-card group relative block px-12 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={CSS_TRANSITIONS.border}
       {...externalProps}

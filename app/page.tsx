@@ -4,15 +4,14 @@ import {
   ProjectGrid,
   AboutSection,
 } from "@/components/sections/LazySections";
-import { SectionBlock, SectionDivider } from "@/components/ui";
-import CalloutLinkStatic from "@/components/ui/CalloutLinkStatic";
+import { SectionBlock, SectionDivider, CalloutLink } from "@/components/ui";
 import { ArrowUpRight } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
 
 export default function Home() {
   return (
     <>
-      <CalloutLinkStatic
+      <CalloutLink
         href="/blog"
         label="Visit my blog!"
         icon={<ArrowUpRight size={16} strokeWidth={ICON_CONFIG.strokeWidth} />}
