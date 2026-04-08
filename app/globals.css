@@ -209,6 +209,13 @@ body {
   mix-blend-mode: multiply;
 }
 
+@media (max-width: 767px) {
+  .paper-background::before {
+    display: none;
+    background-image: none;
+  }
+}
+
 /* ========================================
    UNIFIED GRID SYSTEM
    Base unit: 16px × 16px cells

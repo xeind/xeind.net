@@ -33,7 +33,7 @@ export default function Footer() {
       <div className="bg-accent absolute inset-0">
         {/* Paper grain texture overlay */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-20"
+          className="pointer-events-none absolute inset-0 hidden opacity-20 md:block"
           style={{
             backgroundImage: "url('/grain-texture.webp')",
             backgroundSize: "200px 200px",
