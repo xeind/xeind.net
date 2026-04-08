@@ -1,28 +1,28 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useReducedMotion } from "@/lib/hooks";
 
-interface LogoTooltipPortalProps {
+interface AnchoredPopupProps {
   triggerRef: React.RefObject<HTMLButtonElement | null>;
   visible: boolean;
   onClose: () => void;
+  label: string;
 }
 
 const GAP = 8;
 const TAIL_W = 6;
 const TAIL_H = 5;
-const PAD_X = 8;
-const PAD_Y = 3;
 
-export default function LogoTooltipPortal({
+export default function AnchoredPopup({
   triggerRef,
   visible,
   onClose,
-}: LogoTooltipPortalProps) {
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  label,
+}: AnchoredPopupProps) {
+  const popupRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function LogoTooltipPortal({
     <AnimatePresence>
       {visible && (
         <motion.div
-          ref={tooltipRef}
+          ref={popupRef}
           initial={
             prefersReducedMotion
               ? { opacity: 0 }
@@ -117,7 +117,7 @@ export default function LogoTooltipPortal({
               dominantBaseline="central"
               className="fill-foreground font-mono text-[0.6875rem]"
             >
-              Copy logo as SVG
+              {label}
             </text>
           </svg>
         </motion.div>

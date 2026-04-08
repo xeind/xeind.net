@@ -4,47 +4,41 @@ import {
   ProjectGrid,
   AboutSection,
 } from "@/components/sections/LazySections";
-import { SectionBlock, SectionDivider, CalloutLink } from "@/components/ui";
+import { Panel, PageStack, CalloutBand } from "@/components/ui";
 import { ArrowUpRight } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
 
 export default function Home() {
   return (
-    <>
-      <CalloutLink
-        href="/blog"
-        label="Visit my blog!"
-        icon={<ArrowUpRight size={16} strokeWidth={ICON_CONFIG.strokeWidth} />}
-        external={true}
-      />
-
-      <SectionBlock
-        showGrid={false}
-        hideTopBorder={true}
-        bottomDiamondsOnly={true}
-      >
+    <PageStack
+      lead={
+        <CalloutBand
+          href="/blog"
+          label="Visit my blog!"
+          icon={
+            <ArrowUpRight size={16} strokeWidth={ICON_CONFIG.strokeWidth} />
+          }
+          external={true}
+        />
+      }
+    >
+      <Panel tone="hero" padding="lg" edges="bottom" ornaments="bottom">
         <HeroSection />
-      </SectionBlock>
+      </Panel>
 
-      <SectionDivider />
-
-      <SectionBlock>
+      <Panel>
         <AboutSection />
-      </SectionBlock>
+      </Panel>
 
-      <SectionDivider />
-
-      <SectionBlock>
+      <Panel>
         <ExperienceTimeline />
-      </SectionBlock>
+      </Panel>
 
-      <SectionDivider />
-
-      <SectionBlock>
+      <Panel>
         <ProjectGrid />
-      </SectionBlock>
+      </Panel>
 
       {/* <div className="h-(--footer-height)" aria-hidden="true" /> */}
-    </>
+    </PageStack>
   );
 }

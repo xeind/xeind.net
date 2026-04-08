@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useClickSound } from "@/lib/hooks";
+import Tooltip from "./Tooltip";
 
 interface InlineLinkProps {
   href: string;
@@ -10,6 +11,7 @@ interface InlineLinkProps {
   external?: boolean;
   className?: string;
   onHoverSound?: () => void;
+  hintLabel?: string;
 }
 
 /**
@@ -32,6 +34,7 @@ export default function InlineLink({
   external = false,
   className = "",
   onHoverSound,
+  hintLabel,
 }: InlineLinkProps) {
   const { hover, clickSoft } = useClickSound();
   const soundHandler = onHoverSound ?? hover;
@@ -44,7 +47,7 @@ export default function InlineLink({
       }
     : {};
 
-  return (
+  const link = (
     <Component
       href={href}
       onMouseEnter={soundHandler}
@@ -74,4 +77,8 @@ export default function InlineLink({
       {children}
     </Component>
   );
+
+  if (!hintLabel) return link;
+
+  return <Tooltip label={hintLabel}>{link}</Tooltip>;
 }

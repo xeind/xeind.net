@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import StaticLogo from "./StaticLogo";
-import LogoTooltipPortal from "@/components/LogoTooltipPortal";
+import AnchoredPopup from "@/components/ui/AnchoredPopup";
 import { useClickSound } from "@/lib/hooks";
 
 interface SmartLogoProps {
@@ -48,10 +48,11 @@ export default function SmartLogo({
         <StaticLogo size={size} />
       </button>
 
-      <LogoTooltipPortal
+      <AnchoredPopup
         triggerRef={buttonRef}
         visible={showPortal}
         onClose={() => setShowPortal(false)}
+        label="Copy logo as SVG"
       />
     </>
   );

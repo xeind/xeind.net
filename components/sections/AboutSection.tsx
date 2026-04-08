@@ -2,7 +2,7 @@
 
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineLink from "@/components/ui/InlineLink";
-import Tooltip from "@/components/ui/Tooltip";
+import HoverWord from "@/components/ui/HoverWord";
 
 export default function AboutSection() {
   return (
@@ -13,7 +13,10 @@ export default function AboutSection() {
       >
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and
-          microinteractions. Currently working at{" "}
+          <HoverWord hintLabel="the tiny polish bits">
+            microinteractions
+          </HoverWord>
+          . Currently working at{" "}
           <InlineLink href="https://www.pioneerdev.ai/" external>
             Pioneer
           </InlineLink>
@@ -22,11 +25,13 @@ export default function AboutSection() {
 
         <p>
           I enjoy using{" "}
-          <Tooltip label="my dotfiles">
-            <InlineLink href="https://github.com/xeind/dotfiles" external>
-              open‑source tools
-            </InlineLink>
-          </Tooltip>{" "}
+          <InlineLink
+            href="https://github.com/xeind/dotfiles"
+            external
+            hintLabel="my dotfiles"
+          >
+            open‑source tools
+          </InlineLink>{" "}
           and experiment with custom configs and self‑hosted environments to
           improve my developer workflow.
         </p>
