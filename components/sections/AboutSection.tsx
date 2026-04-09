@@ -1,6 +1,5 @@
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineLink from "@/components/ui/InlineLink";
-import HoverWord from "@/components/ui/HoverWord";
 
 export default function AboutSection() {
   return (
@@ -11,10 +10,7 @@ export default function AboutSection() {
       >
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and
-          <HoverWord hintLabel="the tiny polish bits">
-            microinteractions
-          </HoverWord>
-          . Currently working at{" "}
+          microinteractions. Currently working at{" "}
           <InlineLink href="https://www.pioneerdev.ai/" external>
             Pioneer
           </InlineLink>

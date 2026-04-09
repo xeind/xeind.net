@@ -66,7 +66,17 @@ interface ProjectLogoProps {
 
 const ATAX_X = [3, 13, 23, 33, 43] as const;
 const ATAX_Y = [0, 10, 20, 30, 40] as const;
-const ATAX_COORDS = ATAX_Y.flatMap((y) => ATAX_X.map((x) => ({ x, y })));
+const ATAX_COORDS = (() => {
+  const coords: Array<{ x: number; y: number }> = [];
+
+  for (const y of ATAX_Y) {
+    for (const x of ATAX_X) {
+      coords.push({ x, y });
+    }
+  }
+
+  return coords;
+})();
 const ATAX_PRIMARY_OPACITY = [
   0.52, 0.72, 0.72, 0.72, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.52, 0.52, 0.92,
   0.52, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.72, 0.32, 0.32, 0.32, 0.72,
