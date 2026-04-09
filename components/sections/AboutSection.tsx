@@ -1,5 +1,3 @@
-"use client";
-
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineLink from "@/components/ui/InlineLink";
 import HoverWord from "@/components/ui/HoverWord";
