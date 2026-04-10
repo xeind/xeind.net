@@ -15,6 +15,7 @@ export default function AboutSection() {
             href="https://www.pioneerdev.ai/"
             target="_blank"
             rel="noopener noreferrer"
+            data-hero-sfx="click"
             className="inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <InlineIcon src="/projects/pioneer.svg" />
@@ -30,6 +31,7 @@ export default function AboutSection() {
             target="_blank"
             rel="noopener noreferrer"
             title="my dotfiles"
+            data-hero-sfx="click"
             className="inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             open‑source tools
