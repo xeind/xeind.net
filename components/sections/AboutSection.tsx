@@ -1,5 +1,5 @@
 import { STACK_SPACING } from "@/lib/config/spacing";
-import InlineLink from "@/components/ui/InlineLink";
+import InlineIcon from "@/components/ui/InlineIcon";
 
 export default function AboutSection() {
   return (
@@ -11,21 +11,29 @@ export default function AboutSection() {
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and
           microinteractions. Currently working at{" "}
-          <InlineLink href="https://www.pioneerdev.ai/" external>
+          <a
+            href="https://www.pioneerdev.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <InlineIcon src="/projects/pioneer.svg" />
             Pioneer
-          </InlineLink>
+          </a>
           .
         </p>
 
         <p>
           I enjoy using{" "}
-          <InlineLink
+          <a
             href="https://github.com/xeind/dotfiles"
-            external
-            hintLabel="my dotfiles"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="my dotfiles"
+            className="inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             open‑source tools
-          </InlineLink>{" "}
+          </a>{" "}
           and experiment with custom configs and self‑hosted environments to
           improve my developer workflow.
         </p>
