@@ -399,10 +399,17 @@ export default function ProjectGrid() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onMouseEnter={hover}
-                        className="hover:text-tertiary border-b border-dashed border-accent/30 hover:border-solid pb-px transition-all motion-reduce:transition-none"
+                        className="hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
                         style={t}
                       >
-                        {activeProject.title}
+                        <span className="border-b border-dashed border-accent/30 pb-px transition-all hover:border-solid">
+                          {activeProject.title}
+                        </span>
+                        <ArrowUpRight
+                          size={ICON_CONFIG.sizes.md}
+                          strokeWidth={ICON_CONFIG.strokeWidth}
+                          className="mt-0.5 shrink-0"
+                        />
                       </a>
                     ) : (
                       activeProject.title
@@ -481,7 +488,7 @@ export default function ProjectGrid() {
               {/* External link indicator */}
               {(project.liveUrl || project.githubUrl) && (
                 <div
-                  className="absolute top-4 right-4 z-10 opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none leading-none"
+                  className="absolute top-4 right-4 z-10 opacity-0 transition-all group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none leading-none"
                   style={t}
                 >
                   <a
