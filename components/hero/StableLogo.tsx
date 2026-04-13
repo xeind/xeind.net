@@ -116,7 +116,7 @@ export default function StableLogo({
   );
 
   return (
-    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+    <DropdownMenu.Root modal={false} open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger asChild>
         <button
           onContextMenu={handleContextMenu}

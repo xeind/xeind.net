@@ -1,5 +1,3 @@
-"use client";
-
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 // Build-time git info (set during build). Prefer a commit-date env var for determinism
