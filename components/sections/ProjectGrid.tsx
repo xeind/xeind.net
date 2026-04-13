@@ -399,6 +399,7 @@ export default function ProjectGrid() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onMouseEnter={hover}
+                        onClick={clickLow}
                         className="hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
                         style={t}
                       >
