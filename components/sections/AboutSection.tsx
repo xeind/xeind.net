@@ -31,7 +31,6 @@ export default function AboutSection() {
             href="https://github.com/xeind/dotfiles"
             external
             hintLabel="my dotfiles"
-            onHoverSound={() => {}}
           >
             open‑source tools
           </InlineLink>{" "}

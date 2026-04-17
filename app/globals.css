@@ -241,6 +241,79 @@ body {
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
 }
 
+/* ========================================
+   SHARED TRANSITION TIMING
+   0.2s cubic-bezier(0.33, 1, 0.68, 1) — easeOutCubic
+   Used by borders, corners, hover effects
+   ======================================== */
+
+.t-border {
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* ========================================
+   CORNER ACCENTS — Expanding L-shaped corners
+   Used on timeline dots, buttons, cards
+   Each corner = wrapper + ::before (h-line) + ::after (v-line)
+   ======================================== */
+
+/* Shared corner line styles */
+.ca-tl, .ca-tr, .ca-bl, .ca-br {
+  position: absolute;
+  transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.ca-tl::before, .ca-tl::after,
+.ca-tr::before, .ca-tr::after,
+.ca-bl::before, .ca-bl::after,
+.ca-br::before, .ca-br::after {
+  content: "";
+  display: block;
+  background-color: var(--color-accent);
+  transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Horizontal line (h-line): 1px tall, 0.25rem wide */
+.ca-tl::before, .ca-tr::before { height: 1px; width: 0.25rem; }
+.ca-bl::after, .ca-br::after { height: 1px; width: 0.25rem; }
+
+/* Vertical line (v-line): 0.25rem tall, 1px wide */
+.ca-tl::after, .ca-tr::after { height: 0.25rem; width: 1px; }
+.ca-bl::before, .ca-br::before { height: 0.25rem; width: 1px; }
+
+/* Positioning */
+.ca-tl { left: 0; top: 0; }
+.ca-tr { right: 0; top: 0; }
+.ca-bl { bottom: 0; left: 0; }
+.ca-br { bottom: 0; right: 0; }
+
+/* Right-aligned corners */
+.ca-tr::before, .ca-tr::after,
+.ca-br::before, .ca-br::after { margin-left: auto; }
+
+/* Group hover: expand corners outward */
+.group:hover .ca-tl, .group:focus-within .ca-tl { transform: translate(-0.25rem, -0.25rem); }
+.group:hover .ca-tr, .group:focus-within .ca-tr { transform: translate(0.25rem, -0.25rem); }
+.group:hover .ca-bl, .group:focus-within .ca-bl { transform: translate(-0.25rem, 0.25rem); }
+.group:hover .ca-br, .group:focus-within .ca-br { transform: translate(0.25rem, 0.25rem); }
+
+/* Group hover: lines grow and recolor */
+.group:hover .ca-tl::before, .group:focus-within .ca-tl::before,
+.group:hover .ca-tr::before, .group:focus-within .ca-tr::before,
+.group:hover .ca-bl::after, .group:focus-within .ca-bl::after,
+.group:hover .ca-br::after, .group:focus-within .ca-br::after {
+  width: 0.5rem;
+  background-color: var(--color-tertiary);
+}
+
+.group:hover .ca-tl::after, .group:focus-within .ca-tl::after,
+.group:hover .ca-tr::after, .group:focus-within .ca-tr::after,
+.group:hover .ca-bl::before, .group:focus-within .ca-bl::before,
+.group:hover .ca-br::before, .group:focus-within .ca-br::before {
+  height: 0.5rem;
+  background-color: var(--color-tertiary);
+}
+
 /* S-Tier Compositor-Only Animations */
 @media (prefers-reduced-motion: reduce) {
   *,

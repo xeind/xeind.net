@@ -1,9 +1,11 @@
 "use client";
 
+import { lazy, Suspense } from "react";
 import Link from "next/link";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useClickSound } from "@/lib/hooks";
-import Tooltip from "./Tooltip";
+
+const Tooltip = lazy(() => import("./Tooltip"));
 
 interface InlineLinkProps {
   href: string;
@@ -80,5 +82,9 @@ export default function InlineLink({
 
   if (!hintLabel) return link;
 
-  return <Tooltip label={hintLabel}>{link}</Tooltip>;
+  return (
+    <Suspense fallback={link}>
+      <Tooltip label={hintLabel}>{link}</Tooltip>
+    </Suspense>
+  );
 }

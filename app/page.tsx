@@ -1,9 +1,7 @@
 import HeroSection from "@/components/hero/HeroSection";
-import {
-  ExperienceTimeline,
-  ProjectGrid,
-  AboutSection,
-} from "@/components/sections/LazySections";
+import { ProjectGrid } from "@/components/sections/LazySections";
+import AboutSection from "@/components/sections/AboutSection";
+import ExperienceTimeline from "@/components/sections/ExperienceTimeline";
 import { Panel, PageStack, CalloutBand } from "@/components/ui";
 import { ArrowUpRight } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
