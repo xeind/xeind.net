@@ -1,5 +1,3 @@
-"use client";
-
 import dynamic from "next/dynamic";
 
 // Lazy-loaded ProjectGrid with loading state to prevent CLS.

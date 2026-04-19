@@ -1,5 +1,3 @@
-"use client";
-
 import { DURATION, EASING } from "@/lib/config";
 
 interface BadgeProps {

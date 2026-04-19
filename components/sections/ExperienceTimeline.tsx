@@ -1,17 +1,13 @@
-"use client";
-
 import { experiences } from "@/lib/data";
 import { Badge, InlineLink } from "@/components/ui";
 import { Experience } from "@/lib/types";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
-import { useReducedMotion, useClickSound } from "@/lib/hooks";
 
 interface ExperienceItemProps {
   exp: Experience;
-  nudge: () => void;
 }
 
-function ExperienceItem({ exp, nudge }: ExperienceItemProps) {
+function ExperienceItem({ exp }: ExperienceItemProps) {
   return (
     <article className="group relative mb-8 flex gap-6 last:mb-0">
       {exp.id !== experiences[experiences.length - 1].id && (
@@ -49,7 +45,6 @@ function ExperienceItem({ exp, nudge }: ExperienceItemProps) {
                   <InlineLink
                     href={exp.companyUrl}
                     external
-                    onHoverSound={nudge}
                     className="font-medium"
                   >
                     {exp.company}
@@ -85,15 +80,12 @@ function ExperienceItem({ exp, nudge }: ExperienceItemProps) {
 }
 
 export default function ExperienceTimeline() {
-  const prefersReducedMotion = useReducedMotion();
-  const { nudge } = useClickSound();
-
   return (
     <div className={STACK_SPACING.normal}>
       <h2 className="text-foreground font-serif text-2xl">Experience</h2>
 
       {experiences.map((exp) => (
-        <ExperienceItem key={exp.id} exp={exp} nudge={nudge} />
+        <ExperienceItem key={exp.id} exp={exp} />
       ))}
     </div>
   );
