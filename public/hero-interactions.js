@@ -37,7 +37,7 @@
     filter.frequency.value = 3000 + Math.random() * 400;
     filter.Q.value = 2;
     const gain = audio.createGain();
-    gain.gain.value = 0.12 + Math.random() * 0.03;
+    gain.gain.value = 0.2 + Math.random() * 0.04;
     noise.connect(filter);
     filter.connect(gain);
     gain.connect(audio.destination);

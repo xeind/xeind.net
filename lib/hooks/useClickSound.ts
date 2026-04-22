@@ -237,7 +237,7 @@ function playClick() {
   filter.Q.value = 3;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.5 + Math.random() * 0.08;
+  gain.gain.value = 0.62 + Math.random() * 0.1;
 
   noise.connect(filter);
   filter.connect(gain);
@@ -294,7 +294,7 @@ function playClickHigh() {
   filter.Q.value = 4;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.18 + Math.random() * 0.06;
+  gain.gain.value = 0.26 + Math.random() * 0.07;
 
   noise.connect(filter);
   filter.connect(gain);
@@ -324,7 +324,7 @@ function playClickLow() {
   filter.Q.value = 2.5;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.26 + Math.random() * 0.06;
+  gain.gain.value = 0.36 + Math.random() * 0.08;
 
   noise.connect(filter);
   filter.connect(gain);
@@ -354,7 +354,7 @@ function playClickSharp() {
   filter.Q.value = 5;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.2 + Math.random() * 0.05;
+  gain.gain.value = 0.3 + Math.random() * 0.06;
 
   noise.connect(filter);
   filter.connect(gain);
@@ -384,7 +384,7 @@ function playClickSoft() {
   filter.Q.value = 2;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.12 + Math.random() * 0.03;
+  gain.gain.value = 0.2 + Math.random() * 0.04;
 
   noise.connect(filter);
   filter.connect(gain);
