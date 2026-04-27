@@ -2,32 +2,28 @@ import { Project } from "@/lib/types";
 
 export const projects: Project[] = [
   {
-    id: "nightingale-zed",
-    title: "Nightingale for Zed",
+    id: "nightingale",
+    title: "Nightingale",
     type: "Theme",
-    description: "Warm contrast theme for Zed editor",
+    description: "Warm contrast theme",
     longDescription: [
-      "Nightingale and Lightingale themes for the Zed editor",
-      "Comfortable warm contrast designed for long coding sessions",
+      "Warm contrast theme for Zed and Neovim.",
+      "Dark and light variants with full TreeSitter support for Neovim.",
     ],
-    technologies: ["Zed", "JSON"],
-    liveUrl: "https://zed.dev/extensions/nightingale",
-    githubUrl: "https://github.com/xeind/nightingale-zed",
+    projectLinks: [
+      {
+        label: "Install for Zed",
+        url: "https://zed.dev/extensions/nightingale",
+      },
+      {
+        label: "Neovim Plugin",
+        url: "https://github.com/xeind/nightingale.nvim",
+      },
+    ],
+    technologies: ["Zed", "Neovim", "Lua", "JSON", "TreeSitter"],
     featured: true,
     year: 2025,
-    imageUrl: "/projects/nightingale-zed.svg",
-  },
-  {
-    id: "nightingale-nvim",
-    title: "nightingale.nvim",
-    type: "Theme",
-    description: "Neovim color scheme",
-    longDescription: ["Dark and light variants with full TreeSitter support"],
-    technologies: ["Lua", "Neovim", "TreeSitter"],
-    githubUrl: "https://github.com/xeind/nightingale.nvim",
-    featured: true,
-    year: 2025,
-    imageUrl: "/projects/nightingale-nvim.svg",
+    imageUrl: "/projects/nightingale.svg",
   },
   {
     id: "atax",

@@ -23,6 +23,10 @@ export interface Project {
   type: string;
   description: string;
   longDescription?: string[];
+  projectLinks?: Array<{
+    label: string;
+    url: string;
+  }>;
   technologies: string[];
   imageUrl?: string;
   liveUrl?: string;

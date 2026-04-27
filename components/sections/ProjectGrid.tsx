@@ -39,6 +39,10 @@ const ICON_SIZES = {
   large: { grid: "h-12 sm:h-14", modal: "h-14 sm:h-16" },
 };
 
+function getPrimaryProjectUrl(project: (typeof projects)[0]) {
+  return project.liveUrl || project.githubUrl;
+}
+
 /** Dashed borders (4 sides) that become solid on group hover */
 function DashedBorders() {
   return (
@@ -178,6 +182,9 @@ export default function ProjectGrid() {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
   const prefersReducedMotion = useReducedMotion();
   const { hover, clickLow, clickSharp } = useClickSound();
+  const activeProjectUrl = activeProject
+    ? getPrimaryProjectUrl(activeProject)
+    : undefined;
 
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
@@ -393,9 +400,9 @@ export default function ProjectGrid() {
                         : SPRING_CONFIG.noBounce
                     }
                   >
-                    {activeProject.liveUrl || activeProject.githubUrl ? (
+                    {activeProjectUrl ? (
                       <a
-                        href={activeProject.liveUrl || activeProject.githubUrl}
+                        href={activeProjectUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         onMouseEnter={hover}
@@ -416,6 +423,39 @@ export default function ProjectGrid() {
                       activeProject.title
                     )}
                   </motion.h3>
+
+                  {activeProject.projectLinks &&
+                    activeProject.projectLinks.length > 0 && (
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                        className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
+                      >
+                        {activeProject.projectLinks.map((link) => (
+                          <a
+                            key={link.url}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onMouseEnter={hover}
+                            onClick={clickLow}
+                            className="text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
+                            style={t}
+                          >
+                            <span className="border-b border-dashed border-accent/30 pb-px transition-all hover:border-solid">
+                              {link.label}
+                            </span>
+                            <ArrowUpRight
+                              size={ICON_CONFIG.sizes.sm}
+                              strokeWidth={ICON_CONFIG.strokeWidth}
+                              className="shrink-0"
+                            />
+                          </a>
+                        ))}
+                      </motion.div>
+                    )}
 
                   {/* Technologies */}
                   {activeProject.technologies &&
@@ -469,110 +509,116 @@ export default function ProjectGrid() {
         <div
           className={`grid w-full grid-cols-2 ${GAP_SPACING.sm} md:grid-cols-3`}
         >
-          {projects.map((project) => (
-            <motion.button
-              layoutId={`card-${project.id}`}
-              key={project.id}
-              onMouseEnter={hover}
-              onClick={() => handleProjectClick(project)}
-              className="group bg-card relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
-              style={{ borderRadius: 0 }}
-              transition={
-                prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
-              }
-              aria-label={`View details for ${project.title}`}
-            >
-              <DashedBorders />
-              <CornerBrackets />
-              <GradientBackground />
+          {projects.map((project) => {
+            const primaryUrl = getPrimaryProjectUrl(project);
 
-              {/* External link indicator */}
-              {(project.liveUrl || project.githubUrl) && (
-                <div
-                  className="absolute top-4 right-4 z-10 opacity-0 transition-all group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none leading-none"
-                  style={t}
-                >
-                  <a
-                    href={project.liveUrl || project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    className="text-accent hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
-                    style={tFast}
-                    aria-label={`Open ${project.title} in new tab`}
-                  >
-                    <ArrowUpRight
-                      size={ICON_CONFIG.sizes.md}
-                      strokeWidth={ICON_CONFIG.strokeWidth}
-                    />
-                  </a>
-                </div>
-              )}
-
-              {/* Image area with layoutId */}
-              <motion.div
-                layoutId={`image-${project.id}`}
-                className="bg-muted absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed border-accent/30"
+            return (
+              <motion.button
+                layoutId={`card-${project.id}`}
+                key={project.id}
+                onMouseEnter={hover}
+                onClick={() => handleProjectClick(project)}
+                className="group bg-card relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+                style={{ borderRadius: 0 }}
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
                     : SPRING_CONFIG.noBounce
                 }
+                aria-label={`View details for ${project.title}`}
               >
-                <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-                {project.imageUrl ? (
-                  <ProjectLogo
-                    projectId={project.id}
-                    theme={resolvedTheme}
-                    alt={project.title}
-                    className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
-                  />
-                ) : (
-                  <div className="text-foreground/60 font-mono text-[0.6875rem]">
-                    {project.id}
+                <DashedBorders />
+                <CornerBrackets />
+                <GradientBackground />
+
+                {/* External link indicator */}
+                {primaryUrl && !project.projectLinks?.length && (
+                  <div
+                    className="absolute top-4 right-4 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+                    style={t}
+                  >
+                    <a
+                      href={primaryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      className="text-accent hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
+                      style={tFast}
+                      aria-label={`Open ${project.title} in new tab`}
+                    >
+                      <ArrowUpRight
+                        size={ICON_CONFIG.sizes.md}
+                        strokeWidth={ICON_CONFIG.strokeWidth}
+                      />
+                    </a>
                   </div>
                 )}
-              </motion.div>
 
-              {/* Card content with layoutId */}
-              <motion.div
-                layoutId={`content-${project.id}`}
-                className="absolute inset-x-0 bottom-0 flex h-1/2 flex-col p-3 md:p-5"
-                transition={
-                  prefersReducedMotion
-                    ? { duration: 0 }
-                    : SPRING_CONFIG.noBounce
-                }
-              >
-                <motion.p
-                  layoutId={`type-${project.id}`}
-                  className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
+                {/* Image area with layoutId */}
+                <motion.div
+                  layoutId={`image-${project.id}`}
+                  className="bg-muted absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed border-accent/30"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
                       : SPRING_CONFIG.noBounce
                   }
                 >
-                  {project.type}
-                </motion.p>
-                <motion.h3
-                  layoutId={`title-${project.id}`}
-                  className="text-foreground line-clamp-2 pr-6 font-serif text-sm leading-tight md:text-base"
+                  <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
+                  {project.imageUrl ? (
+                    <ProjectLogo
+                      projectId={project.id}
+                      theme={resolvedTheme}
+                      alt={project.title}
+                      className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
+                    />
+                  ) : (
+                    <div className="text-foreground/60 font-mono text-[0.6875rem]">
+                      {project.id}
+                    </div>
+                  )}
+                </motion.div>
+
+                {/* Card content with layoutId */}
+                <motion.div
+                  layoutId={`content-${project.id}`}
+                  className="absolute inset-x-0 bottom-0 flex h-1/2 flex-col p-3 md:p-5"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
                       : SPRING_CONFIG.noBounce
                   }
                 >
-                  {project.title}
-                </motion.h3>
-                <p className="text-foreground/60 mt-2 hidden text-xs leading-relaxed line-clamp-2 min-[864px]:mt-auto min-[864px]:block lg:text-sm">
-                  {project.description}
-                </p>
-              </motion.div>
-            </motion.button>
-          ))}
+                  <motion.p
+                    layoutId={`type-${project.id}`}
+                    className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0 }
+                        : SPRING_CONFIG.noBounce
+                    }
+                  >
+                    {project.type}
+                  </motion.p>
+                  <motion.h3
+                    layoutId={`title-${project.id}`}
+                    className="text-foreground line-clamp-2 pr-6 font-serif text-sm leading-tight md:text-base"
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0 }
+                        : SPRING_CONFIG.noBounce
+                    }
+                  >
+                    {project.title}
+                  </motion.h3>
+                  <p className="text-foreground/60 mt-2 hidden text-xs leading-relaxed line-clamp-2 min-[864px]:mt-auto min-[864px]:block lg:text-sm">
+                    {project.description}
+                  </p>
+                </motion.div>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
     </>
