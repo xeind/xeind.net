@@ -8,7 +8,6 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["motion", "lucide-react"],
-    inlineCss: true,
   },
   transpilePackages: ["@chenglou/pretext"],
   env: {
