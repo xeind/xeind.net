@@ -172,15 +172,7 @@ export default function ThemeSwitcher() {
           {/* Right border - dashed, solid on hover */}
           <div className="border-accent/30 pointer-events-none absolute top-0 right-0 bottom-0 w-px border-r border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
 
-          <motion.span
-            className="relative z-10 inline-flex"
-            animate={{ rotate: 0 }}
-            whileHover={shouldAnimate ? { rotate: 12 } : {}}
-            transition={{
-              duration: DURATION.fast,
-              ease: EASING.easeOutCubic as [number, number, number, number],
-            }}
-          >
+          <span className="relative z-10 inline-flex">
             {currentThemeData?.icon ? (
               <currentThemeData.icon
                 size={themeIconSize}
@@ -192,7 +184,7 @@ export default function ThemeSwitcher() {
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             )}
-          </motion.span>
+          </span>
           <span className="relative z-10">{currentThemeData?.label}</span>
         </button>
       </DropdownMenu.Trigger>
