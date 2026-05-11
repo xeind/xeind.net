@@ -16,7 +16,7 @@ export const projects: Project[] = [
         url: "https://zed.dev/extensions/nightingale",
       },
       {
-        label: "Neovim Plugin",
+        label: "Neovim Theme",
         url: "https://github.com/xeind/nightingale.nvim",
       },
     ],
