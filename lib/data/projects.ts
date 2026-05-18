@@ -5,7 +5,7 @@ export const projects: Project[] = [
     id: "nightingale",
     title: "Nightingale",
     type: "Theme",
-    description: "Warm contrast theme",
+    description: "Theme for Zed and Neovim",
     longDescription: [
       "Warm contrast theme for Zed and Neovim.",
       "Dark and light variants with full TreeSitter support for Neovim.",
