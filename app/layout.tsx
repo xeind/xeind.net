@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Footer from "@/components/layout/LazyFooter";
 import CornerDiamond from "@/components/ui/CornerDiamond";
@@ -162,6 +164,8 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
