@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Xein Deniel",
     images: [
       {
-        url: "/site-ograph.jpg",
+        url: "/ograph.jpg",
         width: 1200,
         height: 630,
         alt: "Xein Deniel",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     description:
       "Full-stack developer specializing in high-performance web applications with expertise in TypeScript, React, and Rust.",
     creator: "@xeinvi",
-    images: ["/site-ograph.jpg"],
+    images: ["/ograph.jpg"],
   },
   robots: {
     index: true,
