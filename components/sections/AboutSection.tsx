@@ -1,6 +1,8 @@
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineIcon from "@/components/ui/InlineIcon";
-import InlineLink from "@/components/ui/InlineLink";
+
+const inlineLinkClass =
+  "inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 export default function AboutSection() {
   return (
@@ -27,13 +29,16 @@ export default function AboutSection() {
 
         <p>
           I enjoy using{" "}
-          <InlineLink
+          <a
             href="https://github.com/xeind/dotfiles"
-            external
-            hintLabel="my dotfiles"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-hero-sfx="click"
+            aria-label="open-source tools (opens in new tab)"
+            className={inlineLinkClass}
           >
             open‑source tools
-          </InlineLink>{" "}
+          </a>{" "}
           and experiment with custom configs and self‑hosted environments to
           improve my developer workflow.
         </p>

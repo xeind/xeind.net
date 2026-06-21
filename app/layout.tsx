@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Footer from "@/components/layout/LazyFooter";
 import CornerDiamond from "@/components/ui/CornerDiamond";
@@ -92,13 +90,6 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        <link
-          rel="preload"
-          href="/fonts/Inter-Bold.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
 
         {/* Inline critical CSS to prevent render blocking */}
         <style
@@ -106,8 +97,8 @@ export default function RootLayout({
             __html: `
               @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional}
               @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional}
-              @font-face{font-family:Inter;src:url(/fonts/Inter-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional}
-              @font-face{font-family:Inter;src:url(/fonts/Inter-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional}
+              @font-face{font-family:Inter;src:url(/fonts/Inter-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional;size-adjust:100%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
+              @font-face{font-family:Inter;src:url(/fonts/Inter-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional;size-adjust:100%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
               @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional}
               @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional}
               :root{--color-background:hsl(0 0% 100%);--color-foreground:hsl(0 0% 0%);--color-card:hsl(0 0% 100%);--color-border:hsl(0 0% 85%);--color-muted:hsl(0 0% 96%);--color-accent:hsl(0 0% 20%);--color-accent-hover:hsl(0 0% 10%);--color-destructive:hsl(0 0% 40%);--color-success:hsl(0 0% 30%);--color-primary:hsl(0 0% 20%);--color-primary-hover:hsl(0 0% 10%);--color-secondary:hsl(0 0% 35%);--color-secondary-hover:hsl(0 0% 25%);--color-tertiary:hsl(0 0% 10%);--color-tertiary-hover:hsl(0 0% 20%);--color-info:hsl(0 0% 45%);--color-warning:hsl(0 0% 40%);--font-family-sans:"Inter",system-ui,sans-serif;--font-family-mono:"Commit Mono",Menlo,Monaco,monospace;--footer-height:128px}
@@ -164,8 +155,6 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

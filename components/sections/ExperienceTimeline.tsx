@@ -1,7 +1,10 @@
 import { experiences } from "@/lib/data";
-import { Badge, InlineLink } from "@/components/ui";
+import { Badge } from "@/components/ui";
 import { Experience } from "@/lib/types";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
+
+const inlineLinkClass =
+  "inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 interface ExperienceItemProps {
   exp: Experience;
@@ -42,13 +45,16 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               {exp.companyUrl ? (
                 <span className="inline-block">
-                  <InlineLink
+                  <a
                     href={exp.companyUrl}
-                    external
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-hero-sfx="click"
+                    aria-label={`${exp.company} (opens in new tab)`}
                     className="font-medium"
                   >
-                    {exp.company}
-                  </InlineLink>
+                    <span className={inlineLinkClass}>{exp.company}</span>
+                  </a>
                 </span>
               ) : (
                 <span className="font-medium">{exp.company}</span>

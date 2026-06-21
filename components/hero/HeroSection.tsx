@@ -1,5 +1,5 @@
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
-import HeroLogo from "./HeroLogo";
+import StaticLogo from "./StaticLogo";
 import { GAP_SPACING } from "@/lib/config/spacing";
 import { personalInfo } from "@/lib/data";
 import { ICON_CONFIG } from "@/lib/config/design";
@@ -143,7 +143,7 @@ export default function HeroSection() {
     <div className="flex flex-col items-center md:items-start">
       {/* Logo, Name and Location */}
       <div className="mb-6 flex flex-row items-center gap-6">
-        <HeroLogo size={64} className="text-foreground shrink-0" />
+        <StaticLogo size={64} className="text-foreground shrink-0" />
 
         <div className="flex flex-col gap-1 items-start text-left">
           <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
