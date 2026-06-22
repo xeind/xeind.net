@@ -1,5 +1,5 @@
 import { experiences } from "@/lib/data";
-import { Badge } from "@/components/ui";
+import Badge from "@/components/ui/Badge";
 import { Experience } from "@/lib/types";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 

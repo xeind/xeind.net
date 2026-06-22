@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowUpRight } from "lucide-react";
 import { projects } from "@/lib/data";
-import { Badge } from "@/components/ui";
+import Badge from "@/components/ui/Badge";
 import ProjectLogo from "@/components/sections/ProjectLogo";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";

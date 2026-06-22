@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Panel, InlineLink, PageStack } from "@/components/ui";
+import Panel from "@/components/ui/Panel";
+import InlineLink from "@/components/ui/InlineLink";
+import PageStack from "@/components/ui/PageStack";
 import { toolCategories } from "@/lib/data";
 
 export const metadata: Metadata = {

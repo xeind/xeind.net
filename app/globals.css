@@ -2,16 +2,20 @@
 
 @import "tailwindcss";
 
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
+@keyframes pioneer-sparkle-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.animate-spin-slow {
-  animation: spin-slow 4s linear infinite;
+.pioneer-sparkle-cutout {
+  animation: pioneer-sparkle-spin 4s linear infinite;
+  transform-box: view-box;
+  transform-origin: 48.76% 39.09%;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin-slow {
+  .pioneer-sparkle-cutout {
     animation: none;
   }
 }

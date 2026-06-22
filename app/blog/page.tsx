@@ -1,4 +1,5 @@
-import { Panel, PageStack } from "@/components/ui";
+import Panel from "@/components/ui/Panel";
+import PageStack from "@/components/ui/PageStack";
 
 export default function BlogsPage() {
   return (

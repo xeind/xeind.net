@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui";
-import { SectionBlock } from "@/components/ui";
+import Badge from "@/components/ui/Badge";
+import SectionBlock from "@/components/ui/SectionBlock";
 
 export default function BadgeDemo() {
   return (
