@@ -80,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning style={{ backgroundColor: "#f5f5f5" }}>
       <head>
         {/* Preload primary UI fonts BEFORE inline CSS so browser reuses them */}
         <link
@@ -116,16 +116,11 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  const theme = localStorage.getItem('theme') || 'system';
-                  if (theme === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    if (prefersDark) {
-                      document.documentElement.setAttribute('data-theme', 'dark');
-                    }
-                  } else if (theme !== 'light') {
-                    document.documentElement.setAttribute('data-theme', theme);
-                  }
-                } catch (e) {}
+                  var d=document.documentElement,t=localStorage.getItem('theme')||'system';
+                  if(t==='system'){if(window.matchMedia('(prefers-color-scheme: dark)').matches){d.setAttribute('data-theme','dark');d.style.backgroundColor='#262626'}}
+                  else if(t==='dark'){d.setAttribute('data-theme','dark');d.style.backgroundColor='#262626'}
+                  else if(t==='nightingale'){d.setAttribute('data-theme','nightingale');d.style.backgroundColor='#181818'}
+                } catch(e) {}
               })();
             `,
           }}
