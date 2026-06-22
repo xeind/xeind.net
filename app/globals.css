@@ -2,6 +2,20 @@
 
 @import "tailwindcss";
 
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow {
+    animation: none;
+  }
+}
+
 /* ========================================
    CSS RESET - Normalize browser defaults
    Applied after Tailwind to preserve utilities

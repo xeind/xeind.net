@@ -204,6 +204,20 @@ function AtaxLogo({
   );
 }
 
+const PIONEER_P_BODY =
+  "M10.33,0c2.68,0,4.94.87,6.76,2.62,1.82,1.75,2.74,3.98,2.74,6.69s-.91,4.94-2.74,6.69c-1.82,1.75-4.08,2.62-6.76,2.62h-2.67c-.48,0-.86.39-.86.86v3.94c0,.49-.39.88-.88.88H.8c-.44,0-.8-.36-.8-.8V.86c0-.48.39-.86.86-.86h9.47Z";
+
+const PIONEER_SPARKLE =
+  "M8.71,5.96c.22-1.04,1.68-1.04,1.91,0v.05s.01,0,.01,0c0,.03.01.06.02.1.29,1.25,1.29,2.21,2.54,2.43,1.06.19,1.06,1.74,0,1.92-1.26.22-2.26,1.19-2.54,2.45l-.03.13c-.23,1.03-1.69,1.03-1.91,0l-.02-.12c-.27-1.27-1.27-2.24-2.53-2.46-1.06-.19-1.06-1.73,0-1.92,1.25-.22,2.25-1.19,2.53-2.45l.02-.09v-.04Z";
+
+const PIONEER_SPARKLE_CENTER = "9.67 9.5";
+
+const PIONEER_THEME: Record<ResolvedTheme, { body: string }> = {
+  light: { body: "#1a1a1a" },
+  dark: { body: "#e6e6e6" },
+  nightingale: { body: "#DCD7BA" },
+};
+
 export default function ProjectLogo({
   projectId,
   theme,
@@ -212,6 +226,47 @@ export default function ProjectLogo({
 }: ProjectLogoProps) {
   if (projectId === "atax") {
     return <AtaxLogo theme={theme} className={className} alt={alt} />;
+  }
+
+  if (projectId === "pioneerdev-ai") {
+    const colors = PIONEER_THEME[theme];
+    return (
+      <span
+        role="img"
+        aria-label={alt}
+        className={clsx("inline-flex items-center justify-center", className)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 19.83 24.3"
+          className="h-full w-auto max-w-full"
+        >
+          <defs>
+            <mask id="pioneer-sparkle-mask">
+              <rect width="100%" height="100%" fill="white" />
+              <path
+                d={PIONEER_SPARKLE}
+                fill="black"
+              >
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from={`0 ${PIONEER_SPARKLE_CENTER}`}
+                  to={`360 ${PIONEER_SPARKLE_CENTER}`}
+                  dur="4s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </mask>
+          </defs>
+          <path
+            d={PIONEER_P_BODY}
+            fill={colors.body}
+            mask="url(#pioneer-sparkle-mask)"
+          />
+        </svg>
+      </span>
+    );
   }
 
   const logoSvg = PROJECT_LOGO_SVGS[projectId]?.[theme];

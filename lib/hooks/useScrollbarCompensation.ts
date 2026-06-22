@@ -11,8 +11,8 @@ export function useScrollbarCompensation(isOpen: boolean) {
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
 
-      // Prevent scroll on HTML element
-      document.documentElement.style.overflow = "hidden";
+      // Prevent scroll without changing the root stacking/compositing context.
+      document.body.style.overflow = "hidden";
 
       // Set CSS variable for fixed elements to use
       document.documentElement.style.setProperty(
@@ -24,14 +24,14 @@ export function useScrollbarCompensation(isOpen: boolean) {
       document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
       // Restore everything
-      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
       document.documentElement.style.removeProperty("--scrollbar-width");
       document.body.style.paddingRight = "";
     }
 
     // Cleanup on unmount
     return () => {
-      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
       document.documentElement.style.removeProperty("--scrollbar-width");
       document.body.style.paddingRight = "";
     };
