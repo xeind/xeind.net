@@ -53,6 +53,15 @@ export default function ThemeSwitcher() {
   const shouldAnimate = !prefersReducedMotion && isFinePointer;
 
   const applyThemeInstantly = useCallback((theme: string) => {
+    const setRootBackground = (actualTheme: string) => {
+      document.documentElement.style.backgroundColor =
+        actualTheme === "dark"
+          ? "#262626"
+          : actualTheme === "nightingale"
+            ? "#181818"
+            : "#f5f5f5";
+    };
+
     if (theme === "system") {
       // Detect system preference
       const prefersDark = window.matchMedia(
@@ -65,10 +74,13 @@ export default function ThemeSwitcher() {
       } else {
         document.documentElement.setAttribute("data-theme", actualTheme);
       }
+      setRootBackground(actualTheme);
     } else if (theme === "light") {
       document.documentElement.removeAttribute("data-theme");
+      setRootBackground("light");
     } else {
       document.documentElement.setAttribute("data-theme", theme);
+      setRootBackground(theme);
     }
   }, []);
 
