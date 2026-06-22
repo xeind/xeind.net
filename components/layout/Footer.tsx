@@ -33,7 +33,7 @@ export default function Footer() {
         <div
           className="pointer-events-none absolute inset-0 hidden opacity-20 md:block"
           style={{
-            backgroundImage: "url('/grain-texture.webp')",
+            // backgroundImage: "url('/grain-texture.webp')",
             backgroundSize: "200px 200px",
             backgroundRepeat: "repeat",
           }}

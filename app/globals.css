@@ -211,7 +211,7 @@ body {
 
 @media (min-width: 768px) {
   .paper-background::before {
-    background-image: url("/grain-texture.webp");
+    /* background-image: url("/grain-texture.webp"); */
   }
 }
 
