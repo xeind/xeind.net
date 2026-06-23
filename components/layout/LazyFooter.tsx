@@ -2,11 +2,10 @@
 
 import dynamic from "next/dynamic";
 
-// Lazy-load Footer to remove ThemeSwitcher's motion dependency from critical path.
-// Footer is below-the-fold and not critical for FCP/LCP metrics.
-// This keeps smooth animations while achieving 98-100 Lighthouse score.
+// Lazy-load Footer to defer ThemeSwitcher's motion dependency from critical path.
+// Footer is fixed behind content (-z-10), not visible on initial load.
 const Footer = dynamic(() => import("./Footer"), {
-  ssr: true, // Keep SSR for SEO and to prevent layout shift
+  ssr: false,
 });
 
 export default Footer;
