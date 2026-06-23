@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
@@ -216,6 +216,53 @@ const PIONEER_THEME: Record<ResolvedTheme, { body: string }> = {
   nightingale: { body: "#DCD7BA" },
 };
 
+function PioneerLogo({
+  colors,
+  alt,
+  className,
+}: {
+  colors: { body: string };
+  alt: string;
+  className?: string;
+}) {
+  const sparkleRef = useCallback((el: SVGPathElement | null) => {
+    if (el) {
+      el.style.animationDelay = `${-(performance.now() / 1000) % 4}s`;
+    }
+  }, []);
+
+  return (
+    <span
+      role="img"
+      aria-label={alt}
+      className={clsx("inline-flex items-center justify-center", className)}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 19.83 24.3"
+        className="h-full w-auto max-w-full"
+      >
+        <defs>
+          <mask id="pioneer-sparkle-mask">
+            <rect width="100%" height="100%" fill="white" />
+            <path
+              ref={sparkleRef}
+              d={PIONEER_SPARKLE}
+              fill="black"
+              className="pioneer-sparkle-cutout"
+            />
+          </mask>
+        </defs>
+        <path
+          d={PIONEER_P_BODY}
+          fill={colors.body}
+          mask="url(#pioneer-sparkle-mask)"
+        />
+      </svg>
+    </span>
+  );
+}
+
 export default function ProjectLogo({
   projectId,
   theme,
@@ -229,36 +276,7 @@ export default function ProjectLogo({
   if (projectId === "pioneerdev-ai") {
     const colors = PIONEER_THEME[theme];
     return (
-      <span
-        role="img"
-        aria-label={alt}
-        className={clsx("inline-flex items-center justify-center", className)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 19.83 24.3"
-          className="h-full w-auto max-w-full"
-        >
-          <defs>
-            <mask id="pioneer-sparkle-mask">
-              <rect width="100%" height="100%" fill="white" />
-              <path
-                d={PIONEER_SPARKLE}
-                fill="black"
-                className="pioneer-sparkle-cutout"
-                style={{
-                  animationDelay: `${-(typeof performance !== "undefined" ? performance.now() / 1000 : 0) % 4}s`,
-                }}
-              />
-            </mask>
-          </defs>
-          <path
-            d={PIONEER_P_BODY}
-            fill={colors.body}
-            mask="url(#pioneer-sparkle-mask)"
-          />
-        </svg>
-      </span>
+      <PioneerLogo colors={colors} alt={alt} className={className} />
     );
   }
 
