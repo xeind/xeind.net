@@ -1,11 +1,4 @@
-import dynamic from "next/dynamic";
-
-const ThemeSwitcher = dynamic(() => import("@/components/ThemeSwitcher"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[30px] w-[100px]" aria-hidden />
-  ),
-});
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 // Build-time git info (set during build). Prefer a commit-date env var for determinism
 // deterministic — the build pipeline should set NEXT_PUBLIC_BUILD_DATE.
