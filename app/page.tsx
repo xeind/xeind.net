@@ -11,16 +11,16 @@ import { ICON_CONFIG } from "@/lib/config/design";
 export default function Home() {
   return (
     <PageStack
-      // lead={
-      //   <CalloutBand
-      //     href="/blog"
-      //     label="Visit my blog!"
-      //     icon={
-      //       <ArrowUpRight size={16} strokeWidth={ICON_CONFIG.strokeWidth} />
-      //     }
-      //     external={true}
-      //   />
-      // }
+      lead={
+        <CalloutBand
+          href="/blog"
+          label="Visit my blog!"
+          icon={
+            <ArrowUpRight size={16} strokeWidth={ICON_CONFIG.strokeWidth} />
+          }
+          external={true}
+        />
+      }
     >
       <Panel tone="hero" padding="lg" edges="bottom" ornaments="bottom">
         <HeroSection />

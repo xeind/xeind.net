@@ -33,7 +33,7 @@ export default function AboutSection() {
           <InlineLink
             href="https://github.com/xeind/dotfiles"
             external
-            hintLabel="my dotfiles"
+            // hintLabel="my dotfiles"
           >
             open‑source tools
           </InlineLink>{" "}
