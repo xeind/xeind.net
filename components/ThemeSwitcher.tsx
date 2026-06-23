@@ -142,6 +142,9 @@ export default function ThemeSwitcher() {
     setOpen(false);
   };
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const currentThemeData = themes.find((t) => t.value === currentTheme);
 
   // Position the portal dropdown relative to the trigger
@@ -247,8 +250,7 @@ export default function ThemeSwitcher() {
         <span className="relative z-10">{currentThemeData?.label}</span>
       </button>
 
-      {typeof document !== "undefined" &&
-        createPortal(dropdown, document.body)}
+      {mounted && createPortal(dropdown, document.body)}
     </>
   );
 }

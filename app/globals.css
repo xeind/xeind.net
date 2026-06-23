@@ -12,6 +12,7 @@
   animation: pioneer-sparkle-spin 4s linear infinite;
   transform-box: view-box;
   transform-origin: 48.76% 39.09%;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
