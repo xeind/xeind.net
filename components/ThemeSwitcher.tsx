@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Palette, Check, Monitor } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { useClickSound } from "@/lib/hooks";
@@ -143,8 +144,78 @@ export default function ThemeSwitcher() {
 
   const currentThemeData = themes.find((t) => t.value === currentTheme);
 
+  // Position the portal dropdown relative to the trigger
+  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
+  useEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    setMenuPos({
+      top: rect.top,
+      right: window.innerWidth - rect.right,
+    });
+  }, [open]);
+
+  const dropdown = (
+    <div
+      ref={menuRef}
+      role="listbox"
+      aria-label="Theme options"
+      className={`bg-card border-accent/30 fixed z-[9999] min-w-[220px] border border-dashed p-1 shadow-lg transition-[opacity,transform] duration-150 origin-bottom-right ${
+        open
+          ? "scale-100 opacity-100"
+          : "pointer-events-none scale-95 opacity-0"
+      }`}
+      style={{
+        top: menuPos.top,
+        right: menuPos.right,
+        transform: `translateY(-100%) translateY(-6px)${open ? "" : " scale(0.95)"}`,
+      }}
+    >
+      {themes.map((theme) => (
+        <button
+          key={theme.value}
+          role="option"
+          aria-selected={currentTheme === theme.value}
+          onClick={() => handleThemeChange(theme.value)}
+          className="text-foreground hover:bg-muted focus:bg-muted flex w-full cursor-pointer items-center gap-3 px-3 py-2 font-mono text-xs outline-none select-none"
+          style={CSS_TRANSITIONS.fade}
+        >
+          <div className="w-4">
+            {currentTheme === theme.value && (
+              <Check
+                size={themeIconSize}
+                className="text-accent"
+                strokeWidth={ICON_CONFIG.strokeWidth}
+              />
+            )}
+          </div>
+
+          <span className="flex-1 text-left">{theme.label}</span>
+
+          {theme.icon ? (
+            <theme.icon
+              size={themeIconSize}
+              className="text-foreground/70"
+              strokeWidth={ICON_CONFIG.strokeWidth}
+            />
+          ) : (
+            <div className="flex gap-0.5">
+              {theme.colors.map((color, i) => (
+                <div
+                  key={i}
+                  className="ring-border/50 h-3 w-3 ring-1"
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="relative">
+    <>
       <button
         ref={triggerRef}
         onClick={() => setOpen((o) => !o)}
@@ -176,57 +247,8 @@ export default function ThemeSwitcher() {
         <span className="relative z-10">{currentThemeData?.label}</span>
       </button>
 
-      <div
-        ref={menuRef}
-        role="listbox"
-        aria-label="Theme options"
-        className={`bg-card border-accent/30 absolute right-0 bottom-full z-50 mb-1.5 min-w-[220px] border border-dashed p-1 shadow-lg transition-[opacity,transform] duration-150 origin-bottom-right ${
-          open
-            ? "scale-100 opacity-100"
-            : "pointer-events-none scale-95 opacity-0"
-        }`}
-      >
-        {themes.map((theme) => (
-          <button
-            key={theme.value}
-            role="option"
-            aria-selected={currentTheme === theme.value}
-            onClick={() => handleThemeChange(theme.value)}
-            className="text-foreground hover:bg-muted focus:bg-muted flex w-full cursor-pointer items-center gap-3 px-3 py-2 font-mono text-xs outline-none select-none"
-            style={CSS_TRANSITIONS.fade}
-          >
-            <div className="w-4">
-              {currentTheme === theme.value && (
-                <Check
-                  size={themeIconSize}
-                  className="text-accent"
-                  strokeWidth={ICON_CONFIG.strokeWidth}
-                />
-              )}
-            </div>
-
-            <span className="flex-1 text-left">{theme.label}</span>
-
-            {theme.icon ? (
-              <theme.icon
-                size={themeIconSize}
-                className="text-foreground/70"
-                strokeWidth={ICON_CONFIG.strokeWidth}
-              />
-            ) : (
-              <div className="flex gap-0.5">
-                {theme.colors.map((color, i) => (
-                  <div
-                    key={i}
-                    className="ring-border/50 h-3 w-3 ring-1"
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
+      {typeof document !== "undefined" &&
+        createPortal(dropdown, document.body)}
+    </>
   );
 }
