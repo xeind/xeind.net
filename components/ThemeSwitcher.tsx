@@ -166,10 +166,10 @@ export default function ThemeSwitcher() {
       ref={menuRef}
       role="listbox"
       aria-label="Theme options"
-      className={`bg-card border-accent/30 fixed z-[9999] min-w-[220px] border border-dashed p-1 shadow-lg transition-[opacity] duration-150 ${
+      className={`bg-card border-accent/30 fixed z-[9999] min-w-[220px] border border-dashed p-1 shadow-lg transition-opacity ease-out ${
         open
-          ? "opacity-100"
-          : "pointer-events-none opacity-0"
+          ? "opacity-100 duration-100"
+          : "pointer-events-none opacity-0 duration-200"
       }`}
       style={{
         top: menuPosRef.current.top,
