@@ -1,41 +1,34 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { motion, AnimatePresence } from "motion/react";
 import { Palette, Check, Monitor } from "lucide-react";
 import { ICON_CONFIG } from "@/lib/config/design";
-import { useReducedMotion, useClickSound } from "@/lib/hooks";
-import {
-  SPRING_CONFIG,
-  DURATION,
-  EASING,
-  CSS_TRANSITIONS,
-} from "@/lib/config/animation";
+import { useClickSound } from "@/lib/hooks";
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
 
 const themes = [
   {
     value: "system",
     label: "System",
-    colors: ["#333333", "#595959", "#7A7A7A"], // Accent, Secondary, Tertiary (monochrome)
+    colors: ["#333333", "#595959", "#7A7A7A"],
     icon: Monitor,
   },
   {
     value: "light",
     label: "Light",
-    colors: ["#E2E2E2", "#ECECEC", "#4D4D4D"], // Accent, Secondary, Tertiary (monochrome)
+    colors: ["#E2E2E2", "#ECECEC", "#4D4D4D"],
     icon: undefined,
   },
   {
     value: "dark",
     label: "Dark",
-    colors: ["#1E1E1E", "#232323", "#808080"], // Accent, Secondary, Tertiary (monochrome)
+    colors: ["#1E1E1E", "#232323", "#808080"],
     icon: undefined,
   },
   {
     value: "nightingale",
     label: "Nightingale",
-    colors: ["#202020", "#98BB6C", "#E6C384"], // Background, Green, Yellow
+    colors: ["#202020", "#98BB6C", "#E6C384"],
     icon: undefined,
   },
 ] as const;
@@ -43,14 +36,11 @@ const themes = [
 export default function ThemeSwitcher() {
   const themeIconSize = 16;
 
-  // Always start with "system" to avoid hydration mismatch
   const [currentTheme, setCurrentTheme] = useState("system");
   const [open, setOpen] = useState(false);
-  const [isFinePointer, setIsFinePointer] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const prefersReducedMotion = useReducedMotion();
   const { click, hover } = useClickSound();
-  const shouldAnimate = !prefersReducedMotion && isFinePointer;
 
   const applyThemeInstantly = useCallback((theme: string) => {
     const setRootBackground = (actualTheme: string) => {
@@ -63,7 +53,6 @@ export default function ThemeSwitcher() {
     };
 
     if (theme === "system") {
-      // Detect system preference
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
@@ -86,13 +75,11 @@ export default function ThemeSwitcher() {
 
   const applyTheme = useCallback(
     (theme: string, skipAnimation = false) => {
-      // Check if View Transitions API is supported and animation is not skipped
       if (
         !skipAnimation &&
         typeof document !== "undefined" &&
         "startViewTransition" in document
       ) {
-        // Animate theme change with View Transitions
         const doc = document as Document & {
           startViewTransition: (callback: () => void) => void;
         };
@@ -100,7 +87,6 @@ export default function ThemeSwitcher() {
           applyThemeInstantly(theme);
         });
       } else {
-        // Fallback: instant theme change
         applyThemeInstantly(theme);
       }
     },
@@ -108,26 +94,12 @@ export default function ThemeSwitcher() {
   );
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(pointer: fine)");
-    const syncPointer = () => setIsFinePointer(mediaQuery.matches);
-
-    syncPointer();
-    mediaQuery.addEventListener("change", syncPointer);
-
-    return () => mediaQuery.removeEventListener("change", syncPointer);
-  }, []);
-
-  useEffect(() => {
-    // Load saved theme from localStorage on client only
     const savedTheme = localStorage.getItem("theme") || "system";
     if (savedTheme !== currentTheme) {
       setCurrentTheme(savedTheme);
     }
-
-    // Apply theme immediately without animation on initial load
     applyTheme(savedTheme, true);
 
-    // Listen for system theme changes if using system
     if (savedTheme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = () => applyTheme("system", true);
@@ -137,196 +109,124 @@ export default function ThemeSwitcher() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-
-    if (!newOpen) {
-      setTimeout(() => {
-        triggerRef.current?.blur();
-      }, 0);
-    }
-  };
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [open]);
 
   const handleThemeChange = (theme: string) => {
     click();
     setCurrentTheme(theme);
     applyTheme(theme);
     localStorage.setItem("theme", theme);
-    // Close the dropdown - AnimatePresence will handle exit animation
     setOpen(false);
   };
 
   const currentThemeData = themes.find((t) => t.value === currentTheme);
 
   return (
-    <DropdownMenu.Root
-      modal={false}
-      open={open}
-      onOpenChange={handleOpenChange}
-    >
-      <DropdownMenu.Trigger asChild>
-        <button
-          ref={triggerRef}
-          onMouseEnter={hover}
-          className="bg-card text-foreground hover:bg-muted group relative inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          suppressHydrationWarning
-          aria-label="Select theme"
-        >
-          {/* Top border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute top-0 right-0 left-0 h-px border-t border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+    <div className="relative">
+      <button
+        ref={triggerRef}
+        onClick={() => setOpen((o) => !o)}
+        onMouseEnter={hover}
+        className="bg-card text-foreground hover:bg-muted group relative inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        suppressHydrationWarning
+        aria-label="Select theme"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        <div className="border-accent/30 pointer-events-none absolute top-0 right-0 left-0 h-px border-t border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+        <div className="border-accent/30 pointer-events-none absolute right-0 bottom-0 left-0 h-px border-b border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+        <div className="border-accent/30 pointer-events-none absolute top-0 bottom-0 left-0 w-px border-l border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+        <div className="border-accent/30 pointer-events-none absolute top-0 right-0 bottom-0 w-px border-r border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
 
-          {/* Bottom border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute right-0 bottom-0 left-0 h-px border-b border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+        <span className="relative z-10 inline-flex">
+          {currentThemeData?.icon ? (
+            <currentThemeData.icon
+              size={themeIconSize}
+              strokeWidth={ICON_CONFIG.strokeWidth}
+            />
+          ) : (
+            <Palette
+              size={themeIconSize}
+              strokeWidth={ICON_CONFIG.strokeWidth}
+            />
+          )}
+        </span>
+        <span className="relative z-10">{currentThemeData?.label}</span>
+      </button>
 
-          {/* Left border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute top-0 bottom-0 left-0 w-px border-l border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+      <div
+        ref={menuRef}
+        role="listbox"
+        aria-label="Theme options"
+        className={`bg-card border-accent/30 absolute right-0 bottom-full z-50 mb-1.5 min-w-[220px] border border-dashed p-1 shadow-lg transition-[opacity,transform] duration-150 origin-bottom-right ${
+          open
+            ? "scale-100 opacity-100"
+            : "pointer-events-none scale-95 opacity-0"
+        }`}
+      >
+        {themes.map((theme) => (
+          <button
+            key={theme.value}
+            role="option"
+            aria-selected={currentTheme === theme.value}
+            onClick={() => handleThemeChange(theme.value)}
+            className="text-foreground hover:bg-muted focus:bg-muted flex w-full cursor-pointer items-center gap-3 px-3 py-2 font-mono text-xs outline-none select-none"
+            style={CSS_TRANSITIONS.fade}
+          >
+            <div className="w-4">
+              {currentTheme === theme.value && (
+                <Check
+                  size={themeIconSize}
+                  className="text-accent"
+                  strokeWidth={ICON_CONFIG.strokeWidth}
+                />
+              )}
+            </div>
 
-          {/* Right border - dashed, solid on hover */}
-          <div className="border-accent/30 pointer-events-none absolute top-0 right-0 bottom-0 w-px border-r border-dashed transition-[border-color,border-style] duration-200 group-hover:border-solid" />
+            <span className="flex-1 text-left">{theme.label}</span>
 
-          <span className="relative z-10 inline-flex">
-            {currentThemeData?.icon ? (
-              <currentThemeData.icon
+            {theme.icon ? (
+              <theme.icon
                 size={themeIconSize}
+                className="text-foreground/70"
                 strokeWidth={ICON_CONFIG.strokeWidth}
               />
             ) : (
-              <Palette
-                size={themeIconSize}
-                strokeWidth={ICON_CONFIG.strokeWidth}
-              />
-            )}
-          </span>
-          <span className="relative z-10">{currentThemeData?.label}</span>
-        </button>
-      </DropdownMenu.Trigger>
-
-      <DropdownMenu.Portal>
-        <AnimatePresence>
-          {open && (
-            <DropdownMenu.Content
-              className="bg-card border-accent/30 z-50 min-w-[220px] overflow-hidden border border-dashed p-1 shadow-lg"
-              sideOffset={5}
-              align="end"
-              asChild
-            >
-              <motion.div
-                initial={
-                  shouldAnimate ? { opacity: 0, scale: 0.95, y: -10 } : {}
-                }
-                animate={shouldAnimate ? { opacity: 1, scale: 1, y: 0 } : {}}
-                exit={shouldAnimate ? { opacity: 0, scale: 0.95, y: -10 } : {}}
-                transition={
-                  shouldAnimate ? SPRING_CONFIG.noBounce : { duration: 0 }
-                }
-                onAnimationComplete={(definition) => {
-                  // Close after exit animation completes
-                  if (definition === "exit") {
-                    setOpen(false);
-                  }
-                }}
-              >
-                {themes.map((theme, index) => (
-                  <DropdownMenu.Item
-                    key={theme.value}
-                    className="text-foreground hover:bg-muted focus:bg-muted group relative flex cursor-pointer items-center gap-3 px-3 py-2 font-mono text-xs outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50"
-                    onSelect={(event) => {
-                      event.preventDefault(); // Prevent Radix auto-close
-                      handleThemeChange(theme.value);
-                    }}
-                    style={CSS_TRANSITIONS.fade}
-                  >
-                    <motion.div
-                      initial={shouldAnimate ? { opacity: 0, x: -5 } : {}}
-                      animate={shouldAnimate ? { opacity: 1, x: 0 } : {}}
-                      transition={
-                        shouldAnimate
-                          ? {
-                              delay: index * 0.03,
-                              ...SPRING_CONFIG.noBounce,
-                            }
-                          : { duration: 0 }
-                      }
-                      className="contents"
-                    >
-                      {/* Checkmark with animation */}
-                      <div className="w-4">
-                        <AnimatePresence mode="wait">
-                          {currentTheme === theme.value && (
-                            <motion.div
-                              initial={
-                                shouldAnimate
-                                  ? { scale: 0, x: -10, opacity: 0 }
-                                  : {}
-                              }
-                              animate={
-                                shouldAnimate
-                                  ? { scale: 1, x: 0, opacity: 1 }
-                                  : {}
-                              }
-                              exit={
-                                shouldAnimate
-                                  ? { scale: 0, x: 10, opacity: 0 }
-                                  : {}
-                              }
-                              transition={
-                                shouldAnimate
-                                  ? SPRING_CONFIG.noBounce
-                                  : { duration: 0 }
-                              }
-                            >
-                              <Check
-                                size={themeIconSize}
-                                className="text-accent"
-                                strokeWidth={ICON_CONFIG.strokeWidth}
-                              />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-
-                      {/* Theme Name */}
-                      <span className="flex-1">{theme.label}</span>
-
-                      {/* Color Preview or Icon */}
-                      {theme.icon ? (
-                        <motion.div
-                          whileHover={shouldAnimate ? { scale: 1.1 } : {}}
-                          transition={{
-                            duration: DURATION.fast,
-                            ease: EASING.easeOutCubic as [
-                              number,
-                              number,
-                              number,
-                              number,
-                            ],
-                          }}
-                        >
-                          <theme.icon
-                            size={themeIconSize}
-                            className="text-foreground/70"
-                            strokeWidth={ICON_CONFIG.strokeWidth}
-                          />
-                        </motion.div>
-                      ) : (
-                        <div className="flex gap-0.5">
-                          {theme.colors.map((color, i) => (
-                            <div
-                              key={i}
-                              className="ring-border/50 h-3 w-3 ring-1"
-                              style={{ backgroundColor: color }}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </motion.div>
-                  </DropdownMenu.Item>
+              <div className="flex gap-0.5">
+                {theme.colors.map((color, i) => (
+                  <div
+                    key={i}
+                    className="ring-border/50 h-3 w-3 ring-1"
+                    style={{ backgroundColor: color }}
+                  />
                 ))}
-              </motion.div>
-            </DropdownMenu.Content>
-          )}
-        </AnimatePresence>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
