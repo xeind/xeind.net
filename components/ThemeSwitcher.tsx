@@ -147,16 +147,19 @@ export default function ThemeSwitcher() {
 
   const currentThemeData = themes.find((t) => t.value === currentTheme);
 
-  // Position the portal dropdown relative to the trigger
-  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
-  useEffect(() => {
-    if (!open || !triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    setMenuPos({
-      top: rect.top,
-      right: window.innerWidth - rect.right,
-    });
-  }, [open]);
+  // Position ref updated synchronously on toggle — no extra render
+  const menuPosRef = useRef({ top: 0, right: 0 });
+
+  const toggleOpen = () => {
+    if (!open && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      menuPosRef.current = {
+        top: rect.top,
+        right: window.innerWidth - rect.right,
+      };
+    }
+    setOpen((o) => !o);
+  };
 
   const dropdown = (
     <div
@@ -169,8 +172,8 @@ export default function ThemeSwitcher() {
           : "pointer-events-none scale-95 opacity-0"
       }`}
       style={{
-        top: menuPos.top,
-        right: menuPos.right,
+        top: menuPosRef.current.top,
+        right: menuPosRef.current.right,
         transform: `translateY(-100%) translateY(-6px)${open ? "" : " scale(0.95)"}`,
       }}
     >
@@ -221,7 +224,7 @@ export default function ThemeSwitcher() {
     <>
       <button
         ref={triggerRef}
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggleOpen}
         onMouseEnter={hover}
         className="bg-card text-foreground hover:bg-muted group relative inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         suppressHydrationWarning
