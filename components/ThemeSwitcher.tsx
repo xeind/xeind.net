@@ -166,15 +166,15 @@ export default function ThemeSwitcher() {
       ref={menuRef}
       role="listbox"
       aria-label="Theme options"
-      className={`bg-card border-accent/30 fixed z-[9999] min-w-[220px] border border-dashed p-1 shadow-lg transition-[opacity,transform] duration-150 origin-bottom-right ${
+      className={`bg-card border-accent/30 fixed z-[9999] min-w-[220px] border border-dashed p-1 shadow-lg transition-[opacity] duration-150 ${
         open
-          ? "scale-100 opacity-100"
-          : "pointer-events-none scale-95 opacity-0"
+          ? "opacity-100"
+          : "pointer-events-none opacity-0"
       }`}
       style={{
         top: menuPosRef.current.top,
         right: menuPosRef.current.right,
-        transform: `translateY(-100%) translateY(-6px)${open ? "" : " scale(0.95)"}`,
+        transform: "translateY(-100%) translateY(-6px)",
       }}
     >
       {themes.map((theme) => (

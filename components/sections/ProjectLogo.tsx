@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useReducedMotion } from "@/lib/hooks";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
@@ -220,10 +221,12 @@ function PioneerLogo({
   colors,
   alt,
   className,
+  reducedMotion,
 }: {
   colors: { body: string };
   alt: string;
   className?: string;
+  reducedMotion: boolean;
 }) {
   const sparkleRef = useCallback((el: SVGPathElement | null) => {
     if (el) {
@@ -242,22 +245,32 @@ function PioneerLogo({
         viewBox="0 0 19.83 24.3"
         className="h-full w-auto max-w-full"
       >
-        <defs>
-          <mask id="pioneer-sparkle-mask">
-            <rect width="100%" height="100%" fill="white" />
+        {reducedMotion ? (
+          <path
+            d={`${PIONEER_P_BODY}${PIONEER_SPARKLE}`}
+            fill={colors.body}
+            fillRule="evenodd"
+          />
+        ) : (
+          <>
+            <defs>
+              <mask id="pioneer-sparkle-mask">
+                <rect width="100%" height="100%" fill="white" />
+                <path
+                  ref={sparkleRef}
+                  d={PIONEER_SPARKLE}
+                  fill="black"
+                  className="pioneer-sparkle-cutout"
+                />
+              </mask>
+            </defs>
             <path
-              ref={sparkleRef}
-              d={PIONEER_SPARKLE}
-              fill="black"
-              className="pioneer-sparkle-cutout"
+              d={PIONEER_P_BODY}
+              fill={colors.body}
+              mask="url(#pioneer-sparkle-mask)"
             />
-          </mask>
-        </defs>
-        <path
-          d={PIONEER_P_BODY}
-          fill={colors.body}
-          mask="url(#pioneer-sparkle-mask)"
-        />
+          </>
+        )}
       </svg>
     </span>
   );
@@ -269,6 +282,8 @@ export default function ProjectLogo({
   className,
   alt,
 }: ProjectLogoProps) {
+  const reducedMotion = useReducedMotion();
+
   if (projectId === "atax") {
     return <AtaxLogo theme={theme} className={className} alt={alt} />;
   }
@@ -276,7 +291,7 @@ export default function ProjectLogo({
   if (projectId === "pioneerdev-ai") {
     const colors = PIONEER_THEME[theme];
     return (
-      <PioneerLogo colors={colors} alt={alt} className={className} />
+      <PioneerLogo colors={colors} alt={alt} className={className} reducedMotion={reducedMotion} />
     );
   }
 
