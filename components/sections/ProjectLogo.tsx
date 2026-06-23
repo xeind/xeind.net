@@ -246,6 +246,9 @@ export default function ProjectLogo({
                 d={PIONEER_SPARKLE}
                 fill="black"
                 className="pioneer-sparkle-cutout"
+                style={{
+                  animationDelay: `${-(typeof performance !== "undefined" ? performance.now() / 1000 : 0) % 4}s`,
+                }}
               />
             </mask>
           </defs>
