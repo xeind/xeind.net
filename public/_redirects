@@ -1,0 +1,2 @@
+# Keep canonical URLs extensionless.
+/*.html /:splat 301
