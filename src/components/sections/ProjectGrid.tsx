@@ -530,7 +530,7 @@ export default function ProjectGrid() {
                 <GradientBackground />
 
                 {/* External link indicator */}
-                {primaryUrl && !project.projectLinks?.length && (
+                {primaryUrl && (
                   <div
                     className="absolute top-4 right-4 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
                     style={t}
