@@ -2,6 +2,7 @@ import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import StaticLogo from "./StaticLogo";
 import { GAP_SPACING } from "@/lib/config/spacing";
 import { personalInfo } from "@/lib/data/personal";
+import InlineIcon from "@/components/ui/InlineIcon";
 import { ICON_CONFIG } from "@/lib/config/design";
 
 interface HeroActionLinkProps {
@@ -138,34 +139,80 @@ function HeroActionLink({
   );
 }
 
+function HeroSocialLink({
+  href,
+  label,
+  iconSrc,
+}: {
+  href: string;
+  label: string;
+  iconSrc: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${label} (opens in new tab)`}
+      data-hero-sfx="click"
+      data-hero-sfx-hover
+      className="text-foreground/56 hover:text-tertiary inline-flex min-h-10 min-w-10 items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      style={CSS_TRANSITIONS.border}
+    >
+      <InlineIcon
+        src={iconSrc}
+        className="mr-0 ml-0 h-[1.15em] w-[1.15em] align-[-0.12em]"
+      />
+      <span className="sr-only">{label}</span>
+    </a>
+  );
+}
+
 export default function HeroSection() {
   return (
-    <div className="flex flex-col items-center md:items-start">
+    <div className="flex w-full flex-col items-center md:items-start">
       {/* Logo, Name and Location */}
-      <div className="mb-6 flex flex-row items-center gap-6">
-        <StaticLogo size={64} className="text-foreground shrink-0" />
+      <div className="mb-6 flex w-full items-start gap-6">
+        <div className="flex min-w-0 flex-1 flex-row items-center gap-6">
+          <StaticLogo size={64} className="text-foreground shrink-0" />
 
-        <div className="flex flex-col gap-1 items-start text-left">
-          <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
-            {personalInfo.name}
-          </h1>
-          <address className="not-italic text-foreground/60 flex items-center gap-1 text-sm">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              width={ICON_CONFIG.sizes.sm}
-              height={ICON_CONFIG.sizes.sm}
-              aria-hidden
-            >
-              <path
-                fillRule="evenodd"
-                d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{personalInfo.location}</span>
-          </address>
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left">
+            <div className="flex w-full items-center justify-between gap-3">
+              <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
+                {personalInfo.name}
+              </h1>
+
+              <div className="flex shrink-0 items-center gap-1 -my-1">
+                <HeroSocialLink
+                  href={personalInfo.githubUrl}
+                  label="GitHub"
+                  iconSrc="/github.svg"
+                />
+                <HeroSocialLink
+                  href={personalInfo.linkedinUrl}
+                  label="LinkedIn"
+                  iconSrc="/linkedin.svg"
+                />
+              </div>
+            </div>
+            <address className="text-foreground/60 not-italic flex items-center gap-1 text-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width={ICON_CONFIG.sizes.sm}
+                height={ICON_CONFIG.sizes.sm}
+                aria-hidden
+              >
+                <path
+                  fillRule="evenodd"
+                  d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>{personalInfo.location}</span>
+            </address>
+          </div>
         </div>
       </div>
 

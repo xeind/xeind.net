@@ -7,6 +7,8 @@ export interface PersonalInfo {
   email: string;
   cvUrl: string;
   calComUrl: string;
+  githubUrl: string;
+  linkedinUrl: string;
 }
 
 // Skills/Tech Stack

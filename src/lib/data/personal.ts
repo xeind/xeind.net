@@ -8,4 +8,6 @@ export const personalInfo: PersonalInfo = {
   email: "xd@xeind.net",
   cvUrl: "/virgines-resume.pdf",
   calComUrl: "https://cal.com/xeind",
+  githubUrl: "https://github.com/xeind",
+  linkedinUrl: "https://linkedin.com/in/xeind",
 };
