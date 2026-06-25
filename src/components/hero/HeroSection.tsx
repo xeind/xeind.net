@@ -156,12 +156,12 @@ function HeroSocialLink({
       aria-label={`${label} (opens in new tab)`}
       data-hero-sfx="click"
       data-hero-sfx-hover
-      className="text-foreground/56 hover:text-tertiary inline-flex min-h-10 min-w-10 items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="text-foreground/80 hover:text-tertiary inline-flex min-h-10 min-w-10 items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={CSS_TRANSITIONS.border}
     >
       <InlineIcon
         src={iconSrc}
-        className="mr-0 ml-0 h-[1.15em] w-[1.15em] align-[-0.12em]"
+        className="h-[1.25em] w-[1.25em] align-[-0.12em]"
       />
       <span className="sr-only">{label}</span>
     </a>
@@ -178,7 +178,7 @@ export default function HeroSection() {
 
           <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left">
             <div className="flex w-full items-center justify-between gap-3">
-              <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight">
+              <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight whitespace-nowrap">
                 {personalInfo.name}
               </h1>
 
