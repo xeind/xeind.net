@@ -1,0 +1,94 @@
+---
+interface Props {
+  commit: string;
+  buildDate: string;
+}
+
+const { commit, buildDate } = Astro.props;
+const date = new Date(buildDate);
+const year = Number.isNaN(date.getTime()) ? new Date().getFullYear() : date.getFullYear();
+const compactDate = Number.isNaN(date.getTime())
+  ? "dev"
+  : date.toISOString().slice(0, 10).replaceAll("-", "");
+---
+
+<footer
+  class="text-foreground fixed right-0 bottom-0 left-0 -z-10 flex flex-col justify-end"
+  style="height:var(--footer-height);padding-right:var(--scrollbar-width, 0px)"
+>
+  <div class="bg-accent absolute inset-0"></div>
+  <div class="relative mx-auto h-full w-full max-w-5xl">
+    <div class="relative z-10 h-full p-6 px-6 sm:px-8 md:p-8 md:px-12">
+      <div class="grid grid-cols-[1fr_auto] items-center gap-4 sm:gap-6 md:gap-8">
+        <div class="flex flex-col gap-1">
+          <p class="text-background font-mono text-xs">© {year} XD</p>
+          <p class="text-background flex items-center gap-2 font-mono text-xs">
+            Static HTML <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
+            Astro
+          </p>
+          <p class="text-background hidden items-center gap-2 font-mono text-xs sm:flex">
+            Fonts: Latin Modern
+            <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
+            Inter
+            <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
+            Commit Mono
+          </p>
+          <p class="text-background flex items-center gap-2 font-mono text-xs opacity-70">
+            {commit}
+            <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
+            Last Built: {compactDate}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          data-theme-cycle
+          class="bg-card text-foreground hover:bg-muted relative inline-flex min-h-8 items-center gap-2 px-3 py-1.5 font-mono text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label="Theme"
+        >
+          <span data-theme-label>Dark</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const themes = ["dark", "light", "nightingale"];
+  const labels: Record<string, string> = {
+    dark: "Dark",
+    light: "Light",
+    nightingale: "Nightingale",
+  };
+
+  function applyTheme(theme: string) {
+    if (theme === "light") {
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+
+    document.documentElement.style.backgroundColor =
+      theme === "dark"
+        ? "#262626"
+        : theme === "nightingale"
+          ? "#181818"
+          : "#f5f5f5";
+
+    const label = document.querySelector("[data-theme-label]");
+    if (label) label.textContent = labels[theme];
+  }
+
+  const themeButton = document.querySelector("[data-theme-cycle]");
+  const savedTheme = localStorage.getItem("theme");
+  const initialTheme = themes.includes(savedTheme ?? "") ? savedTheme! : "dark";
+  applyTheme(initialTheme);
+
+  themeButton?.addEventListener("click", () => {
+    const saved = localStorage.getItem("theme");
+    const current = themes.includes(saved ?? "") ? saved! : "dark";
+    const next = themes[(themes.indexOf(current) + 1) % themes.length];
+    localStorage.setItem("theme", next);
+    applyTheme(next);
+  });
+</script>

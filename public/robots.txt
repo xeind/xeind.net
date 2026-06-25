@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xeind.net/sitemap-index.xml

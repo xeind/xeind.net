@@ -1,0 +1,17 @@
+{
+  "name": "Xein Deniel",
+  "short_name": "XD",
+  "description": "Portfolio of full-stack engineer Xein Deniel.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#262626",
+  "theme_color": "#262626",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

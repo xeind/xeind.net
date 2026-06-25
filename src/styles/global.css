@@ -1,0 +1,591 @@
+/* Font-faces are inlined in layout.tsx for faster First Paint */
+
+@import "tailwindcss";
+
+@keyframes pioneer-sparkle-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pioneer-sparkle-cutout {
+  animation: pioneer-sparkle-spin 4s linear infinite;
+  transform-box: view-box;
+  transform-origin: 48.76% 39.09%;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pioneer-sparkle-cutout {
+    animation: none;
+  }
+}
+
+/* ========================================
+   CSS RESET - Normalize browser defaults
+   Applied after Tailwind to preserve utilities
+   ======================================== */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  min-height: 100vh;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+@theme {
+  /* Light mode (default) - Monochrome Light */
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(0 0% 0%);
+  --color-card: hsl(0 0% 100%);
+  --color-border: hsl(0 0% 85%);
+  --color-muted: hsl(0 0% 96%);
+  --color-accent: hsl(0 0% 20%);
+  --color-accent-hover: hsl(0 0% 10%);
+  --color-destructive: hsl(0 0% 40%);
+  --color-success: hsl(0 0% 30%);
+
+  /* Extended color variants for richer UI */
+  --color-primary: hsl(0 0% 20%);
+  /* Main accent (same as accent) */
+  --color-primary-hover: hsl(0 0% 10%);
+  --color-secondary: hsl(0 0% 35%);
+  /* Secondary accent */
+  --color-secondary-hover: hsl(0 0% 25%);
+  --color-tertiary: hsl(0 0% 10%);
+  /* Third accent */
+  --color-tertiary-hover: hsl(0 0% 20%);
+  --color-info: hsl(0 0% 45%);
+  /* Info states */
+  --color-warning: hsl(0 0% 40%);
+  /* Warning states */
+
+  --font-family-serif: "Latin Modern Roman", Georgia, serif;
+  --font-family-sans: "Inter", system-ui, sans-serif;
+  --font-family-mono: "Commit Mono", Menlo, Monaco, monospace;
+
+  /* Typography scale - uniform, minimal variation */
+  --font-size-xs: 0.75rem; /* 12px - Meta (mono only) */
+  --font-size-sm: 0.875rem; /* 14px - Body & UI */
+  --font-size-base: 1rem; /* 16px - Emphasis */
+  --font-size-lg: 1.125rem; /* 18px - H2 */
+  --font-size-xl: 1.25rem; /* 20px - H1 */
+  --font-size-2xl: 1.5rem; /* 24px - Display */
+
+  /* Line heights for readability */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+}
+
+/* ========================================
+   THEME VARIANTS
+   Each theme overrides the same 9 tokens
+   ======================================== */
+
+/* Dark Theme - Monochrome Dark */
+[data-theme="dark"] {
+  --color-background: hsl(0 0% 10%);
+  --color-foreground: hsl(0 0% 100%);
+  --color-card: hsl(0 0% 16%);
+  --color-border: hsl(0 0% 30%);
+  --color-muted: hsl(0 0% 15%);
+  --color-accent: hsl(0 0% 85%);
+  --color-accent-hover: hsl(0 0% 95%);
+  --color-destructive: hsl(0 0% 50%);
+  --color-success: hsl(0 0% 60%);
+
+  /* Extended monochrome palette */
+  --color-primary: hsl(0 0% 85%);
+  --color-primary-hover: hsl(0 0% 95%);
+  --color-secondary: hsl(0 0% 70%);
+  --color-secondary-hover: hsl(0 0% 80%);
+  --color-tertiary: hsl(0 0% 100%);
+  --color-tertiary-hover: hsl(0 0% 90%);
+  --color-info: hsl(0 0% 70%);
+  --color-warning: hsl(0 0% 60%);
+}
+
+/* Nightingale Theme - Warm contrast from nightingale.nvim */
+[data-theme="nightingale"] {
+  --color-background: hsl(0 0% 12.5%);
+  /* #202020 - warm dark */
+  --color-foreground: hsl(42 27% 80%);
+  /* #DCD7BA - cream/beige */
+  --color-card: hsl(0 0% 15.6%);
+  /* #282828 - bg2 */
+  --color-border: hsl(0 0% 21.5%);
+  /* #363636 - bg4 */
+  --color-muted: hsl(0 0% 9.4%);
+  /* #181818 - bg1 darker */
+  --color-accent: hsl(86 36% 57%);
+  /* #98BB6C - green (strings, nature) */
+  --color-accent-hover: hsl(86 36% 67%);
+  /* Lighter green on hover */
+  --color-destructive: hsl(3 96% 65%);
+  /* #E82424 - red (errors) */
+  --color-success: hsl(86 36% 57%);
+  /* #98BB6C - green (strings) */
+
+  /* Extended Nightingale palette - Green/Orange/Yellow trio */
+  --color-primary: hsl(86 36% 57%);
+  /* #98BB6C - green (main accent, strings) */
+  --color-primary-hover: hsl(86 36% 67%);
+  --color-secondary: hsl(17 87% 75%);
+  /* #f5a284 - orange (constants, warm) */
+  --color-secondary-hover: hsl(17 87% 85%);
+  --color-tertiary: hsl(43 74% 72%);
+  /* #E6C384 - yellow (bright highlights) */
+  --color-tertiary-hover: hsl(43 74% 82%);
+  --color-info: hsl(214 45% 69%);
+  /* #85a8da - blue (functions) */
+  --color-warning: hsl(32 86% 65%);
+  /* #FF9E3B - orange warning */
+}
+
+:root {
+  /* Font Rendering for that "High-End Editor" look */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Unified Grid System: 16px base unit */
+  --grid-cell-size: 16px;
+
+  /* Custom CSS Variables */
+  --footer-height: 128px;
+  /* 8 cells × 16px = scroll reveal distance */
+  --footer-bg-height: 100vh;
+  /* Background extends full viewport */
+  --radius: 0.5rem;
+  /* Divider dash pattern (consistent across horizontal and vertical dividers) */
+  --divider-dash-length: 8px; /* visible dash length */
+  --divider-dash-gap: 8px; /* gap between dashes */
+  --divider-thickness: 2px; /* default thickness for dividers (use even px for easy centering) */
+
+  /* Text shadow tokens
+     Disabled for LCP/contentful elements to reduce paint cost. If
+     you need a decorative shadow on non-LCP elements, add a custom
+     utility that is not applied to hero/LCP content. */
+  --text-shadow-subtle: none;
+  --text-shadow-strong: none;
+  --text-shadow-on-image: none;
+}
+
+html {
+  overscroll-behavior: contain;
+}
+
+body {
+  overscroll-behavior: contain;
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+  font-family: var(--font-family-sans);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* PAPER BACKGROUND - Outermost container with noise */
+.paper-background {
+  position: relative;
+  background-color: var(--color-muted);
+  min-height: 100dvh;
+}
+
+/* Paper grain texture on background */
+.paper-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: none;
+  background-size: 200px 200px;
+  background-repeat: repeat;
+  pointer-events: none;
+  z-index: 99;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+@media (min-width: 768px) {
+  .paper-background::before {
+    /* background-image: url("/grain-texture.webp"); */
+  }
+}
+
+/* ========================================
+   UNIFIED GRID SYSTEM
+   Base unit: 16px × 16px cells
+   All spacing must be multiples of 16px
+   ======================================== */
+
+/* Grid Pattern for Footer - 16px cells */
+.bg-grid-pattern {
+  background-size: 16px 16px;
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  mask-image: linear-gradient(to top, black 60%, transparent 100%);
+}
+
+/* Hero Grid Background - 16px cells, fades left to right */
+.bg-hero-grid {
+  background-size: 16px 16px;
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  mask-image: linear-gradient(to right, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
+}
+
+/* ========================================
+   SHARED TRANSITION TIMING
+   0.2s cubic-bezier(0.33, 1, 0.68, 1) — easeOutCubic
+   Used by borders, corners, hover effects
+   ======================================== */
+
+.t-border {
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* ========================================
+   CORNER ACCENTS — Expanding L-shaped corners
+   Used on timeline dots, buttons, cards
+   Each corner = wrapper + ::before (h-line) + ::after (v-line)
+   ======================================== */
+
+/* Shared corner line styles */
+.ca-tl,
+.ca-tr,
+.ca-bl,
+.ca-br {
+  position: absolute;
+  transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.ca-tl::before,
+.ca-tl::after,
+.ca-tr::before,
+.ca-tr::after,
+.ca-bl::before,
+.ca-bl::after,
+.ca-br::before,
+.ca-br::after {
+  content: "";
+  display: block;
+  background-color: var(--color-accent);
+  transition: all 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Horizontal line (h-line): 1px tall, 0.25rem wide */
+.ca-tl::before,
+.ca-tr::before {
+  height: 1px;
+  width: 0.25rem;
+}
+.ca-bl::after,
+.ca-br::after {
+  height: 1px;
+  width: 0.25rem;
+}
+
+/* Vertical line (v-line): 0.25rem tall, 1px wide */
+.ca-tl::after,
+.ca-tr::after {
+  height: 0.25rem;
+  width: 1px;
+}
+.ca-bl::before,
+.ca-br::before {
+  height: 0.25rem;
+  width: 1px;
+}
+
+/* Positioning */
+.ca-tl {
+  left: 0;
+  top: 0;
+}
+.ca-tr {
+  right: 0;
+  top: 0;
+}
+.ca-bl {
+  bottom: 0;
+  left: 0;
+}
+.ca-br {
+  bottom: 0;
+  right: 0;
+}
+
+/* Right-aligned corners */
+.ca-tr::before,
+.ca-tr::after,
+.ca-br::before,
+.ca-br::after {
+  margin-left: auto;
+}
+
+/* Group hover: expand corners outward */
+.group:hover .ca-tl,
+.group:focus-within .ca-tl {
+  transform: translate(-0.25rem, -0.25rem);
+}
+.group:hover .ca-tr,
+.group:focus-within .ca-tr {
+  transform: translate(0.25rem, -0.25rem);
+}
+.group:hover .ca-bl,
+.group:focus-within .ca-bl {
+  transform: translate(-0.25rem, 0.25rem);
+}
+.group:hover .ca-br,
+.group:focus-within .ca-br {
+  transform: translate(0.25rem, 0.25rem);
+}
+
+/* Group hover: lines grow and recolor */
+.group:hover .ca-tl::before,
+.group:focus-within .ca-tl::before,
+.group:hover .ca-tr::before,
+.group:focus-within .ca-tr::before,
+.group:hover .ca-bl::after,
+.group:focus-within .ca-bl::after,
+.group:hover .ca-br::after,
+.group:focus-within .ca-br::after {
+  width: 0.5rem;
+  background-color: var(--color-tertiary);
+}
+
+.group:hover .ca-tl::after,
+.group:focus-within .ca-tl::after,
+.group:hover .ca-tr::after,
+.group:focus-within .ca-tr::after,
+.group:hover .ca-bl::before,
+.group:focus-within .ca-bl::before,
+.group:hover .ca-br::before,
+.group:focus-within .ca-br::before {
+  height: 0.5rem;
+  background-color: var(--color-tertiary);
+}
+
+/* S-Tier Compositor-Only Animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hide scrollbar but keep scroll functionality */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
+}
+
+/* ========================================
+   VIEW TRANSITIONS - Theme Toggle Animation
+   Bottom-to-top wipe effect on theme change
+   ======================================== */
+
+::view-transition-group(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  /* expo-out easing */
+}
+
+::view-transition-new(root) {
+  animation: theme-wipe-up 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+}
+
+@keyframes theme-wipe-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-new(root),
+  ::view-transition-old(root) {
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   INLINE CODE STYLING
+   Matches dashed border design system
+   ======================================== */
+
+code {
+  font-family: var(--font-family-mono);
+  font-size: 0.875em;
+  padding: 0.125rem 0.375rem;
+  border: 1px dashed hsl(var(--color-accent) / 0.3);
+  border-radius: var(--radius);
+  background-color: hsl(var(--color-muted) / 0.5);
+  color: hsl(var(--color-foreground) / 0.8);
+}
+
+/* Code within pre blocks (code blocks) should not have extra padding */
+pre code {
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+}
+
+/* ========================================
+   XEIN LOGO - Per-Shape Hover Effect
+   Each shape independently crossfades on hover
+   Matches Button hover behavior exactly
+   ======================================== */
+
+.xein-logo {
+  position: relative;
+  display: inline-block;
+}
+
+/* Each shape wrapper */
+.logo-shape {
+  position: relative;
+}
+
+/* Filled shape - visible by default */
+.shape-filled {
+  opacity: 1;
+  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Fill overlay - hidden by default, appears on hover at 30% like Button */
+.shape-fill-overlay {
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+
+/* Outline shape - hidden by default */
+.shape-outline {
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+
+/* Hover state - matches Button: fill at 30%, outline fully visible */
+.logo-shape:hover .shape-filled {
+  opacity: 0;
+}
+
+.logo-shape:hover .shape-fill-overlay {
+  opacity: 0.3;
+}
+
+.logo-shape:hover .shape-outline {
+  opacity: 1;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .shape-filled,
+  .shape-fill-overlay,
+  .shape-outline {
+    transition: none;
+  }
+}
+
+/* Each shape wrapper */
+.logo-shape {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Filled shape - visible by default */
+.shape-filled {
+  opacity: 1;
+  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Outline shape - hidden by default */
+.shape-outline {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 300ms cubic-bezier(0.19, 1, 0.22, 1),
+    visibility 0ms 300ms;
+}
+
+/* Hover state - crossfade from filled to outline for individual shape */
+.logo-shape:hover .shape-filled {
+  opacity: 0;
+}
+
+.logo-shape:hover .shape-outline {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 300ms cubic-bezier(0.19, 1, 0.22, 1),
+    visibility 0ms 0ms;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .shape-filled,
+  .shape-outline {
+    transition: none;
+  }
+
+  .shape-outline {
+    visibility: hidden;
+  }
+
+  .logo-shape:hover .shape-outline {
+    visibility: visible;
+  }
+}

@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Panel from "@/components/ui/Panel";
+import { toolCategories } from "@/lib/data/tools";
+---
+
+<Layout
+  title="Tools | Xein Deniel"
+  description="Apps and tools I use for development, design, and productivity."
+  canonicalPath="/tools"
+>
+  <Panel edges="bottom" ornaments="bottom">
+    <h1 class="text-foreground mb-8 font-serif text-2xl">Tools</h1>
+
+    <div class="flex flex-col">
+      {
+        toolCategories.map((category, index) => (
+          <div>
+            {index > 0 && (
+              <div class="border-accent/20 my-6 border-t border-dashed" />
+            )}
+            <div>
+              <h2 class="text-accent mb-3 font-mono text-xs tracking-wide">
+                {category.label}
+              </h2>
+              <ul class="space-y-1">
+                {category.tools.map((tool) => (
+                  <li class="text-foreground/80 text-sm leading-relaxed">
+                    {tool.url ? (
+                      <a
+                        href={tool.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px transition-colors hover:border-solid"
+                      >
+                        {tool.name}
+                      </a>
+                    ) : (
+                      <span class="text-foreground">{tool.name}</span>
+                    )}
+                    <span class="text-foreground/50">
+                      {" "}
+                      &mdash; {tool.description}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Panel>
+</Layout>

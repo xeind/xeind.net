@@ -1,0 +1,107 @@
+import type { Project } from "@/lib/types";
+
+export const projects: Project[] = [
+  {
+    id: "nightingale",
+    title: "Nightingale",
+    type: "Theme",
+    description: "Theme for Zed and Neovim",
+    longDescription: [
+      "Warm contrast theme for Zed and Neovim.",
+      "Dark and light variants with full TreeSitter support for Neovim.",
+    ],
+    projectLinks: [
+      {
+        label: "Install for Zed",
+        url: "https://zed.dev/extensions/nightingale",
+      },
+      {
+        label: "Neovim Theme",
+        url: "https://github.com/xeind/nightingale.nvim",
+      },
+    ],
+    technologies: ["Zed", "Neovim", "Lua", "JSON", "TreeSitter"],
+    featured: true,
+    year: 2025,
+    imageUrl: "/projects/nightingale.svg",
+  },
+  {
+    id: "atax",
+    title: "ATAX",
+    type: "Tool",
+    description: "Image encryption and decryption tool",
+    longDescription: [
+      "Chaotic-map encryption scheme achieving high diffusion, randomness, and strong security",
+      "Validated with Entropy 7.9982, UACI 33.46%, NPCR 99.61%, Correlation -0.0008, and 21ms runtime",
+    ],
+    technologies: ["TypeScript", "Python", "React", "Docker"],
+    liveUrl: "https://atax.dev",
+    featured: true,
+    year: 2024,
+    imageUrl: "/projects/atax.svg",
+  },
+
+  {
+    id: "slavicmeet",
+    title: "slavicmeet",
+    type: "Work",
+    description: "Dating site",
+    technologies: ["Astro", "Tailwind", "Cloudflare"],
+    liveUrl: "https://slavicmeet.app",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/smeet-seo.svg",
+    iconSize: "compact",
+  },
+  {
+    id: "filipinameet",
+    title: "filipinameet",
+    type: "Work",
+    description: "Dating site",
+    technologies: ["React", "TypeScript"],
+    liveUrl: "https://filipinameet.com",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/fmeet-seo.svg",
+  },
+  {
+    id: "yield",
+    title: "Yield",
+    type: "Work",
+    description: "",
+    technologies: ["React", "TypeScript", "Prisma"],
+    liveUrl: "",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/yield.svg",
+    iconSize: "compact",
+  },
+  {
+    id: "pioneerdev-ai",
+    title: "Pioneer Dev",
+    type: "Work",
+    description: "",
+    technologies: ["Astro", "TypeScript"],
+    liveUrl: "https://pioneerdev.ai",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/pioneer.svg",
+  },
+];
+
+// Helper functions
+export const getFeaturedProjects = () => {
+  return projects.filter((p) => p.featured);
+};
+
+export const getProjectsByType = (type: string) => {
+  return projects.filter((p) => p.type === type);
+};
+
+export const getProjectById = (id: string) => {
+  return projects.find((p) => p.id === id);
+};
+
+export const getProjectsByYear = (year: number) => {
+  return projects.filter((p) => p.year === year);
+};

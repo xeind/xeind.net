@@ -1,0 +1,86 @@
+---
+import Layout from "../layouts/Layout.astro";
+import HeroSection from "@/components/hero/HeroSection";
+import AboutSection from "@/components/sections/AboutSection";
+import ExperienceTimeline from "@/components/sections/ExperienceTimeline";
+import ProjectGrid from "@/components/sections/ProjectGrid";
+import CalloutBand from "@/components/ui/CalloutBand";
+import Panel from "@/components/ui/Panel";
+import SectionDivider from "@/components/ui/SectionDivider";
+import { SITE, absoluteUrl } from "@/config/site";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfilePage",
+      "@id": absoluteUrl("/#profile"),
+      url: absoluteUrl("/"),
+      name: `${SITE.name} — ${SITE.jobTitle}`,
+      description: SITE.description,
+      mainEntity: {
+        "@type": "Person",
+        "@id": absoluteUrl("/#person"),
+        name: SITE.name,
+        url: SITE.url,
+        image: absoluteUrl(SITE.socialImage),
+        email: SITE.email,
+        jobTitle: SITE.jobTitle,
+        address: {
+          "@type": "PostalAddress",
+          addressCountry: "PH",
+          addressLocality: SITE.location,
+        },
+        sameAs: SITE.profiles,
+        knowsAbout: [
+          "Interface design",
+          "Web development",
+          "TypeScript",
+          "React",
+          "Astro",
+          "Rust",
+          "Web performance",
+        ],
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": absoluteUrl("/#website"),
+      url: SITE.url,
+      name: SITE.name,
+      inLanguage: SITE.language,
+    },
+  ],
+};
+---
+
+<Layout
+  title={`${SITE.name} — ${SITE.jobTitle}`}
+  description={SITE.description}
+  canonicalPath="/"
+  type="profile"
+  structuredData={structuredData}
+>
+  <div class="flex flex-col">
+    <CalloutBand href="/blog" label="Visit my blog!" external />
+
+    <Panel tone="hero" padding="lg" edges="bottom" ornaments="bottom">
+      <HeroSection />
+    </Panel>
+    <SectionDivider />
+
+    <Panel>
+      <AboutSection />
+    </Panel>
+    <SectionDivider />
+
+    <Panel>
+      <ExperienceTimeline />
+    </Panel>
+    <SectionDivider />
+
+    <Panel>
+      <ProjectGrid client:visible />
+    </Panel>
+  </div>
+</Layout>
