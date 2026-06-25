@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "xeind-net",
-  "account_id": "eb163502cbeb039b7d3735c0b8535c0c",
+  "account_id": "d87030cf8e81f9320e482d2b0efc9613",
   "compatibility_date": "2026-06-25",
   "assets": {
     "directory": "./dist",
@@ -11,4 +11,10 @@
   "observability": {
     "enabled": true,
   },
+  "routes": [
+    {
+      "pattern": "xeind.net",
+      "custom_domain": true,
+    },
+  ],
 }
