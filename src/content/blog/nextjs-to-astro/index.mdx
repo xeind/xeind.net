@@ -11,6 +11,8 @@ For months, my portfolio sat at 95 on mobile PageSpeed. I'd tweak one thing, gai
 
 Then I migrated to Astro. First run: four 100s.
 
+---
+
 ## The Problem with Next.js
 
 My site isn't complex. A hero, about section, project grid, experience timeline, and a footer. One interactive component (the project grid modal). Everything else is static content.
@@ -25,6 +27,8 @@ Next.js shipped ~450KB of JavaScript for this:
 I rewrote the theme switcher to remove Radix. I swapped barrel imports for direct imports to help tree-shaking. I wrapped the footer in `dynamic(() => import(...), { ssr: false })`. Nothing moved the needle past 95 on mobile.
 
 The real problem: Next.js hydrates the entire page.<Cite n={3} /> Every component ships JavaScript regardless of whether it needs interactivity. For a content site, that's overhead you can't optimize out of existence.
+
+---
 
 ## What Astro Changes
 
@@ -107,7 +111,7 @@ HTML pages get `no-cache` so deployments take effect immediately.
 ## The Numbers
 
 | Metric | Next.js (Vercel) | Astro (Cloudflare) |
-|--------|------------------|--------------------|
+|--------|-----------------:|-------------------:|
 | Performance | 95-97 | 100 |
 | Accessibility | 100 | 100 |
 | Best Practices | 100 | 100 |
@@ -125,7 +129,7 @@ If you're building content-forward site, start with Astro. Add React islands whe
 
 ---
 
-The source is [on GitHub](https://github.com/xeind/xeind.net). The migration commit is `23a8fe2` if you want to see exactly what changed.
+The source for this site is [on GitHub](https://github.com/xeind/xeind.net/commit/23a8fe2eb1c4baca18e516c110fa2c581ac86d98).
 
 <References>
   <Ref n={1} href="https://nextjs.org/docs/app/building-your-application/rendering">Next.js Rendering documentation — App Router hydration and server/client component model</Ref>

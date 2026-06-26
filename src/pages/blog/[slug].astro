@@ -33,12 +33,17 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     <Panel edges="both" ornaments="bottom">
       {/* Post header */}
       <div class="mb-6">
-        <time
-          datetime={post.data.date.toISOString()}
-          class="text-accent mb-2 block font-mono text-xs tracking-wide"
-        >
-          {formattedDate}
-        </time>
+        <div class="mb-2 flex items-center justify-between">
+          <a
+            href="/blog"
+            class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
+          >
+            ← Blogs
+          </a>
+          <time datetime={post.data.date.toISOString()} class="text-accent/50 font-mono text-xs tracking-wide">
+            {formattedDate}
+          </time>
+        </div>
         <h1 class="text-foreground mb-3 font-serif text-2xl">
           {post.data.title}
         </h1>

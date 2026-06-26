@@ -31,6 +31,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   box-sizing: border-box;
+  background: var(--color-background);
 }
 
 *,
@@ -419,37 +420,27 @@ body {
 }
 
 /* ========================================
-   VIEW TRANSITIONS - Theme Toggle Animation
-   Bottom-to-top wipe effect on theme change
+   VIEW TRANSITIONS - Crossfade via ClientRouter
    ======================================== */
 
-::view-transition-group(root) {
-  animation-duration: 0.5s;
-  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-  /* expo-out easing */
+::view-transition-old(root) {
+  animation: fade-out 150ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 ::view-transition-new(root) {
-  animation: theme-wipe-up 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  animation-fill-mode: both;
+  animation: fade-in 250ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
-::view-transition-old(root) {
-  animation: none;
-  z-index: -1;
+@keyframes fade-out {
+  to { opacity: 0; }
 }
 
-@keyframes theme-wipe-up {
-  from {
-    clip-path: inset(100% 0 0 0);
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-  }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Respect reduced motion preference */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(root),
   ::view-transition-new(root),
@@ -573,18 +564,38 @@ pre code {
 
 /* Code blocks — dashed border + muted background */
 pre.astro-code {
+  position: relative;
   background-color: var(--color-muted) !important;
-  border: 1px dashed color-mix(in srgb, var(--color-accent) 20%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 15%, transparent);
   font-family: var(--font-family-mono) !important;
   font-size: 0.8125rem;
   line-height: 1.75;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem;
   overflow-x: auto;
   counter-reset: line;
+}
+pre.astro-code[data-language] {
+  padding-top: 2rem;
 }
 pre.astro-code[data-has-header] {
   border-top: none;
 }
+
+/* Language label */
+pre.astro-code[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0.625rem;
+  left: 0.875rem;
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  user-select: none;
+  line-height: 1;
+}
+
 pre.astro-code code {
   background: transparent;
   font-size: inherit;
@@ -600,6 +611,35 @@ pre.astro-code .line::before {
   margin-right: 0.5rem;
   color: color-mix(in srgb, var(--color-foreground) 25%, transparent);
   user-select: none;
+}
+
+/* Table alternating rows */
+tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--color-accent) 4%, transparent);
+}
+
+[data-theme="nightingale"] tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--color-secondary) 6%, transparent);
+}
+
+/* Collapse bare text nodes (newlines) between <code> tag and first .line */
+pre.astro-code code {
+  font-size: 0;
+  line-height: 0;
+}
+pre.astro-code code > .line {
+  font-size: 0.8125rem;
+  line-height: 1.75;
+}
+
+/* After title extraction, Shiki leaves an empty first .line.
+   Match all possible shapes: truly empty, single empty child, or whitespace-only. */
+pre.astro-code code > .line:first-child:empty,
+pre.astro-code code > .line:first-child:not(:has(span:not(:empty))),
+pre.astro-code code > .line:last-child:empty,
+pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
+  display: none;
+  counter-increment: none;
 }
 
 /* ========================================

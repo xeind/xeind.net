@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
 import Seo from "../components/Seo.astro";
+import { ClientRouter } from "astro:transitions";
 import { SITE } from "@/config/site";
 
 interface Props {
@@ -42,13 +43,6 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
 
           if (theme === "light") root.removeAttribute("data-theme");
           else root.setAttribute("data-theme", theme);
-
-          root.style.backgroundColor =
-            theme === "dark"
-                ? "#0e1115"
-                : theme === "nightingale"
-                  ? "#181818"
-                  : "#EBE5D8";
         } catch {
           document.documentElement.style.backgroundColor = "#EBE5D8";
         }
@@ -95,6 +89,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       type={type}
       structuredData={structuredData}
     />
+    <ClientRouter />
   </head>
   <body class="font-sans antialiased">
     <div class="paper-background min-h-dvh overflow-x-clip" tabindex="-1">

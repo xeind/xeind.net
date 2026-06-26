@@ -1,5 +1,1 @@
-User-agent: *
-Disallow:
-
 Sitemap: https://xeind.net/sitemap-index.xml
-

@@ -51,4 +51,10 @@ next-env.d.ts
 lighthouse-*.json
 lighthouse-*.html
 
+# tool caches
+.ruff_cache/
+.claude/
+.fallow/
+.open-code/
+
 .github

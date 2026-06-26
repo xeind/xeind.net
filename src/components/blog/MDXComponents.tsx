@@ -203,7 +203,13 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 /* ── Divider ── */
 
 function MdxHr() {
-  return <div className="border-accent/20 my-6 border-t border-dashed" />;
+  return (
+    <div className="relative my-5 h-px -mx-5 sm:-mx-8 md:-mx-12">
+      <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
+      <span className="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+      <span className="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+    </div>
+  );
 }
 
 /* ── Lists ── */
@@ -333,6 +339,19 @@ export function References({ children }: { children: React.ReactNode }) {
   );
 }
 
+/* ── Video ── */
+
+function MdxVideo(props: React.VideoHTMLAttributes<HTMLVideoElement>) {
+  return (
+    <video
+      controls
+      preload="metadata"
+      className="border-accent/30 my-6 w-full border border-dashed"
+      {...props}
+    />
+  );
+}
+
 /* ── Export ── */
 
 export const mdxComponents = {
@@ -342,7 +361,6 @@ export const mdxComponents = {
   h3: MdxH3,
   p: MdxParagraph,
   blockquote: MdxBlockquote,
-  pre: MdxPre,
   code: MdxCode,
   hr: MdxHr,
   ul: MdxUl,
@@ -351,6 +369,7 @@ export const mdxComponents = {
   strong: MdxStrong,
   em: MdxEm,
   img: MdxImg,
+  video: MdxVideo,
   table: MdxTable,
   th: MdxTh,
   td: MdxTd,

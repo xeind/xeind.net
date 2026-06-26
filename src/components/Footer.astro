@@ -99,38 +99,40 @@ const compactDate = Number.isNaN(date.getTime())
 
 <script>
   const themes = ["dark", "light", "nightingale"];
-  const labels: Record<string, string> = {
+  const labels = {
     dark: "Dark",
     light: "Light",
     nightingale: "Nightingale",
   };
 
-  function applyTheme(theme: string) {
+  function applyTheme(theme) {
     if (theme === "light") {
       document.documentElement.removeAttribute("data-theme");
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-
-    document.documentElement.style.backgroundColor =
-      theme === "dark"
-        ? "#0e1115"
-        : theme === "nightingale"
-          ? "#181818"
-          : "#EBE5D8";
-
     const label = document.querySelector("[data-theme-label]");
     if (label) label.textContent = labels[theme];
   }
 
+  function syncTheme() {
+    const saved = localStorage.getItem("theme");
+    if (saved && themes.includes(saved)) {
+      applyTheme(saved);
+    }
+  }
+
+  /* Initial sync */
+  syncTheme();
+
+  /* Re-sync after ClientRouter navigation */
+  document.addEventListener("astro:after-swap", syncTheme);
+
   const themeButton = document.querySelector("[data-theme-cycle]");
-  const savedTheme = localStorage.getItem("theme");
-  const initialTheme = themes.includes(savedTheme ?? "") ? savedTheme! : "dark";
-  applyTheme(initialTheme);
 
   themeButton?.addEventListener("click", () => {
     const saved = localStorage.getItem("theme");
-    const current = themes.includes(saved ?? "") ? saved! : "dark";
+    const current = themes.includes(saved ?? "") ? saved : "dark";
     const next = themes[(themes.indexOf(current) + 1) % themes.length];
     localStorage.setItem("theme", next);
     applyTheme(next);

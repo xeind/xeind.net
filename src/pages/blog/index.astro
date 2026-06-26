@@ -26,7 +26,11 @@ const posts = (await getCollection("blog"))
           {posts.map((post, index) => (
             <div>
               {index > 0 && (
-                <div class="border-accent/20 my-6 border-t border-dashed" />
+                <div class="relative my-5 h-px -mx-5 sm:-mx-8 md:-mx-12">
+                  <div class="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed"></div>
+                  <span class="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border"></span>
+                  <span class="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border"></span>
+                </div>
               )}
               <a href={`/blog/${post.id}`} class="group block">
                 <time
