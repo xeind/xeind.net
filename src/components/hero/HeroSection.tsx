@@ -2,7 +2,6 @@ import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import StaticLogo from "./StaticLogo";
 import { GAP_SPACING } from "@/lib/config/spacing";
 import { personalInfo } from "@/lib/data/personal";
-import InlineIcon from "@/components/ui/InlineIcon";
 import { ICON_CONFIG } from "@/lib/config/design";
 
 interface HeroActionLinkProps {
@@ -139,14 +138,21 @@ function HeroActionLink({
   );
 }
 
+const SOCIAL_ICONS: Record<string, string> = {
+  github:
+    "M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.755-1.333-1.755-1.09-.745.082-.729.082-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.834 2.809 1.304 3.495.997.108-.776.418-1.305.762-1.605-2.665-.303-5.467-1.332-5.467-5.93 0-1.31.468-2.382 1.235-3.22-.135-.304-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23a11.52 11.52 0 0 1 3.005-.404c1.02.005 2.047.138 3.005.404 2.295-1.552 3.3-1.23 3.3-1.23.645 1.653.24 2.872.12 3.176.765.838 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.922.435.375.81 1.102.81 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12Z",
+  linkedin:
+    "M20.447 20.452H16.89V14.87c0-1.332-.027-3.045-1.856-3.045-1.857 0-2.142 1.45-2.142 2.948v5.68H9.336V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.605 0 4.272 2.372 4.272 5.456zM5.337 7.433a2.063 2.063 0 1 1 0-4.127 2.063 2.063 0 0 1 0 4.127M7.119 20.452H3.555V9h3.564zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0Z",
+};
+
 function HeroSocialLink({
   href,
   label,
-  iconSrc,
+  icon,
 }: {
   href: string;
   label: string;
-  iconSrc: string;
+  icon: string;
 }) {
   return (
     <a
@@ -159,10 +165,15 @@ function HeroSocialLink({
       className="text-foreground/80 hover:text-tertiary inline-flex min-h-10 min-w-10 items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={CSS_TRANSITIONS.border}
     >
-      <InlineIcon
-        src={iconSrc}
-        className="h-[1.25em] w-[1.25em] align-[-0.12em]"
-      />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className="h-[1.25em] w-[1.25em]"
+        aria-hidden
+      >
+        <path d={SOCIAL_ICONS[icon]} />
+      </svg>
       <span className="sr-only">{label}</span>
     </a>
   );
@@ -186,12 +197,12 @@ export default function HeroSection() {
                 <HeroSocialLink
                   href={personalInfo.githubUrl}
                   label="GitHub"
-                  iconSrc="/github.svg"
+                  icon="github"
                 />
                 <HeroSocialLink
                   href={personalInfo.linkedinUrl}
                   label="LinkedIn"
-                  iconSrc="/linkedin.svg"
+                  icon="linkedin"
                 />
               </div>
             </div>

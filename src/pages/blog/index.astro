@@ -1,0 +1,72 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Panel from "@/components/ui/Panel";
+import SectionDivider from "@/components/ui/SectionDivider";
+import Badge from "@/components/ui/Badge";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft || import.meta.env.DEV)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Layout
+  title="Blog | Xein Deniel"
+  description="Notes and articles from Xein Deniel."
+  canonicalPath="/blog"
+>
+  <div class="flex flex-col">
+    <Panel edges="both" ornaments="bottom">
+      {posts.length === 0 ? (
+        <p class="text-foreground/80 font-serif text-base leading-relaxed">
+          No posts yet.
+        </p>
+      ) : (
+        <div class="flex flex-col">
+          {posts.map((post, index) => (
+            <div>
+              {index > 0 && (
+                <div class="border-accent/20 my-6 border-t border-dashed" />
+              )}
+              <a href={`/blog/${post.id}`} class="group block">
+                <time
+                  datetime={post.data.date.toISOString()}
+                  class="text-accent mb-1 block font-mono text-xs tracking-wide"
+                >
+                  {post.data.date.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+                <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="text-foreground/60 mb-3 font-serif text-sm leading-relaxed">
+                  {post.data.excerpt}
+                </p>
+                {post.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2">
+                    {post.data.tags.map((tag) => (
+                      <Badge>{tag}</Badge>
+                    ))}
+                  </div>
+                )}
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+    </Panel>
+    <SectionDivider />
+
+    <Panel edges="both" ornaments="bottom">
+      <a
+        href="/"
+        class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
+      >
+        &larr; Home
+      </a>
+    </Panel>
+  </div>
+</Layout>

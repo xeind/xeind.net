@@ -1,0 +1,82 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Panel from "@/components/ui/Panel";
+import SectionDivider from "@/components/ui/SectionDivider";
+import Badge from "@/components/ui/Badge";
+import { mdxComponents } from "@/components/blog/MDXComponents";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = post.data.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout
+  title={`${post.data.title} | Xein Deniel`}
+  description={post.data.excerpt}
+  canonicalPath={`/blog/${post.id}`}
+>
+  <div class="flex flex-col">
+    <Panel edges="both" ornaments="bottom">
+      {/* Post header */}
+      <div class="mb-6">
+        <time
+          datetime={post.data.date.toISOString()}
+          class="text-accent mb-2 block font-mono text-xs tracking-wide"
+        >
+          {formattedDate}
+        </time>
+        <h1 class="text-foreground mb-3 font-serif text-2xl">
+          {post.data.title}
+        </h1>
+        {post.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <Badge>{tag}</Badge>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Dashed separator */}
+      <div class="border-accent/20 mb-6 border-t border-dashed" />
+
+      {/* Post content */}
+      <article>
+        <Content components={mdxComponents} />
+      </article>
+    </Panel>
+    <SectionDivider />
+
+    {/* Navigation */}
+    <Panel edges="both" ornaments="bottom">
+      <div class="flex items-center justify-between">
+        <a
+          href="/blog"
+          class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
+        >
+          &larr; All posts
+        </a>
+        <a
+          href="/"
+          class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
+        >
+          Home
+        </a>
+      </div>
+    </Panel>
+  </div>
+</Layout>

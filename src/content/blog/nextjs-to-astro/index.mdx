@@ -1,0 +1,137 @@
+---
+title: "Why I Moved from Next.js to Astro"
+date: 2026-06-26
+excerpt: "I couldn't break past 95 on mobile PageSpeed. Astro gave me 100 across the board without sacrificing anything."
+tags: ["astro", "next.js", "performance", "cloudflare"]
+---
+
+import { Cite, Ref, References } from "@/components/blog/MDXComponents";
+
+For months, my portfolio sat at 95 on mobile PageSpeed. I'd tweak one thing, gain a point, lose it somewhere else. The ceiling was real and I couldn't break through.
+
+Then I migrated to Astro. First run: four 100s.
+
+## The Problem with Next.js
+
+My site isn't complex. A hero, about section, project grid, experience timeline, and a footer. One interactive component (the project grid modal). Everything else is static content.
+
+Next.js shipped ~450KB of JavaScript for this:
+
+- 214KB Next.js runtime (App Router, hydration, client router)<Cite n={1} />
+- 123KB motion/react (used by one component)
+- 113KB browser polyfills (Turbopack shared chunks)
+- 84KB Radix UI (dropdown menu for a theme switcher)<Cite n={2} />
+
+I rewrote the theme switcher to remove Radix. I swapped barrel imports for direct imports to help tree-shaking. I wrapped the footer in `dynamic(() => import(...), { ssr: false })`. Nothing moved the needle past 95 on mobile.
+
+The real problem: Next.js hydrates the entire page.<Cite n={3} /> Every component ships JavaScript regardless of whether it needs interactivity. For a content site, that's overhead you can't optimize out of existence.
+
+## What Astro Changes
+
+Astro defaults to zero JavaScript.<Cite n={4} /> Components render to HTML at build time. You opt into interactivity only where you need it, per component.
+
+My entire site now has one hydrated island:
+
+```astro
+<ProjectGrid client:visible />
+```
+
+That's it. Nothing else ships JavaScript. The hero, about section, timeline, footer — all static HTML. The project grid only hydrates when it scrolls into view.
+
+## The Migration
+
+One commit: 9,300 insertions, 10,861 deletions across 98 files. Looks dramatic, but most of it was just moving files and converting React to `.astro`.
+
+### What stayed the same
+
+- React components — ProjectGrid, HeroSection, AboutSection kept their `.tsx` files. Astro renders them server-side unless you add a client directive.
+- Tailwind CSS — moved from PostCSS to the Vite plugin (`@tailwindcss/vite`). Same utility classes, faster builds.
+- Motion — the project grid modal animation is identical. Same `layoutId`, same springs, same `AnimatePresence`.
+- Design system — every token, spacing constant, and animation config carried over unchanged.
+
+### What changed
+
+- Routing — from Next.js App Router to Astro file-based routing. Simpler, no nested layouts to think about.
+- Theme switching — from a React context provider to an inline `<script>` in the `<head>` that reads `localStorage` before paint. No flash, no hydration.
+- CSS delivery — `build.inlineStylesheets: "always"` inlines everything into the HTML.<Cite n={5} /> One fewer network request, immediate paint.
+- Footer — was a React component loaded with `dynamic()`. Now a `.astro` file, zero JavaScript overhead.
+- Theme dropdown — was a React component using `createPortal`. Now a server-rendered button with an inline script. No Radix, no motion, no portal.
+
+### The theme script
+
+This is ~300 bytes and runs before paint (blocking, deliberately):
+
+```html
+<script is:inline>
+  (() => {
+    const saved = localStorage.getItem("theme");
+    const theme = ["dark", "light", "nightingale"].includes(saved)
+      ? saved : "dark";
+    if (theme === "light")
+      document.documentElement.removeAttribute("data-theme");
+    else
+      document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+```
+
+No flash. No hydration mismatch. No `useEffect` dance.
+
+## Deploying to Cloudflare
+
+I moved from Vercel to Cloudflare Workers with static assets.<Cite n={6} /> Minimal config:
+
+```jsonc
+{
+  "assets": { "directory": "./dist" },
+  "routes": [{ "pattern": "xeind.net", "custom_domain": true }]
+}
+```
+
+Astro builds to `./dist`, Wrangler deploys it. Static files served from Cloudflare's edge globally.
+
+### Cache headers
+
+Astro fingerprints CSS and JS with content hashes under `/_astro/`. These get permanent caching:
+
+```
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+```
+
+HTML pages get `no-cache` so deployments take effect immediately.
+
+## The Numbers
+
+| Metric | Next.js (Vercel) | Astro (Cloudflare) |
+|--------|------------------|--------------------|
+| Performance | 95-97 | 100 |
+| Accessibility | 100 | 100 |
+| Best Practices | 100 | 100 |
+| SEO | 100 | 100 |
+| JS shipped | ~450KB | ~125KB |
+| Hydrated components | All | 1 |
+
+The remaining ~125KB is motion/react for the project grid modal. Everything else is HTML and inlined CSS.
+
+## What I'd Do Differently
+
+I shouldn't have started with Next.js for a portfolio. The App Router is excellent for apps with dynamic data, authentication, and server actions. But a portfolio? It's static content with maybe one interactive widget.
+
+If you're building content-forward site, start with Astro. Add React islands where you need them. Going the other way (trying to make React ship less JavaScript) is swimming upstream.
+
+---
+
+The source is [on GitHub](https://github.com/xeind/xeind.net). The migration commit is `23a8fe2` if you want to see exactly what changed.
+
+<References>
+  <Ref n={1} href="https://nextjs.org/docs/app/building-your-application/rendering">Next.js Rendering documentation — App Router hydration and server/client component model</Ref>
+  <Ref n={2} href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu">Radix UI Dropdown Menu — accessible but ships significant JS for simple menus</Ref>
+  <Ref n={3} href="https://www.patterns.dev/react/react-selective-hydration">Selective Hydration in React 18 — patterns.dev</Ref>
+  <Ref n={4} href="https://docs.astro.build/en/concepts/islands/">Astro Islands architecture — zero JS by default, opt-in interactivity</Ref>
+  <Ref n={5} href="https://docs.astro.build/en/reference/configuration-reference/#buildinlinestylesheets">Astro build.inlineStylesheets configuration reference</Ref>
+  <Ref n={6} href="https://developers.cloudflare.com/workers/static-assets/">Cloudflare Workers Static Assets documentation</Ref>
+</References>

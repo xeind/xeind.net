@@ -1,0 +1,58 @@
+---
+title: "Hello World"
+date: 2026-06-26
+excerpt: "First post on the blog. Testing MDX components, code blocks, images, and links."
+tags: ["meta", "astro"]
+draft: true
+---
+
+import { Cite, Ref, References } from "@/components/blog/MDXComponents";
+
+This is my first blog post. I'm using MDX so I can embed React components directly in my writing.<Cite n={1} />
+
+## Links
+
+Here's an [external link](https://github.com/xeind) that opens in a new tab automatically. And here's an [internal link](/blog).
+
+## Code
+
+Inline code looks like this: `const x = 42`.
+
+```typescript
+// test.ts
+interface BlogPost {
+  title: string;
+  date: Date;
+  tags: string[];
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+```
+
+## Blockquotes
+
+> Design is not just what it looks like and feels like. Design is how it works.
+
+## Lists
+
+- First item with some detail
+- Second item explaining something
+- Third item wrapping up
+
+1. Ordered items work too
+2. They follow the same spacing
+3. Consistent with the design system
+
+---
+
+That's the basics. More posts coming soon.
+
+<References>
+  <Ref n={1} href="https://mdxjs.com/">MDX — Markdown for the component era</Ref>
+</References>

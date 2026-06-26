@@ -1,0 +1,331 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Panel from "@/components/ui/Panel";
+import SectionDivider from "@/components/ui/SectionDivider";
+import Badge from "@/components/ui/Badge";
+import InlineLink from "@/components/ui/InlineLink";
+import CornerDiamond from "@/components/ui/CornerDiamond";
+---
+
+<Layout
+  title="Design System | Xein Deniel"
+  description="Design tokens, components, and patterns."
+  canonicalPath="/design"
+  noindex
+>
+  <div class="flex flex-col">
+    {/* Header */}
+    <Panel tone="hero" padding="lg" edges="bottom" ornaments="bottom">
+      <h1 class="text-foreground font-serif text-2xl">Design System</h1>
+      <p class="text-foreground/60 mt-2 text-sm">
+        Tokens, components, and patterns used across xeind.net.
+      </p>
+    </Panel>
+    <SectionDivider />
+
+    {/* Typography */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        TYPOGRAPHY
+      </h2>
+
+      <div class="space-y-6">
+        <div>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">font-serif · Latin Modern Roman</p>
+          <p class="text-foreground font-serif text-2xl">The quick brown fox jumps over the lazy dog</p>
+          <p class="text-foreground font-serif text-xl">The quick brown fox jumps over the lazy dog</p>
+          <p class="text-foreground font-serif text-lg">The quick brown fox jumps over the lazy dog</p>
+          <p class="text-foreground font-serif text-base">The quick brown fox jumps over the lazy dog</p>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">font-sans · Inter</p>
+          <p class="text-foreground font-sans text-sm">The quick brown fox jumps over the lazy dog</p>
+          <p class="text-foreground font-sans text-xs">The quick brown fox jumps over the lazy dog</p>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">font-mono · Commit Mono</p>
+          <p class="text-foreground font-mono text-sm">The quick brown fox jumps over the lazy dog</p>
+          <p class="text-foreground font-mono text-xs">0123456789 !@#$%^&amp;*() const fn =&gt; {"{}"}</p>
+        </div>
+      </div>
+    </Panel>
+    <SectionDivider />
+
+    {/* Colors */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        COLORS
+      </h2>
+      <p class="text-foreground/50 mb-4 font-mono text-xs">
+        Adapts to Light, Dark, and Nightingale themes
+      </p>
+
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { name: "background", cls: "bg-background" },
+          { name: "foreground", cls: "bg-foreground" },
+          { name: "card", cls: "bg-card" },
+          { name: "muted", cls: "bg-muted" },
+          { name: "accent", cls: "bg-accent" },
+          { name: "tertiary", cls: "bg-tertiary" },
+          { name: "secondary", cls: "bg-secondary" },
+          { name: "border", cls: "bg-border" },
+        ].map((c) => (
+          <div class="flex items-center gap-3">
+            <div
+              class={`border-accent/20 h-8 w-8 shrink-0 border border-dashed ${c.cls}`}
+            />
+            <span class="text-foreground/60 font-mono text-xs">{c.name}</span>
+          </div>
+        ))}
+      </div>
+    </Panel>
+    <SectionDivider />
+
+    {/* Borders & Ornaments */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        BORDERS &amp; ORNAMENTS
+      </h2>
+
+      <div class="space-y-6">
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Dashed borders · hover → solid</p>
+          <div class="group border-accent/30 relative inline-block cursor-pointer border border-dashed px-6 py-3 transition-all hover:border-solid">
+            <span class="text-foreground font-serif text-sm">Hover me</span>
+          </div>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Corner diamonds</p>
+          <div class="border-accent/20 relative border border-dashed px-6 py-4">
+            <CornerDiamond position="all" variant="accent" />
+            <span class="text-foreground/80 font-serif text-sm">Panel with corner ornaments</span>
+          </div>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Corner brackets · expand on hover</p>
+          <div class="group relative inline-block px-6 py-4">
+            <div class="ca-tl" />
+            <div class="ca-tr" />
+            <div class="ca-bl" />
+            <div class="ca-br" />
+            <span class="text-foreground/80 font-serif text-sm">Hover to expand brackets</span>
+          </div>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Section divider</p>
+          <SectionDivider />
+        </div>
+      </div>
+    </Panel>
+    <SectionDivider />
+
+    {/* Components */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        COMPONENTS
+      </h2>
+
+      <div class="space-y-6">
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Badge variants</p>
+          <div class="flex flex-wrap gap-2">
+            <Badge>default</Badge>
+            <Badge variant="accent">accent</Badge>
+            <Badge variant="muted">muted</Badge>
+            <Badge>TypeScript</Badge>
+            <Badge>React</Badge>
+            <Badge>Astro</Badge>
+          </div>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">InlineLink</p>
+          <p class="text-foreground/80 font-serif text-base">
+            A link to <InlineLink href="https://github.com" external>GitHub</InlineLink> and an
+            <InlineLink href="/blog"> internal link</InlineLink>.
+          </p>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Inline code</p>
+          <p class="text-foreground/80 font-serif text-base">
+            Use <code>npm install</code> to install, then run <code>astro dev</code>.
+          </p>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Code block</p>
+          <pre class="border-accent/20 bg-muted overflow-x-auto border border-dashed p-4 font-mono text-[0.8125rem] leading-relaxed"><code>{`interface Config {
+  site: string;
+  output: "static";
+  themes: ("light" | "dark" | "nightingale")[];
+}`}</code></pre>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">CTA Buttons · View Resume / Schedule Call</p>
+          <div class="flex flex-wrap justify-center gap-4 md:justify-start md:gap-8">
+            <!-- View Resume -->
+            <a href="#" class="bg-card group relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors md:px-12">
+              <div class="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid" />
+              <div class="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid" />
+              <div class="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid" />
+              <div class="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid" />
+              <!-- Corner brackets -->
+              <div class="absolute top-0 left-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" /><div class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" />
+              </div>
+              <div class="absolute top-0 right-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all" /><div class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all" />
+              </div>
+              <div class="absolute bottom-0 left-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" /><div class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" />
+              </div>
+              <div class="absolute right-0 bottom-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all" /><div class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all" />
+              </div>
+              <!-- Gradient overlay -->
+              <div class="pointer-events-none absolute inset-0">
+                <div class="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0" />
+                <div class="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0" />
+              </div>
+              <span class="relative z-10 font-serif text-sm">View Resume</span>
+              <span class="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all">V</span>
+            </a>
+            <!-- Schedule Call -->
+            <a href="#" class="bg-card group relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors md:px-12">
+              <div class="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid" />
+              <div class="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid" />
+              <div class="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid" />
+              <div class="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid" />
+              <div class="absolute top-0 left-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" /><div class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" />
+              </div>
+              <div class="absolute top-0 right-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all" /><div class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all" />
+              </div>
+              <div class="absolute bottom-0 left-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" /><div class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" />
+              </div>
+              <div class="absolute right-0 bottom-0 z-10">
+                <div class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all" /><div class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all" />
+              </div>
+              <div class="pointer-events-none absolute inset-0">
+                <div class="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0" />
+                <div class="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0" />
+              </div>
+              <span class="relative z-10 font-serif text-sm">Schedule Call</span>
+              <span class="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all">C</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p class="text-foreground/50 mb-3 font-mono text-xs">Blockquote</p>
+          <blockquote class="border-accent/30 my-2 border-l border-dashed py-1 pl-5">
+            <p class="text-foreground/60 font-serif text-base italic leading-[1.8]">
+              Design is not just what it looks like and feels like.
+              Design is how it works.
+            </p>
+          </blockquote>
+        </div>
+      </div>
+    </Panel>
+    <SectionDivider />
+
+    {/* Spacing */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        SPACING
+      </h2>
+      <p class="text-foreground/50 mb-4 font-mono text-xs">
+        Base unit: 16px grid · All spacing in multiples of 4px
+      </p>
+
+      <div class="space-y-2">
+        {[
+          { label: "xs", value: "gap-2 (8px)" },
+          { label: "sm", value: "gap-4 (16px)" },
+          { label: "md", value: "gap-8 (32px)" },
+          { label: "lg", value: "gap-12 (48px)" },
+          { label: "xl", value: "gap-16 (64px)" },
+        ].map((s) => (
+          <div class="flex items-center gap-4">
+            <span class="text-foreground w-8 font-mono text-xs">{s.label}</span>
+            <div class="bg-accent/20 h-4 flex-1" style={`max-width: ${parseInt(s.value.match(/\d+(?=px)/)?.[0] || "16") * 3}px`} />
+            <span class="text-foreground/50 font-mono text-xs">{s.value}</span>
+          </div>
+        ))}
+      </div>
+    </Panel>
+    <SectionDivider />
+
+    {/* Animation */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        ANIMATION
+      </h2>
+
+      <div class="space-y-3">
+        {[
+          { label: "instant", value: "0ms" },
+          { label: "fast", value: "150ms" },
+          { label: "normal", value: "200ms" },
+          { label: "slow", value: "300ms" },
+          { label: "slower", value: "500ms" },
+        ].map((d) => (
+          <div class="flex items-center gap-4">
+            <span class="text-foreground w-16 font-mono text-xs">{d.label}</span>
+            <span class="text-foreground/50 font-mono text-xs">{d.value}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="border-accent/20 my-4 border-t border-dashed" />
+
+      <p class="text-foreground/50 font-mono text-xs">
+        Easing: cubic-bezier(0.215, 0.61, 0.355, 1) · ease-out for entries, ease for hovers
+      </p>
+      <p class="text-foreground/50 mt-1 font-mono text-xs">
+        Springs: duration 0.3s, bounce 0 (noBounce) for modals &amp; layout
+      </p>
+    </Panel>
+    <SectionDivider />
+
+    {/* Back */}
+    <Panel edges="top">
+      <a
+        href="/"
+        class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
+      >
+        &larr; Home
+      </a>
+    </Panel>
+  </div>
+</Layout>
