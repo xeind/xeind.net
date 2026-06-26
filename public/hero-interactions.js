@@ -49,6 +49,27 @@
     noise.start(audio.currentTime);
   };
 
+  const playFidget = async () => {
+    const audio = getCtx();
+    if (audio.state === "suspended") await audio.resume();
+    const noise = audio.createBufferSource();
+    const buf = audio.createBuffer(1, audio.sampleRate * 0.005, audio.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++)
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);
+    noise.buffer = buf;
+    const filter = audio.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 2200 + Math.random() * 400;
+    filter.Q.value = 3;
+    const gain = audio.createGain();
+    gain.gain.value = 0.12 + Math.random() * 0.03;
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audio.destination);
+    noise.start(audio.currentTime);
+  };
+
   const heroLinkSelector = '[data-hero-sfx="click"]';
   const hoverSelector = "[data-hero-sfx-hover]";
   const hintSelector = "[data-link-hint]";
@@ -183,7 +204,7 @@
           : null;
       if (!target || target === lastHoverTarget) return;
       lastHoverTarget = target;
-      if (primed) void playClickSoft();
+      if (primed) void playFidget();
       if (target.matches(hintSelector)) showHint(target);
     },
     { passive: true },

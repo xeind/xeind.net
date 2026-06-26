@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
@@ -13,10 +14,16 @@ export default defineConfig({
   build: {
     inlineStylesheets: "always",
   },
+  markdown: {
+    shikiConfig: {
+      theme: "css-variables",
+    },
+  },
   integrations: [
     react(),
+    mdx(),
     sitemap({
-      filter: (page) => !page.endsWith("/blog/") && !page.endsWith("/badges/"),
+      filter: (page) => !page.endsWith("/badges/"),
     }),
   ],
   vite: {

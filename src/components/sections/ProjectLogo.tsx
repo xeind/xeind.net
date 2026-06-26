@@ -212,9 +212,9 @@ const PIONEER_SPARKLE =
   "M8.71,5.96c.22-1.04,1.68-1.04,1.91,0v.05s.01,0,.01,0c0,.03.01.06.02.1.29,1.25,1.29,2.21,2.54,2.43,1.06.19,1.06,1.74,0,1.92-1.26.22-2.26,1.19-2.54,2.45l-.03.13c-.23,1.03-1.69,1.03-1.91,0l-.02-.12c-.27-1.27-1.27-2.24-2.53-2.46-1.06-.19-1.06-1.73,0-1.92,1.25-.22,2.25-1.19,2.53-2.45l.02-.09v-.04Z";
 
 const PIONEER_THEME: Record<ResolvedTheme, { body: string }> = {
-  light: { body: "#1a1a1a" },
-  dark: { body: "#e6e6e6" },
-  nightingale: { body: "#DCD7BA" },
+  light: { body: "var(--color-foreground)" },
+  dark: { body: "var(--color-foreground)" },
+  nightingale: { body: "var(--color-foreground)" },
 };
 
 function PioneerLogo({

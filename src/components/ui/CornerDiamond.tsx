@@ -13,8 +13,8 @@ export default function CornerDiamond({
 }: CornerDiamondProps) {
   const baseClass =
     variant === "accent"
-      ? `absolute z-10 rotate-45 rounded-[1px] border border-accent/20 bg-card ${className}`
-      : `absolute z-10 rotate-45 rounded-[1px] border border-border bg-card ${className}`;
+      ? `absolute z-20 rotate-45 rounded-[1px] border border-accent/20 bg-card ${className}`
+      : `absolute z-20 rotate-45 rounded-[1px] border border-border bg-card ${className}`;
 
   // Different offsets for visual alignment with rotated square
   const topOffset = "-3.5px"; // Top/bottom positioning

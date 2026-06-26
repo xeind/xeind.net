@@ -392,6 +392,68 @@ function playClickSoft() {
   noise.start(ctx.currentTime);
 }
 
+function playFidget() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  // Tiny mechanical tick — low-pitched, very short noise burst
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.005, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);
+  }
+  noise.buffer = buf;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 2200 + Math.random() * 400;
+  filter.Q.value = 3;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.12 + Math.random() * 0.03;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(ctx.currentTime);
+}
+
+function playBrush() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  // Soft tactile brush — very quiet, wide-band, ultra-short
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.007, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 25);
+  }
+  noise.buffer = buf;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 2000 + Math.random() * 500;
+  filter.Q.value = 1.2;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.06 + Math.random() * 0.02;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(ctx.currentTime);
+}
+
 export function useClickSound() {
   const prefersReducedMotion = useReducedMotion();
   const enabled = useRef(true);
@@ -482,6 +544,16 @@ export function useClickSound() {
     playProjectPop();
   }, [prefersReducedMotion]);
 
+  const fidget = useCallback(() => {
+    if (prefersReducedMotion || !enabled.current) return;
+    playFidget();
+  }, [prefersReducedMotion]);
+
+  const brush = useCallback(() => {
+    if (prefersReducedMotion || !enabled.current) return;
+    playBrush();
+  }, [prefersReducedMotion]);
+
   return {
     tick,
     pop,
@@ -495,5 +567,7 @@ export function useClickSound() {
     clickSharp,
     clickSoft,
     projectPop,
+    fidget,
+    brush,
   };
 }
