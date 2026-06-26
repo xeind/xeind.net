@@ -14,6 +14,7 @@ function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
     <a
       href={href}
+      data-hero-sfx="click"
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px font-normal transition-colors hover:border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{

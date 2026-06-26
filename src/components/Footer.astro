@@ -128,9 +128,10 @@ const compactDate = Number.isNaN(date.getTime())
   /* Re-sync after ClientRouter navigation */
   document.addEventListener("astro:after-swap", syncTheme);
 
-  const themeButton = document.querySelector("[data-theme-cycle]");
-
-  themeButton?.addEventListener("click", () => {
+  /* Event delegation — survives ClientRouter DOM swaps */
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-theme-cycle]");
+    if (!btn) return;
     const saved = localStorage.getItem("theme");
     const current = themes.includes(saved ?? "") ? saved : "dark";
     const next = themes[(themes.indexOf(current) + 1) % themes.length];

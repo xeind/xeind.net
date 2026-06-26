@@ -17,7 +17,7 @@
   function makeCopyButton() {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "text-accent/60 hover:text-tertiary flex h-6 w-6 items-center justify-center rounded-[4px] transition-colors shrink-0";
+    btn.className = "text-accent/40 hover:text-tertiary flex h-6 w-6 items-center justify-center rounded-[4px] transition-colors shrink-0";
     btn.setAttribute("aria-label", "Copy code");
 
     btn.innerHTML =

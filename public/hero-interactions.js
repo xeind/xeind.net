@@ -1,4 +1,7 @@
 (() => {
+  if (window.__hero_interactions_loaded) return;
+  window.__hero_interactions_loaded = true;
+
   if (!window.matchMedia("(pointer: fine)").matches) return;
 
   let ctx = null;
@@ -272,5 +275,10 @@
       await playClickSoft();
       window.open(link.href, link.target || "_blank", "noopener,noreferrer");
     })();
+  });
+
+  /* Re-prime audio after ClientRouter navigations */
+  document.addEventListener("astro:after-swap", () => {
+    primed = false;
   });
 })();

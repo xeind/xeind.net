@@ -32,7 +32,7 @@ const posts = (await getCollection("blog"))
                   <span class="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border"></span>
                 </div>
               )}
-              <a href={`/blog/${post.id}`} class="group block">
+              <a href={`/blog/${post.id}`} class="group block" data-hero-sfx="click" data-hero-sfx-hover>
                 <time
                   datetime={post.data.date.toISOString()}
                   class="text-accent mb-1 block font-mono text-xs tracking-wide"
@@ -67,6 +67,7 @@ const posts = (await getCollection("blog"))
     <Panel edges="both" ornaments="bottom">
       <a
         href="/"
+        data-hero-sfx="click"
         class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
       >
         &larr; Home
