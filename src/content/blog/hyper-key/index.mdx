@@ -1,0 +1,144 @@
+---
+title: "The Hyper Key ✦"
+date: 2026-06-27
+excerpt: "Caps Lock is the most wasted key on the keyboard. I turned it into a launcher for everything."
+tags: ["karabiner", "mac", "productivity", "keyboard"]
+series: "hyper-key-setup"
+seriesOrder: 1
+seriesIcon: "star"
+---
+
+import { Cite, Ref, References } from "@/components/blog/MDXComponents";
+
+I grew up on Windows. No strong opinions about keyboards. Caps Lock was Caps Lock, something I hit by accident once a month.
+
+Then I installed WSL and got hooked on Ubuntu inside a Windows shell. It started with Ghostty as my terminal, then tmux, then vim. That spiraled into an obsession with Unix. I bought a Mac because I wanted the real thing, not a subsystem bolted onto an OS that fights you at every turn.
+
+That changed how I thought about input. Why reach for a mouse when `hjkl` is right there? Why click through menus when a keystroke can do it faster?
+
+I found [Max Stoiber's video](https://www.youtube.com/watch?v=j4b_uQX3Vu0) on his keyboard setup<Cite n={1} /> and it rewired my brain. Remap `Caps Lock` into a "Hyper Key", a modifier that doesn't exist on any standard keyboard, and use it to build an entire shortcut layer on top of your normal layout.
+
+I've been using this system for over a year. I can't go back. My `Caps Lock` keycap is the shiniest key on the board.
+
+---
+
+## What the Hyper Key Is
+
+Every keyboard has four modifier keys: `Control`, `Option`, `Shift`, `Command`. Hold all four simultaneously and you get a chord that virtually no application uses: `Ctrl+Opt+Shift+Cmd`. That's the Hyper Key.
+
+Karabiner-Elements<Cite n={2} /> lets you remap `Caps Lock` to send this chord when held. Tap it alone and it sends `Escape` (useful in vim). Hold it and you've unlocked a parallel keyboard layer.
+
+```jsonc
+{
+  "description": "Caps Lock -> Hyper Key",
+  "from": { "key_code": "caps_lock" },
+  "to": [{ "set_variable": { "name": "hyper", "value": 1 } }],
+  "to_after_key_up": [{ "set_variable": { "name": "hyper", "value": 0 } }],
+  "to_if_alone": [{ "key_code": "escape" }]
+}
+```
+
+One key, two functions. No conflict with anything.
+
+## Sublayers
+
+A single modifier gives you 26 letters to bind. That's useful, but not enough. Sublayers multiply the space.
+
+Hold `Hyper`, then press a letter to enter a *mode*. While in that mode, every key on the keyboard has a different meaning. Release `Hyper` and you're back to normal.
+
+I have seven sublayers:
+
+| Key | Mode | What it does |
+|-----|------|-------------|
+| `b` | Bookmarks | Open websites instantly |
+| `o` | Open | Launch applications |
+| `w` | Window | Tile, move, resize windows |
+| `c` | Capture | Screenshots, OCR, clipboard (CleanShot X) |
+| `s` | System | Volume, brightness, lock, DND |
+| `v` | Vim | Arrow keys, scrolling, mouse clicks |
+| `r` | Raycast | Color picker, emoji, notifications |
+
+Each sublayer is a Karabiner variable. When you hold Hyper + `b`, the variable `hyper_sublayer_b` is set to 1. Every binding inside that sublayer checks for this variable. Let go and it resets to 0.
+
+The sublayers are mutually exclusive. Activating one requires all others to be at 0. No accidental crossover.
+
+## Bookmarks: Hyper + B
+
+The simplest sublayer. Hold `Hyper + B`, then press a letter to open a site in your default browser.
+
+| Key | Site |
+|-----|------|
+| `x` | X (Twitter) |
+| `y` | YouTube |
+| `f` | Facebook |
+| `g` | GitHub |
+| `r` | Reddit |
+| `c` | ChatGPT |
+| `m` | Gmail |
+| `p` | Google Photos |
+| `l` | LinkedIn |
+
+Each binding is a `shell_command` that runs `open https://...`. No browser extension, no bookmark bar, no `Spotlight` search. Two keys and the page is loading.
+
+```jsonc
+{
+  "conditions": [{ "name": "hyper_sublayer_b", "type": "variable_if", "value": 1 }],
+  "from": { "key_code": "g" },
+  "to": [{ "shell_command": "open https://github.com" }]
+}
+```
+
+I can open GitHub from any application, any context, without touching the mouse or switching to a browser first.
+
+## Open Apps: Hyper + O
+
+Same idea, but for applications. Hold `Hyper + O`, press a letter, the app opens or focuses if already running.
+
+| Key | App | Mnemonic |
+|-----|-----|----------|
+| `1` | Bitwarden | |
+| `b` | Firefox | browser |
+| `z` | Zen Browser | |
+| `d` | Discord | |
+| `t` | Ghostty | terminal |
+| `m` | Obsidian | markdown |
+| `f` | Finder | |
+| `n` | Things 3 | notes |
+| `p` | Skim | pdf |
+| `h` | Helium | |
+| `c` | Zed | code |
+
+```jsonc
+{
+  "conditions": [{ "name": "hyper_sublayer_o", "type": "variable_if", "value": 1 }],
+  "from": { "key_code": "t" },
+  "to": [{ "shell_command": "open -a 'Ghostty.app'" }]
+}
+```
+
+Before this, I used `Cmd+Space` and typed app names into Spotlight. It worked, but it's sequential: invoke launcher, type name, wait for match, press `Enter`. The Hyper Key is parallel: hold two keys, press one more, done. The app is already opening before Spotlight would've finished indexing.
+
+## The Mental Model
+
+`Caps Lock` turns your keyboard into a command palette. Each sublayer is a category. Each key is an action.
+
+There's no memorization phase. You build the bindings around things you already do twenty times a day. Within a week the muscle memory is automatic. Within a month you forget the keybindings exist. Your fingers just know.
+
+The real shift isn't speed. It's that your hands never leave the keyboard. No reaching for the mouse to click a dock icon. No `Cmd+Tab` cycling through windows. No opening a browser, clicking the address bar, typing a URL. Every common action is two or three keystrokes.
+
+With the vim sublayer (covered in a later post), I can keep my thumb on the trackpad and do everything else with the left hand. Navigate, scroll, click, switch apps, tile windows. I don't even need to look at the screen half the time. The muscle memory runs on its own.
+
+I've tried going back to Windows. Nothing matches the speed. The OS doesn't have anything close to Karabiner, and even the third-party tools feel like duct tape over a missing foundation.
+
+Pair this with a terminal running tmux and it gets absurd. `Hyper + O + T` opens Ghostty. `Tmux prefix + HJKL` to navigate panes. Vim motions inside each pane. Three layers of keyboard-driven control, all building on the same muscle memory. Unbeatable.
+
+---
+
+✦ This is part one of a series on my keyboard setup. Next: window management with vim-style tiling.
+
+My Karabiner config is in my [dotfiles](https://github.com/xeind/dotfiles/tree/main/.config/karabiner).
+
+<References>
+  <Ref n={1} href="https://www.youtube.com/watch?v=j4b_uQX3Vu0">Max Stoiber, "My Hyper Key keyboard setup" (YouTube)</Ref>
+  <Ref n={2} href="https://karabiner-elements.pqrs.org/">Karabiner-Elements, keyboard customizer for macOS</Ref>
+</References>

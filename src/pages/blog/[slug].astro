@@ -22,6 +22,15 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
   month: "long",
   day: "numeric",
 });
+
+// Series data
+const allPosts = await getCollection("blog");
+const seriesPosts = post.data.series
+  ? allPosts
+      .filter((p) => p.data.series === post.data.series && !p.data.draft)
+      .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+  : [];
+const seriesIcon = seriesPosts[0]?.data.seriesIcon;
 ---
 
 <Layout
@@ -63,6 +72,39 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
       <article>
         <Content components={mdxComponents} />
       </article>
+
+      {/* Series nav */}
+      {seriesPosts.length > 1 && (
+        <div class="border-accent/15 mt-8 border border-dashed p-5">
+          <div class="mb-3 flex items-center gap-2">
+            {seriesIcon === "star" && (
+              <span class="text-accent text-sm">✦</span>
+            )}
+            <span class="text-secondary font-mono text-xs tracking-wide uppercase">Series</span>
+          </div>
+          <ol class="space-y-1.5 list-none pl-0">
+            {seriesPosts.map((sp) => (
+              <li class="flex items-start gap-2 text-sm">
+                <span class="text-accent/40 mt-px shrink-0 font-mono text-xs">
+                  {sp.data.seriesOrder}.
+                </span>
+                {sp.id === post.id ? (
+                  <span class="text-foreground font-serif">
+                    {sp.data.title}
+                  </span>
+                ) : (
+                  <a
+                    href={`/blog/${sp.id}`}
+                    class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px font-serif transition-colors hover:border-solid"
+                  >
+                    {sp.data.title}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
     </Panel>
     <SectionDivider />
 
