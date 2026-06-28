@@ -53,7 +53,7 @@ svg {
 }
 
 @theme {
-  /* Light mode (default) - E-ink / Kindle Paper */
+  /* Kozo — warm paper, ink on mulberry fiber */
   --color-background: hsl(42 29% 92%);
   --color-foreground: hsl(30 10% 18%);
   --color-card: hsl(42 29% 96%);
@@ -102,7 +102,7 @@ svg {
    Each theme overrides the same 9 tokens
    ======================================== */
 
-/* Dark Theme - Cool slate deep black */
+/* Manila — deep night, sodium lamps, warm concrete */
 [data-theme="dark"] {
   --color-background: hsl(220 8% 6%);
   --color-foreground: hsl(220 6% 93%);
@@ -478,7 +478,7 @@ pre code {
    Maps Shiki token colors to design tokens
    ======================================== */
 
-/* Light mode — warm ink on paper */
+/* Kozo — warm ink on paper */
 :root {
   --shiki-color-text: hsl(34 14% 18%);
   --shiki-color-background: transparent;
@@ -506,7 +506,7 @@ pre code {
   --shiki-token-link: hsl(210 30% 42%);
 }
 
-/* Dark mode — Manila nights */
+/* Manila — night traffic, sodium glow */
 [data-theme="dark"] {
   --shiki-color-text: hsl(40 6% 82%);
   --shiki-color-background: transparent;

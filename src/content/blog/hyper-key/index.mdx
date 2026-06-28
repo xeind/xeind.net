@@ -1,5 +1,5 @@
 ---
-title: "The Hyper Key ✦"
+title: "My Hyper Key ✦"
 date: 2026-06-27
 excerpt: "Caps Lock is the most wasted key on the keyboard. I turned it into a launcher for everything."
 tags: ["karabiner", "mac", "productivity", "keyboard"]
@@ -16,15 +16,17 @@ Then I installed WSL and got hooked on Ubuntu inside a Windows shell. It started
 
 That changed how I thought about input. Why reach for a mouse when `hjkl` is right there? Why click through menus when a keystroke can do it faster?
 
-I found [Max Stoiber's video](https://www.youtube.com/watch?v=j4b_uQX3Vu0) on his keyboard setup<Cite n={1} /> and it rewired my brain. Remap `Caps Lock` into a "Hyper Key", a modifier that doesn't exist on any standard keyboard, and use it to build an entire shortcut layer on top of your normal layout.
+I found [Max Stoiber's video](https://www.youtube.com/watch?v=j4b_uQX3Vu0) on his keyboard setup<Cite n={1} /> and it rewired my brain. Remap `Caps Lock` into Hyper (✦), a modifier chord that doesn't exist on any standard keyboard, and use it to build an entire shortcut layer on top of your normal layout.
 
 I've been using this system for over a year. I can't go back. My `Caps Lock` keycap is the shiniest key on the board.
 
+Note: throughout this post, `Hyper (✦)` means `⌃⌥⇧⌘` = `Ctrl+Opt+Shift+Cmd`.
+
 ---
 
-## What the Hyper Key Is
+## What Hyper (✦) Is
 
-Every keyboard has four modifier keys: `Control`, `Option`, `Shift`, `Command`. Hold all four simultaneously and you get a chord that virtually no application uses: `Ctrl+Opt+Shift+Cmd`. That's the Hyper Key.
+Every keyboard has four modifier keys: `Control`, `Option`, `Shift`, `Command`. Hold all four simultaneously and you get a chord that virtually no application uses: `⌃⌥⇧⌘`. That's Hyper (✦).
 
 Karabiner-Elements<Cite n={2} /> lets you remap `Caps Lock` to send this chord when held. Tap it alone and it sends `Escape` (useful in vim). Hold it and you've unlocked a parallel keyboard layer.
 
@@ -44,13 +46,13 @@ One key, two functions. No conflict with anything.
 
 A single modifier gives you 26 letters to bind. That's useful, but not enough. Sublayers multiply the space.
 
-Hold `Hyper`, then press a letter to enter a *mode*. While in that mode, every key on the keyboard has a different meaning. Release `Hyper` and you're back to normal.
+Hold Hyper (✦), then press a letter to enter a *mode*. While in that mode, every key on the keyboard has a different meaning. Release Hyper and you're back to normal.
 
 I have seven sublayers:
 
 | Key | Mode | What it does |
 |-----|------|-------------|
-| `b` | Bookmarks | Open websites instantly |
+| `b` | Browser | Open websites instantly |
 | `o` | Open | Launch applications |
 | `w` | Window | Tile, move, resize windows |
 | `c` | Capture | Screenshots, OCR, clipboard (CleanShot X) |
@@ -58,25 +60,26 @@ I have seven sublayers:
 | `v` | Vim | Arrow keys, scrolling, mouse clicks |
 | `r` | Raycast | Color picker, emoji, notifications |
 
-Each sublayer is a Karabiner variable. When you hold Hyper + `b`, the variable `hyper_sublayer_b` is set to 1. Every binding inside that sublayer checks for this variable. Let go and it resets to 0.
+Each sublayer is a Karabiner variable. When you hold ✦ + `b`, the variable `hyper_sublayer_b` is set to 1. Every binding inside that sublayer checks for this variable. Let go and it resets to 0.
 
 The sublayers are mutually exclusive. Activating one requires all others to be at 0. No accidental crossover.
 
-## Bookmarks: Hyper + B
+## Browser: ✦ + B
 
-The simplest sublayer. Hold `Hyper + B`, then press a letter to open a site in your default browser.
+The simplest sublayer. Hold `✦ + B`, then press a letter to open a site in your default browser.
 
-| Key | Site |
-|-----|------|
-| `x` | X (Twitter) |
-| `y` | YouTube |
-| `f` | Facebook |
-| `g` | GitHub |
-| `r` | Reddit |
-| `c` | ChatGPT |
-| `m` | Gmail |
-| `p` | Google Photos |
-| `l` | LinkedIn |
+| Key | Site | Mnemonic |
+|-----|------|----------|
+| `x` | X (Twitter) | x |
+| `y` | YouTube | youtube |
+| `f` | Facebook | facebook |
+| `g` | GitHub | github |
+| `r` | Reddit | reddit |
+| `c` | ChatGPT | chatgpt |
+| `m` | Gmail | mail |
+| `p` | Google Photos | photos |
+| `l` | LinkedIn | linkedin |
+| `t` | Monkeytype | typing |
 
 Each binding is a `shell_command` that runs `open https://...`. No browser extension, no bookmark bar, no `Spotlight` search. Two keys and the page is loading.
 
@@ -90,9 +93,9 @@ Each binding is a `shell_command` that runs `open https://...`. No browser exten
 
 I can open GitHub from any application, any context, without touching the mouse or switching to a browser first.
 
-## Open Apps: Hyper + O
+## Open Apps: ✦ + O
 
-Same idea, but for applications. Hold `Hyper + O`, press a letter, the app opens or focuses if already running.
+Same idea, but for applications. Hold `✦ + O`, press a letter, the app opens or focuses if already running.
 
 | Key | App | Mnemonic |
 |-----|-----|----------|
@@ -116,7 +119,7 @@ Same idea, but for applications. Hold `Hyper + O`, press a letter, the app opens
 }
 ```
 
-Before this, I used `Cmd+Space` and typed app names into Spotlight. It worked, but it's sequential: invoke launcher, type name, wait for match, press `Enter`. The Hyper Key is parallel: hold two keys, press one more, done. The app is already opening before Spotlight would've finished indexing.
+Before this, I used `Cmd+Space` and typed app names into Spotlight. It worked, but it's sequential: invoke launcher, type name, wait for match, press `Enter`. Hyper (✦) is parallel: hold two keys, press one more, done. The app is already opening before Spotlight would've finished indexing.
 
 ## The Mental Model
 
@@ -130,7 +133,7 @@ With the vim sublayer (covered in a later post), I can keep my thumb on the trac
 
 I've tried going back to Windows. Nothing matches the speed. The OS doesn't have anything close to Karabiner, and even the third-party tools feel like duct tape over a missing foundation.
 
-Pair this with a terminal running tmux and it gets absurd. `Hyper + O + T` opens Ghostty. `Tmux prefix + HJKL` to navigate panes. Vim motions inside each pane. Three layers of keyboard-driven control, all building on the same muscle memory. Unbeatable.
+Pair this with a terminal running tmux and it gets absurd. `✦ + O + T` opens Ghostty. `Tmux prefix + HJKL` to navigate panes. Vim motions inside each pane. Three layers of keyboard-driven control, all building on the same muscle memory. Unbeatable.
 
 ---
 

@@ -254,7 +254,7 @@ function MdxOl(props: React.HTMLAttributes<HTMLOListElement>) {
 function MdxLi(props: React.HTMLAttributes<HTMLLIElement>) {
   return (
     <li className="flex items-start gap-3" {...props}>
-      <div className="bg-accent mt-[0.72em] h-1 w-1 shrink-0" />
+      <div className="bg-foreground/50 mt-[0.72em] h-1 w-1 shrink-0" />
       <span>{props.children}</span>
     </li>
   );
