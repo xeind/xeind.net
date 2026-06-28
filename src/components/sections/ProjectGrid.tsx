@@ -20,6 +20,7 @@ import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 import { useClickSound } from "@/lib/hooks/useClickSound";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
+import PretextBlock from "@/components/blog/PretextBlock";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
@@ -517,8 +518,13 @@ export default function ProjectGrid() {
                           .filter((point) => point.trim().length > 0)
                           .map((point, i) => (
                             <li key={i} className="flex items-start gap-3">
-                              <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
-                              <span>{point}</span>
+                              <div className="bg-foreground/50 mt-2 h-1 w-1 shrink-0" />
+                              <PretextBlock
+                                font='14px "Latin Modern Roman", "Iowan Old Style", Georgia, serif'
+                                lineHeight={22.4}
+                              >
+                                {point}
+                              </PretextBlock>
                             </li>
                           ))}
                       </motion.ul>

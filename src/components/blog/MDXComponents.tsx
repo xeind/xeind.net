@@ -352,9 +352,9 @@ export function Ref({
 
 export function References({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-5">
+    <div>
       <div className="border-accent/20 mb-4 border-t border-dashed" />
-      <h3 className="text-secondary mb-4 font-mono text-xs tracking-wide">
+      <h3 className="text-secondary mb-3 font-mono text-xs tracking-wide">
         REFERENCES
       </h3>
       <ol className="list-none space-y-2 pl-0">{children}</ol>

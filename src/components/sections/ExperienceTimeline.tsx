@@ -1,5 +1,6 @@
 import { experiences } from "@/lib/data/experience";
 import Badge from "@/components/ui/Badge";
+import PretextBlock from "@/components/blog/PretextBlock";
 import type { Experience } from "@/lib/types";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
@@ -69,9 +70,14 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
           </div>
         </div>
 
-        <p className="text-foreground/80 text-sm leading-relaxed">
-          {exp.description}
-        </p>
+        <div className="text-foreground/80">
+          <PretextBlock
+            font='14px "Latin Modern Roman", "Iowan Old Style", Georgia, serif'
+            lineHeight={22.4}
+          >
+            {exp.description}
+          </PretextBlock>
+        </div>
 
         {exp.technologies && exp.technologies.length > 0 && (
           <div className={`mt-4 flex flex-wrap ${GAP_SPACING.xs}`}>

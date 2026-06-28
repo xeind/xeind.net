@@ -18,27 +18,27 @@
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className =
-      "text-accent/40 hover:text-tertiary flex h-6 w-6 items-center justify-center rounded-[4px] transition-colors shrink-0";
+      "text-accent/40 hover:text-tertiary active:scale-[0.96] flex h-10 w-10 items-center justify-center rounded-[4px] transition-[color,transform] shrink-0 motion-reduce:transition-none";
     btn.setAttribute("aria-label", "Copy code");
+    btn.setAttribute("data-hero-sfx", "click");
+    btn.setAttribute("data-hero-sfx-hover", "");
 
     btn.innerHTML =
       '<div class="relative h-3.5 w-3.5">' +
-      '<span class="copy-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(1);transition:transform 150ms cubic-bezier(0.23,1,0.32,1);transform-origin:center">' +
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:1;transition:opacity 150ms cubic-bezier(0.23,1,0.32,1)">' +
+      '<span class="copy-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(1);opacity:1;filter:blur(0px);transition:transform 180ms cubic-bezier(0.2,0,0,1),opacity 180ms cubic-bezier(0.2,0,0,1),filter 180ms cubic-bezier(0.2,0,0,1);transform-origin:center;will-change:transform,opacity,filter">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
       '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' +
       "</svg>" +
       "</span>" +
-      '<span class="check-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(0.4);transition:transform 150ms cubic-bezier(0.23,1,0.32,1);transform-origin:center">' +
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 150ms cubic-bezier(0.23,1,0.32,1)">' +
+      '<span class="check-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(0.25);opacity:0;filter:blur(4px);transition:transform 180ms cubic-bezier(0.2,0,0,1),opacity 180ms cubic-bezier(0.2,0,0,1),filter 180ms cubic-bezier(0.2,0,0,1);transform-origin:center;will-change:transform,opacity,filter">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
       '<path d="M20 6 9 17l-5-5"/>' +
       "</svg>" +
       "</span>" +
       "</div>";
 
     var copyWrap = btn.querySelector(".copy-wrap");
-    var copySvg = copyWrap.querySelector("svg");
     var checkWrap = btn.querySelector(".check-wrap");
-    var checkSvg = checkWrap.querySelector("svg");
     var timeout;
 
     btn.addEventListener("click", function () {
@@ -47,16 +47,20 @@
       var text = pre.querySelector("pre")?.textContent || "";
       navigator.clipboard.writeText(text.trim()).then(function () {
         clearTimeout(timeout);
-        copyWrap.style.transform = "scale(0.4)";
-        copySvg.style.opacity = "0";
+        copyWrap.style.transform = "scale(0.25)";
+        copyWrap.style.opacity = "0";
+        copyWrap.style.filter = "blur(4px)";
         checkWrap.style.transform = "scale(1)";
-        checkSvg.style.opacity = "1";
+        checkWrap.style.opacity = "1";
+        checkWrap.style.filter = "blur(0px)";
         btn.setAttribute("aria-label", "Copied");
         timeout = setTimeout(function () {
           copyWrap.style.transform = "scale(1)";
-          copySvg.style.opacity = "1";
-          checkWrap.style.transform = "scale(0.4)";
-          checkSvg.style.opacity = "0";
+          copyWrap.style.opacity = "1";
+          copyWrap.style.filter = "blur(0px)";
+          checkWrap.style.transform = "scale(0.25)";
+          checkWrap.style.opacity = "0";
+          checkWrap.style.filter = "blur(4px)";
           btn.setAttribute("aria-label", "Copy code");
         }, 2000);
       });
@@ -103,11 +107,11 @@
       }
 
       var copyBtn = makeCopyButton();
-      copyBtn.classList.add("absolute", "right-3", "z-10", "h-8", "w-8");
+      copyBtn.classList.add("absolute", "right-2", "z-10");
       if (title) {
-        copyBtn.style.top = "3.25rem";
+        copyBtn.style.top = "2.875rem";
       } else {
-        copyBtn.classList.add("top-3");
+        copyBtn.classList.add("top-2");
       }
       wrapper.appendChild(copyBtn);
 
