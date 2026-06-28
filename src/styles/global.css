@@ -260,6 +260,37 @@ body {
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
 }
 
+.divider-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-accent) 18%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-accent) 18%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 4px 4px;
+  background-position: center;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+}
+
+
 /* ========================================
    SHARED TRANSITION TIMING
    0.2s cubic-bezier(0.33, 1, 0.68, 1) — easeOutCubic

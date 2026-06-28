@@ -123,8 +123,9 @@ const compactDate = Number.isNaN(date.getTime())
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-    const label = document.querySelector<HTMLElement>("[data-theme-label]");
-    if (label) label.textContent = labels[theme];
+    document.querySelectorAll<HTMLElement>("[data-theme-label]").forEach(
+      (el) => (el.textContent = labels[theme]),
+    );
   }
 
   function syncTheme() {

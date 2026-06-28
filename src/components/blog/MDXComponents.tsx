@@ -352,7 +352,7 @@ export function Ref({
 
 export function References({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <div className="[&_p]:mb-0 [&_p]:text-sm [&_p]:leading-relaxed">
       <div className="border-accent/20 mb-4 border-t border-dashed" />
       <h3 className="text-secondary mb-3 font-mono text-xs tracking-wide">
         REFERENCES
