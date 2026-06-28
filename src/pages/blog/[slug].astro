@@ -83,24 +83,31 @@ const articleStructuredData = {
           >
             ← Blogs
           </a>
-          <time datetime={post.data.date.toISOString()} class="text-accent/50 font-mono text-xs tracking-wide tabular-nums">
+          <time
+            datetime={post.data.date.toISOString()}
+            class="text-accent/50 font-mono text-xs tracking-wide tabular-nums"
+          >
             {formattedDate}
           </time>
         </div>
-        <h1 class="text-foreground mb-3 font-serif text-2xl [text-wrap:balance]">
+        <h1
+          class="text-foreground mb-3 font-serif text-2xl [text-wrap:balance]"
+        >
           {post.data.title}
         </h1>
-        {post.data.tags.length > 0 && (
-          <div class="flex flex-wrap gap-2">
-            {post.data.tags.map((tag) => (
-              <Badge>{tag}</Badge>
-            ))}
-          </div>
-        )}
+        {
+          post.data.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2">
+              {post.data.tags.map((tag) => (
+                <Badge>{tag}</Badge>
+              ))}
+            </div>
+          )
+        }
       </div>
 
       {/* Dashed separator */}
-      <div class="border-accent/20 mb-6 border-t border-dashed" />
+      <div class="border-accent/20 mb-6 border-t border-dashed"></div>
 
       {/* Post content */}
       <article>
@@ -108,37 +115,41 @@ const articleStructuredData = {
       </article>
 
       {/* Series nav */}
-      {seriesPosts.length > 1 && (
-        <div class="border-accent/15 mt-8 border border-dashed p-5">
-          <div class="mb-3 flex items-center gap-2">
-            {seriesIcon === "star" && (
-              <span class="text-accent text-sm">✦</span>
-            )}
-            <span class="text-secondary font-mono text-xs tracking-wide uppercase">Series</span>
-          </div>
-          <ol class="space-y-1.5 list-none pl-0">
-            {seriesPosts.map((sp) => (
-              <li class="flex items-start gap-2 text-sm">
-                <span class="text-accent/40 mt-px shrink-0 font-mono text-xs">
-                  {sp.data.seriesOrder}.
-                </span>
-                {sp.id === post.id ? (
-                  <span class="text-foreground font-serif">
-                    {sp.data.title}
+      {
+        seriesPosts.length > 1 && (
+          <div class="border-accent/15 mt-8 border border-dashed p-5">
+            <div class="mb-3 flex items-center gap-2">
+              {seriesIcon === "star" && (
+                <span class="text-accent text-sm">✦</span>
+              )}
+              <span class="text-secondary font-mono text-xs tracking-wide uppercase">
+                Series
+              </span>
+            </div>
+            <ol class="list-none space-y-1.5 pl-0">
+              {seriesPosts.map((sp) => (
+                <li class="flex items-start gap-2 text-sm">
+                  <span class="text-accent/40 mt-px shrink-0 font-mono text-xs">
+                    {sp.data.seriesOrder}.
                   </span>
-                ) : (
-                  <a
-                    href={`/blog/${sp.id}`}
-                    class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px font-serif transition-colors hover:border-solid"
-                  >
-                    {sp.data.title}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
+                  {sp.id === post.id ? (
+                    <span class="text-foreground font-serif">
+                      {sp.data.title}
+                    </span>
+                  ) : (
+                    <a
+                      href={`/blog/${sp.id}`}
+                      class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px font-serif transition-colors hover:border-solid"
+                    >
+                      {sp.data.title}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )
+      }
     </Panel>
     <SectionDivider />
 

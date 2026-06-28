@@ -16,15 +16,15 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
       {exp.id !== experiences[experiences.length - 1].id && (
         <div
           aria-hidden="true"
-          className="absolute top-3 bottom-0 translate-y-5 z-0"
+          className="absolute top-3 bottom-0 z-0 translate-y-5"
           style={{
             left: "0.52rem",
             width: 0,
             marginLeft: "calc(var(--divider-thickness) / -2)",
           }}
         >
-          <div className="absolute inset-y-0 left-0 border-l border-dashed border-foreground/30 h-full opacity-100 group-hover:opacity-0 group-focus-within:opacity-0 transition-opacity t-border" />
-          <div className="absolute inset-y-0 left-0 h-full border-l border-solid border-foreground/30 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 t-border" />
+          <div className="border-foreground/30 t-border absolute inset-y-0 left-0 h-full border-l border-dashed opacity-100 transition-opacity group-focus-within:opacity-0 group-hover:opacity-0" />
+          <div className="border-foreground/30 t-border absolute inset-y-0 left-0 h-full border-l border-solid opacity-0 group-focus-within:opacity-100 group-hover:opacity-100" />
         </div>
       )}
 
@@ -41,7 +41,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
       <div className="flex-1">
         <div className="mb-4">
           <h3 className="text-foreground font-serif text-base">{exp.role}</h3>
-          <div className="text-foreground/60 mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-sm">
+          <div className="text-foreground/60 mt-1 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               {exp.companyUrl ? (
                 <span className="inline-block">

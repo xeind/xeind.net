@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  type ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowUpRight } from "lucide-react";
@@ -47,19 +53,19 @@ function DashedBorders() {
   return (
     <>
       <div
-        className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-hover:border-solid group-focus-within:border-solid"
+        className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
         style={t}
       />
     </>
@@ -296,217 +302,234 @@ export default function ProjectGrid() {
   return (
     <>
       {/* Overlay + Modal — portaled to body to escape main's stacking context */}
-      {mounted && createPortal(
-        <>
-          <AnimatePresence>
-            {activeProject && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={
-                  prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
-                }
-                className="fixed inset-0 z-40 bg-black/30"
-              />
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {activeProject && (
-              <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
+      {mounted &&
+        createPortal(
+          <>
+            <AnimatePresence>
+              {activeProject && (
                 <motion.div
-                  layoutId={`card-${activeProject.id}`}
-                  className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
-                  style={{ borderRadius: 0 }}
-                  ref={modalRef}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={
-                    prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
+                    prefersReducedMotion
+                      ? { duration: 0 }
+                      : SPRING_CONFIG.noBounce
                   }
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="modal-title"
-                >
-                  <ModalBorders />
-                  <ModalCornerBrackets />
+                  className="fixed inset-0 z-40 bg-black/30"
+                />
+              )}
+            </AnimatePresence>
 
-                  {/* Close button */}
-                  <button
-                    onClick={handleClose}
-                    className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 absolute top-4 right-4 z-30 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent motion-reduce:transition-none"
-                    style={tFast}
-                    aria-label="Close modal"
-                  >
-                    <X
-                      size={ICON_CONFIG.sizes.sm}
-                      strokeWidth={ICON_CONFIG.strokeWidth}
-                    />
-                  </button>
-
-                  {/* Image area */}
+            <AnimatePresence>
+              {activeProject && (
+                <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
                   <motion.div
-                    layoutId={`image-${activeProject.id}`}
-                    className="bg-muted relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed border-accent/30"
+                    layoutId={`card-${activeProject.id}`}
+                    className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
+                    style={{ borderRadius: 0 }}
+                    ref={modalRef}
                     transition={
                       prefersReducedMotion
                         ? { duration: 0 }
                         : SPRING_CONFIG.noBounce
                     }
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
                   >
-                    <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-                    {activeProject.imageUrl ? (
-                      <ProjectLogo
-                        projectId={activeProject.id}
-                        theme={resolvedTheme}
-                        alt={activeProject.title}
-                        className={`relative z-10 ${ICON_SIZES[activeProject.iconSize || "normal"].modal}`}
-                      />
-                    ) : (
-                      <div className="text-foreground/60 font-mono text-[0.6875rem]">
-                        {activeProject.id}
-                      </div>
-                    )}
-                  </motion.div>
+                    <ModalBorders />
+                    <ModalCornerBrackets />
 
-                  {/* Content */}
-                  <motion.div
-                    layoutId={`content-${activeProject.id}`}
-                    className="scrollbar-hide flex flex-col overflow-y-auto px-8 py-6"
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0 }
-                        : SPRING_CONFIG.noBounce
-                    }
-                  >
-                    {/* Header — same order as card: type then title */}
-                    <div className="mb-4">
-                      <motion.div
-                        layoutId={`type-${activeProject.id}`}
-                        className="mb-1 flex items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
-                        transition={
-                          prefersReducedMotion
-                            ? { duration: 0 }
-                            : SPRING_CONFIG.noBounce
-                        }
-                      >
-                        <span className="text-accent">{activeProject.type}</span>
-                        <span className="text-foreground/60">·</span>
-                        <span className="text-tertiary">{activeProject.year}</span>
-                      </motion.div>
-                      <motion.h3
-                        id="modal-title"
-                        layoutId={`title-${activeProject.id}`}
-                        className="text-foreground font-serif text-xl"
-                        transition={
-                          prefersReducedMotion
-                            ? { duration: 0 }
-                            : SPRING_CONFIG.noBounce
-                        }
-                      >
-                        {activeProjectUrl ? (
-                          <a
-                            href={activeProjectUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onMouseEnter={brush}
-                            onClick={clickLow}
-                            className="hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
-                            style={t}
-                          >
-                            <span className="border-b border-dashed border-accent/30 pb-px transition-all hover:border-solid">
-                              {activeProject.title}
-                            </span>
-                            <ArrowUpRight
-                              size={ICON_CONFIG.sizes.md}
-                              strokeWidth={ICON_CONFIG.strokeWidth}
-                              className="mt-0.5 shrink-0"
-                            />
-                          </a>
-                        ) : (
-                          activeProject.title
-                        )}
-                      </motion.h3>
-
-                      {activeProject.projectLinks &&
-                        activeProject.projectLinks.length > 0 && (
-                          <motion.div
-                            layout
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                            className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
-                          >
-                            {activeProject.projectLinks.map((link) => (
-                              <a
-                                key={link.url}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onMouseEnter={brush}
-                                onClick={clickLow}
-                                className="text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
-                                style={t}
-                              >
-                                <span className="border-b border-dashed border-accent/30 pb-px transition-all hover:border-solid">
-                                  {link.label}
-                                </span>
-                                <ArrowUpRight
-                                  size={ICON_CONFIG.sizes.sm}
-                                  strokeWidth={ICON_CONFIG.strokeWidth}
-                                  className="shrink-0"
-                                />
-                              </a>
-                            ))}
-                          </motion.div>
-                        )}
-
-                      {/* Technologies */}
-                      {activeProject.technologies &&
-                        activeProject.technologies.length > 0 && (
-                          <motion.div
-                            layout
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                            className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
-                          >
-                            {activeProject.technologies.map((tech) => (
-                              <Badge key={tech}>{tech}</Badge>
-                            ))}
-                          </motion.div>
-                        )}
-                    </div>
-
-                    {/* Dashed separator */}
-                    <div className="border-accent/20 mb-4 border-t border-dashed" />
-
-                    {/* Description */}
-                    <motion.ul
-                      layout
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                      className={`text-foreground/80 mb-4 text-sm leading-relaxed ${STACK_SPACING.tight}`}
+                    {/* Close button */}
+                    <button
+                      onClick={handleClose}
+                      className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 focus-visible:ring-accent absolute top-4 right-4 z-30 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2 motion-reduce:transition-none"
+                      style={tFast}
+                      aria-label="Close modal"
                     >
-                      {(
-                        activeProject.longDescription || [activeProject.description]
-                      )
-                        .filter((point) => point.trim().length > 0)
-                        .map((point, i) => (
-                          <li key={i} className="flex items-start gap-3">
-                            <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
-                            <span>{point}</span>
-                          </li>
-                        ))}
-                    </motion.ul>
+                      <X
+                        size={ICON_CONFIG.sizes.sm}
+                        strokeWidth={ICON_CONFIG.strokeWidth}
+                      />
+                    </button>
+
+                    {/* Image area */}
+                    <motion.div
+                      layoutId={`image-${activeProject.id}`}
+                      className="bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : SPRING_CONFIG.noBounce
+                      }
+                    >
+                      <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
+                      {activeProject.imageUrl ? (
+                        <ProjectLogo
+                          projectId={activeProject.id}
+                          theme={resolvedTheme}
+                          alt={activeProject.title}
+                          className={`relative z-10 ${ICON_SIZES[activeProject.iconSize || "normal"].modal}`}
+                        />
+                      ) : (
+                        <div className="text-foreground/60 font-mono text-[0.6875rem]">
+                          {activeProject.id}
+                        </div>
+                      )}
+                    </motion.div>
+
+                    {/* Content */}
+                    <motion.div
+                      layoutId={`content-${activeProject.id}`}
+                      className="scrollbar-hide flex flex-col overflow-y-auto px-8 py-6"
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : SPRING_CONFIG.noBounce
+                      }
+                    >
+                      {/* Header — same order as card: type then title */}
+                      <div className="mb-4">
+                        <motion.div
+                          layoutId={`type-${activeProject.id}`}
+                          className="mb-1 flex items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
+                          transition={
+                            prefersReducedMotion
+                              ? { duration: 0 }
+                              : SPRING_CONFIG.noBounce
+                          }
+                        >
+                          <span className="text-accent">
+                            {activeProject.type}
+                          </span>
+                          <span className="text-foreground/60">·</span>
+                          <span className="text-tertiary">
+                            {activeProject.year}
+                          </span>
+                        </motion.div>
+                        <motion.h3
+                          id="modal-title"
+                          layoutId={`title-${activeProject.id}`}
+                          className="text-foreground font-serif text-xl"
+                          transition={
+                            prefersReducedMotion
+                              ? { duration: 0 }
+                              : SPRING_CONFIG.noBounce
+                          }
+                        >
+                          {activeProjectUrl ? (
+                            <a
+                              href={activeProjectUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onMouseEnter={brush}
+                              onClick={clickLow}
+                              className="hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
+                              style={t}
+                            >
+                              <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
+                                {activeProject.title}
+                              </span>
+                              <ArrowUpRight
+                                size={ICON_CONFIG.sizes.md}
+                                strokeWidth={ICON_CONFIG.strokeWidth}
+                                className="mt-0.5 shrink-0"
+                              />
+                            </a>
+                          ) : (
+                            activeProject.title
+                          )}
+                        </motion.h3>
+
+                        {activeProject.projectLinks &&
+                          activeProject.projectLinks.length > 0 && (
+                            <motion.div
+                              layout
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{
+                                opacity: 0,
+                                transition: { duration: 0.05 },
+                              }}
+                              className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
+                            >
+                              {activeProject.projectLinks.map((link) => (
+                                <a
+                                  key={link.url}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onMouseEnter={brush}
+                                  onClick={clickLow}
+                                  className="text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
+                                  style={t}
+                                >
+                                  <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
+                                    {link.label}
+                                  </span>
+                                  <ArrowUpRight
+                                    size={ICON_CONFIG.sizes.sm}
+                                    strokeWidth={ICON_CONFIG.strokeWidth}
+                                    className="shrink-0"
+                                  />
+                                </a>
+                              ))}
+                            </motion.div>
+                          )}
+
+                        {/* Technologies */}
+                        {activeProject.technologies &&
+                          activeProject.technologies.length > 0 && (
+                            <motion.div
+                              layout
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{
+                                opacity: 0,
+                                transition: { duration: 0.05 },
+                              }}
+                              className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
+                            >
+                              {activeProject.technologies.map((tech) => (
+                                <Badge key={tech}>{tech}</Badge>
+                              ))}
+                            </motion.div>
+                          )}
+                      </div>
+
+                      {/* Dashed separator */}
+                      <div className="border-accent/20 mb-4 border-t border-dashed" />
+
+                      {/* Description */}
+                      <motion.ul
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, transition: { duration: 0.05 } }}
+                        className={`text-foreground/80 mb-4 text-sm leading-relaxed ${STACK_SPACING.tight}`}
+                      >
+                        {(
+                          activeProject.longDescription || [
+                            activeProject.description,
+                          ]
+                        )
+                          .filter((point) => point.trim().length > 0)
+                          .map((point, i) => (
+                            <li key={i} className="flex items-start gap-3">
+                              <div className="bg-accent mt-2 h-1 w-1 shrink-0" />
+                              <span>{point}</span>
+                            </li>
+                          ))}
+                      </motion.ul>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-              </div>
-            )}
-          </AnimatePresence>
-        </>,
-        document.body,
-      )}
+                </div>
+              )}
+            </AnimatePresence>
+          </>,
+          document.body,
+        )}
 
       {/* Project Grid */}
       <div className={STACK_SPACING.normal}>
@@ -524,7 +547,7 @@ export default function ProjectGrid() {
                 key={project.id}
                 onMouseEnter={brush}
                 onClick={() => handleProjectClick(project)}
-                className="group bg-card relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+                className="group bg-card focus-visible:ring-accent focus-visible:ring-offset-background relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                 style={{ borderRadius: 0 }}
                 transition={
                   prefersReducedMotion
@@ -564,7 +587,7 @@ export default function ProjectGrid() {
                 {/* Image area with layoutId */}
                 <motion.div
                   layoutId={`image-${project.id}`}
-                  className="bg-muted absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed border-accent/30"
+                  className="bg-muted border-accent/30 absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed"
                   transition={
                     prefersReducedMotion
                       ? { duration: 0 }
@@ -618,7 +641,7 @@ export default function ProjectGrid() {
                   >
                     {project.title}
                   </motion.h3>
-                  <p className="text-foreground/60 mt-2 hidden text-xs leading-relaxed line-clamp-2 min-[864px]:mt-auto min-[864px]:block lg:text-sm">
+                  <p className="text-foreground/60 mt-2 line-clamp-2 hidden text-xs leading-relaxed min-[864px]:mt-auto min-[864px]:block lg:text-sm">
                     {project.description}
                   </p>
                 </motion.div>

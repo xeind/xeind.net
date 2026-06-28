@@ -28,7 +28,7 @@ function HeroActionLink({
       rel={rel}
       data-hero-sfx="click"
       {...(shortcut ? { "data-hero-shortcut": shortcut } : {})}
-      className="bg-card group relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background md:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -162,7 +162,7 @@ function HeroSocialLink({
       aria-label={`${label} (opens in new tab)`}
       data-hero-sfx="click"
       data-hero-sfx-hover
-      className="text-foreground/80 hover:text-tertiary inline-flex min-h-10 min-w-10 items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="text-foreground/80 hover:text-tertiary focus-visible:ring-accent focus-visible:ring-offset-background inline-flex min-h-10 min-w-10 items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={CSS_TRANSITIONS.border}
     >
       <svg
@@ -193,7 +193,7 @@ export default function HeroSection() {
                 {personalInfo.name}
               </h1>
 
-              <div className="flex shrink-0 items-center gap-1 -my-1">
+              <div className="-my-1 flex shrink-0 items-center gap-1">
                 <HeroSocialLink
                   href={personalInfo.githubUrl}
                   label="GitHub"
@@ -206,7 +206,7 @@ export default function HeroSection() {
                 />
               </div>
             </div>
-            <address className="text-foreground/60 not-italic flex items-center gap-1 text-sm">
+            <address className="text-foreground/60 flex items-center gap-1 text-sm not-italic">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -228,12 +228,12 @@ export default function HeroSection() {
       </div>
 
       {/* Tagline */}
-      <p className="text-foreground/80 mb-6 max-w-xl text-center md:text-left text-sm">
+      <p className="text-foreground/80 mb-6 max-w-xl text-center text-sm md:text-left">
         {personalInfo.tagline}
       </p>
 
       {/* CTAs */}
-      <div className="flex flex-wrap justify-center md:justify-start gap-4 md:gap-8">
+      <div className="flex flex-wrap justify-center gap-4 md:justify-start md:gap-8">
         <HeroActionLink href={personalInfo.cvUrl} badge="V" shortcut="v">
           View Resume
         </HeroActionLink>

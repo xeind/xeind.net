@@ -36,7 +36,7 @@ Karabiner-Elements<Cite n={2} /> lets you remap `Caps Lock` to send this chord w
   "from": { "key_code": "caps_lock" },
   "to": [{ "set_variable": { "name": "hyper", "value": 1 } }],
   "to_after_key_up": [{ "set_variable": { "name": "hyper", "value": 0 } }],
-  "to_if_alone": [{ "key_code": "escape" }]
+  "to_if_alone": [{ "key_code": "escape" }],
 }
 ```
 
@@ -46,19 +46,19 @@ One key, two functions. No conflict with anything.
 
 A single modifier gives you 26 letters to bind. That's useful, but not enough. Sublayers multiply the space.
 
-Hold Hyper (✦), then press a letter to enter a *mode*. While in that mode, every key on the keyboard has a different meaning. Release Hyper and you're back to normal.
+Hold Hyper (✦), then press a letter to enter a _mode_. While in that mode, every key on the keyboard has a different meaning. Release Hyper and you're back to normal.
 
 I have seven sublayers:
 
-| Key | Mode | What it does |
-|-----|------|-------------|
-| `b` | Browser | Open websites instantly |
-| `o` | Open | Launch applications |
-| `w` | Window | Tile, move, resize windows |
+| Key | Mode    | What it does                              |
+| --- | ------- | ----------------------------------------- |
+| `b` | Browser | Open websites instantly                   |
+| `o` | Open    | Launch applications                       |
+| `w` | Window  | Tile, move, resize windows                |
 | `c` | Capture | Screenshots, OCR, clipboard (CleanShot X) |
-| `s` | System | Volume, brightness, lock, DND |
-| `v` | Vim | Arrow keys, scrolling, mouse clicks |
-| `r` | Raycast | Color picker, emoji, notifications |
+| `s` | System  | Volume, brightness, lock, DND             |
+| `v` | Vim     | Arrow keys, scrolling, mouse clicks       |
+| `r` | Raycast | Color picker, emoji, notifications        |
 
 Each sublayer is a Karabiner variable. When you hold ✦ + `b`, the variable `hyper_sublayer_b` is set to 1. Every binding inside that sublayer checks for this variable. Let go and it resets to 0.
 
@@ -68,26 +68,28 @@ The sublayers are mutually exclusive. Activating one requires all others to be a
 
 The simplest sublayer. Hold `✦ + B`, then press a letter to open a site in your default browser.
 
-| Key | Site | Mnemonic |
-|-----|------|----------|
-| `x` | X (Twitter) | x |
-| `y` | YouTube | youtube |
-| `f` | Facebook | facebook |
-| `g` | GitHub | github |
-| `r` | Reddit | reddit |
-| `c` | ChatGPT | chatgpt |
-| `m` | Gmail | mail |
-| `p` | Google Photos | photos |
-| `l` | LinkedIn | linkedin |
-| `t` | Monkeytype | typing |
+| Key | Site          | Mnemonic |
+| --- | ------------- | -------- |
+| `x` | X (Twitter)   |          |
+| `y` | YouTube       |          |
+| `f` | Facebook      |          |
+| `g` | GitHub        |          |
+| `r` | Reddit        |          |
+| `c` | ChatGPT       |          |
+| `m` | Gmail         | mail     |
+| `p` | Google Photos | photos   |
+| `l` | LinkedIn      |          |
+| `t` | Monkeytype    | typing   |
 
 Each binding is a `shell_command` that runs `open https://...`. No browser extension, no bookmark bar, no `Spotlight` search. Two keys and the page is loading.
 
 ```jsonc
 {
-  "conditions": [{ "name": "hyper_sublayer_b", "type": "variable_if", "value": 1 }],
+  "conditions": [
+    { "name": "hyper_sublayer_b", "type": "variable_if", "value": 1 },
+  ],
   "from": { "key_code": "g" },
-  "to": [{ "shell_command": "open https://github.com" }]
+  "to": [{ "shell_command": "open https://github.com" }],
 }
 ```
 
@@ -97,25 +99,27 @@ I can open GitHub from any application, any context, without touching the mouse 
 
 Same idea, but for applications. Hold `✦ + O`, press a letter, the app opens or focuses if already running.
 
-| Key | App | Mnemonic |
-|-----|-----|----------|
-| `1` | Bitwarden | |
-| `b` | Firefox | browser |
-| `z` | Zen Browser | |
-| `d` | Discord | |
-| `t` | Ghostty | terminal |
-| `m` | Obsidian | markdown |
-| `f` | Finder | |
-| `n` | Things 3 | notes |
-| `p` | Skim | pdf |
-| `h` | Helium | |
-| `c` | Zed | code |
+| Key | App         | Mnemonic |
+| --- | ----------- | -------- |
+| `1` | Bitwarden   |          |
+| `b` | Firefox     | browser  |
+| `z` | Zen Browser |          |
+| `d` | Discord     |          |
+| `t` | Ghostty     | terminal |
+| `m` | Obsidian    | markdown |
+| `f` | Finder      |          |
+| `n` | Things 3    | notes    |
+| `p` | Skim        | pdf      |
+| `h` | Helium      |          |
+| `c` | Zed         | code     |
 
 ```jsonc
 {
-  "conditions": [{ "name": "hyper_sublayer_o", "type": "variable_if", "value": 1 }],
+  "conditions": [
+    { "name": "hyper_sublayer_o", "type": "variable_if", "value": 1 },
+  ],
   "from": { "key_code": "t" },
-  "to": [{ "shell_command": "open -a 'Ghostty.app'" }]
+  "to": [{ "shell_command": "open -a 'Ghostty.app'" }],
 }
 ```
 
@@ -142,6 +146,10 @@ Pair this with a terminal running tmux and it gets absurd. `✦ + O + T` opens G
 My Karabiner config is in my [dotfiles](https://github.com/xeind/dotfiles/tree/main/.config/karabiner).
 
 <References>
-  <Ref n={1} href="https://www.youtube.com/watch?v=j4b_uQX3Vu0">Max Stoiber, "My Hyper Key keyboard setup" (YouTube)</Ref>
-  <Ref n={2} href="https://karabiner-elements.pqrs.org/">Karabiner-Elements, keyboard customizer for macOS</Ref>
+  <Ref n={1} href="https://www.youtube.com/watch?v=j4b_uQX3Vu0">
+    Max Stoiber, "My Hyper Key keyboard setup" (YouTube)
+  </Ref>
+  <Ref n={2} href="https://karabiner-elements.pqrs.org/">
+    Karabiner-Elements, keyboard customizer for macOS
+  </Ref>
 </References>

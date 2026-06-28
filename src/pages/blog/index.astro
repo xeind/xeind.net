@@ -39,50 +39,57 @@ const blogStructuredData = {
 >
   <div class="flex flex-col">
     <Panel edges="both" ornaments="all">
-      {posts.length === 0 ? (
-        <p class="text-foreground/80 font-serif text-base leading-relaxed">
-          No posts yet.
-        </p>
-      ) : (
-        <div class="flex flex-col">
-          {posts.map((post, index) => (
-            <div>
-              {index > 0 && (
-                <div class="relative my-5 h-px -mx-5 sm:-mx-8 md:-mx-12">
-                  <div class="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed"></div>
-                  <span class="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border"></span>
-                  <span class="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border"></span>
-                </div>
-              )}
-              <a href={`/blog/${post.id}`} class="group block" data-hero-sfx="click" data-hero-sfx-hover>
-                <time
-                  datetime={post.data.date.toISOString()}
-                  class="text-accent mb-1 block font-mono text-xs tracking-wide tabular-nums"
-                >
-                  {post.data.date.toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </time>
-                <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg transition-colors [text-wrap:balance]">
-                  {post.data.title}
-                </h2>
-                <p class="text-foreground/60 mb-3 font-serif text-sm leading-relaxed">
-                  {post.data.excerpt}
-                </p>
-                {post.data.tags.length > 0 && (
-                  <div class="flex flex-wrap gap-2">
-                    {post.data.tags.map((tag) => (
-                      <Badge>{tag}</Badge>
-                    ))}
+      {
+        posts.length === 0 ? (
+          <p class="text-foreground/80 font-serif text-base leading-relaxed">
+            No posts yet.
+          </p>
+        ) : (
+          <div class="flex flex-col">
+            {posts.map((post, index) => (
+              <div>
+                {index > 0 && (
+                  <div class="relative -mx-5 my-5 h-px sm:-mx-8 md:-mx-12">
+                    <div class="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
+                    <span class="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+                    <span class="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
                   </div>
                 )}
-              </a>
-            </div>
-          ))}
-        </div>
-      )}
+                <a
+                  href={`/blog/${post.id}`}
+                  class="group block"
+                  data-hero-sfx="click"
+                  data-hero-sfx-hover
+                >
+                  <time
+                    datetime={post.data.date.toISOString()}
+                    class="text-accent mb-1 block font-mono text-xs tracking-wide tabular-nums"
+                  >
+                    {post.data.date.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                  <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg [text-wrap:balance] transition-colors">
+                    {post.data.title}
+                  </h2>
+                  <p class="text-foreground/60 mb-3 font-serif text-sm leading-relaxed">
+                    {post.data.excerpt}
+                  </p>
+                  {post.data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2">
+                      {post.data.tags.map((tag) => (
+                        <Badge>{tag}</Badge>
+                      ))}
+                    </div>
+                  )}
+                </a>
+              </div>
+            ))}
+          </div>
+        )
+      }
     </Panel>
     <SectionDivider />
 

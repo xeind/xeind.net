@@ -37,26 +37,7 @@ export default function Badge({
 
   return (
     <span
-      className={`
-        relative
-        inline-flex
-        items-center
-        justify-center
-        gap-2
-        bg-card
-        bg-accent/8
-        border
-        border-dashed
-        px-2
-        py-0.5
-        min-h-[1.25rem]
-        font-mono
-        text-[0.6875rem]
-        leading-tight
-        transition-[background-color,border-color,color,opacity]
-        ${variantStyles[variant]}
-        ${className}
-      `}
+      className={`bg-card bg-accent/8 relative inline-flex min-h-[1.25rem] items-center justify-center gap-2 border border-dashed px-2 py-0.5 font-mono text-[0.6875rem] leading-tight transition-[background-color,border-color,color,opacity] ${variantStyles[variant]} ${className} `}
       style={{
         transitionDuration: `${DURATION.normal}s`,
         transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,

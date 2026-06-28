@@ -44,15 +44,10 @@ export default function BlogImage({ src, alt }: BlogImageProps) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="border-accent/30 group relative block w-full cursor-zoom-in border border-dashed transition-colors hover:border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="border-accent/30 group focus-visible:ring-accent focus-visible:ring-offset-background relative block w-full cursor-zoom-in border border-dashed transition-colors hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           style={CSS_TRANSITIONS.border}
         >
-          <img
-            src={src}
-            alt={alt}
-            loading="lazy"
-            className="block w-full"
-          />
+          <img src={src} alt={alt} loading="lazy" className="block w-full" />
         </button>
         {alt && (
           <figcaption className="text-foreground/50 mt-2 text-center font-mono text-xs">
@@ -93,7 +88,7 @@ export default function BlogImage({ src, alt }: BlogImageProps) {
                   >
                     <button
                       onClick={handleClose}
-                      className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 bg-card absolute -top-3 -right-3 z-10 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 bg-card focus-visible:ring-accent absolute -top-3 -right-3 z-10 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2"
                       style={CSS_TRANSITIONS.fade}
                       aria-label="Close image"
                     >

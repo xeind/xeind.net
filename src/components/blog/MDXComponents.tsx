@@ -17,7 +17,7 @@ function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
       href={href}
       data-hero-sfx="click"
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px font-normal transition-colors hover:border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="text-accent hover:text-tertiary border-accent/30 focus-visible:ring-accent focus-visible:ring-offset-background inline border-b border-dashed pb-px font-normal transition-colors hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={{
         ...CSS_TRANSITIONS.border,
         paddingBottom: "1px",
@@ -42,13 +42,19 @@ function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
 
 function MdxH2(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]" {...props} />
+    <h2
+      className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]"
+      {...props}
+    />
   );
 }
 
 function MdxH3(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]" {...props} />
+    <h3
+      className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]"
+      {...props}
+    />
   );
 }
 
@@ -62,9 +68,7 @@ function MdxParagraph(props: React.HTMLAttributes<HTMLParagraphElement>) {
   if (typeof children === "string") {
     return (
       <div className="text-foreground/85 mb-5" {...rest}>
-        <PretextBlock className="font-serif text-base">
-          {children}
-        </PretextBlock>
+        <PretextBlock className="font-serif text-base">{children}</PretextBlock>
       </div>
     );
   }
@@ -96,7 +100,7 @@ function MdxBlockquote(props: React.HTMLAttributes<HTMLQuoteElement>) {
       className="border-accent/30 my-6 border-l border-dashed py-1 pl-5"
       {...props}
     >
-      <div className="text-foreground/60 font-serif text-base italic leading-[1.8]">
+      <div className="text-foreground/60 font-serif text-base leading-[1.8] italic">
         {props.children}
       </div>
     </blockquote>
@@ -191,7 +195,7 @@ function MdxPre(props: React.HTMLAttributes<HTMLPreElement>) {
   return (
     <div className="group relative my-4">
       {lang && (
-        <span className="text-accent/50 absolute top-2.5 left-3.5 z-10 font-mono text-[0.65rem] uppercase tracking-wider select-none">
+        <span className="text-accent/50 absolute top-2.5 left-3.5 z-10 font-mono text-[0.65rem] tracking-wider uppercase select-none">
           {lang}
         </span>
       )}
@@ -223,7 +227,7 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 
 function MdxHr() {
   return (
-    <div className="relative my-5 h-px -mx-5 sm:-mx-8 md:-mx-12">
+    <div className="relative -mx-5 my-5 h-px sm:-mx-8 md:-mx-12">
       <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
       <span className="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
       <span className="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />

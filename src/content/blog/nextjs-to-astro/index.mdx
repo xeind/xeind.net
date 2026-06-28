@@ -70,11 +70,11 @@ This is ~300 bytes and runs before paint (blocking, deliberately):
   (() => {
     const saved = localStorage.getItem("theme");
     const theme = ["dark", "light", "nightingale"].includes(saved)
-      ? saved : "dark";
+      ? saved
+      : "dark";
     if (theme === "light")
       document.documentElement.removeAttribute("data-theme");
-    else
-      document.documentElement.setAttribute("data-theme", theme);
+    else document.documentElement.setAttribute("data-theme", theme);
   })();
 </script>
 ```
@@ -88,7 +88,7 @@ I moved from Vercel to Cloudflare Workers with static assets.<Cite n={6} /> Mini
 ```jsonc
 {
   "assets": { "directory": "./dist" },
-  "routes": [{ "pattern": "xeind.net", "custom_domain": true }]
+  "routes": [{ "pattern": "xeind.net", "custom_domain": true }],
 }
 ```
 
@@ -110,14 +110,14 @@ HTML pages get `no-cache` so deployments take effect immediately.
 
 ## The Numbers
 
-| Metric | Next.js (Vercel) | Astro (Cloudflare) |
-|--------|-----------------:|-------------------:|
-| Performance | 95-97 | 100 |
-| Accessibility | 100 | 100 |
-| Best Practices | 100 | 100 |
-| SEO | 100 | 100 |
-| JS shipped | ~450KB | ~125KB |
-| Hydrated components | All | 1 |
+| Metric              | Next.js (Vercel) | Astro (Cloudflare) |
+| ------------------- | ---------------: | -----------------: |
+| Performance         |            95-97 |                100 |
+| Accessibility       |              100 |                100 |
+| Best Practices      |              100 |                100 |
+| SEO                 |              100 |                100 |
+| JS shipped          |           ~450KB |             ~125KB |
+| Hydrated components |              All |                  1 |
 
 The remaining ~125KB is motion/react for the project grid modal. Everything else is HTML and inlined CSS.
 
@@ -132,10 +132,33 @@ If you're building content-forward site, start with Astro. Add React islands whe
 The source for this site is [on GitHub](https://github.com/xeind/xeind.net/commit/23a8fe2eb1c4baca18e516c110fa2c581ac86d98).
 
 <References>
-  <Ref n={1} href="https://nextjs.org/docs/app/building-your-application/rendering">Next.js Rendering documentation — App Router hydration and server/client component model</Ref>
-  <Ref n={2} href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu">Radix UI Dropdown Menu — accessible but ships significant JS for simple menus</Ref>
-  <Ref n={3} href="https://www.patterns.dev/react/react-selective-hydration">Selective Hydration in React 18 — patterns.dev</Ref>
-  <Ref n={4} href="https://docs.astro.build/en/concepts/islands/">Astro Islands architecture — zero JS by default, opt-in interactivity</Ref>
-  <Ref n={5} href="https://docs.astro.build/en/reference/configuration-reference/#buildinlinestylesheets">Astro build.inlineStylesheets configuration reference</Ref>
-  <Ref n={6} href="https://developers.cloudflare.com/workers/static-assets/">Cloudflare Workers Static Assets documentation</Ref>
+  <Ref
+    n={1}
+    href="https://nextjs.org/docs/app/building-your-application/rendering"
+  >
+    Next.js Rendering documentation — App Router hydration and server/client
+    component model
+  </Ref>
+  <Ref
+    n={2}
+    href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu"
+  >
+    Radix UI Dropdown Menu — accessible but ships significant JS for simple
+    menus
+  </Ref>
+  <Ref n={3} href="https://www.patterns.dev/react/react-selective-hydration">
+    Selective Hydration in React 18 — patterns.dev
+  </Ref>
+  <Ref n={4} href="https://docs.astro.build/en/concepts/islands/">
+    Astro Islands architecture — zero JS by default, opt-in interactivity
+  </Ref>
+  <Ref
+    n={5}
+    href="https://docs.astro.build/en/reference/configuration-reference/#buildinlinestylesheets"
+  >
+    Astro build.inlineStylesheets configuration reference
+  </Ref>
+  <Ref n={6} href="https://developers.cloudflare.com/workers/static-assets/">
+    Cloudflare Workers Static Assets documentation
+  </Ref>
 </References>

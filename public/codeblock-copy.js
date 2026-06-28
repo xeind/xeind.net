@@ -17,22 +17,23 @@
   function makeCopyButton() {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "text-accent/40 hover:text-tertiary flex h-6 w-6 items-center justify-center rounded-[4px] transition-colors shrink-0";
+    btn.className =
+      "text-accent/40 hover:text-tertiary flex h-6 w-6 items-center justify-center rounded-[4px] transition-colors shrink-0";
     btn.setAttribute("aria-label", "Copy code");
 
     btn.innerHTML =
       '<div class="relative h-3.5 w-3.5">' +
-        '<span class="copy-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(1);transition:transform 150ms cubic-bezier(0.23,1,0.32,1);transform-origin:center">' +
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:1;transition:opacity 150ms cubic-bezier(0.23,1,0.32,1)">' +
-            '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' +
-          '</svg>' +
-        '</span>' +
-        '<span class="check-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(0.4);transition:transform 150ms cubic-bezier(0.23,1,0.32,1);transform-origin:center">' +
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 150ms cubic-bezier(0.23,1,0.32,1)">' +
-            '<path d="M20 6 9 17l-5-5"/>' +
-          '</svg>' +
-        '</span>' +
-      '</div>';
+      '<span class="copy-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(1);transition:transform 150ms cubic-bezier(0.23,1,0.32,1);transform-origin:center">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:1;transition:opacity 150ms cubic-bezier(0.23,1,0.32,1)">' +
+      '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' +
+      "</svg>" +
+      "</span>" +
+      '<span class="check-wrap" style="position:absolute;inset:0;display:inline-flex;align-items:center;justify-content:center;transform:scale(0.4);transition:transform 150ms cubic-bezier(0.23,1,0.32,1);transform-origin:center">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0;transition:opacity 150ms cubic-bezier(0.23,1,0.32,1)">' +
+      '<path d="M20 6 9 17l-5-5"/>' +
+      "</svg>" +
+      "</span>" +
+      "</div>";
 
     var copyWrap = btn.querySelector(".copy-wrap");
     var copySvg = copyWrap.querySelector("svg");
@@ -64,7 +65,9 @@
   }
 
   function enhanceBlocks() {
-    var blocks = document.querySelectorAll("pre.astro-code:not([data-copy-ready])");
+    var blocks = document.querySelectorAll(
+      "pre.astro-code:not([data-copy-ready])",
+    );
 
     blocks.forEach(function (pre) {
       /* Bail if detached from DOM (ClientRouter timing) */
@@ -75,7 +78,9 @@
         var firstLine = pre.querySelector(".line:first-child");
         if (firstLine) {
           var text = firstLine.textContent || "";
-          var match = text.match(/^\s*(?:\/\/|#|--|\/\*)\s*(.+?)(?:\s*\*\/)?\s*$/);
+          var match = text.match(
+            /^\s*(?:\/\/|#|--|\/\*)\s*(.+?)(?:\s*\*\/)?\s*$/,
+          );
           if (match) {
             title = match[1];
             firstLine.remove();
@@ -117,11 +122,18 @@
           var children = [].slice.call(code.childNodes);
           for (var i = 0; i < children.length; i++) {
             var child = children[i];
-            if (child.nodeType === Node.TEXT_NODE && !child.textContent?.trim()) {
+            if (
+              child.nodeType === Node.TEXT_NODE &&
+              !child.textContent?.trim()
+            ) {
               child.remove();
               continue;
             }
-            if (child.nodeType === Node.ELEMENT_NODE && child.matches(".line") && !child.textContent?.trim()) {
+            if (
+              child.nodeType === Node.ELEMENT_NODE &&
+              child.matches(".line") &&
+              !child.textContent?.trim()
+            ) {
               child.remove();
               continue;
             }

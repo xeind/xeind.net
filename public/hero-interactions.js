@@ -56,7 +56,11 @@
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
     const noise = audio.createBufferSource();
-    const buf = audio.createBuffer(1, audio.sampleRate * 0.005, audio.sampleRate);
+    const buf = audio.createBuffer(
+      1,
+      audio.sampleRate * 0.005,
+      audio.sampleRate,
+    );
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++)
       data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);

@@ -57,8 +57,16 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#EBE5D8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e1115" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="theme-color"
+      content="#EBE5D8"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0e1115"
+      media="(prefers-color-scheme: dark)"
+    />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -78,12 +86,48 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       crossorigin
     />
     <style is:inline>
-      @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional}
-      @font-face{font-family:Latin Modern Roman;src:url(/fonts/LatinModernRoman-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional}
-      @font-face{font-family:Inter;src:url(/fonts/Inter-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional}
-      @font-face{font-family:Inter;src:url(/fonts/Inter-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional}
-      @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Regular.woff2)format("woff2");font-weight:400;font-style:normal;font-display:optional}
-      @font-face{font-family:Commit Mono;src:url(/fonts/CommitMono-Bold.woff2)format("woff2");font-weight:700;font-style:normal;font-display:optional}
+      @font-face {
+        font-family: Latin Modern Roman;
+        src: url(/fonts/LatinModernRoman-Regular.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: optional;
+      }
+      @font-face {
+        font-family: Latin Modern Roman;
+        src: url(/fonts/LatinModernRoman-Bold.woff2) format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: optional;
+      }
+      @font-face {
+        font-family: Inter;
+        src: url(/fonts/Inter-Regular.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: optional;
+      }
+      @font-face {
+        font-family: Inter;
+        src: url(/fonts/Inter-Bold.woff2) format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: optional;
+      }
+      @font-face {
+        font-family: Commit Mono;
+        src: url(/fonts/CommitMono-Regular.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: optional;
+      }
+      @font-face {
+        font-family: Commit Mono;
+        src: url(/fonts/CommitMono-Bold.woff2) format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: optional;
+      }
     </style>
 
     <Seo
@@ -116,7 +160,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
             class="bg-card border-accent/20 absolute bottom-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
           <span
-            class="bg-card border-accent/20 absolute bottom-[-3.5px] right-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
+            class="bg-card border-accent/20 absolute right-[-4.5px] bottom-[-3.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
           <slot />
         </main>

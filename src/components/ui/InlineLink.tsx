@@ -43,23 +43,7 @@ export default function InlineLink({
       data-hero-sfx="click"
       data-hero-sfx-hover
       data-link-hint={hintLabel || undefined}
-      className={`
-        inline
-        ${hintLabel ? "link-hint" : ""}
-        text-accent
-        hover:text-tertiary
-        border-b
-        border-accent/30
-        border-dashed
-        hover:border-solid
-        focus-visible:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-accent
-        focus-visible:ring-offset-2
-        focus-visible:ring-offset-background
-        transition-all
-        ${className}
-      `}
+      className={`inline ${hintLabel ? "link-hint" : ""} text-accent hover:text-tertiary border-accent/30 focus-visible:ring-accent focus-visible:ring-offset-background border-b border-dashed transition-all hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${className} `}
       style={{
         ...CSS_TRANSITIONS.border,
         paddingBottom: "1px",

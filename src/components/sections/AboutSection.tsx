@@ -22,7 +22,10 @@ export default function AboutSection() {
             data-hero-sfx="click"
             className={inlineLinkClass}
           >
-            <InlineIcon src="/projects/pioneer.svg" className="mr-[0.175rem] ml-[0.175rem]" />
+            <InlineIcon
+              src="/projects/pioneer.svg"
+              className="mr-[0.175rem] ml-[0.175rem]"
+            />
             Pioneer
           </a>
           .
