@@ -11,7 +11,10 @@ interface Props {
   image?: string;
   canonicalPath?: string;
   noindex?: boolean;
-  type?: "website" | "profile";
+  type?: "website" | "profile" | "article";
+  publishedTime?: string;
+  modifiedTime?: string;
+  keywords?: string[];
   structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
@@ -22,6 +25,9 @@ const {
   canonicalPath = Astro.url.pathname,
   noindex = false,
   type = "website",
+  publishedTime,
+  modifiedTime,
+  keywords,
   structuredData,
 } = Astro.props;
 
@@ -87,6 +93,9 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       image={image}
       noindex={noindex}
       type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      keywords={keywords}
       structuredData={structuredData}
     />
     <ClientRouter />

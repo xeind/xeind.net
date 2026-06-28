@@ -5,9 +5,12 @@ import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
 import { mdxComponents } from "@/components/blog/MDXComponents";
+import { SITE, absoluteUrl } from "@/config/site";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = (await getCollection("blog")).filter(
+    (post) => !post.data.draft || import.meta.env.DEV,
+  );
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -31,15 +34,46 @@ const seriesPosts = post.data.series
       .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
   : [];
 const seriesIcon = seriesPosts[0]?.data.seriesIcon;
+const postPath = `/blog/${post.id}`;
+const postUrl = absoluteUrl(postPath);
+const publishedTime = post.data.date.toISOString();
+const articleStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.excerpt,
+  datePublished: publishedTime,
+  dateModified: publishedTime,
+  mainEntityOfPage: postUrl,
+  url: postUrl,
+  author: {
+    "@type": "Person",
+    name: SITE.name,
+    url: SITE.url,
+  },
+  publisher: {
+    "@type": "Person",
+    name: SITE.name,
+    url: SITE.url,
+  },
+  image: absoluteUrl(SITE.socialImage),
+  keywords: post.data.tags,
+  inLanguage: SITE.language,
+};
 ---
 
 <Layout
   title={`${post.data.title} | Xein Deniel`}
   description={post.data.excerpt}
-  canonicalPath={`/blog/${post.id}`}
+  canonicalPath={postPath}
+  type="article"
+  publishedTime={publishedTime}
+  modifiedTime={publishedTime}
+  keywords={post.data.tags}
+  structuredData={articleStructuredData}
 >
   <div class="flex flex-col">
-    <Panel edges="both" ornaments="bottom">
+    <Panel edges="both" ornaments="all">
       {/* Post header */}
       <div class="mb-6">
         <div class="mb-2 flex items-center justify-between">
@@ -49,11 +83,11 @@ const seriesIcon = seriesPosts[0]?.data.seriesIcon;
           >
             ← Blogs
           </a>
-          <time datetime={post.data.date.toISOString()} class="text-accent/50 font-mono text-xs tracking-wide">
+          <time datetime={post.data.date.toISOString()} class="text-accent/50 font-mono text-xs tracking-wide tabular-nums">
             {formattedDate}
           </time>
         </div>
-        <h1 class="text-foreground mb-3 font-serif text-2xl">
+        <h1 class="text-foreground mb-3 font-serif text-2xl [text-wrap:balance]">
           {post.data.title}
         </h1>
         {post.data.tags.length > 0 && (
@@ -109,7 +143,7 @@ const seriesIcon = seriesPosts[0]?.data.seriesIcon;
     <SectionDivider />
 
     {/* Navigation */}
-    <Panel edges="both" ornaments="bottom">
+    <Panel edges="both" ornaments="all">
       <div class="flex items-center justify-between">
         <a
           href="/blog"

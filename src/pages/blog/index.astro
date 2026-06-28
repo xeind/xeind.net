@@ -4,19 +4,41 @@ import Layout from "../../layouts/Layout.astro";
 import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
+import { SITE, absoluteUrl } from "@/config/site";
 
 const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft || import.meta.env.DEV)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const blogStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: `${SITE.name} Blog`,
+  description: "Notes and articles from Xein Deniel.",
+  url: absoluteUrl("/blog"),
+  inLanguage: SITE.language,
+  author: {
+    "@type": "Person",
+    name: SITE.name,
+    url: SITE.url,
+  },
+  blogPost: posts.map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.data.title,
+    url: absoluteUrl(`/blog/${post.id}`),
+    datePublished: post.data.date.toISOString(),
+    description: post.data.excerpt,
+  })),
+};
 ---
 
 <Layout
   title="Blog | Xein Deniel"
   description="Notes and articles from Xein Deniel."
   canonicalPath="/blog"
+  structuredData={blogStructuredData}
 >
   <div class="flex flex-col">
-    <Panel edges="both" ornaments="bottom">
+    <Panel edges="both" ornaments="all">
       {posts.length === 0 ? (
         <p class="text-foreground/80 font-serif text-base leading-relaxed">
           No posts yet.
@@ -35,7 +57,7 @@ const posts = (await getCollection("blog"))
               <a href={`/blog/${post.id}`} class="group block" data-hero-sfx="click" data-hero-sfx-hover>
                 <time
                   datetime={post.data.date.toISOString()}
-                  class="text-accent mb-1 block font-mono text-xs tracking-wide"
+                  class="text-accent mb-1 block font-mono text-xs tracking-wide tabular-nums"
                 >
                   {post.data.date.toLocaleDateString("en-US", {
                     year: "numeric",
@@ -43,7 +65,7 @@ const posts = (await getCollection("blog"))
                     day: "numeric",
                   })}
                 </time>
-                <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg transition-colors">
+                <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg transition-colors [text-wrap:balance]">
                   {post.data.title}
                 </h2>
                 <p class="text-foreground/60 mb-3 font-serif text-sm leading-relaxed">

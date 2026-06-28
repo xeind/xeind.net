@@ -478,60 +478,60 @@ pre code {
    Maps Shiki token colors to design tokens
    ======================================== */
 
-/* Light mode — Kindle / e-ink warm pastel */
+/* Light mode — warm ink on paper */
 :root {
   --shiki-color-text: hsl(34 14% 18%);
   --shiki-color-background: transparent;
   --shiki-foreground: hsl(34 14% 18%);
   --shiki-background: transparent;
-  --astro-code-foreground: hsl(34 14% 18%);
+  --astro-code-foreground: hsl(34 14% 32%);
   --astro-code-background: transparent;
-  --astro-code-token-keyword: hsl(340 40% 42%);
-  --astro-code-token-function: hsl(220 45% 38%);
-  --astro-code-token-constant: hsl(25 55% 36%);
-  --astro-code-token-string: hsl(160 32% 30%);
-  --astro-code-token-comment: hsl(40 8% 52%);
-  --astro-code-token-parameter: hsl(45 25% 28%);
-  --astro-code-token-string-expression: hsl(160 32% 30%);
-  --astro-code-token-punctuation: hsl(34 6% 44%);
-  --astro-code-token-link: hsl(220 45% 38%);
-  --shiki-token-constant: hsl(25 55% 36%);
-  --shiki-token-string: hsl(160 32% 30%);
-  --shiki-token-comment: hsl(40 8% 52%);
-  --shiki-token-keyword: hsl(340 40% 42%);
-  --shiki-token-parameter: hsl(45 25% 28%);
-  --shiki-token-function: hsl(220 45% 38%);
-  --shiki-token-string-expression: hsl(160 32% 30%);
-  --shiki-token-punctuation: hsl(34 6% 44%);
-  --shiki-token-link: hsl(220 45% 38%);
+  --astro-code-token-keyword: hsl(280 28% 48%);
+  --astro-code-token-function: hsl(210 30% 42%);
+  --astro-code-token-constant: hsl(18 40% 48%);
+  --astro-code-token-string: hsl(140 22% 38%);
+  --astro-code-token-comment: hsl(38 14% 60%);
+  --astro-code-token-parameter: hsl(35 25% 42%);
+  --astro-code-token-string-expression: hsl(140 22% 38%);
+  --astro-code-token-punctuation: hsl(34 10% 54%);
+  --astro-code-token-link: hsl(210 30% 42%);
+  --shiki-token-constant: hsl(18 40% 48%);
+  --shiki-token-string: hsl(140 22% 38%);
+  --shiki-token-comment: hsl(38 14% 60%);
+  --shiki-token-keyword: hsl(280 28% 48%);
+  --shiki-token-parameter: hsl(35 25% 42%);
+  --shiki-token-function: hsl(210 30% 42%);
+  --shiki-token-string-expression: hsl(140 22% 38%);
+  --shiki-token-punctuation: hsl(34 10% 54%);
+  --shiki-token-link: hsl(210 30% 42%);
 }
 
-/* Dark mode — Kanagawa Dragon */
+/* Dark mode — Manila nights */
 [data-theme="dark"] {
-  --shiki-color-text: hsl(120 3% 78%);
+  --shiki-color-text: hsl(40 6% 82%);
   --shiki-color-background: transparent;
-  --shiki-foreground: hsl(120 3% 78%);
+  --shiki-foreground: hsl(40 6% 82%);
   --shiki-background: transparent;
-  --astro-code-foreground: hsl(120 3% 78%);
+  --astro-code-foreground: hsl(40 6% 82%);
   --astro-code-background: transparent;
-  --astro-code-token-keyword: hsl(4 42% 60%);
-  --astro-code-token-function: hsl(198 33% 62%);
-  --astro-code-token-constant: hsl(355 67% 64%);
-  --astro-code-token-string: hsl(84 15% 52%);
-  --astro-code-token-comment: hsl(60 1% 56%);
-  --astro-code-token-parameter: hsl(35 29% 65%);
-  --astro-code-token-string-expression: hsl(84 15% 52%);
-  --astro-code-token-punctuation: hsl(60 1% 56%);
-  --astro-code-token-link: hsl(198 33% 62%);
-  --shiki-token-constant: hsl(355 67% 64%);
-  --shiki-token-string: hsl(84 15% 52%);
-  --shiki-token-comment: hsl(60 1% 56%);
-  --shiki-token-keyword: hsl(4 42% 60%);
-  --shiki-token-parameter: hsl(35 29% 65%);
-  --shiki-token-function: hsl(198 33% 62%);
-  --shiki-token-string-expression: hsl(84 15% 52%);
-  --shiki-token-punctuation: hsl(60 1% 56%);
-  --shiki-token-link: hsl(198 33% 62%);
+  --astro-code-token-keyword: hsl(38 85% 65%);
+  --astro-code-token-function: hsl(22 60% 70%);
+  --astro-code-token-constant: hsl(8 65% 62%);
+  --astro-code-token-string: hsl(50 50% 60%);
+  --astro-code-token-comment: hsl(25 5% 38%);
+  --astro-code-token-parameter: hsl(30 45% 70%);
+  --astro-code-token-string-expression: hsl(50 50% 60%);
+  --astro-code-token-punctuation: hsl(25 5% 44%);
+  --astro-code-token-link: hsl(22 60% 70%);
+  --shiki-token-constant: hsl(8 65% 62%);
+  --shiki-token-string: hsl(50 50% 60%);
+  --shiki-token-comment: hsl(25 5% 38%);
+  --shiki-token-keyword: hsl(38 85% 65%);
+  --shiki-token-parameter: hsl(30 45% 70%);
+  --shiki-token-function: hsl(22 60% 70%);
+  --shiki-token-string-expression: hsl(50 50% 60%);
+  --shiki-token-punctuation: hsl(25 5% 44%);
+  --shiki-token-link: hsl(22 60% 70%);
 }
 
 /* Nightingale mode — warm color palette */

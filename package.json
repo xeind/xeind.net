@@ -51,6 +51,7 @@
     "vite": "$vite"
   },
   "dependencies": {
-    "@astrojs/mdx": "^7.0.0"
+    "@astrojs/mdx": "^7.0.0",
+    "@chenglou/pretext": "^0.0.8"
   }
 }

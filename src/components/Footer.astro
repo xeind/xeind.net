@@ -98,26 +98,31 @@ const compactDate = Number.isNaN(date.getTime())
 </footer>
 
 <script>
-  const themes = ["dark", "light", "nightingale"];
+  type ThemeName = "dark" | "light" | "nightingale";
+  const themes: ThemeName[] = ["dark", "light", "nightingale"];
   const labels = {
     dark: "Dark",
     light: "Light",
     nightingale: "Nightingale",
-  };
+  } satisfies Record<ThemeName, string>;
 
-  function applyTheme(theme) {
+  function isThemeName(value: string | null): value is ThemeName {
+    return value !== null && themes.includes(value as ThemeName);
+  }
+
+  function applyTheme(theme: ThemeName) {
     if (theme === "light") {
       document.documentElement.removeAttribute("data-theme");
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-    const label = document.querySelector("[data-theme-label]");
+    const label = document.querySelector<HTMLElement>("[data-theme-label]");
     if (label) label.textContent = labels[theme];
   }
 
   function syncTheme() {
     const saved = localStorage.getItem("theme");
-    if (saved && themes.includes(saved)) {
+    if (isThemeName(saved)) {
       applyTheme(saved);
     }
   }
@@ -130,10 +135,12 @@ const compactDate = Number.isNaN(date.getTime())
 
   /* Event delegation — survives ClientRouter DOM swaps */
   document.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-theme-cycle]");
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+    const btn = target.closest("[data-theme-cycle]");
     if (!btn) return;
     const saved = localStorage.getItem("theme");
-    const current = themes.includes(saved ?? "") ? saved : "dark";
+    const current: ThemeName = isThemeName(saved) ? saved : "dark";
     const next = themes[(themes.indexOf(current) + 1) % themes.length];
     localStorage.setItem("theme", next);
     applyTheme(next);

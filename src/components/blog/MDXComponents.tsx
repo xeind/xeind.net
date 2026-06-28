@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import BlogImage from "./BlogImage";
+import PretextBlock from "./PretextBlock";
 
 /* ── Links ── */
 
@@ -33,7 +34,7 @@ function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
 function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className="text-secondary mt-10 mb-4 font-serif text-2xl first:mt-0"
+      className="text-secondary mt-10 mb-4 font-serif text-2xl [text-wrap:balance] first:mt-0"
       {...props}
     />
   );
@@ -41,24 +42,41 @@ function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
 
 function MdxH2(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className="text-secondary mt-8 mb-3 font-serif text-xl" {...props} />
+    <h2 className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]" {...props} />
   );
 }
 
 function MdxH3(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className="text-secondary mt-6 mb-2 font-serif text-lg" {...props} />
+    <h3 className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]" {...props} />
   );
 }
 
 /* ── Body ── */
 
 function MdxParagraph(props: React.HTMLAttributes<HTMLParagraphElement>) {
+  // If children is pure text (no inline elements like links, code, etc),
+  // render through pretext for precise line-by-line layout
+  const { children, ...rest } = props;
+
+  if (typeof children === "string") {
+    return (
+      <div className="text-foreground/85 mb-5" {...rest}>
+        <PretextBlock className="font-serif text-base">
+          {children}
+        </PretextBlock>
+      </div>
+    );
+  }
+
+  // Fall back to native rendering for paragraphs with inline elements
   return (
     <p
-      className="text-foreground/85 mb-5 font-serif text-base leading-[1.8]"
-      {...props}
-    />
+      className="text-foreground/85 mb-5 font-serif text-base leading-[1.8] [text-wrap:pretty]"
+      {...rest}
+    >
+      {children}
+    </p>
   );
 }
 
@@ -100,18 +118,18 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="text-accent hover:text-tertiary absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-[5px] transition-colors"
+      className="text-accent hover:text-tertiary absolute top-2 right-2 z-10 flex h-10 w-10 items-center justify-center rounded-[5px] transition-colors"
       aria-label={copied ? "Copied" : "Copy code"}
     >
       <div className="relative h-4 w-4">
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false} mode="wait">
           {copied ? (
             <motion.svg
               key="check"
-              initial={{ opacity: 0, scale: 0.4 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.4 }}
-              transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+              initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
               className="absolute inset-0"
               width="16"
               height="16"
@@ -127,10 +145,10 @@ function CopyButton({ text }: { text: string }) {
           ) : (
             <motion.svg
               key="copy"
-              initial={{ opacity: 0, scale: 0.4 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.4 }}
-              transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
+              initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
               className="absolute inset-0"
               width="16"
               height="16"
@@ -286,7 +304,7 @@ export function Cite({ n, href }: { n: number; href?: string }) {
   return (
     <a
       href={anchor}
-      className="text-accent hover:text-tertiary ml-0.5 align-super font-mono text-[0.65em] no-underline transition-colors"
+      className="text-accent hover:text-tertiary ml-0.5 p-1 align-super font-mono text-[0.65em] no-underline transition-colors"
     >
       [{n}]
     </a>
