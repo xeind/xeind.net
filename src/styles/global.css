@@ -510,6 +510,27 @@ pre code {
   color: var(--color-foreground);
 }
 
+.divider-grid-broken {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Cpath d='M0.5 0v4M0 0.5h4' fill='none' stroke='%23888' stroke-width='0.5' stroke-dasharray='1.5 1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  background-size: 4px 4px;
+  background-position: center;
+  opacity: 0.25;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+}
+
 /* ========================================
    SHIKI CSS-VARIABLES THEME
    Maps Shiki token colors to design tokens
@@ -552,23 +573,23 @@ pre code {
   --astro-code-foreground: hsl(40 6% 82%);
   --astro-code-background: transparent;
   --astro-code-token-keyword: hsl(38 85% 65%);
-  --astro-code-token-function: hsl(22 60% 70%);
-  --astro-code-token-constant: hsl(8 65% 62%);
-  --astro-code-token-string: hsl(50 50% 60%);
+  --astro-code-token-function: hsl(200 47% 68%);
+  --astro-code-token-constant: hsl(10 72% 64%);
+  --astro-code-token-string: hsl(95 37% 60%);
   --astro-code-token-comment: hsl(25 5% 38%);
   --astro-code-token-parameter: hsl(30 45% 70%);
-  --astro-code-token-string-expression: hsl(50 50% 60%);
+  --astro-code-token-string-expression: hsl(95 37% 60%);
   --astro-code-token-punctuation: hsl(25 5% 44%);
-  --astro-code-token-link: hsl(22 60% 70%);
-  --shiki-token-constant: hsl(8 65% 62%);
-  --shiki-token-string: hsl(50 50% 60%);
+  --astro-code-token-link: hsl(200 47% 68%);
+  --shiki-token-constant: hsl(10 72% 64%);
+  --shiki-token-string: hsl(95 37% 60%);
   --shiki-token-comment: hsl(25 5% 38%);
   --shiki-token-keyword: hsl(38 85% 65%);
   --shiki-token-parameter: hsl(30 45% 70%);
-  --shiki-token-function: hsl(22 60% 70%);
-  --shiki-token-string-expression: hsl(50 50% 60%);
+  --shiki-token-function: hsl(200 47% 68%);
+  --shiki-token-string-expression: hsl(95 37% 60%);
   --shiki-token-punctuation: hsl(25 5% 44%);
-  --shiki-token-link: hsl(22 60% 70%);
+  --shiki-token-link: hsl(200 47% 68%);
 }
 
 /* Nightingale mode — warm color palette */
@@ -579,24 +600,24 @@ pre code {
   --shiki-background: transparent;
   --astro-code-foreground: hsl(42 27% 80%);
   --astro-code-background: transparent;
-  --astro-code-token-keyword: hsl(43 74% 72%);
-  --astro-code-token-function: hsl(214 45% 69%);
-  --astro-code-token-constant: hsl(17 87% 75%);
-  --astro-code-token-string: hsl(86 36% 57%);
+  --astro-code-token-keyword: hsl(28 66% 72%);
+  --astro-code-token-function: hsl(166 27% 66%);
+  --astro-code-token-constant: hsl(350 49% 72%);
+  --astro-code-token-string: hsl(74 28% 58%);
   --astro-code-token-comment: hsl(0 0% 45%);
   --astro-code-token-parameter: hsl(42 27% 80%);
-  --astro-code-token-string-expression: hsl(86 36% 57%);
+  --astro-code-token-string-expression: hsl(74 28% 58%);
   --astro-code-token-punctuation: hsl(0 0% 50%);
-  --astro-code-token-link: hsl(86 36% 57%);
-  --shiki-token-constant: hsl(17 87% 75%);
-  --shiki-token-string: hsl(86 36% 57%);
+  --astro-code-token-link: hsl(166 27% 66%);
+  --shiki-token-constant: hsl(350 49% 72%);
+  --shiki-token-string: hsl(74 28% 58%);
   --shiki-token-comment: hsl(0 0% 45%);
-  --shiki-token-keyword: hsl(43 74% 72%);
+  --shiki-token-keyword: hsl(28 66% 72%);
   --shiki-token-parameter: hsl(42 27% 80%);
-  --shiki-token-function: hsl(214 45% 69%);
-  --shiki-token-string-expression: hsl(86 36% 57%);
+  --shiki-token-function: hsl(166 27% 66%);
+  --shiki-token-string-expression: hsl(74 28% 58%);
   --shiki-token-punctuation: hsl(0 0% 50%);
-  --shiki-token-link: hsl(86 36% 57%);
+  --shiki-token-link: hsl(166 27% 66%);
 }
 
 /* Code blocks — dashed border + muted background */
