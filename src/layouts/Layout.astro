@@ -41,14 +41,23 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     <script is:inline>
       (() => {
         try {
-          const root = document.documentElement;
-          const saved = localStorage.getItem("theme");
-          const theme = ["dark", "light", "nightingale"].includes(saved)
-            ? saved
-            : "dark";
+          var themes = ["dark", "light", "nightingale"];
+          var root = document.documentElement;
+          var saved = localStorage.getItem("theme");
+          var theme = themes.includes(saved) ? saved : "dark";
 
           if (theme === "light") root.removeAttribute("data-theme");
           else root.setAttribute("data-theme", theme);
+
+          if (!window.__themeSwapBound) {
+            window.__themeSwapBound = true;
+            document.addEventListener("astro:before-swap", function (e) {
+              var s = localStorage.getItem("theme");
+              var t = themes.includes(s) ? s : "dark";
+              if (t === "light") e.newDocument.documentElement.removeAttribute("data-theme");
+              else e.newDocument.documentElement.setAttribute("data-theme", t);
+            });
+          }
         } catch {
           document.documentElement.style.backgroundColor = "#EBE5D8";
         }

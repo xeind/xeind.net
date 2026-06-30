@@ -138,7 +138,9 @@ const compactDate = Number.isNaN(date.getTime())
   /* Initial sync */
   syncTheme();
 
-  /* Re-sync after ClientRouter navigation */
+  /* Sync labels after ClientRouter navigation (theme is already
+     applied on the new document by the head inline script's
+     astro:before-swap handler) */
   document.addEventListener("astro:after-swap", syncTheme);
 
   /* Event delegation — survives ClientRouter DOM swaps */
