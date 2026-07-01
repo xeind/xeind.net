@@ -220,7 +220,7 @@ body {
 /* Paper grain texture on background */
 .paper-background::before {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
   background-image: url("/grain-texture.webp");
   background-size: 160px 160px;
