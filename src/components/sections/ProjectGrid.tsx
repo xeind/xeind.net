@@ -326,7 +326,7 @@ export default function ProjectGrid() {
                 <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
                   <motion.div
                     layoutId={`card-${activeProject.id}`}
-                    className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
+                    className="paper-grain-overlay-top bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
                     style={{ borderRadius: 0 }}
                     ref={modalRef}
                     transition={
@@ -357,7 +357,7 @@ export default function ProjectGrid() {
                     {/* Image area */}
                     <motion.div
                       layoutId={`image-${activeProject.id}`}
-                      className="bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
+                      className="paper-grain-overlay bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
                       transition={
                         prefersReducedMotion
                           ? { duration: 0 }
@@ -382,7 +382,7 @@ export default function ProjectGrid() {
                     {/* Content */}
                     <motion.div
                       layoutId={`content-${activeProject.id}`}
-                      className="scrollbar-hide flex flex-col overflow-y-auto px-8 py-6"
+                      className="scrollbar-hide relative flex flex-col overflow-y-auto px-8 py-6"
                       transition={
                         prefersReducedMotion
                           ? { duration: 0 }
