@@ -357,7 +357,7 @@ export default function ProjectGrid() {
                     {/* Image area */}
                     <motion.div
                       layoutId={`image-${activeProject.id}`}
-                      className="paper-grain-overlay bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
+                      className="bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
                       transition={
                         prefersReducedMotion
                           ? { duration: 0 }
