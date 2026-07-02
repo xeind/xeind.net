@@ -217,45 +217,6 @@ body {
   min-height: 100dvh;
 }
 
-/* Paper grain texture on background */
-.paper-background::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("/grain-texture.webp");
-  background-size: 160px 160px;
-  background-repeat: repeat;
-  background-position: top left;
-  pointer-events: none;
-  z-index: 30;
-  opacity: 0.08;
-}
-
-.paper-grain-overlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("/grain-texture.webp");
-  background-size: 160px 160px;
-  background-repeat: repeat;
-  background-position: top left;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.08;
-}
-
-.paper-grain-overlay-top::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("/grain-texture.webp");
-  background-size: 160px 160px;
-  background-repeat: repeat;
-  background-position: top left;
-  pointer-events: none;
-  z-index: 20;
-  opacity: 0.06;
-}
 
 /* ========================================
    UNIFIED GRID SYSTEM

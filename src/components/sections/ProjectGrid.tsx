@@ -326,7 +326,7 @@ export default function ProjectGrid() {
                 <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
                   <motion.div
                     layoutId={`card-${activeProject.id}`}
-                    className="paper-grain-overlay-top bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
+                    className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
                     style={{ borderRadius: 0 }}
                     ref={modalRef}
                     transition={
