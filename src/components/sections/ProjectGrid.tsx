@@ -184,7 +184,7 @@ export default function ProjectGrid() {
   >(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(getResolvedTheme);
   const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { brush, clickLow, clickSharp } = useClickSound();
