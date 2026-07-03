@@ -101,18 +101,18 @@ let lastAtaxFrame = {
 
 const ATAX_THEME = {
   light: {
-    primaryFill: "#2E2E2E",
-    secondaryFill: "#5A6472",
+    primaryFill: "var(--color-foreground)",
+    secondaryFill: "var(--color-secondary)",
     secondaryOpacity: 0.38,
   },
   dark: {
-    primaryFill: "#E6E6E6",
-    secondaryFill: "#FFFFFF",
+    primaryFill: "var(--color-primary)",
+    secondaryFill: "var(--color-tertiary)",
     secondaryOpacity: 0.3,
   },
   nightingale: {
-    primaryFill: "#DCD7BA",
-    secondaryFill: "#98BB6C",
+    primaryFill: "var(--color-foreground)",
+    secondaryFill: "var(--color-accent)",
     secondaryOpacity: 0.4,
   },
 } as const;
