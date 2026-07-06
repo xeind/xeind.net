@@ -6,10 +6,10 @@ import {
   useRef,
   useCallback,
   type ReactNode,
+  type SVGProps,
 } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { X, ArrowUpRight } from "lucide-react";
 import { projects } from "@/lib/data/projects";
 import Badge from "@/components/ui/Badge";
 import ProjectLogo from "@/components/sections/ProjectLogo";
@@ -18,7 +18,7 @@ import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
-import { useClickSound } from "@/lib/hooks/useClickSound";
+import { useProjectGridSounds } from "@/lib/hooks/useProjectGridSounds";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
@@ -43,6 +43,58 @@ const ICON_SIZES = {
   normal: { grid: "h-10 sm:h-12", modal: "h-12 sm:h-14" },
   large: { grid: "h-12 sm:h-14", modal: "h-14 sm:h-16" },
 };
+
+type IconProps = SVGProps<SVGSVGElement> & {
+  size: number;
+  strokeWidth: number;
+};
+
+function ArrowUpRightIcon({
+  size,
+  strokeWidth,
+  className,
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M7 17 17 7" />
+      <path d="M7 7h10v10" />
+    </svg>
+  );
+}
+
+function CloseIcon({ size, strokeWidth, className, ...props }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="m18 6-12 12" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
 
 function getPrimaryProjectUrl(project: (typeof projects)[0]) {
   return project.liveUrl || project.projectLinks?.[0]?.url || project.githubUrl;
@@ -187,7 +239,7 @@ export default function ProjectGrid() {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(getResolvedTheme);
   const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const { brush, clickLow, clickSharp } = useClickSound();
+  const { brush, clickLow, clickSharp } = useProjectGridSounds();
   const activeProjectUrl = activeProject
     ? getPrimaryProjectUrl(activeProject)
     : undefined;
@@ -348,7 +400,7 @@ export default function ProjectGrid() {
                       style={tFast}
                       aria-label="Close modal"
                     >
-                      <X
+                      <CloseIcon
                         size={ICON_CONFIG.sizes.sm}
                         strokeWidth={ICON_CONFIG.strokeWidth}
                       />
@@ -431,7 +483,7 @@ export default function ProjectGrid() {
                               <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
                                 {activeProject.title}
                               </span>
-                              <ArrowUpRight
+                              <ArrowUpRightIcon
                                 size={ICON_CONFIG.sizes.md}
                                 strokeWidth={ICON_CONFIG.strokeWidth}
                                 className="mt-0.5 shrink-0"
@@ -468,7 +520,7 @@ export default function ProjectGrid() {
                                   <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
                                     {link.label}
                                   </span>
-                                  <ArrowUpRight
+                                  <ArrowUpRightIcon
                                     size={ICON_CONFIG.sizes.sm}
                                     strokeWidth={ICON_CONFIG.strokeWidth}
                                     className="shrink-0"
@@ -578,7 +630,7 @@ export default function ProjectGrid() {
                       style={tFast}
                       aria-label={`Open ${project.title} in new tab`}
                     >
-                      <ArrowUpRight
+                      <ArrowUpRightIcon
                         size={ICON_CONFIG.sizes.md}
                         strokeWidth={ICON_CONFIG.strokeWidth}
                       />
