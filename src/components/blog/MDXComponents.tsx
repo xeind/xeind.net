@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import BlogImage from "./BlogImage";
 import PretextBlock from "./PretextBlock";
+import PullQuoteCard from "./PullQuoteCard";
 
 /* ── Links ── */
 
@@ -362,6 +363,8 @@ export function References({ children }: { children: React.ReactNode }) {
   );
 }
 
+export { PullQuoteCard };
+
 /* ── Video ── */
 
 function MdxVideo(props: React.VideoHTMLAttributes<HTMLVideoElement>) {
@@ -396,4 +399,5 @@ export const mdxComponents = {
   table: MdxTable,
   th: MdxTh,
   td: MdxTd,
+  PullQuoteCard,
 };
