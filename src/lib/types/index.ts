@@ -38,6 +38,23 @@ export interface Project {
   iconSize?: "compact" | "normal" | "large";
 }
 
+// Awards & Certifications
+export interface Award {
+  id: string;
+  title: string;
+  issuer: string;
+  type: string;
+  description: string;
+  stats?: Array<{
+    key: string;
+    value: string;
+  }>;
+  year?: number;
+  url?: string;
+  imageUrl?: string;
+  iconSize?: "compact" | "normal" | "large";
+}
+
 // Experience
 export interface Experience {
   id: string;
