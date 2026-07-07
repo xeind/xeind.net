@@ -99,23 +99,9 @@ let lastAtaxFrame = {
   secondaryOrder: DEFAULT_ATAX_SECONDARY_ORDER,
 };
 
-const ATAX_THEME = {
-  light: {
-    primaryFill: "var(--color-foreground)",
-    secondaryFill: "var(--color-secondary)",
-    secondaryOpacity: 0.38,
-  },
-  dark: {
-    primaryFill: "var(--color-primary)",
-    secondaryFill: "var(--color-tertiary)",
-    secondaryOpacity: 0.3,
-  },
-  nightingale: {
-    primaryFill: "var(--color-foreground)",
-    secondaryFill: "var(--color-foreground)",
-    secondaryOpacity: 0.24,
-  },
-} as const;
+// ATAX colors resolve via --atax-* CSS variables (global.css) so the SVG
+// markup is identical across themes — theme-dependent attributes here would
+// desync from SSR output (hydration never patches attribute mismatches).
 
 function shuffleIndices(length: number) {
   const arr = Array.from({ length }, (_, i) => i);
@@ -126,15 +112,7 @@ function shuffleIndices(length: number) {
   return arr;
 }
 
-function AtaxLogo({
-  theme,
-  className,
-  alt,
-}: {
-  theme: ResolvedTheme;
-  className?: string;
-  alt: string;
-}) {
+function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
   const [primaryOrder, setPrimaryOrder] = useState<number[]>(
     () => lastAtaxFrame.primaryOrder,
   );
@@ -157,9 +135,6 @@ function AtaxLogo({
     return () => window.clearInterval(timer);
   }, []);
 
-  const colors = ATAX_THEME[theme];
-  const primaryOpacityScale = theme === "nightingale" ? 0.84 : 1;
-
   return (
     <span
       role="img"
@@ -171,7 +146,10 @@ function AtaxLogo({
         viewBox="0 0 54 48"
         className="h-full w-auto max-w-full"
       >
-        <g fill={colors.primaryFill}>
+        <g
+          fill="var(--atax-primary)"
+          style={{ opacity: "var(--atax-primary-scale, 1)" }}
+        >
           {ATAX_PRIMARY_OPACITY.map((opacity, i) => {
             const coord = ATAX_COORDS[primaryOrder[i]];
             return (
@@ -181,12 +159,15 @@ function AtaxLogo({
                 y={coord.y}
                 width="8"
                 height="8"
-                fillOpacity={opacity * primaryOpacityScale}
+                fillOpacity={opacity}
               />
             );
           })}
         </g>
-        <g fill={colors.secondaryFill}>
+        <g
+          fill="var(--atax-secondary)"
+          style={{ opacity: "var(--atax-secondary-opacity, 0.38)" }}
+        >
           {secondaryOrder.map((coordIdx, i) => {
             const coord = ATAX_COORDS[coordIdx];
             return (
@@ -196,7 +177,6 @@ function AtaxLogo({
                 y={coord.y}
                 width="8"
                 height="8"
-                fillOpacity={colors.secondaryOpacity}
               />
             );
           })}
@@ -286,7 +266,7 @@ export default function ProjectLogo({
   const reducedMotion = useReducedMotion();
 
   if (projectId === "atax") {
-    return <AtaxLogo theme={theme} className={className} alt={alt} />;
+    return <AtaxLogo className={className} alt={alt} />;
   }
 
   if (projectId === "pioneerdev-ai") {

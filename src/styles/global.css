@@ -210,6 +210,28 @@ body {
   overflow-x: hidden;
 }
 
+/* ATAX animated logo — theme-mapped fills. Kept in CSS (not component props)
+   so the SVG markup is identical across themes and SSR/hydration stay in sync. */
+:root {
+  --atax-primary: var(--color-foreground);
+  --atax-primary-scale: 1;
+  --atax-secondary: var(--color-secondary);
+  --atax-secondary-opacity: 0.38;
+}
+
+[data-theme="dark"] {
+  --atax-primary: var(--color-primary);
+  --atax-secondary: var(--color-tertiary);
+  --atax-secondary-opacity: 0.3;
+}
+
+[data-theme="nightingale"] {
+  --atax-primary: var(--color-foreground);
+  --atax-primary-scale: 0.84;
+  --atax-secondary: var(--color-foreground);
+  --atax-secondary-opacity: 0.24;
+}
+
 /* PAPER BACKGROUND - Outermost container with noise */
 .paper-background {
   position: relative;
