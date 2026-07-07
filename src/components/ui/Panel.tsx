@@ -7,6 +7,7 @@ interface PanelProps {
   tone?: "default" | "hero";
   padding?: "sm" | "md" | "lg";
   showGrid?: boolean;
+  showNoise?: boolean;
   className?: string;
 }
 
@@ -17,6 +18,7 @@ export default function Panel({
   tone = "default",
   padding = "md",
   showGrid = false,
+  showNoise = false,
   className = "",
 }: PanelProps) {
   const resolvedEdges = edges ?? "both";
@@ -57,6 +59,17 @@ export default function Panel({
         </>
       ) : (
         <CornerDiamond position="all" variant="accent" />
+      )}
+      {showNoise && (
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.012]"
+          style={{
+            backgroundImage: "url(/noise.svg)",
+            backgroundSize: "180px 180px",
+            backgroundRepeat: "repeat",
+          }}
+          aria-hidden="true"
+        />
       )}
       {showGrid && (
         <div className="bg-hero-grid pointer-events-none absolute inset-0 opacity-20" />
