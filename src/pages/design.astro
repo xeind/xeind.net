@@ -5,6 +5,9 @@ import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
 import InlineLink from "@/components/ui/InlineLink";
 import CornerDiamond from "@/components/ui/CornerDiamond";
+import GridIterations from "@/components/design/GridIterations";
+import EdgeOrnaments from "@/components/design/EdgeOrnaments";
+import PrecisionMarks from "@/components/design/PrecisionMarks";
 ---
 
 <Layout
@@ -653,6 +656,44 @@ import CornerDiamond from "@/components/ui/CornerDiamond";
       <p class="text-foreground/50 mt-1 font-mono text-xs">
         Springs: duration 0.3s, bounce 0 (noBounce) for modals &amp; layout
       </p>
+    </Panel>
+    <SectionDivider />
+
+    {/* Grid Iterations */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        GRID ITERATIONS
+      </h2>
+      <p class="text-foreground/50 mb-6 font-mono text-xs">
+        Card iterations for the project and awards grids — cards expand into a
+        center modal on click
+      </p>
+      <GridIterations client:visible />
+    </Panel>
+    <SectionDivider />
+
+    {/* Edge Ornaments */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        EDGE ORNAMENTS
+      </h2>
+      <p class="text-foreground/50 mb-6 font-mono text-xs">
+        Ruler-tick and segmented-dash prototypes — placement candidates for the
+        site frame, dividers, hero, and timeline
+      </p>
+      <EdgeOrnaments />
+    </Panel>
+    <SectionDivider />
+
+    {/* Precision Marks */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">
+        PRECISION MARKS
+      </h2>
+      <p class="text-foreground/50 mb-6 font-mono text-xs">
+        Drafting-sheet marks — dimensions, title block, coordinates
+      </p>
+      <PrecisionMarks />
     </Panel>
     <SectionDivider />
 
