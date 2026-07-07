@@ -63,7 +63,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
               <span>{exp.location}</span>
             </div>
 
-            <div className="shrink-0">
+            <div className="shrink-0 font-mono text-xs">
               {exp.period.start} – {exp.period.end}
             </div>
           </div>
