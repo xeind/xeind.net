@@ -166,15 +166,6 @@ export default function PullQuoteCard({
           )}
         </figcaption>
       </div>
-      <div
-        className="pointer-events-none absolute inset-0 z-20 opacity-[0.045] mix-blend-multiply dark:opacity-[0.02] dark:mix-blend-screen"
-        style={{
-          backgroundImage: "url(/noise.svg)",
-          backgroundSize: "180px 180px",
-          backgroundRepeat: "repeat",
-        }}
-        aria-hidden="true"
-      />
     </figure>
   );
 }

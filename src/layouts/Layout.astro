@@ -155,10 +155,19 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
   </head>
   <body class="font-sans antialiased">
     <div class="paper-background min-h-dvh overflow-x-clip" tabindex="-1">
-      <div class="relative mx-auto max-w-5xl">
+      <div class="mx-auto max-w-5xl">
         <main
           class="bg-card border-accent/20 before:bg-accent/20 after:bg-accent/20 relative isolate mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:h-px after:content-['']"
         >
+          <div
+            class="pointer-events-none absolute inset-0 z-0 opacity-[0.065] mix-blend-multiply dark:opacity-[0.03] dark:mix-blend-screen"
+            style={{
+              backgroundImage: "url(/noise.svg)",
+              backgroundSize: "180px 180px",
+              backgroundRepeat: "repeat",
+            }}
+            aria-hidden="true"
+          ></div>
           <span
             class="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
