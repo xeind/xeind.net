@@ -813,3 +813,126 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
     visibility: visible;
   }
 }
+
+.edge-glow-shell {
+  --edge-glow-opacity: 0;
+  --edge-glow-x: 50%;
+  --edge-glow-y: 50%;
+  --edge-glow-ink: color-mix(
+    in srgb,
+    var(--color-accent) 68%,
+    var(--color-foreground) 32%
+  );
+}
+
+.edge-glow-layer {
+  position: absolute;
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  left: -1px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: var(--edge-glow-opacity);
+  transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: radial-gradient(
+    120px 220px at var(--edge-glow-x) var(--edge-glow-y),
+    color-mix(in srgb, var(--color-foreground) 26%, transparent) 0%,
+    color-mix(in srgb, var(--color-accent) 42%, transparent) 24%,
+    color-mix(in srgb, var(--color-tertiary) 20%, transparent) 42%,
+    transparent 74%
+  );
+}
+
+.edge-glow-shell-vertical .edge-glow-layer {
+  -webkit-mask-image:
+    linear-gradient(#000 0 0),
+    linear-gradient(#000 0 0);
+  -webkit-mask-size: 1px 100%, 1px 100%;
+  -webkit-mask-position: left top, right top;
+  -webkit-mask-repeat: no-repeat;
+  mask-image:
+    linear-gradient(#000 0 0),
+    linear-gradient(#000 0 0);
+  mask-size: 1px 100%, 1px 100%;
+  mask-position: left top, right top;
+  mask-repeat: no-repeat;
+}
+
+.edge-glow-shell-horizontal .edge-glow-layer {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+  mask-repeat: no-repeat;
+}
+
+.edge-glow-shell-line .edge-glow-layer {
+  -webkit-mask-image: linear-gradient(#000 0 0);
+  -webkit-mask-size: 100% 1px;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: linear-gradient(#000 0 0);
+  mask-size: 100% 1px;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+/* Divider glow lines: transparent 1px strips positioned to overlap the
+   adjacent Panels' full-bleed hairlines exactly (the divider never draws
+   its own boundary line — the Panel hairline IS the edge). Each strip gets
+   its own --edge-line-strength from edge-glow.js based on the cursor's
+   vertical distance to that strip, so the nearer edge lights up first and
+   brighter. The hotspot is the strip's own background, so it cannot sit
+   off the line it belongs to. */
+.edge-glow-line {
+  --edge-line-strength: 0;
+  pointer-events: none;
+  opacity: var(--edge-line-strength);
+  transition: opacity 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Peak intensity matches the diamonds' cap (ink at 42%) so lines,
+     diamonds, and the side wash read as one system.
+     Strip spans ±9999px; --edge-glow-x is relative to the shell's left
+     edge, so shift the hotspot into this coordinate space. */
+  background: radial-gradient(
+    160px 3px at calc(var(--edge-glow-x, 50%) + 9999px) 50%,
+    color-mix(in srgb, var(--edge-glow-ink) 42%, transparent) 0%,
+    color-mix(in srgb, var(--edge-glow-ink) 18%, transparent) 45%,
+    transparent 85%
+  );
+}
+
+.edge-glow-node {
+  isolation: isolate;
+  --edge-node-strength: 0;
+}
+
+.edge-glow-node::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border: 1px solid var(--edge-glow-ink);
+  opacity: calc(var(--edge-node-strength) * 0.42);
+  pointer-events: none;
+  transition: opacity 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-glow-layer,
+  .edge-glow-node::after,
+  .edge-glow-line {
+    transition: none;
+  }
+}

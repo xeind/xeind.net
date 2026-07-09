@@ -22,8 +22,24 @@ export default function SectionDivider({
 }: SectionDividerProps) {
   if (variant === "grid") {
     return (
-      <div className="relative -z-10 overflow-hidden" style={{ height: "20px" }}>
+      <div
+        className="edge-glow-shell edge-glow-shell-horizontal relative"
+        style={{ height: "20px" }}
+      >
         <DividerAccent />
+        {/* Transparent glow strips overlapping the adjacent Panels' own
+            full-bleed hairlines (1px outside this box) — the divider draws
+            no lines of its own. */}
+        <div
+          className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
+          style={{ top: "-1px" }}
+          aria-hidden="true"
+        />
+        <div
+          className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
+          style={{ bottom: "-1px" }}
+          aria-hidden="true"
+        />
         <div className="divider-grid absolute inset-x-0" style={{ top: "1px", bottom: "1px" }} />
       </div>
     );
@@ -31,16 +47,41 @@ export default function SectionDivider({
 
   if (variant === "grid-broken") {
     return (
-      <div className="relative -z-10 overflow-hidden" style={{ height: "20px" }}>
+      <div
+        className="edge-glow-shell edge-glow-shell-horizontal relative"
+        style={{ height: "20px" }}
+      >
         <DividerAccent />
+        <div
+          className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
+          style={{ top: "-1px" }}
+          aria-hidden="true"
+        />
+        <div
+          className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
+          style={{ bottom: "-1px" }}
+          aria-hidden="true"
+        />
         <div className="divider-grid-broken absolute inset-x-0" style={{ top: "1px", bottom: "1px" }} />
       </div>
     );
   }
 
   return (
-    <div className="bg-card relative -z-10 h-4 overflow-hidden">
+    <div className="edge-glow-shell edge-glow-shell-horizontal bg-card relative h-4">
       <DividerAccent />
+      {/* Glow strips overlapping the adjacent Panels' hairlines — the
+          interior dashed lines stay static; only real enclosing edges glow. */}
+      <div
+        className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
+        style={{ top: "-1px" }}
+        aria-hidden="true"
+      />
+      <div
+        className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
+        style={{ bottom: "-1px" }}
+        aria-hidden="true"
+      />
       <div
         className="border-accent/20 absolute right-0 left-0 border-b border-dashed"
         style={{

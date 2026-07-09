@@ -150,7 +150,8 @@ export default function EdgeOrnaments() {
         <p className="text-foreground/50 mb-3 font-mono text-xs">
           Hero edge strips — short inward ticks, fading downward
         </p>
-        <div className="border-accent/20 relative mx-auto h-40 w-full max-w-md border-x">
+        <div className="edge-glow-shell edge-glow-shell-vertical border-accent/20 relative mx-auto h-40 w-full max-w-md border-x">
+          <div className="edge-glow-layer" aria-hidden="true" />
           <div
             className="text-accent/30 absolute top-0 bottom-0 left-0 w-8 [mask-image:linear-gradient(to_bottom,black,transparent)]"
             aria-hidden="true"

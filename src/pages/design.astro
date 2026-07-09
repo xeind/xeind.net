@@ -265,9 +265,15 @@ import PrecisionMarks from "@/components/design/PrecisionMarks";
 
         <div>
           <p class="text-foreground/50 mb-3 font-mono text-xs">
-            Section divider
+            Section divider — full-bleed hairlines stand in for the adjacent
+            panel edges the glow overlays
           </p>
-          <SectionDivider />
+          <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-12">
+            <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
+            <div class="bg-accent/20 absolute bottom-0 right-[-9999px] left-[-9999px] h-px"></div>
+            <CornerDiamond position="all" variant="accent" />
+            <SectionDivider />
+          </div>
         </div>
 
         <div class="border-accent/20 border-t border-dashed"></div>
@@ -281,19 +287,34 @@ import PrecisionMarks from "@/components/design/PrecisionMarks";
               <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">
                 dashed
               </p>
-              <SectionDivider variant="dashed" />
+              <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-12">
+                <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
+                <div class="bg-accent/20 absolute bottom-0 right-[-9999px] left-[-9999px] h-px"></div>
+                <CornerDiamond position="all" variant="accent" />
+                <SectionDivider variant="dashed" />
+              </div>
             </div>
             <div>
               <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">
                 grid
               </p>
-              <SectionDivider variant="grid" />
+              <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-12">
+                <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
+                <div class="bg-accent/20 absolute bottom-0 right-[-9999px] left-[-9999px] h-px"></div>
+                <CornerDiamond position="all" variant="accent" />
+                <SectionDivider variant="grid" />
+              </div>
             </div>
             <div>
               <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">
                 grid-broken
               </p>
-              <SectionDivider variant="grid-broken" />
+              <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-12">
+                <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
+                <div class="bg-accent/20 absolute bottom-0 right-[-9999px] left-[-9999px] h-px"></div>
+                <CornerDiamond position="all" variant="accent" />
+                <SectionDivider variant="grid-broken" />
+              </div>
             </div>
           </div>
         </div>
