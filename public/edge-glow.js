@@ -24,11 +24,19 @@
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   // Ease-out (sqrt): ramps up quickly on entry so effects react as soon as
-  // the cursor is in range, rather than staying near-zero until the cursor
-  // is almost on top of them.
+  // the cursor is in range — right for the diamonds, whose capped 1px
+  // outlines would be invisible without an early ramp.
   const falloff = (distance, radius) => {
     const normalized = clamp(1 - distance / radius, 0, 1);
     return Math.sqrt(normalized);
+  };
+
+  // Smoothstep: near-zero at the edge of range, steepening on approach —
+  // right for the wash, whose large uncapped hotspot reads as "already on"
+  // under an ease-out curve.
+  const smoothFalloff = (distance, radius) => {
+    const normalized = clamp(1 - distance / radius, 0, 1);
+    return normalized * normalized * (3 - 2 * normalized);
   };
 
   // Skip style writes when the value hasn't changed — idle shells cost one
@@ -107,11 +115,11 @@
           Math.abs(pointerX - rect.left),
           Math.abs(pointerX - rect.right),
         );
-        washStrength = falloff(distToBorder, GLOW_RADIUS);
+        washStrength = smoothFalloff(distToBorder, GLOW_RADIUS);
       } else if (isHorizontal) {
         const distToBand =
           relY < 0 ? -relY : relY > rect.height ? relY - rect.height : 0;
-        washStrength = falloff(distToBand, GLOW_RADIUS);
+        washStrength = smoothFalloff(distToBand, GLOW_RADIUS);
       } else {
         washStrength = 1;
       }
