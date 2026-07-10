@@ -5,7 +5,6 @@ import AboutSection from "@/components/sections/AboutSection";
 import ExperienceTimeline from "@/components/sections/ExperienceTimeline";
 import ProjectGrid from "@/components/sections/ProjectGrid";
 import CalloutBand from "@/components/ui/CalloutBand";
-import DimensionLine from "@/components/ui/DimensionLine";
 import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import { SITE, absoluteUrl } from "@/config/site";
@@ -67,11 +66,6 @@ const structuredData = {
 
     <Panel tone="hero" padding="lg" edges="bottom" ornaments="bottom">
       <HeroSection />
-      {/* Negative margins cancel the panel's lg padding so the line truly
-          spans the max-w-5xl column its label claims to measure */}
-      <div class="-mx-6 mt-8 sm:-mx-10 md:-mx-14">
-        <DimensionLine label="max-w-5xl · 1024" />
-      </div>
     </Panel>
     <SectionDivider variant="grid" />
 

@@ -3,10 +3,31 @@
  * registration crosshairs, title block, grid references, scale bar,
  * center-marked divider. Static markup, zero JS.
  */
-import DimensionLine from "@/components/ui/DimensionLine";
 
-// DimensionLine lives in ui/ — it's a production component now (used in the
-// hero); this page only showcases it.
+/** Architectural dimension line: end caps, diagonal ticks, centered label.
+ * Marks are absolutely anchored so caps, ticks, and line share exact
+ * intersections instead of drifting as flex siblings. */
+function DimensionLine({ label }: { label: string }) {
+  return (
+    <div
+      className="text-accent/50 relative flex h-4 w-full items-center justify-center"
+      aria-hidden="true"
+    >
+      {/* Dimension line */}
+      <div className="bg-accent/25 absolute inset-x-0 top-1/2 h-px" />
+      {/* End caps (extension lines) */}
+      <div className="bg-current absolute top-1/2 left-0 h-3 w-px -translate-y-1/2" />
+      <div className="bg-current absolute top-1/2 right-0 h-3 w-px -translate-y-1/2" />
+      {/* 45deg ticks centered on each cap/line intersection */}
+      <div className="bg-current absolute top-1/2 left-0 h-px w-2 -translate-x-1/2 -translate-y-1/2 rotate-45" />
+      <div className="bg-current absolute top-1/2 right-0 h-px w-2 translate-x-1/2 -translate-y-1/2 rotate-45" />
+      {/* Label sits on the line, masking it */}
+      <span className="bg-card text-foreground/50 relative z-10 px-2 font-mono text-[0.625rem] tracking-wide">
+        {label}
+      </span>
+    </div>
+  );
+}
 
 /** Engineering-drawing title block */
 function TitleBlock() {
