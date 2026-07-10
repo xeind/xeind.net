@@ -228,10 +228,11 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 
 function MdxHr() {
   return (
-    <div className="relative -mx-5 my-5 h-px sm:-mx-8 md:-mx-12">
+    <div className="edge-glow-shell edge-glow-shell-horizontal edge-glow-shell-line relative -mx-5 my-5 h-px sm:-mx-8 md:-mx-12">
+      <div className="edge-glow-layer" aria-hidden="true" />
       <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
-      <span className="bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
-      <span className="bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+      <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+      <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
     </div>
   );
 }
