@@ -8,6 +8,11 @@
   // one illuminated system rather than separate effects with separate
   // trigger distances.
   const GLOW_RADIUS = 180;
+  // Lines closer together than the lamp radius (a divider's two strips are
+  // ~20px apart) would read identical under the lamp alone — a tight local
+  // emphasis on top makes the line directly under the cursor clearly
+  // brightest without shrinking anyone's reach.
+  const LINE_EMPHASIS_RADIUS = 32;
 
   let shells = [];
   let frame = 0;
@@ -137,9 +142,15 @@
       const line = lines[i];
       const lineRect = line.getBoundingClientRect();
       const lineY = lineRect.top - rect.top + lineRect.height / 2;
-      const strength = inside
-        ? falloff(Math.abs(relY - lineY), GLOW_RADIUS)
-        : 0;
+      let strength = 0;
+      if (inside) {
+        const dist = Math.abs(relY - lineY);
+        const lamp = falloff(dist, GLOW_RADIUS);
+        const local = clamp(1 - dist / LINE_EMPHASIS_RADIUS, 0, 1);
+        // Shared lamp sets the reach; the squared local term doubles the
+        // line the cursor is actually on relative to its neighbor.
+        strength = lamp * (0.5 + 0.5 * local * local);
+      }
       write(line, cache, `l${i}`, "--edge-line-strength", strength.toFixed(3));
     }
   }
