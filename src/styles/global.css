@@ -236,9 +236,6 @@ body {
 .paper-background {
   position: relative;
   background-color: var(--color-muted);
-  background-image: url("/paper-noise.svg");
-  background-size: 180px 180px;
-  background-repeat: repeat;
   min-height: 100dvh;
 }
 
