@@ -85,7 +85,7 @@ svg {
 
   --font-family-serif: "Latin Modern Roman", Georgia, serif;
   --font-family-sans: "Inter", system-ui, sans-serif;
-  --font-family-mono: "Commit Mono", Menlo, Monaco, monospace;
+  --font-family-mono: "JetBrains Mono", Menlo, Monaco, monospace;
 
   /* Typography scale - uniform, minimal variation */
   --font-size-xs: 0.75rem; /* 12px - Meta (mono only) */
