@@ -11,8 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "deploy": "PUBLIC_GIT_COMMIT_HASH=$(git rev-parse --short HEAD) PUBLIC_BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') npm run build && wrangler deploy",
-    "deploy:dry": "npm run build && wrangler deploy --dry-run",
+    "deploy": "PUBLIC_GIT_COMMIT_HASH=$(git rev-parse --short HEAD) PUBLIC_BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') npm run build && wrangler pages deploy dist --project-name xeind-net --branch main",
+    "deploy:dry": "npm run build",
     "lighthouse": "lighthouse http://localhost:3181 --view --chrome-flags=\"--headless\"",
     "lighthouse:mobile": "lighthouse http://localhost:3181 --preset=mobile --view --chrome-flags=\"--headless\"",
     "lighthouse:ci": "lighthouse http://localhost:3000 --output=json --output=html --output-path=./lighthouse-report --chrome-flags=\"--headless\""
