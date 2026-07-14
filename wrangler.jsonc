@@ -1,20 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "xeind-net",
-  "account_id": "d87030cf8e81f9320e482d2b0efc9613",
-  "compatibility_date": "2026-06-25",
-  "assets": {
-    "directory": "./dist",
-    "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page",
-  },
-  "observability": {
-    "enabled": true,
-  },
-  "routes": [
-    {
-      "pattern": "xeind.net",
-      "custom_domain": true,
-    },
-  ],
+  "compatibility_date": "2026-07-15",
+  "pages_build_output_dir": "./dist",
 }
