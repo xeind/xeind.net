@@ -155,9 +155,10 @@
         const dist = Math.abs(relY - lineY);
         const lamp = falloff(dist, GLOW_RADIUS);
         const local = clamp(1 - dist / LINE_EMPHASIS_RADIUS, 0, 1);
-        // Shared lamp sets the reach; the squared local term doubles the
-        // line the cursor is actually on relative to its neighbor.
-        strength = lamp * (0.5 + 0.5 * local * local);
+        // Shared lamp sets the reach; the squared local term makes the
+        // line under the cursor dominate. Low ambient floor (0.2) keeps a
+        // faint echo of unity without the far line reading as "on".
+        strength = lamp * (0.2 + 0.8 * local * local);
       }
       write(line, cache, `l${i}`, "--edge-line-strength", strength.toFixed(3));
     }
