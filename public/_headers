@@ -24,7 +24,7 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # ── Unversioned images: stable, but fixed URLs, so cap at 7 days so an
-#    updated asset still propagates (covers root + /projects svgs) ──
+#    updated asset still propagates (covers root + /blog + /projects) ──
 /*.svg
   Cache-Control: public, max-age=604800
 /*.png
@@ -32,6 +32,12 @@
 /*.webp
   Cache-Control: public, max-age=604800
 /*.jpg
+  Cache-Control: public, max-age=604800
+/*.jpeg
+  Cache-Control: public, max-age=604800
+/*.gif
+  Cache-Control: public, max-age=604800
+/*.avif
   Cache-Control: public, max-age=604800
 
 # ── Fixed-URL documents & scripts: revalidate so edits ship on next load
