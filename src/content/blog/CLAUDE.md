@@ -49,17 +49,61 @@ Match the existing posts (`hyper-key`, `nextjs-to-astro`). The through-line:
 - **No filler.** No "In today's fast-paced world," no "Let's dive in," no
   "In conclusion." If a sentence doesn't add a fact or move the story, delete it.
 
-## Structure
+## Structure — this is the standard, not a suggestion
 
-- `##` for section headings (short, direct: "The itch", "The Numbers", "What
-  Astro Changes"). Skip `#` — the title renders it.
-- `---` between major movements when a visual break helps.
+Every post follows the same skeleton. The existing posts (`hyper-key`,
+`nextjs-to-astro`) are the reference; match them.
+
+```mdx
+---
+# frontmatter
+---
+
+import { Cite, Ref, References } from "@/components/blog/MDXComponents";
+
+Opening hook — one or two short paragraphs. No heading above it.
+
+---
+
+## First section
+
+Body. Cite external claims inline.<Cite n={1} />
+
+---
+
+## Next section
+
+...
+
+---
+
+[Closing link or line]
+
+<References>
+  <Ref n={1} href="https://…">What it is</Ref>
+</References>
+```
+
+Rules that are **required**, because the last posts skipped them and it showed:
+
+- **Use `---` between every major movement** — after the intro, and between
+  sections. It's the visual rhythm of the site's posts. Don't run sections
+  together.
+- **Break paragraphs short.** One idea per paragraph. A single punchy line on
+  its own is good. Don't write walls of text — the existing posts breathe.
+- **Use citations for anything external.** Any tool, doc, video, product, or
+  claim that has a source gets an inline `<Cite n={n} />` and a matching `<Ref>`
+  in a `<References>` block at the end. Number them in order of appearance. This
+  is not optional — if a post references outside things and has no `References`
+  block, it's not done.
+- `##` for section headings (short, direct: "The itch", "The Numbers"). Never
+  `#` — the title renders it.
 - Inline code liberally for anything technical: keys (`Caps Lock`), commands
   (`npm run dev`), configs, filenames, identifiers.
-- Fenced code blocks with a language tag; they're highlighted via Shiki's
+- Fenced code blocks with a language tag; highlighted via Shiki's
   `css-variables` theme (themed automatically, no per-block styling).
-- Tables are fine for comparisons (see the Next.js→Astro numbers table).
-- `>` blockquotes for emphasis or a landing-line quote.
+- Tables for comparisons (see the Next.js→Astro numbers table).
+- `>` blockquotes for a landing-line or a quote — one per post, max, for impact.
 
 ## Images
 
