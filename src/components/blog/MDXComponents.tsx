@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
-import BlogImage from "./BlogImage";
 import PretextBlock from "./PretextBlock";
 import PullQuoteCard from "./PullQuoteCard";
 
@@ -268,8 +267,31 @@ function MdxLi(props: React.HTMLAttributes<HTMLLIElement>) {
 
 /* ── Image ── */
 
+// Static markup only — MDX components rendered via the `components` prop are
+// server-rendered and never hydrate, so interactivity lives in the vanilla
+// /blog-lightbox.js (FLIP zoom-to-center), wired up in [slug].astro.
 function MdxImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  return <BlogImage src={props.src || ""} alt={props.alt || ""} />;
+  const src = typeof props.src === "string" ? props.src : "";
+  const alt = props.alt || "";
+  return (
+    <figure className="mx-auto my-6 max-w-xl">
+      <button
+        type="button"
+        className="blog-zoom border-accent/30 bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block w-full cursor-zoom-in border border-dashed p-1 transition-colors hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        style={CSS_TRANSITIONS.border}
+        data-zoom-src={src}
+        data-zoom-alt={alt}
+        aria-label={alt ? `Zoom image: ${alt}` : "Zoom image"}
+      >
+        <img src={src} alt={alt} loading="lazy" className="block w-full" />
+      </button>
+      {alt && (
+        <figcaption className="text-foreground/50 mt-2 text-center font-mono text-xs">
+          {alt}
+        </figcaption>
+      )}
+    </figure>
+  );
 }
 
 /* ── Table ── */

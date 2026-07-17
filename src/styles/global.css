@@ -936,3 +936,46 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
     transition: none;
   }
 }
+
+/* Blog image zoom lightbox — vanilla FLIP morph (public/blog-lightbox.js).
+   Matches the project grid modal feel: thumbnail flies to a centered,
+   enlarged view over a dimmed backdrop. */
+.blog-zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgb(0 0 0 / 0.6);
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.blog-zoom-backdrop.is-visible {
+  opacity: 1;
+}
+
+.blog-zoom-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.blog-zoom-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  cursor: zoom-out;
+  opacity: 0;
+  padding: 4px;
+  background: var(--color-card);
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-zoom-backdrop {
+    transition: none;
+  }
+}

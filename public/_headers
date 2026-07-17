@@ -59,3 +59,5 @@
   Cache-Control: public, max-age=0, must-revalidate
 /codeblock-copy.js
   Cache-Control: public, max-age=0, must-revalidate
+/blog-lightbox.js
+  Cache-Control: public, max-age=0, must-revalidate
