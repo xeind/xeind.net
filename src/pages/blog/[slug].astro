@@ -102,15 +102,6 @@ const articleStructuredData = {
         >
           {post.data.title}
         </h1>
-        <p class="text-foreground/60 mb-3 text-sm">
-          By <a
-            href="/"
-            rel="author"
-            class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px transition-colors hover:border-solid"
-          >
-            {SITE.name}
-          </a>
-        </p>
         {
           post.data.tags.length > 0 && (
             <div class="flex flex-wrap gap-2">
