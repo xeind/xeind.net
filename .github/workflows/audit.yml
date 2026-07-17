@@ -1,0 +1,24 @@
+name: Code audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  fallow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Non-blocking for now: the repo has a backlog of pre-existing findings
+      # (some are false positives — scripts loaded via <script src> rather
+      # than import, which fallow's static graph can't see). Once triaged,
+      # drop `continue-on-error` to make this a real merge gate.
+      - name: Dead code & duplication
+        run: npm run audit
+        continue-on-error: true

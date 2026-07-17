@@ -57,4 +57,5 @@ lighthouse-*.html
 .fallow/
 .open-code/
 
-.github
+.github/*
+!.github/workflows/

@@ -1,0 +1,106 @@
+---
+interface Props {
+  href: string;
+  label: string;
+  shortcut: string;
+}
+
+const { href, label, shortcut } = Astro.props;
+const t = "transition-duration:0.2s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
+const tFast = "transition-duration:0.15s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
+---
+
+<a
+  href={href}
+  class="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:px-12"
+  style={t}
+>
+  <div
+    class="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid"
+    style={t}
+  >
+  </div>
+  <div
+    class="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid"
+    style={t}
+  >
+  </div>
+  <div
+    class="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
+    style={t}
+  >
+  </div>
+  <div
+    class="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid"
+    style={t}
+  >
+  </div>
+  {/* Corner brackets */}
+  <div class="absolute top-0 left-0 z-10">
+    <div
+      class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
+      style={t}
+    >
+    </div><div
+      class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
+      style={t}
+    >
+    </div>
+  </div>
+  <div class="absolute top-0 right-0 z-10">
+    <div
+      class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
+      style={t}
+    >
+    </div><div
+      class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
+      style={t}
+    >
+    </div>
+  </div>
+  <div class="absolute bottom-0 left-0 z-10">
+    <div
+      class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
+      style={t}
+    >
+    </div><div
+      class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
+      style={t}
+    >
+    </div>
+  </div>
+  <div class="absolute right-0 bottom-0 z-10">
+    <div
+      class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
+      style={t}
+    >
+    </div><div
+      class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
+      style={t}
+    >
+    </div>
+  </div>
+  {/* Gradient overlays */}
+  <div class="pointer-events-none absolute inset-0">
+    <div
+      class="bg-accent/20 absolute inset-0 transition-opacity group-hover:opacity-0 group-active:opacity-0"
+      style={`mask-image:linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.15) 87.5%, transparent 100%);-webkit-mask-image:linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.15) 87.5%, transparent 100%);${t}`}
+    >
+    </div>
+    <div
+      class="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0"
+      style={t}
+    >
+    </div>
+    <div
+      class="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-active:opacity-100"
+      style={`mask-image:linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%);-webkit-mask-image:linear-gradient(to right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.60) 12.5%, rgba(0,0,0,0.40) 32.5%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.40) 67.5%, rgba(0,0,0,0.60) 87.5%, rgba(0,0,0,0.60) 100%);${tFast}`}
+    >
+    </div>
+  </div>
+  <span class="relative z-10 font-serif text-sm" style={t}>{label}</span>
+  <span
+    class="bg-accent/10 text-accent-hover/90 group-hover:text-tertiary group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all"
+    style={t}>{shortcut}</span
+  >
+</a>
