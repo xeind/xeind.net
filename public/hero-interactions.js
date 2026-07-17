@@ -268,7 +268,7 @@
       return;
 
     const key = event.key.toLowerCase();
-    if (key !== "v" && key !== "c") return;
+    if (key !== "r" && key !== "c") return;
 
     const link = document.querySelector('[data-hero-shortcut="' + key + '"]');
     if (!(link instanceof HTMLAnchorElement)) return;

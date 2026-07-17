@@ -235,7 +235,7 @@ export default function HeroSection() {
 
       {/* CTAs */}
       <div className="flex flex-wrap justify-center gap-4 md:justify-start md:gap-8">
-        <HeroActionLink href={personalInfo.cvUrl} badge="V" shortcut="v">
+        <HeroActionLink href={personalInfo.cvUrl} badge="R" shortcut="r">
           View Resume
         </HeroActionLink>
         <HeroActionLink
