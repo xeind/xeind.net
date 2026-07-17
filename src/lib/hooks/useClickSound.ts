@@ -36,7 +36,39 @@ async function primeAudioContext() {
   audioPrimed = true;
 }
 
-function playTick() {
+/** Wires up the one-time listeners that unlock the shared AudioContext on
+ * first interaction (autoplay policy). Shared by useClickSound and any
+ * lighter-weight consumer that imports play* functions directly, so the
+ * unlock logic exists in exactly one place. */
+export function useAudioUnlock() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const unlockAudio = () => {
+      void primeAudioContext();
+    };
+
+    window.addEventListener("pointerenter", unlockAudio, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("pointermove", unlockAudio, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("pointerdown", unlockAudio, { once: true });
+    window.addEventListener("keydown", unlockAudio, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerenter", unlockAudio);
+      window.removeEventListener("pointermove", unlockAudio);
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+    };
+  }, []);
+}
+
+export function playTick() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -65,7 +97,7 @@ function playTick() {
   oscillator.stop(ctx.currentTime + 0.09);
 }
 
-function playPop() {
+export function playPop() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -93,7 +125,7 @@ function playPop() {
   oscillator.stop(ctx.currentTime + 0.1);
 }
 
-function playHover() {
+export function playHover() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -121,7 +153,7 @@ function playHover() {
   oscillator.stop(ctx.currentTime + 0.1);
 }
 
-function playChime() {
+export function playChime() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -150,7 +182,7 @@ function playChime() {
   oscillator.stop(ctx.currentTime + 0.15);
 }
 
-function playTap() {
+export function playTap() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -179,7 +211,7 @@ function playTap() {
   oscillator.stop(ctx.currentTime + 0.08);
 }
 
-function playNudge() {
+export function playNudge() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -215,7 +247,7 @@ function playNudge() {
   osc2.stop(ctx.currentTime + 0.5);
 }
 
-function playClick() {
+export function playClick() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -245,7 +277,7 @@ function playClick() {
   noise.start(ctx.currentTime);
 }
 
-function playProjectPop() {
+export function playProjectPop() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -272,7 +304,7 @@ function playProjectPop() {
   oscillator.stop(ctx.currentTime + 0.055);
 }
 
-function playClickHigh() {
+export function playClickHigh() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -302,7 +334,7 @@ function playClickHigh() {
   noise.start(ctx.currentTime);
 }
 
-function playClickLow() {
+export function playClickLow() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -332,7 +364,7 @@ function playClickLow() {
   noise.start(ctx.currentTime);
 }
 
-function playClickSharp() {
+export function playClickSharp() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -362,7 +394,7 @@ function playClickSharp() {
   noise.start(ctx.currentTime);
 }
 
-function playClickSoft() {
+export function playClickSoft() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -392,7 +424,7 @@ function playClickSoft() {
   noise.start(ctx.currentTime);
 }
 
-function playFidget() {
+export function playFidget() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -423,7 +455,7 @@ function playFidget() {
   noise.start(ctx.currentTime);
 }
 
-function playBrush() {
+export function playBrush() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -458,31 +490,7 @@ export function useClickSound() {
   const prefersReducedMotion = useReducedMotion();
   const enabled = useRef(true);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const unlockAudio = () => {
-      void primeAudioContext();
-    };
-
-    window.addEventListener("pointerenter", unlockAudio, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("pointermove", unlockAudio, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("pointerdown", unlockAudio, { once: true });
-    window.addEventListener("keydown", unlockAudio, { once: true });
-
-    return () => {
-      window.removeEventListener("pointerenter", unlockAudio);
-      window.removeEventListener("pointermove", unlockAudio);
-      window.removeEventListener("pointerdown", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
-    };
-  }, []);
+  useAudioUnlock();
 
   const tick = useCallback(() => {
     if (prefersReducedMotion || !enabled.current) return;

@@ -18,7 +18,12 @@ import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
-import { useProjectGridSounds } from "@/lib/hooks/useProjectGridSounds";
+import {
+  useAudioUnlock,
+  playBrush,
+  playClickLow,
+  playClickSharp,
+} from "@/lib/hooks/useClickSound";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
@@ -239,7 +244,19 @@ export default function ProjectGrid() {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(getResolvedTheme);
   const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const { brush, clickLow, clickSharp } = useProjectGridSounds();
+  useAudioUnlock();
+  const brush = useCallback(() => {
+    if (prefersReducedMotion) return;
+    playBrush();
+  }, [prefersReducedMotion]);
+  const clickLow = useCallback(() => {
+    if (prefersReducedMotion) return;
+    playClickLow();
+  }, [prefersReducedMotion]);
+  const clickSharp = useCallback(() => {
+    if (prefersReducedMotion) return;
+    playClickSharp();
+  }, [prefersReducedMotion]);
   const activeProjectUrl = activeProject
     ? getPrimaryProjectUrl(activeProject)
     : undefined;
