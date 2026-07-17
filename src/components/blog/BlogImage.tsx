@@ -44,7 +44,7 @@ export default function BlogImage({ src, alt }: BlogImageProps) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="border-accent/30 group focus-visible:ring-accent focus-visible:ring-offset-background relative block w-full cursor-zoom-in border border-dashed transition-colors hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="border-accent/30 bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block w-full cursor-zoom-in border border-dashed p-1 transition-colors hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           style={CSS_TRANSITIONS.border}
         >
           <img src={src} alt={alt} loading="lazy" className="block w-full" />
@@ -101,7 +101,7 @@ export default function BlogImage({ src, alt }: BlogImageProps) {
                     <img
                       src={src}
                       alt={alt}
-                      className="border-accent/30 max-h-[85vh] max-w-full border border-dashed object-contain"
+                      className="border-accent/30 bg-card max-h-[85vh] max-w-full border border-dashed object-contain p-1"
                     />
                   </motion.div>
                 </div>
