@@ -40,7 +40,7 @@ export default function BlogImage({ src, alt }: BlogImageProps) {
 
   return (
     <>
-      <figure className="my-6">
+      <figure className="mx-auto my-6 max-w-xl">
         <button
           type="button"
           onClick={() => setOpen(true)}
