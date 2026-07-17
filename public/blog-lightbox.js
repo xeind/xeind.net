@@ -1,6 +1,10 @@
 (() => {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+  // iOS Sheet curve (Vaul/Ionic) at drawer duration — Emil's canonical
+  // large-surface morph. The easing makes 500ms feel faster than it is.
+  const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+  const OPEN_MS = 500;
+  const CLOSE_MS = 460;
   let state = null; // { backdrop, stage, full, thumb, prevOverflow } | null
   let busy = false;
 
@@ -58,9 +62,9 @@
       const { dx, dy, sx, sy } = flip(full, fromRect);
       full.style.transformOrigin = "center center";
       full.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
-      full.style.opacity = "1";
+      full.style.opacity = "1"; // instant — FLIP places it exactly over the thumb
       full.getBoundingClientRect(); // force reflow so the next frame animates
-      full.style.transition = `transform 320ms ${EASE}`;
+      full.style.transition = `transform ${OPEN_MS}ms ${EASE}`;
       full.style.transform = "translate(0, 0) scale(1)";
     });
   }
@@ -85,12 +89,12 @@
       return;
     }
 
-    // FLIP back toward the thumbnail's current box.
+    // FLIP back toward the thumbnail's current box — a clean morph, no fade.
+    // It lands exactly over the real thumbnail, so removing it is seamless.
     const toRect = thumb.getBoundingClientRect();
     const { dx, dy, sx, sy } = flip(full, toRect);
-    full.style.transition = `transform 260ms ${EASE}, opacity 260ms ${EASE}`;
+    full.style.transition = `transform ${CLOSE_MS}ms ${EASE}`;
     full.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
-    full.style.opacity = "0";
 
     let done = false;
     const finish = () => {
@@ -99,7 +103,7 @@
       cleanup();
     };
     full.addEventListener("transitionend", finish, { once: true });
-    setTimeout(finish, 400); // fallback if transitionend doesn't fire
+    setTimeout(finish, CLOSE_MS + 80); // fallback if transitionend doesn't fire
   }
 
   document.addEventListener("click", (event) => {
