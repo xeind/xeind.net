@@ -5,7 +5,7 @@
   const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
   const OPEN_MS = 500;
   const CLOSE_MS = 460;
-  let state = null; // { backdrop, stage, full, thumb, prevOverflow } | null
+  let state = null; // { backdrop, stage, full, button, prevOverflow } | null
   let busy = false;
 
   function buildOverlay(src, alt) {
@@ -47,9 +47,13 @@
     const { backdrop, stage, full } = buildOverlay(src, alt);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    state = { backdrop, stage, full, thumb, prevOverflow };
+    state = { backdrop, stage, full, button, prevOverflow };
 
-    const fromRect = thumb.getBoundingClientRect();
+    // Measure the button (mat + border + image), not the inner <img> — the
+    // overlay carries the same 4px mat + 1px border, so button-box → overlay-box
+    // maps pixel-perfectly. Using the inner <img> made the overlay land ~10px
+    // small, so the real thumbnail popped larger when the overlay was removed.
+    const fromRect = button.getBoundingClientRect();
 
     requestAnimationFrame(() => {
       backdrop.classList.add("is-visible");
@@ -71,7 +75,7 @@
 
   function closeZoom() {
     if (!state || busy) return;
-    const { backdrop, stage, full, thumb, prevOverflow } = state;
+    const { backdrop, stage, full, button, prevOverflow } = state;
     state = null;
     busy = true;
 
@@ -84,14 +88,15 @@
 
     backdrop.classList.remove("is-visible");
 
-    if (reduceMotion.matches || !thumb) {
+    if (reduceMotion.matches || !button) {
       cleanup();
       return;
     }
 
-    // FLIP back toward the thumbnail's current box — a clean morph, no fade.
-    // It lands exactly over the real thumbnail, so removing it is seamless.
-    const toRect = thumb.getBoundingClientRect();
+    // FLIP back onto the thumbnail button's box — a clean morph, no fade.
+    // Matching mat/border means it lands exactly over the real thumbnail,
+    // so removing it is seamless (no size pop).
+    const toRect = button.getBoundingClientRect();
     const { dx, dy, sx, sy } = flip(full, toRect);
     full.style.transition = `transform ${CLOSE_MS}ms ${EASE}`;
     full.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
