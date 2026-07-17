@@ -12,21 +12,26 @@ const posts = (await getCollection("blog"))
 const blogStructuredData = {
   "@context": "https://schema.org",
   "@type": "Blog",
+  "@id": absoluteUrl("/blog/#blog"),
   name: `${SITE.name} Blog`,
   description: "Notes and articles from Xein Deniel.",
   url: absoluteUrl("/blog"),
   inLanguage: SITE.language,
+  isPartOf: { "@id": absoluteUrl("/#website") },
   author: {
     "@type": "Person",
+    "@id": absoluteUrl("/#person"),
     name: SITE.name,
     url: SITE.url,
   },
   blogPost: posts.map((post) => ({
     "@type": "BlogPosting",
+    "@id": absoluteUrl(`/blog/${post.id}/#article`),
     headline: post.data.title,
     url: absoluteUrl(`/blog/${post.id}`),
     datePublished: post.data.date.toISOString(),
     description: post.data.excerpt,
+    author: { "@id": absoluteUrl("/#person") },
   })),
 };
 ---

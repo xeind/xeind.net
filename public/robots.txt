@@ -1,6 +1,27 @@
-# AI training crawlers — same policy Cloudflare's managed robots.txt
-# applied, but owned here in standard syntax (the managed version's
-# non-standard Content-Signal directive fails Lighthouse validation).
+# AI search and user-requested retrieval. These agents surface and cite pages
+# in AI answers; they are separate from model-training crawlers.
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# AI model-training crawlers remain opted out. This mirrors Cloudflare's
+# managed policy using standard robots.txt syntax; the managed version's
+# non-standard Content-Signal directive fails Lighthouse validation.
 
 User-agent: Amazonbot
 Disallow: /

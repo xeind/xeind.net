@@ -40,19 +40,26 @@ const publishedTime = post.data.date.toISOString();
 const articleStructuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
+  "@id": `${postUrl}#article`,
   headline: post.data.title,
   description: post.data.excerpt,
   datePublished: publishedTime,
   dateModified: publishedTime,
-  mainEntityOfPage: postUrl,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": postUrl,
+  },
   url: postUrl,
+  isPartOf: { "@id": absoluteUrl("/blog/#blog") },
   author: {
     "@type": "Person",
+    "@id": absoluteUrl("/#person"),
     name: SITE.name,
     url: SITE.url,
   },
   publisher: {
     "@type": "Person",
+    "@id": absoluteUrl("/#person"),
     name: SITE.name,
     url: SITE.url,
   },
@@ -95,6 +102,15 @@ const articleStructuredData = {
         >
           {post.data.title}
         </h1>
+        <p class="text-foreground/60 mb-3 text-sm">
+          By <a
+            href="/"
+            rel="author"
+            class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px transition-colors hover:border-solid"
+          >
+            {SITE.name}
+          </a>
+        </p>
         {
           post.data.tags.length > 0 && (
             <div class="flex flex-wrap gap-2">

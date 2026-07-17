@@ -107,6 +107,12 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.name} Blog`}
+      href="/rss.xml"
+    />
 
     <link
       rel="preload"
