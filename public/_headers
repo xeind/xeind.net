@@ -55,3 +55,15 @@
 
 /projects/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Unversioned interaction scripts (no content hash in the filename, unlike
+# /_astro/*) — revalidate on every load so edits take effect immediately
+# instead of running stale for hours on Cloudflare's default TTL.
+/hero-interactions.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/edge-glow.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/codeblock-copy.js
+  Cache-Control: public, max-age=0, must-revalidate
