@@ -878,17 +878,6 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   mask-repeat: no-repeat;
 }
 
-.edge-glow-shell-line .edge-glow-layer {
-  -webkit-mask-image: linear-gradient(#000 0 0);
-  -webkit-mask-size: 100% 1px;
-  -webkit-mask-position: center;
-  -webkit-mask-repeat: no-repeat;
-  mask-image: linear-gradient(#000 0 0);
-  mask-size: 100% 1px;
-  mask-position: center;
-  mask-repeat: no-repeat;
-}
-
 /* Divider glow lines: transparent 1px strips positioned to overlap the
    adjacent Panels' full-bleed hairlines exactly (the divider never draws
    its own boundary line — the Panel hairline IS the edge). Each strip gets
