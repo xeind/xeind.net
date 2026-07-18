@@ -120,6 +120,19 @@ The alt text **is** the caption, so write it as one.
 
 - Supported formats: png, jpg/jpeg, webp, avif, gif (animated GIFs animate in
   place and in the zoom). All are cached in `public/_headers`.
+- **Image grids (collages):** stack image lines back-to-back (no text between
+  them) and they automatically become one FB/LinkedIn-style collage — 2 up to
+  any count. Any paragraph of text between images splits the groups. Grids
+  show at most 5 cells; extra images get a `+N` overlay on the fifth cell and
+  remain reachable in the lightbox. Inside a grid, alt text is a11y/lightbox
+  only (collage cells don't render captions). The lightbox gains next/prev
+  chevrons, an `i / n` counter, and ←/→ keyboard navigation for grids.
+
+  ```md
+  ![first](/blog/a.png)
+  ![second](/blog/b.png)
+  ![third](/blog/c.png)
+  ```
 - Optimize oversized screenshots before committing:
   `node scripts/optimize-blog-images.mjs` (downscales retina captures; add new
   files to its `targets` array).

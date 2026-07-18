@@ -986,3 +986,108 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
     transition: none;
   }
 }
+
+/* Blog image collage grids — FB/LinkedIn/X-style layouts produced by
+   rehype-image-grid + the ImageGrid MDX component. The mat wrapper carries
+   the dashed border; 4px gaps let the card background read as gutters. */
+.blog-grid {
+  display: grid;
+  gap: 4px;
+}
+
+.blog-grid-cell {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+/* Tailwind's `hidden` and this display:block have equal specificity, and
+   this file loads later — restate the hide so 6+ cells stay hidden. */
+.blog-grid-cell.hidden {
+  display: none;
+}
+
+.blog-grid-2 {
+  grid-template-columns: 1fr 1fr;
+  aspect-ratio: 16 / 9;
+}
+
+/* 3-up: big top (one full-width image, two below) */
+.blog-grid-3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 2fr 1fr;
+  aspect-ratio: 4 / 3;
+}
+
+.blog-grid-3 > :first-child {
+  grid-column: span 2;
+}
+
+.blog-grid-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 16 / 10;
+}
+
+/* 5-up: 2 large on top, 3 below (LinkedIn style) */
+.blog-grid-5 {
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 1.2fr 1fr;
+  aspect-ratio: 4 / 3;
+}
+
+.blog-grid-5 > :nth-child(-n + 2) {
+  grid-column: span 3;
+}
+
+.blog-grid-5 > :nth-child(n + 3) {
+  grid-column: span 2;
+}
+
+/* Lightbox gallery controls (injected by blog-lightbox.js — plain CSS, not
+   Tailwind, since public/ scripts aren't scanned for utility classes). */
+.blog-zoom-nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 0.5rem;
+  background: var(--color-card);
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 30%, transparent);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition:
+    color 150ms cubic-bezier(0.215, 0.61, 0.355, 1),
+    border-color 150ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.blog-zoom-nav:hover {
+  color: var(--color-tertiary);
+  border-color: color-mix(in srgb, var(--color-tertiary) 50%, transparent);
+}
+
+.blog-zoom-nav--prev {
+  left: 1rem;
+}
+
+.blog-zoom-nav--next {
+  right: 1rem;
+}
+
+.blog-zoom-counter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 2;
+  pointer-events: none;
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.025em;
+  color: #ebe5d8;
+  background: rgb(0 0 0 / 0.5);
+  padding: 2px 8px;
+}

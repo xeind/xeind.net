@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import mdx from "@astrojs/mdx";
+import rehypeImageGrid from "./src/lib/rehype-image-grid.mjs";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
@@ -21,6 +22,7 @@ export default defineConfig({
     inlineStylesheets: "always",
   },
   markdown: {
+    rehypePlugins: [rehypeImageGrid],
     shikiConfig: {
       theme: "css-variables",
     },

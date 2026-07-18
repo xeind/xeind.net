@@ -294,6 +294,64 @@ function MdxImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   );
 }
 
+/* ── Image grid (collage) ── */
+
+// Rendered for the custom <image-grid> element emitted by
+// src/lib/rehype-image-grid.mjs when a post stacks >= 2 consecutive images.
+// Static markup only — the lightbox (public/blog-lightbox.js) provides
+// zoom + next/prev gallery navigation.
+function ImageGrid(props: { images?: string }) {
+  let images: Array<{ src: string; alt: string }> = [];
+  try {
+    images = JSON.parse(props.images || "[]");
+  } catch {
+    return null;
+  }
+  if (images.length === 0) return null;
+
+  const visible = Math.min(images.length, 5);
+  const extra = images.length - visible;
+
+  return (
+    <figure className="my-6">
+      <div
+        data-image-grid=""
+        className={`blog-grid blog-grid-${visible} border-accent/30 bg-card border border-dashed p-1`}
+      >
+        {images.map((img, i) => (
+          <button
+            key={`${img.src}-${i}`}
+            type="button"
+            className={`blog-zoom blog-grid-cell focus-visible:ring-accent focus-visible:ring-offset-background relative cursor-zoom-in overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+              i >= visible ? "hidden" : ""
+            }`}
+            data-zoom-src={img.src}
+            data-zoom-alt={img.alt}
+            aria-label={
+              img.alt ? `Zoom image: ${img.alt}` : `Zoom image ${i + 1}`
+            }
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            {extra > 0 && i === visible - 1 && (
+              <span
+                className="pointer-events-none absolute inset-0 grid place-items-center bg-black/50 font-mono text-lg text-[#EBE5D8]"
+                aria-hidden="true"
+              >
+                +{extra}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+    </figure>
+  );
+}
+
 /* ── Table ── */
 
 function MdxTable(props: React.HTMLAttributes<HTMLTableElement>) {
@@ -418,6 +476,7 @@ export const mdxComponents = {
   strong: MdxStrong,
   em: MdxEm,
   img: MdxImg,
+  "image-grid": ImageGrid,
   video: MdxVideo,
   table: MdxTable,
   th: MdxTh,
