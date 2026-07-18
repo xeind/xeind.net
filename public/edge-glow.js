@@ -55,10 +55,19 @@
     }
 
     shell.dataset.edgeGlowBound = "true";
+    // Shells nest (divider shells live inside the page-frame <main> shell).
+    // Each node/line must have exactly ONE writer — its nearest shell —
+    // or the two entries fight over the same CSS variable with different
+    // values and the per-entry write cache turns mouse direction into
+    // which writer wins the frame (visible flicker on divider diamonds).
     shells.push({
       shell,
-      nodes: Array.from(shell.querySelectorAll(".edge-glow-node")),
-      lines: Array.from(shell.querySelectorAll(".edge-glow-line")),
+      nodes: Array.from(shell.querySelectorAll(".edge-glow-node")).filter(
+        (node) => node.closest(selector) === shell,
+      ),
+      lines: Array.from(shell.querySelectorAll(".edge-glow-line")).filter(
+        (line) => line.closest(selector) === shell,
+      ),
       isHorizontal: shell.classList.contains("edge-glow-shell-horizontal"),
       isVertical: shell.classList.contains("edge-glow-shell-vertical"),
       cache: {},
@@ -126,13 +135,17 @@
     }
     write(shell, cache, "wash", "--edge-glow-opacity", washStrength.toFixed(3));
 
+    // Node strength from the TRUE cursor position (same rule as the lines
+    // below): the clamped nextY exists only for the visual hotspot. Using
+    // it for distance would collapse a horizontal shell's vertical axis —
+    // a diamond 150px above/below the line would read as "touching".
     for (let i = 0; i < nodes.length; i += 1) {
       const node = nodes[i];
       const nodeRect = node.getBoundingClientRect();
       const nodeX = nodeRect.left - rect.left + nodeRect.width / 2;
       const nodeY = nodeRect.top - rect.top + nodeRect.height / 2;
       const strength = inside
-        ? falloff(Math.hypot(nextX - nodeX, nextY - nodeY), GLOW_RADIUS)
+        ? falloff(Math.hypot(relX - nodeX, relY - nodeY), GLOW_RADIUS)
         : 0;
       write(
         node,
