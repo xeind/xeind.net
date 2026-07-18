@@ -107,19 +107,34 @@ Rules that are **required**, because the last posts skipped them and it showed:
 
 ## Images
 
-Drop files in `public/blog/` and reference by absolute path:
+Drop image files in the post's own folder and reference by **relative** path:
 
 ```md
-![This alt text becomes the visible caption](/blog/my-image.png)
+![This alt text becomes the visible caption](./my-image.webp)
 ```
 
-Markdown images render through `BlogImage` automatically — you get a dashed
+Local images colocated with the post (`src/content/blog/<slug>/`) are
+processed through Astro's `astro:assets` pipeline automatically — the build
+fingerprints the file, infers real `width`/`height` (so the page doesn't
+shift while it loads), and serves it from `/_astro/` with a long-lived
+immutable cache header. This only works for **relative** paths (`./…`); an
+absolute `/blog/…` path or a `public/`-stored file is never optimized and
+never gets dimensions. Don't use `public/` for post images.
+
+Markdown images render through `MdxImg` automatically — you get a dashed
 `accent/30` border (solid on hover), a centered capped width (`max-w-xl`, so
 images are tidy figures, not full-bleed), and a click-to-zoom motion lightbox.
 The alt text **is** the caption, so write it as one.
 
+- **Prefer WebP.** Convert screenshots before committing — WebP runs ~60-70%
+  smaller than PNG at the same visual quality for UI screenshots:
+  `npx sharp -i original.png -o image.webp -- webp --quality 82` (or any
+  equivalent — `sharp-cli` isn't a project dependency, so use whatever's on
+  hand; the point is committing `.webp`, not the tool). Downscale retina
+  captures (3000px+) to ~1840px wide first — the lightbox caps at 90vh
+  anyway.
 - Supported formats: png, jpg/jpeg, webp, avif, gif (animated GIFs animate in
-  place and in the zoom). All are cached in `public/_headers`.
+  place and in the zoom).
 - **Image grids (collages):** stack image lines back-to-back (no text between
   them) and they automatically become one FB/LinkedIn-style collage — 2 up to
   any count. Any paragraph of text between images splits the groups. Grids
@@ -129,15 +144,10 @@ The alt text **is** the caption, so write it as one.
   chevrons, an `i / n` counter, and ←/→ keyboard navigation for grids.
 
   ```md
-  ![first](/blog/a.png)
-  ![second](/blog/b.png)
-  ![third](/blog/c.png)
+  ![first](./a.webp)
+  ![second](./b.webp)
+  ![third](./c.webp)
   ```
-- Optimize oversized screenshots before committing:
-  `node scripts/optimize-blog-images.mjs` (downscales retina captures; add new
-  files to its `targets` array).
-- Don't commit raw screenshots to the repo root — copy them into `public/blog/`
-  with a real name first.
 
 ## MDX components
 

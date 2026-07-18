@@ -6,7 +6,6 @@
     "public/blog-lightbox.js",
     "scripts/generate-icons.mjs",
     "scripts/fetch-jetbrains-mono.mjs",
-    "scripts/optimize-blog-images.mjs",
     "src/components/sections/AwardsGrid.tsx",
     "src/lib/rehype-image-grid.mjs"
   ],
