@@ -57,5 +57,8 @@ lighthouse-*.html
 .fallow/
 .open-code/
 
+# internal authoring notes, not for the public repo
+src/content/blog/CLAUDE.md
+
 .github/*
 !.github/workflows/
