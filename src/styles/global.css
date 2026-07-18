@@ -946,11 +946,15 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   z-index: 9998;
   background: rgb(0 0 0 / 0.6);
   opacity: 0;
-  transition: opacity 500ms cubic-bezier(0.32, 0.72, 0, 1);
+  /* Fade-out: faster than the 460ms close morph so the dimness has fully
+     cleared by the time the image lands — no residual dim popping off at
+     cleanup, and the thumbnail underneath is undimmed at the swap. */
+  transition: opacity 380ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .blog-zoom-backdrop.is-visible {
   opacity: 1;
+  transition-duration: 500ms;
 }
 
 .blog-zoom-stage {
@@ -963,15 +967,16 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   padding: 1.5rem;
 }
 
+/* Borderless on purpose: the overlay FLIPs between the thumbnail's inner
+   <img> and center. The thumbnail's own mat + dashed border never move, so
+   the overlay lands pixel-identical inside them — any mat on the overlay
+   would scale during the morph and pop at the swap. */
 .blog-zoom-img {
   max-width: 90vw;
   max-height: 90vh;
   object-fit: contain;
   cursor: zoom-out;
   opacity: 0;
-  padding: 4px;
-  background: var(--color-card);
-  border: 1px dashed color-mix(in srgb, var(--color-accent) 30%, transparent);
   will-change: transform;
 }
 

@@ -5,8 +5,20 @@
   const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
   const OPEN_MS = 500;
   const CLOSE_MS = 460;
-  let state = null; // { backdrop, stage, full, button, prevOverflow } | null
+  let state = null; // { backdrop, stage, full, thumb, prevOverflow, prevPad }
   let busy = false;
+
+  // Match useScrollbarCompensation: locking body scroll removes the
+  // scrollbar, which shifts the page (and the thumbnail we FLIP against)
+  // on classic-scrollbar setups. Pad the body by the scrollbar width.
+  function lockScroll() {
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    const prevOverflow = document.body.style.overflow;
+    const prevPad = document.body.style.paddingRight;
+    document.body.style.overflow = "hidden";
+    if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
+    return { prevOverflow, prevPad };
+  }
 
   function buildOverlay(src, alt) {
     const backdrop = document.createElement("div");
@@ -45,15 +57,15 @@
     const alt = button.dataset.zoomAlt || thumb.alt || "";
 
     const { backdrop, stage, full } = buildOverlay(src, alt);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    state = { backdrop, stage, full, button, prevOverflow };
+    const { prevOverflow, prevPad } = lockScroll();
+    state = { backdrop, stage, full, thumb, prevOverflow, prevPad };
 
-    // Measure the button (mat + border + image), not the inner <img> — the
-    // overlay carries the same 4px mat + 1px border, so button-box → overlay-box
-    // maps pixel-perfectly. Using the inner <img> made the overlay land ~10px
-    // small, so the real thumbnail popped larger when the overlay was removed.
-    const fromRect = button.getBoundingClientRect();
+    // Measure the inner <img>, and only after the scroll lock (which can
+    // shift layout by the scrollbar width). The overlay is borderless, so
+    // img-box → img-box maps pixel-perfectly while the thumbnail's mat and
+    // dashed border stay put on the page beneath it — nothing to pop at
+    // either end of the morph.
+    const fromRect = thumb.getBoundingClientRect();
 
     requestAnimationFrame(() => {
       backdrop.classList.add("is-visible");
@@ -75,7 +87,7 @@
 
   function closeZoom() {
     if (!state || busy) return;
-    const { backdrop, stage, full, button, prevOverflow } = state;
+    const { backdrop, stage, full, thumb, prevOverflow, prevPad } = state;
     state = null;
     busy = true;
 
@@ -83,20 +95,21 @@
       backdrop.remove();
       stage.remove();
       document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPad;
       busy = false;
     };
 
     backdrop.classList.remove("is-visible");
 
-    if (reduceMotion.matches || !button) {
+    if (reduceMotion.matches || !thumb) {
       cleanup();
       return;
     }
 
-    // FLIP back onto the thumbnail button's box — a clean morph, no fade.
-    // Matching mat/border means it lands exactly over the real thumbnail,
-    // so removing it is seamless (no size pop).
-    const toRect = button.getBoundingClientRect();
+    // FLIP back onto the thumbnail's inner <img> — a clean morph, no fade.
+    // The borderless overlay lands pixel-identical inside the thumbnail's
+    // untouched mat/border, so removing it changes nothing visually.
+    const toRect = thumb.getBoundingClientRect();
     const { dx, dy, sx, sy } = flip(full, toRect);
     full.style.transition = `transform ${CLOSE_MS}ms ${EASE}`;
     full.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
