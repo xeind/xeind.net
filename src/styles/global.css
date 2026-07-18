@@ -944,7 +944,8 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   position: fixed;
   inset: 0;
   z-index: 9998;
-  background: rgb(0 0 0 / 0.6);
+  /* Same dimming as the project grid modal overlay (bg-black/30) */
+  background: rgb(0 0 0 / 0.3);
   opacity: 0;
   /* Fade-out: faster than the 460ms close morph so the dimness has fully
      cleared by the time the image lands — no residual dim popping off at
