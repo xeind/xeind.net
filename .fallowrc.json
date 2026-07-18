@@ -1,0 +1,15 @@
+{
+  "entry": [
+    "public/edge-glow.js",
+    "public/hero-interactions.js",
+    "public/codeblock-copy.js",
+    "public/blog-lightbox.js",
+    "scripts/generate-icons.mjs",
+    "scripts/fetch-jetbrains-mono.mjs",
+    "scripts/optimize-blog-images.mjs",
+    "src/components/sections/AwardsGrid.tsx"
+  ],
+  "ignoreDependencies": [
+    "tailwindcss"
+  ]
+}

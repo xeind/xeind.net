@@ -69,8 +69,8 @@ export const DURATION = {
   slower: 0.5,
 };
 
-// Pre-built transition objects for common patterns
-export const TRANSITIONS = {
+// Pre-built transition objects — internal base for CSS_TRANSITIONS below.
+const TRANSITIONS = {
   // Border hover effects (dashed → solid)
   border: {
     duration: DURATION.normal,
@@ -110,28 +110,5 @@ export const CSS_TRANSITIONS = {
   hover: {
     transitionDuration: `${TRANSITIONS.hover.duration}s`,
     transitionTimingFunction: `cubic-bezier(${TRANSITIONS.hover.ease.join(",")})`,
-  },
-};
-
-// Legacy hover transition config (for backwards compatibility)
-export const HOVER_TRANSITION = {
-  duration: DURATION.normal,
-  ease: "ease" as const,
-};
-
-// Animation presets for specific use cases
-export const ANIMATION_PRESETS = {
-  // For dashed borders that become solid on hover
-  borderInteractive: {
-    transition: `all ${DURATION.normal}s cubic-bezier(${EASING.easeOutCubic.join(",")})`,
-  },
-  // For modals and overlays
-  modalEnter: SPRING_CONFIG.noBounce,
-  // For dropdown menus
-  dropdownEnter: SPRING_CONFIG.gentle,
-  // For quick micro-interactions
-  micro: {
-    duration: DURATION.fast,
-    ease: EASING.easeOutCubic,
   },
 };

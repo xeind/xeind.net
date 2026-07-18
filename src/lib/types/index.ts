@@ -11,13 +11,6 @@ export interface PersonalInfo {
   linkedinUrl: string;
 }
 
-// Skills/Tech Stack
-export interface Skill {
-  name: string;
-  category: "language" | "framework" | "tool" | "database";
-  proficiency?: "beginner" | "intermediate" | "advanced" | "expert";
-}
-
 // Projects
 export interface Project {
   id: string;
@@ -70,24 +63,6 @@ export interface Experience {
   technologies?: string[];
 }
 
-// Social Links
-export interface SocialLink {
-  id: string;
-  platform: string;
-  url: string;
-  icon: string; // Lucide icon name
-  label: string;
-}
-
-// Blog Post
-export interface BlogPost {
-  slug: string;
-  title: string;
-  date: string;
-  excerpt: string;
-  tags: string[];
-}
-
 // Tools
 export interface Tool {
   name: string;
@@ -98,12 +73,4 @@ export interface Tool {
 export interface ToolCategory {
   label: string;
   tools: Tool[];
-}
-
-// Site Configuration
-export interface SiteConfig {
-  name: string;
-  description: string;
-  url: string;
-  author: PersonalInfo;
 }

@@ -88,20 +88,3 @@ export const projects: Project[] = [
     imageUrl: "/projects/pioneer.svg",
   },
 ];
-
-// Helper functions
-export const getFeaturedProjects = () => {
-  return projects.filter((p) => p.featured);
-};
-
-export const getProjectsByType = (type: string) => {
-  return projects.filter((p) => p.type === type);
-};
-
-export const getProjectById = (id: string) => {
-  return projects.find((p) => p.id === id);
-};
-
-export const getProjectsByYear = (year: number) => {
-  return projects.filter((p) => p.year === year);
-};
