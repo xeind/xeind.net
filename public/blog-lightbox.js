@@ -1,12 +1,12 @@
 (() => {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  // iOS Sheet curve (Vaul/Ionic) at drawer duration — Emil's canonical
-  // large-surface morph. The easing makes 500ms feel faster than it is.
+  // iOS Sheet curve (Vaul/Ionic) — Emil's canonical large-surface morph.
+  // Front-loaded, so the morph reads as done well before the clock says so.
   const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
   // Site easeOutCubic for quick content swaps (gallery next/prev).
   const EASE_OUT = "cubic-bezier(0.215, 0.61, 0.355, 1)";
-  const OPEN_MS = 500;
-  const CLOSE_MS = 460;
+  const OPEN_MS = 300;
+  const CLOSE_MS = 280;
   const NAV_OUT_MS = 180;
   const NAV_IN_MS = 220;
 

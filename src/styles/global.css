@@ -936,15 +936,15 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   /* Same dimming as the project grid modal overlay (bg-black/30) */
   background: rgb(0 0 0 / 0.3);
   opacity: 0;
-  /* Fade-out: faster than the 460ms close morph so the dimness has fully
+  /* Fade-out: faster than the 280ms close morph so the dimness has fully
      cleared by the time the image lands — no residual dim popping off at
      cleanup, and the thumbnail underneath is undimmed at the swap. */
-  transition: opacity 380ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: opacity 230ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .blog-zoom-backdrop.is-visible {
   opacity: 1;
-  transition-duration: 500ms;
+  transition-duration: 300ms;
 }
 
 .blog-zoom-stage {
