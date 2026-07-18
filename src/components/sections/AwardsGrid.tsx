@@ -2,6 +2,15 @@ import { awards } from "@/lib/data/awards";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
+import type { Award } from "@/lib/types";
+
+// Local logo imports resolve to an ImageMetadata object (astro:assets);
+// a plain string is a remote/hosted logo, left unoptimized.
+function resolveImageUrl(imageUrl: Award["imageUrl"]) {
+  if (!imageUrl) return null;
+  if (typeof imageUrl === "string") return { url: imageUrl };
+  return { url: imageUrl.src, width: imageUrl.width, height: imageUrl.height };
+}
 
 const t = CSS_TRANSITIONS.border;
 const tFast = CSS_TRANSITIONS.fade;
@@ -163,6 +172,7 @@ export default function AwardsGrid() {
             : award.year
               ? [{ key: "year", value: String(award.year) }]
               : [];
+          const logo = resolveImageUrl(award.imageUrl);
 
           return (
             <Card
@@ -184,10 +194,12 @@ export default function AwardsGrid() {
               {/* Canvas / stage */}
               <div className="bg-muted border-accent/30 relative flex h-32 shrink-0 items-center justify-center border-b border-dashed sm:h-36">
                 <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-                {award.imageUrl ? (
+                {logo ? (
                   <img
-                    src={award.imageUrl}
+                    src={logo.url}
                     alt=""
+                    width={logo.width}
+                    height={logo.height}
                     className={`relative z-10 w-auto ${ICON_SIZES[award.iconSize || "normal"]}`}
                   />
                 ) : (

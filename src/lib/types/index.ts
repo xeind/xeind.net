@@ -1,3 +1,5 @@
+import type { ImageMetadata } from "astro";
+
 // Personal Information
 export interface PersonalInfo {
   name: string;
@@ -44,7 +46,11 @@ export interface Award {
   }>;
   year?: number;
   url?: string;
-  imageUrl?: string;
+  // Local logo: `import logo from "./logos/foo.png"` in awards.ts, then pass
+  // the import here — Astro resolves it through astro:assets (optimized
+  // format, real width/height). A plain string is also accepted for a
+  // remote/hosted logo, which stays unoptimized.
+  imageUrl?: string | ImageMetadata;
   iconSize?: "compact" | "normal" | "large";
 }
 

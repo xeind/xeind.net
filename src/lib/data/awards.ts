@@ -1,5 +1,9 @@
 import type { Award } from "@/lib/types";
 
+// To add a logo: put the file next to this one (e.g. src/lib/data/logos/),
+// `import logo from "./logos/foo.png"`, then set `imageUrl: logo` below.
+// Astro resolves the import through astro:assets — optimized format, real
+// width/height, no manual sizing needed.
 export const awards: Award[] = [
   {
     id: "dep-builder",
