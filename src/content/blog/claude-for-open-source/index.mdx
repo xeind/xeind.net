@@ -10,7 +10,7 @@ import { Cite, Ref, References } from "@/components/blog/MDXComponents";
 
 Over a year ago, I didn't know what a dotfile was.
 
-I grew up on Windows. No opinions about editors, no `.config` folder I cared about. Then I installed WSL to poke at Linux, fell down the Ubuntu rabbit hole — Ghostty, then tmux, then vim — and stopped reaching for the mouse. Eventually I bought a Mac for the real Unix underneath, not a subsystem bolted onto an OS that fights you at every turn.
+I grew up on Windows. No opinions about editors, no `.config` folder I cared about. Then I installed WSL to poke at Linux and fell down the Ubuntu rabbit hole: Ghostty, then tmux, then vim. I stopped reaching for the mouse. Eventually I bought a Mac for the real Unix underneath, not a subsystem bolted onto an OS that fights you at every turn.
 
 Once you start shaping your tools instead of just using them, you notice the gaps. For me, the gap was dead code.
 
@@ -26,13 +26,13 @@ There are tools that find this stuff, but they live in a terminal, in a separate
 
 So I built **vallow.nvim**.<Cite n={1} />
 
-It brings static analysis straight into Neovim<Cite n={2} />: unused exports, dead code, circular deps, duplicate exports, complexity hotspots — all in a native split. Under the hood it's powered by **fallow**, a Rust analysis engine that does the heavy lifting.<Cite n={3} /> The plugin itself is Lua, and it's deliberately unfussy: no LSP, no tree-sitter, no config to get started.
+It brings static analysis straight into Neovim<Cite n={2} />: unused exports, dead code, circular deps, duplicate exports, complexity hotspots, all in a native split. Under the hood it's powered by **fallow**, a Rust analysis engine that does the heavy lifting.<Cite n={3} /> The plugin itself is Lua, and it's deliberately unfussy: no LSP, no tree-sitter, no config to get started.
 
-![vallow.nvim analyzing this very site — unused files, duplicate groups, and complexity hotspots in a native split](./vallow-nvim.webp)
+![vallow.nvim analyzing this very site: unused files, duplicate groups, and complexity hotspots in a native split](./vallow-nvim.webp)
 
 That screenshot is vallow running on the codebase for *this site*. It's flagging the exact loose ends I'd let pile up: three helper scripts nothing imports, a component I'd built and never wired in, and a data file where 80% of the exports were dead.
 
-The constraint I'm proudest of is the "no config" part. Every tool in this space eventually grows a settings file that becomes its own small project to maintain. I wanted the opposite — a thing you install and forget.
+The constraint I'm proudest of is the "no config" part. Every tool in this space eventually grows a settings file that becomes its own small project to maintain. I wanted the opposite: a thing you install and forget.
 
 ---
 
@@ -46,7 +46,7 @@ Not because I had a grand plan. Just because shipping felt like the honest end o
 
 That's what got me into **Claude for Open Source**.
 
-![You're in — six months of Claude Max 20x for a plugin I built because I was annoyed at my own dead code](./claude-for-open-source.webp)
+![You're in: six months of Claude Max 20x for a plugin I built because I was annoyed at my own dead code](./claude-for-open-source.webp)
 
 I'm still a little stunned by the math: six months of the best tools I've used, for a plugin I made on evenings and weekends. It cost me a lot of Lua I had to learn as I went. The return was a door I didn't know existed.
 
@@ -56,7 +56,7 @@ I'm still a little stunned by the math: six months of the best tools I've used, 
 
 Here's the part that makes me grin.
 
-The engine behind vallow — fallow — I've been running it on this site the whole time. It's how I found a sound-effect module I'd duplicated across two files, a dependency my icon script relied on by accident, and a 190-line button I'd copy-pasted instead of turning into a component.
+fallow, the engine behind vallow, has been running on this site the whole time. It's how I found a sound-effect module I'd duplicated across two files, a dependency my icon script relied on by accident, and a 190-line button I'd copy-pasted instead of turning into a component.
 
 The tool I built to keep my code honest keeps *this* code honest too. Build a thing, use the thing, let the thing improve the next thing. That loop is the whole reason any of this is worth doing.
 
@@ -64,7 +64,7 @@ The tool I built to keep my code honest keeps *this* code honest too. Build a th
 
 ## The only advice I have
 
-If you've been sitting on a side project — even one you're sure nobody else wants — ship it anyway. Push the repo. Write the README. Add the license.
+If you've been sitting on a side project, even one you're sure nobody else wants, ship it anyway. Push the repo. Write the README. Add the license.
 
 > Open source rewards you in ways you don't expect.
 
