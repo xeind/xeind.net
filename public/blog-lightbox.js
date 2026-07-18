@@ -5,19 +5,17 @@
   const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
   const OPEN_MS = 500;
   const CLOSE_MS = 460;
-  let state = null; // { backdrop, stage, full, thumb, prevOverflow, prevPad }
+  let state = null; // { backdrop, stage, full, thumb, prevOverflow }
   let busy = false;
 
-  // Match useScrollbarCompensation: locking body scroll removes the
-  // scrollbar, which shifts the page (and the thumbnail we FLIP against)
-  // on classic-scrollbar setups. Pad the body by the scrollbar width.
+  // Scroll lock matches useScrollbarCompensation: overflow hidden ONLY.
+  // Layout shift is prevented site-wide by `scrollbar-gutter: stable` on
+  // <html> (global.css) — adding padding compensation here on top of that
+  // double-compensates and shifts the page left by the scrollbar width.
   function lockScroll() {
-    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
     const prevOverflow = document.body.style.overflow;
-    const prevPad = document.body.style.paddingRight;
     document.body.style.overflow = "hidden";
-    if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
-    return { prevOverflow, prevPad };
+    return prevOverflow;
   }
 
   function buildOverlay(src, alt) {
@@ -57,14 +55,13 @@
     const alt = button.dataset.zoomAlt || thumb.alt || "";
 
     const { backdrop, stage, full } = buildOverlay(src, alt);
-    const { prevOverflow, prevPad } = lockScroll();
-    state = { backdrop, stage, full, thumb, prevOverflow, prevPad };
+    const prevOverflow = lockScroll();
+    state = { backdrop, stage, full, thumb, prevOverflow };
 
-    // Measure the inner <img>, and only after the scroll lock (which can
-    // shift layout by the scrollbar width). The overlay is borderless, so
-    // img-box → img-box maps pixel-perfectly while the thumbnail's mat and
-    // dashed border stay put on the page beneath it — nothing to pop at
-    // either end of the morph.
+    // Measure the inner <img> after the scroll lock. The overlay is
+    // borderless, so img-box → img-box maps pixel-perfectly while the
+    // thumbnail's mat and dashed border stay put on the page beneath it —
+    // nothing to pop at either end of the morph.
     const fromRect = thumb.getBoundingClientRect();
 
     requestAnimationFrame(() => {
@@ -87,7 +84,7 @@
 
   function closeZoom() {
     if (!state || busy) return;
-    const { backdrop, stage, full, thumb, prevOverflow, prevPad } = state;
+    const { backdrop, stage, full, thumb, prevOverflow } = state;
     state = null;
     busy = true;
 
@@ -95,7 +92,6 @@
       backdrop.remove();
       stage.remove();
       document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPad;
       busy = false;
     };
 
