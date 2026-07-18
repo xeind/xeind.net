@@ -85,16 +85,49 @@
     return { backdrop, stage, full, counter };
   }
 
-  // FLIP: place `full` at the target box, then release to its natural
-  // centered size — the image appears to fly between thumbnail and center.
-  function flip(full, fromRect) {
-    const to = full.getBoundingClientRect();
-    const dx = fromRect.left + fromRect.width / 2 - (to.left + to.width / 2);
-    const dy = fromRect.top + fromRect.height / 2 - (to.top + to.height / 2);
-    const sx = fromRect.width / to.width;
-    const sy = fromRect.height / to.height;
-    return { dx, dy, sx, sy };
+  // Cover-aware FLIP between the overlay (full image, contain) and a target
+  // box that displays the same image with object-fit: cover (grid cells) or
+  // at intrinsic ratio (single figures — the math degrades to a plain FLIP).
+  //
+  // Instead of squishing the whole image into the target box (non-uniform
+  // scale = visible distortion + a crop "pop" at the swap), scale UNIFORMLY
+  // so the centered sub-region the target actually displays lands exactly on
+  // the target box, and clip away the rest with an animated inset. The
+  // visible pixels converge to precisely the target's crop.
+  function coverMorph(full, targetRect) {
+    const rect = full.getBoundingClientRect();
+    const iw = full.naturalWidth || rect.width;
+    const ih = full.naturalHeight || rect.height;
+
+    // How the target displays the image (object-fit: cover, centered).
+    const coverScale = Math.max(
+      targetRect.width / iw,
+      targetRect.height / ih,
+    );
+    // The overlay's own display scale (contain => uniform).
+    const s0 = rect.width / iw;
+
+    // The target's visible sub-region, expressed in overlay pixels.
+    const vw = (targetRect.width / coverScale) * s0;
+    const vh = (targetRect.height / coverScale) * s0;
+
+    const k = coverScale / s0; // uniform scale factor
+    const dx =
+      targetRect.left + targetRect.width / 2 - (rect.left + rect.width / 2);
+    const dy =
+      targetRect.top + targetRect.height / 2 - (rect.top + rect.height / 2);
+
+    // Clip insets in the element's local (pre-transform) box.
+    const ix = Math.max(0, (rect.width - vw) / 2);
+    const iy = Math.max(0, (rect.height - vh) / 2);
+
+    return {
+      transform: `translate(${dx}px, ${dy}px) scale(${k})`,
+      clip: `inset(${iy}px ${ix}px ${iy}px ${ix}px)`,
+    };
   }
+
+  const CLIP_NONE = "inset(0px 0px 0px 0px)";
 
   function itemImg(item) {
     return item.querySelector("img") || item;
@@ -145,13 +178,15 @@
         return;
       }
 
-      const { dx, dy, sx, sy } = flip(full, fromRect);
+      const from = coverMorph(full, fromRect);
       full.style.transformOrigin = "center center";
-      full.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
-      full.style.opacity = "1"; // instant — FLIP places it exactly over the thumb
+      full.style.transform = from.transform;
+      full.style.clipPath = from.clip;
+      full.style.opacity = "1"; // instant — the morph places it exactly over the thumb
       full.getBoundingClientRect(); // force reflow so the next frame animates
-      full.style.transition = `transform ${OPEN_MS}ms ${EASE}`;
+      full.style.transition = `transform ${OPEN_MS}ms ${EASE}, clip-path ${OPEN_MS}ms ${EASE}`;
       full.style.transform = "translate(0, 0) scale(1)";
+      full.style.clipPath = CLIP_NONE;
     });
   }
 
@@ -243,11 +278,13 @@
       return;
     }
 
-    // FLIP back onto the target's inner <img> — a clean morph, no fade.
+    // Morph back onto the target's inner <img> — uniform scale + clip so the
+    // visible pixels converge to exactly the crop the cell displays.
     const toRect = itemImg(target).getBoundingClientRect();
-    const { dx, dy, sx, sy } = flip(full, toRect);
-    full.style.transition = `transform ${CLOSE_MS}ms ${EASE}`;
-    full.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+    const to = coverMorph(full, toRect);
+    full.style.transition = `transform ${CLOSE_MS}ms ${EASE}, clip-path ${CLOSE_MS}ms ${EASE}`;
+    full.style.transform = to.transform;
+    full.style.clipPath = to.clip;
 
     let done = false;
     const finish = () => {
