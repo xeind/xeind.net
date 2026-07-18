@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";

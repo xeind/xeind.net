@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
