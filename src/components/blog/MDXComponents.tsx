@@ -267,23 +267,94 @@ function MdxLi(props: React.HTMLAttributes<HTMLLIElement>) {
 
 /* ── Image ── */
 
+// Local (src/-relative) markdown images are resolved by Astro's MDX image
+// pipeline into an ImageMetadata object by the time they reach this
+// component; public/-relative or remote images stay plain strings (never
+// optimized, no known dimensions). Handle both.
+type ResolvedImgSrc =
+  | string
+  | { src: string; width?: number; height?: number };
+
+function resolveImgSrc(src: ResolvedImgSrc | undefined) {
+  if (typeof src === "string") return { url: src };
+  if (src && typeof src.src === "string") {
+    return { url: src.src, width: src.width, height: src.height };
+  }
+  return { url: "" };
+}
+
+interface MdxImgProps {
+  src?: ResolvedImgSrc;
+  alt?: string;
+  // Stamped by src/lib/rehype-image-grid.mjs on images grouped into a
+  // collage — present means "render as a bare grid cell", absent means
+  // "render as a captioned figure".
+  "data-grid-index"?: string;
+  "data-grid-total"?: string;
+}
+
 // Static markup only — MDX components rendered via the `components` prop are
 // server-rendered and never hydrate, so interactivity lives in the vanilla
 // /blog-lightbox.js (FLIP zoom-to-center), wired up in [slug].astro.
-function MdxImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  const src = typeof props.src === "string" ? props.src : "";
+function MdxImg(props: MdxImgProps) {
+  const { url, width, height } = resolveImgSrc(props.src);
   const alt = props.alt || "";
+  const gridIndex = props["data-grid-index"];
+  const gridTotal = props["data-grid-total"];
+
+  if (gridIndex !== undefined && gridTotal !== undefined) {
+    const index = Number(gridIndex);
+    const total = Number(gridTotal);
+    const visible = Math.min(total, 5);
+    const extra = total - visible;
+    const hidden = index >= visible;
+
+    return (
+      <button
+        type="button"
+        className={`blog-zoom blog-grid-cell focus-visible:ring-accent focus-visible:ring-offset-background relative cursor-zoom-in overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${hidden ? "hidden" : ""}`}
+        data-zoom-src={url}
+        data-zoom-alt={alt}
+        aria-label={alt ? `Zoom image: ${alt}` : `Zoom image ${index + 1}`}
+      >
+        <img
+          src={url}
+          alt={alt}
+          width={width}
+          height={height}
+          loading="lazy"
+          className="h-full w-full object-cover"
+        />
+        {extra > 0 && index === visible - 1 && (
+          <span
+            className="pointer-events-none absolute inset-0 grid place-items-center bg-black/50 font-mono text-lg text-[#EBE5D8]"
+            aria-hidden="true"
+          >
+            +{extra}
+          </span>
+        )}
+      </button>
+    );
+  }
+
   return (
     <figure className="mx-auto my-6 max-w-xl">
       <button
         type="button"
         className="blog-zoom border-accent/30 bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block w-full cursor-zoom-in border border-dashed p-1 transition-colors hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         style={CSS_TRANSITIONS.border}
-        data-zoom-src={src}
+        data-zoom-src={url}
         data-zoom-alt={alt}
         aria-label={alt ? `Zoom image: ${alt}` : "Zoom image"}
       >
-        <img src={src} alt={alt} loading="lazy" className="block w-full" />
+        <img
+          src={url}
+          alt={alt}
+          width={width}
+          height={height}
+          loading="lazy"
+          className="block w-full"
+        />
       </button>
       {alt && (
         <figcaption className="text-foreground/50 mt-2 text-center font-mono text-xs">
@@ -298,19 +369,21 @@ function MdxImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
 
 // Rendered for the custom <image-grid> element emitted by
 // src/lib/rehype-image-grid.mjs when a post stacks >= 2 consecutive images.
+// The children are the ORIGINAL <img> nodes (routed back through MdxImg,
+// which renders them as bare cells because of the data-grid-* attrs the
+// rehype plugin stamped on them) — this component just owns the grid shell.
 // Static markup only — the lightbox (public/blog-lightbox.js) provides
 // zoom + next/prev gallery navigation.
-function ImageGrid(props: { images?: string }) {
-  let images: Array<{ src: string; alt: string }> = [];
-  try {
-    images = JSON.parse(props.images || "[]");
-  } catch {
-    return null;
-  }
-  if (images.length === 0) return null;
-
-  const visible = Math.min(images.length, 5);
-  const extra = images.length - visible;
+function ImageGrid({
+  children,
+  "data-count": dataCount,
+}: {
+  children?: React.ReactNode;
+  "data-count"?: string;
+}) {
+  const count = Number(dataCount) || 0;
+  if (count === 0) return null;
+  const visible = Math.min(count, 5);
 
   return (
     <figure className="my-6">
@@ -318,35 +391,7 @@ function ImageGrid(props: { images?: string }) {
         data-image-grid=""
         className={`blog-grid blog-grid-${visible} border-accent/30 bg-card border border-dashed p-1`}
       >
-        {images.map((img, i) => (
-          <button
-            key={`${img.src}-${i}`}
-            type="button"
-            className={`blog-zoom blog-grid-cell focus-visible:ring-accent focus-visible:ring-offset-background relative cursor-zoom-in overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
-              i >= visible ? "hidden" : ""
-            }`}
-            data-zoom-src={img.src}
-            data-zoom-alt={img.alt}
-            aria-label={
-              img.alt ? `Zoom image: ${img.alt}` : `Zoom image ${i + 1}`
-            }
-          >
-            <img
-              src={img.src}
-              alt={img.alt}
-              loading="lazy"
-              className="h-full w-full object-cover"
-            />
-            {extra > 0 && i === visible - 1 && (
-              <span
-                className="pointer-events-none absolute inset-0 grid place-items-center bg-black/50 font-mono text-lg text-[#EBE5D8]"
-                aria-hidden="true"
-              >
-                +{extra}
-              </span>
-            )}
-          </button>
-        ))}
+        {children}
       </div>
     </figure>
   );

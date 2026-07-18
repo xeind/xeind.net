@@ -7,9 +7,14 @@
  *
  * Any "image paragraph" (a <p> whose meaningful children are all <img>s) is
  * merged with adjacent image paragraphs; if the combined run has >= 2 images
- * it becomes a custom `<image-grid images="[{src, alt}, …]">` element, which
- * MDXComponents maps to the ImageGrid component. A lone single-image
- * paragraph passes through untouched and keeps the MdxImg figure treatment.
+ * it becomes a `<image-grid>` element wrapping the ORIGINAL <img> nodes
+ * (tagged with data-grid-index/-total so MdxImg can render them as bare
+ * cells instead of captioned figures). The <img> nodes themselves are left
+ * untouched — local (src/-relative) images are resolved to ImageMetadata by
+ * Astro's own MDX image pipeline later in the build, and that resolution is
+ * keyed off the literal <img> element, not anything we could pass through a
+ * serialized JSON prop. A lone single-image paragraph passes through
+ * untouched and keeps the MdxImg figure treatment.
  */
 export default function rehypeImageGrid() {
   const isWhitespace = (node) =>
@@ -62,15 +67,19 @@ export default function rehypeImageGrid() {
         out.push({
           type: "element",
           tagName: "image-grid",
-          properties: {
-            images: JSON.stringify(
-              run.map((img) => ({
-                src: img.properties?.src || "",
-                alt: img.properties?.alt || "",
-              })),
-            ),
-          },
-          children: [],
+          // Group size is stamped here too (not just per-image), since
+          // ImageGrid can't reliably derive it from React children — MDX
+          // wraps sibling images in a Fragment, and Children.count doesn't
+          // see through that.
+          properties: { "data-count": String(run.length) },
+          children: run.map((img, idx) => ({
+            ...img,
+            properties: {
+              ...img.properties,
+              "data-grid-index": String(idx),
+              "data-grid-total": String(run.length),
+            },
+          })),
         });
         i = lastImageIndex + 1;
       } else {

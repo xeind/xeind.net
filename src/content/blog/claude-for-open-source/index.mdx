@@ -32,7 +32,7 @@ So I built **vallow.nvim**.<Cite n={1} />
 
 It brings static analysis straight into Neovim<Cite n={2} />: unused exports, dead code, circular deps, duplicate exports, complexity hotspots — all in a native split. Under the hood it's powered by **fallow**, a Rust analysis engine that does the heavy lifting.<Cite n={3} /> The plugin itself is Lua, and it's deliberately unfussy: no LSP, no tree-sitter, no config to get started.
 
-![vallow.nvim analyzing this very site — unused files, duplicate groups, and complexity hotspots in a native split](/blog/vallow-nvim.png)
+![vallow.nvim analyzing this very site — unused files, duplicate groups, and complexity hotspots in a native split](./vallow-nvim.webp)
 
 That screenshot is vallow running on the codebase for *this site*. It's flagging the exact loose ends I'd let pile up: three helper scripts nothing imports, a component I'd built and never wired in, and a data file where 80% of the exports were dead.
 
@@ -50,7 +50,7 @@ Not because I had a grand plan. Just because shipping felt like the honest end o
 
 That's what got me into **Claude for Open Source**.
 
-![You're in — six months of Claude Max 20x for a plugin I built because I was annoyed at my own dead code](/blog/claude-for-open-source.png)
+![You're in — six months of Claude Max 20x for a plugin I built because I was annoyed at my own dead code](./claude-for-open-source.webp)
 
 Six months of Claude Max 20x, for a Neovim plugin I made on evenings and weekends. I'm still a little stunned by the math. The project cost me a lot of Lua I had to learn as I went. The return was a door I didn't know existed.
 
