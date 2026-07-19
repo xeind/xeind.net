@@ -78,12 +78,19 @@ const structuredData = {
     <SectionDivider variant="grid" />
 
     <Panel>
-      <ProjectGrid client:visible />
+      <ExperienceTimeline />
     </Panel>
     <SectionDivider variant="grid" />
 
+    {/* Last section on purpose: the grid is the page's only React island
+        (~100KB with the runtime), so it sits below Experience where its
+        client:visible fetch happens while the reader scrolls — out of the
+        initial load's critical window. rootMargin pre-fetches ~a third of
+        a viewport early so it's hydrated on arrival; it must stay smaller
+        than the grid's ~600px gap below the mobile fold or the fetch
+        fires at load and defeats the deferral. */}
     <Panel>
-      <ExperienceTimeline />
+      <ProjectGrid client:visible={{ rootMargin: "300px" }} />
     </Panel>
   </div>
 </Layout>
