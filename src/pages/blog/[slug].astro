@@ -121,6 +121,9 @@ const articleStructuredData = {
         <Content components={mdxComponents} />
       </article>
       <script is:inline src="/blog-lightbox.js" defer></script>
+      {/* Only pages with code blocks load the copy-button script — posts
+          and /design — instead of every page via Layout. */}
+      <script is:inline src="/codeblock-copy.js" defer></script>
 
       {/* Series nav */}
       {

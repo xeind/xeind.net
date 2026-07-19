@@ -533,4 +533,7 @@ import PrecisionMarks from "@/components/design/PrecisionMarks";
       </a>
     </Panel>
   </div>
+  {/* Only pages with code blocks load the copy-button script — posts and
+      /design — instead of every page via Layout. */}
+  <script is:inline src="/codeblock-copy.js" defer></script>
 </Layout>
