@@ -5,6 +5,7 @@ import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
 import { mdxComponents } from "@/components/blog/MDXComponents";
+import MdxImage from "@/components/blog/MdxImage.astro";
 import { SITE, absoluteUrl } from "@/config/site";
 
 export async function getStaticPaths() {
@@ -80,7 +81,7 @@ const articleStructuredData = {
   structuredData={articleStructuredData}
 >
   <div class="flex flex-col">
-          <Panel edges="both" ornaments="all">
+    <Panel edges="both" ornaments="all">
       {/* Post header */}
       <div class="mb-6">
         <div class="mb-2 flex items-center justify-between">
@@ -97,9 +98,7 @@ const articleStructuredData = {
             {formattedDate}
           </time>
         </div>
-        <h1
-          class="text-foreground mb-3 font-serif text-2xl [text-wrap:balance]"
-        >
+        <h1 class="text-foreground mb-3 font-serif text-2xl [text-wrap:balance]">
           {post.data.title}
         </h1>
         {
@@ -118,11 +117,13 @@ const articleStructuredData = {
 
       {/* Post content */}
       <article>
-        <Content components={mdxComponents} />
+        <Content components={{ ...mdxComponents, img: MdxImage }} />
       </article>
       <script is:inline src="/blog-lightbox.js" defer></script>
-      {/* Only pages with code blocks load the copy-button script — posts
-          and /design — instead of every page via Layout. */}
+      {
+        /* Only pages with code blocks load the copy-button script — posts
+          and /design — instead of every page via Layout. */
+      }
       <script is:inline src="/codeblock-copy.js" defer></script>
 
       {/* Series nav */}
@@ -130,12 +131,8 @@ const articleStructuredData = {
         seriesPosts.length > 1 && (
           <div class="border-accent/15 mt-8 border border-dashed p-5">
             <div class="mb-3 flex items-center gap-2">
-              {seriesIcon === "star" && (
-                <span class="text-accent text-sm">✦</span>
-              )}
-              <span class="text-secondary font-mono text-xs tracking-wide uppercase">
-                Series
-              </span>
+              {seriesIcon === "star" && <span class="text-accent text-sm">✦</span>}
+              <span class="text-secondary font-mono text-xs tracking-wide uppercase">Series</span>
             </div>
             <ol class="list-none space-y-1.5 pl-0">
               {seriesPosts.map((sp) => (
@@ -144,9 +141,7 @@ const articleStructuredData = {
                     {sp.data.seriesOrder}.
                   </span>
                   {sp.id === post.id ? (
-                    <span class="text-foreground font-serif">
-                      {sp.data.title}
-                    </span>
+                    <span class="text-foreground font-serif">{sp.data.title}</span>
                   ) : (
                     <a
                       href={`/blog/${sp.id}`}

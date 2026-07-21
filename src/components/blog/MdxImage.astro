@@ -1,0 +1,42 @@
+---
+// Astro-level wrapper around MdxImg — the only place in the MDX image chain
+// that can call the async astro:assets getImage(). Resolves a local image
+// import into a responsive srcSet/sizes pair (so devices fetch a size
+// matched to the figure's real display width, capped by max-w-xl, instead
+// of the full source resolution), then hands the result to MdxImg for the
+// actual styled markup. Remote/public images pass through as plain strings.
+import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
+import { MdxImg, type MdxImgProps } from "./MDXComponents";
+
+// The figure and grid cells never render wider than the max-w-xl (36rem)
+// blog card, so there's no point offering the browser anything bigger.
+const SIZES = "(min-width: 640px) 576px, 100vw";
+
+interface Props {
+  src?: string | ImageMetadata;
+  alt?: string;
+  "data-grid-index"?: string;
+  "data-grid-total"?: string;
+}
+
+const { src, alt, ...rest } = Astro.props as Props;
+
+let imgProps: MdxImgProps = { alt, ...rest };
+
+if (typeof src === "string") {
+  imgProps.src = src;
+} else if (src && typeof src.src === "string") {
+  const optimized = await getImage({ src, sizes: SIZES });
+  imgProps = {
+    ...imgProps,
+    src: optimized.src,
+    srcSet: optimized.srcSet?.attribute,
+    sizes: SIZES,
+    width: src.width,
+    height: src.height,
+  };
+}
+---
+
+<MdxImg {...imgProps} />

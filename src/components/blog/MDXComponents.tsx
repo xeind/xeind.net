@@ -40,19 +40,13 @@ function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
 
 function MdxH2(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2
-      className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]"
-      {...props}
-    />
+    <h2 className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]" {...props} />
   );
 }
 
 function MdxH3(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3
-      className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]"
-      {...props}
-    />
+    <h3 className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]" {...props} />
   );
 }
 
@@ -94,10 +88,7 @@ function MdxEm(props: React.HTMLAttributes<HTMLElement>) {
 
 function MdxBlockquote(props: React.HTMLAttributes<HTMLQuoteElement>) {
   return (
-    <blockquote
-      className="border-accent/30 my-6 border-l border-dashed py-1 pl-5"
-      {...props}
-    >
+    <blockquote className="border-accent/30 my-6 border-l border-dashed py-1 pl-5" {...props}>
       <div className="text-foreground/60 font-serif text-base leading-[1.8] italic">
         {props.children}
       </div>
@@ -183,10 +174,7 @@ function MdxPre(props: React.HTMLAttributes<HTMLPreElement>) {
       : "";
 
   // Extract language from className (e.g. "astro-code" or "language-ts")
-  const langClass =
-    typeof childEl?.props?.className === "string"
-      ? childEl.props.className
-      : "";
+  const langClass = typeof childEl?.props?.className === "string" ? childEl.props.className : "";
   const langMatch = langClass.match(/language-(\w+)/);
   const lang = langMatch?.[1] ?? null;
 
@@ -272,24 +260,16 @@ function MdxLi(props: React.HTMLAttributes<HTMLLIElement>) {
 
 /* ── Image ── */
 
-// Local (src/-relative) markdown images are resolved by Astro's MDX image
-// pipeline into an ImageMetadata object by the time they reach this
-// component; public/-relative or remote images stay plain strings (never
-// optimized, no known dimensions). Handle both.
-type ResolvedImgSrc =
-  | string
-  | { src: string; width?: number; height?: number };
-
-function resolveImgSrc(src: ResolvedImgSrc | undefined) {
-  if (typeof src === "string") return { url: src };
-  if (src && typeof src.src === "string") {
-    return { url: src.src, width: src.width, height: src.height };
-  }
-  return { url: "" };
-}
-
-interface MdxImgProps {
-  src?: ResolvedImgSrc;
+// Resolution to a final URL (and, for local images, a responsive
+// srcSet/sizes pair via getImage()) happens upstream in MdxImage.astro —
+// React components can't call Astro's async getImage() themselves. This
+// component only renders whatever it's handed.
+export interface MdxImgProps {
+  src?: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
   alt?: string;
   // Stamped by src/lib/rehype-image-grid.mjs on images grouped into a
   // collage — present means "render as a bare grid cell", absent means
@@ -301,8 +281,9 @@ interface MdxImgProps {
 // Static markup only — MDX components rendered via the `components` prop are
 // server-rendered and never hydrate, so interactivity lives in the vanilla
 // /blog-lightbox.js (FLIP zoom-to-center), wired up in [slug].astro.
-function MdxImg(props: MdxImgProps) {
-  const { url, width, height } = resolveImgSrc(props.src);
+export function MdxImg(props: MdxImgProps) {
+  const url = props.src || "";
+  const { srcSet, sizes, width, height } = props;
   const alt = props.alt || "";
   const gridIndex = props["data-grid-index"];
   const gridTotal = props["data-grid-total"];
@@ -324,6 +305,8 @@ function MdxImg(props: MdxImgProps) {
       >
         <img
           src={url}
+          srcSet={srcSet}
+          sizes={sizes}
           alt={alt}
           width={width}
           height={height}
@@ -354,6 +337,8 @@ function MdxImg(props: MdxImgProps) {
       >
         <img
           src={url}
+          srcSet={srcSet}
+          sizes={sizes}
           alt={alt}
           width={width}
           height={height}
@@ -426,10 +411,7 @@ function MdxTh(props: React.ThHTMLAttributes<HTMLTableCellElement>) {
 
 function MdxTd(props: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td
-      className="border-accent/20 text-foreground/80 border border-dashed px-4 py-2"
-      {...props}
-    />
+    <td className="border-accent/20 text-foreground/80 border border-dashed px-4 py-2" {...props} />
   );
 }
 
@@ -461,9 +443,7 @@ export function Ref({
       id={`ref-${n}`}
       className="text-foreground/60 flex items-start gap-2 font-serif text-sm leading-relaxed"
     >
-      <span className="text-accent mt-px shrink-0 font-mono text-[0.7rem]">
-        [{n}]
-      </span>
+      <span className="text-accent mt-px shrink-0 font-mono text-[0.7rem]">[{n}]</span>
       <span>
         {href ? (
           <a
@@ -486,9 +466,7 @@ export function References({ children }: { children: React.ReactNode }) {
   return (
     <div className="[&_p]:mb-0 [&_p]:text-sm [&_p]:leading-relaxed">
       <div className="border-accent/20 mb-4 border-t border-dashed" />
-      <h3 className="text-secondary mb-3 font-mono text-xs tracking-wide">
-        REFERENCES
-      </h3>
+      <h3 className="text-secondary mb-3 font-mono text-xs tracking-wide">REFERENCES</h3>
       <ol className="list-none space-y-2 pl-0">{children}</ol>
     </div>
   );

@@ -27,6 +27,13 @@ export default defineConfig({
       theme: "css-variables",
     },
   },
+  image: {
+    // Applies to Markdown/MDX `![]()` images (blog posts) — generates
+    // srcset/sizes so devices fetch a size matched to the figure's
+    // actual display width instead of the full source resolution.
+    layout: "constrained",
+    responsiveStyles: true,
+  },
   integrations: [
     react(),
     mdx(),
