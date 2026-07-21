@@ -10,10 +10,16 @@
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
 
-# Cloudflare Pages MERGES every matching rule's headers, so a path that
-# matches two cache rules gets a doubled Cache-Control. Each path below is
-# therefore covered by exactly one rule (no extension glob overlaps a
-# directory rule; no /*.js rule that would collide with /_astro/*.js).
+# Cloudflare Pages MERGES every matching rule's headers (comma-joins
+# duplicate header values — it does NOT let a more specific rule win), so a
+# path that matches two Cache-Control rules ends up with an ambiguous,
+# effectively-shorter TTL. `/*.webp` etc. are GLOBAL extension globs — they
+# also match /_astro/*.webp, silently downgrading hashed build output from
+# immutable to 7 days. Each path below must therefore be reachable by
+# exactly one rule: directory-scoped rules for /_astro, /fonts, /projects,
+# and an explicit file list for the handful of images that live at the
+# public/ root (add new root-level images to that list, not a `/*.ext`
+# glob — a glob there will re-introduce the /_astro overlap).
 
 # ── Content-addressed: filename changes when content changes ──
 /_astro/*
@@ -24,20 +30,40 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # ── Unversioned images: stable, but fixed URLs, so cap at 7 days so an
-#    updated asset still propagates (covers root + /blog + /projects) ──
-/*.svg
+#    updated asset still propagates ──
+/projects/*
   Cache-Control: public, max-age=604800
-/*.png
+/apple-touch-icon.png
   Cache-Control: public, max-age=604800
-/*.webp
+/github.svg
   Cache-Control: public, max-age=604800
-/*.jpg
+/icon-192.png
   Cache-Control: public, max-age=604800
-/*.jpeg
+/icon-512.png
   Cache-Control: public, max-age=604800
-/*.gif
+/icon.svg
   Cache-Control: public, max-age=604800
-/*.avif
+/linkedin.svg
+  Cache-Control: public, max-age=604800
+/map-pin.svg
+  Cache-Control: public, max-age=604800
+/noise.svg
+  Cache-Control: public, max-age=604800
+/ograph.jpg
+  Cache-Control: public, max-age=604800
+/opengraph-img.jpg
+  Cache-Control: public, max-age=604800
+/opengraph.jpg
+  Cache-Control: public, max-age=604800
+/site-ograph.jpg
+  Cache-Control: public, max-age=604800
+/xd-32x32-dark.png
+  Cache-Control: public, max-age=604800
+/xd-32x32-light.png
+  Cache-Control: public, max-age=604800
+/XD-logo.svg
+  Cache-Control: public, max-age=604800
+/XD-outline.svg
   Cache-Control: public, max-age=604800
 
 # ── Fixed-URL documents & scripts: revalidate so edits ship on next load
