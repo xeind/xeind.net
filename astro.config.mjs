@@ -9,12 +9,6 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://xeind.net",
   output: "static",
-  // Hover-triggered only: prefetching on viewport would re-download the
-  // inlined CSS for every visible link's page — hover is intent.
-  prefetch: {
-    prefetchAll: true,
-    defaultStrategy: "hover",
-  },
   devToolbar: {
     enabled: false,
   },
