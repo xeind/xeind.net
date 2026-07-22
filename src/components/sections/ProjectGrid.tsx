@@ -623,8 +623,8 @@ export default function ProjectGrid() {
                     ? { duration: 0 }
                     : SPRING_CONFIG.noBounce
                 }
-                aria-label={`View details for ${project.title}`}
               >
+                <span className="sr-only">View details for</span>
                 <DashedBorders />
                 <CornerBrackets />
                 <GradientBackground />
