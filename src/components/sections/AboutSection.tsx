@@ -1,6 +1,7 @@
 import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineIcon from "@/components/ui/InlineIcon";
 import InlineLink from "@/components/ui/InlineLink";
+import pioneerIcon from "@/assets/pioneer.svg";
 
 const inlineLinkClass =
   "inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -23,7 +24,7 @@ export default function AboutSection() {
             className={inlineLinkClass}
           >
             <InlineIcon
-              src="/projects/pioneer.svg"
+              src={pioneerIcon.src}
               className="mr-[0.175rem] ml-[0.175rem]"
             />
             Pioneer
