@@ -93,4 +93,44 @@ const structuredData = {
       <ProjectGrid client:visible={{ rootMargin: "300px" }} />
     </Panel>
   </div>
+
+  <script is:inline>
+    (() => {
+      const files = ["fmeet-seo", "smeet-seo", "nightingale"];
+      const themes = ["light", "dark", "nightingale"];
+      const themeAttribute = document.documentElement.getAttribute("data-theme");
+      const activeTheme = themes.includes(themeAttribute) ? themeAttribute : "light";
+
+      document.querySelectorAll("[data-project-logo]").forEach((logo) => {
+        const file = logo.getAttribute("data-project-logo");
+        if (file) logo.setAttribute("src", `/projects/${file}-${activeTheme}.svg`);
+      });
+
+      const preloadAlternateLogos = () => {
+        window.__projectLogoPreload ??= Promise.all(
+          files.flatMap((file) =>
+            themes
+              .filter((theme) => theme !== activeTheme)
+              .map(
+                (theme) =>
+                  new Promise((resolve) => {
+                    const image = new Image();
+                    image.onload = resolve;
+                    image.onerror = resolve;
+                    image.src = `/projects/${file}-${theme}.svg`;
+                  }),
+              ),
+          ),
+        ).then(() => undefined);
+      };
+
+      if (document.readyState === "complete") {
+        preloadAlternateLogos();
+      } else {
+        window.addEventListener("load", () => window.setTimeout(preloadAlternateLogos, 0), {
+          once: true,
+        });
+      }
+    })();
+  </script>
 </Layout>

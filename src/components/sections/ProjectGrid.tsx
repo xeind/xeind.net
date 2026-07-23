@@ -27,7 +27,7 @@ import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
 function getResolvedTheme(): ResolvedTheme {
-  if (typeof document === "undefined") return "light";
+  if (typeof document === "undefined") return "dark";
 
   const themeAttr = document.documentElement.getAttribute("data-theme");
 
