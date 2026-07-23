@@ -1,4 +1,4 @@
-import XeinLogoServer from "../XeinLogoServer";
+import XeinLogoServer from "./XeinLogoServer";
 
 /**
  * StaticLogo - Non-interactive logo for immediate render

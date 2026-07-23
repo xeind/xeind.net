@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
-import { SITE, absoluteUrl } from "@/config/site";
+import { SITE, absoluteUrl } from "@/lib/config/site";
 
 // llms.txt (https://llmstxt.org): a plain-text index of this site so
 // agents and curl users can find the fetchable text versions of

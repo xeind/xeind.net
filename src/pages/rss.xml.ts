@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
-import { SITE, absoluteUrl } from "@/config/site";
+import { SITE, absoluteUrl } from "@/lib/config/site";
 
 function escapeXml(value: string) {
   return value

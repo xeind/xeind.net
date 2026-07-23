@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import mdx from "@astrojs/mdx";
-import rehypeImageGrid from "./src/lib/rehype-image-grid.mjs";
+import rehypeImageGrid from "./src/lib/markdown/rehype-image-grid.mjs";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";

@@ -6,7 +6,7 @@ import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
 import { mdxComponents } from "@/components/blog/MDXComponents";
 import MdxImage from "@/components/blog/MdxImage.astro";
-import { SITE, absoluteUrl } from "@/config/site";
+import { SITE, absoluteUrl } from "@/lib/config/site";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("blog")).filter(

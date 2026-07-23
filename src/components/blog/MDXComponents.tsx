@@ -271,7 +271,7 @@ export interface MdxImgProps {
   width?: number;
   height?: number;
   alt?: string;
-  // Stamped by src/lib/rehype-image-grid.mjs on images grouped into a
+  // Stamped by src/lib/markdown/rehype-image-grid.mjs on images grouped into a
   // collage — present means "render as a bare grid cell", absent means
   // "render as a captioned figure".
   "data-grid-index"?: string;
@@ -358,7 +358,7 @@ export function MdxImg(props: MdxImgProps) {
 /* ── Image grid (collage) ── */
 
 // Rendered for the custom <image-grid> element emitted by
-// src/lib/rehype-image-grid.mjs when a post stacks >= 2 consecutive images.
+// src/lib/markdown/rehype-image-grid.mjs when a post stacks >= 2 consecutive images.
 // The children are the ORIGINAL <img> nodes (routed back through MdxImg,
 // which renders them as bare cells because of the data-grid-* attrs the
 // rehype plugin stamped on them) — this component just owns the grid shell.

@@ -1,7 +1,7 @@
 import { getCollection } from "astro:content";
 import type { APIRoute, GetStaticPaths } from "astro";
-import { absoluteUrl } from "@/config/site";
-import { mdxToPlainMarkdown } from "@/lib/mdx-plain";
+import { absoluteUrl } from "@/lib/config/site";
+import { mdxToPlainMarkdown } from "@/lib/markdown/mdx-plain";
 
 // Plain-markdown twin of every published post at /blog/<slug>.md —
 // fetchable text for curl, agents, and anyone who wants the words

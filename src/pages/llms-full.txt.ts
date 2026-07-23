@@ -1,7 +1,7 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
-import { SITE } from "@/config/site";
-import { mdxToPlainMarkdown } from "@/lib/mdx-plain";
+import { SITE } from "@/lib/config/site";
+import { mdxToPlainMarkdown } from "@/lib/markdown/mdx-plain";
 
 // The whole blog as one plain-markdown file — the "just give me the
 // text" endpoint referenced from /llms.txt.

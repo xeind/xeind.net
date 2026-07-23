@@ -7,7 +7,7 @@
     "scripts/generate-icons.mjs",
     "scripts/fetch-jetbrains-mono.mjs",
     "src/components/sections/AwardsGrid.tsx",
-    "src/lib/rehype-image-grid.mjs"
+    "src/lib/markdown/rehype-image-grid.mjs"
   ],
   "ignoreDependencies": [
     "tailwindcss"

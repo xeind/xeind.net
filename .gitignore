@@ -13,10 +13,6 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
-
 # production
 /build
 /dist/
@@ -45,7 +41,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # Lighthouse reports
 lighthouse-*.json
@@ -56,6 +51,8 @@ lighthouse-*.html
 .claude/
 .fallow/
 .open-code/
+.codex/
+opencode.json
 
 # internal authoring notes, not for the public repo
 src/content/blog/CLAUDE.md
