@@ -45,50 +45,53 @@ function preloadFramesAfterPageLoad() {
 
 function ClaudeFrameMark({ playing }: { playing: boolean }) {
   const reducedMotion = useReducedMotion();
-  const [src, setSrc] = useState(BASE_FRAME);
-  const frameIndex = useRef(-1);
+  const [framesMounted, setFramesMounted] = useState(false);
+  const [framesReady, setFramesReady] = useState(false);
+  const [activeFrame, setActiveFrame] = useState(0);
+  const frameIndex = useRef(0);
 
   useEffect(() => {
-    void preloadFramesAfterPageLoad();
-  }, []);
-
-  useEffect(() => {
-    if (reducedMotion || !playing) return;
-
     let cancelled = false;
-    let timer: number | undefined;
 
     void preloadFramesAfterPageLoad().then(() => {
-      if (cancelled) return;
-
-      if (frameIndex.current === -1) {
-        frameIndex.current = 0;
-        setSrc(ANIMATION_FRAMES[0]);
-      }
-
-      timer = window.setInterval(() => {
-        frameIndex.current = (frameIndex.current + 1) % ANIMATION_FRAMES.length;
-        setSrc(ANIMATION_FRAMES[frameIndex.current]);
-      }, FRAME_DURATION_MS);
+      if (!cancelled) setFramesMounted(true);
     });
 
     return () => {
       cancelled = true;
-      if (timer !== undefined) window.clearInterval(timer);
     };
-  }, [playing, reducedMotion]);
+  }, []);
 
-  const displayedSrc = reducedMotion || !playing ? BASE_FRAME : src;
-  const maskStyle = {
-    WebkitMaskImage: `url("${displayedSrc}")`,
-    maskImage: `url("${displayedSrc}")`,
-    WebkitMaskPosition: "center",
-    maskPosition: "center",
-    WebkitMaskRepeat: "no-repeat",
-    maskRepeat: "no-repeat",
-    WebkitMaskSize: "contain",
-    maskSize: "contain",
-  };
+  useEffect(() => {
+    if (!framesMounted) return;
+
+    let paintFrame: number;
+    const mountFrame = window.requestAnimationFrame(() => {
+      paintFrame = window.requestAnimationFrame(() => {
+        setFramesReady(true);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(mountFrame);
+      if (paintFrame !== undefined) window.cancelAnimationFrame(paintFrame);
+    };
+  }, [framesMounted]);
+
+  useEffect(() => {
+    if (reducedMotion || !playing || !framesReady) return;
+
+    const timer = window.setInterval(() => {
+      frameIndex.current = (frameIndex.current + 1) % ANIMATION_FRAMES.length;
+      setActiveFrame(frameIndex.current);
+    }, FRAME_DURATION_MS);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [framesReady, playing, reducedMotion]);
+
+  const showBase = reducedMotion || !playing || !framesReady;
 
   return (
     <span role="img" aria-label="Claude mark" className="relative z-10 block h-16 w-16">
@@ -96,10 +99,39 @@ function ClaudeFrameMark({ playing }: { playing: boolean }) {
         aria-hidden="true"
         className="absolute inset-0"
         style={{
-          ...maskStyle,
           backgroundColor: "var(--color-foreground)",
+          opacity: showBase ? 1 : 0,
+          WebkitMaskImage: `url("${BASE_FRAME}")`,
+          maskImage: `url("${BASE_FRAME}")`,
+          WebkitMaskPosition: "center",
+          maskPosition: "center",
+          WebkitMaskRepeat: "no-repeat",
+          maskRepeat: "no-repeat",
+          WebkitMaskSize: "contain",
+          maskSize: "contain",
         }}
       />
+      {framesMounted &&
+        ANIMATION_FRAMES.map((frame, index) => (
+          <span
+            key={frame}
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundColor: "var(--color-foreground)",
+              opacity: !showBase && activeFrame === index ? 1 : 0,
+              willChange: "opacity",
+              WebkitMaskImage: `url("${frame}")`,
+              maskImage: `url("${frame}")`,
+              WebkitMaskPosition: "center",
+              maskPosition: "center",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+            }}
+          />
+        ))}
     </span>
   );
 }
