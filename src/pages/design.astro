@@ -6,6 +6,7 @@ import Badge from "@/components/ui/Badge";
 import InlineLink from "@/components/ui/InlineLink";
 import CornerDiamond from "@/components/ui/CornerDiamond";
 import CtaButton from "@/components/ui/CtaButton.astro";
+import ClaudeFrameTile from "@/components/design/ClaudeFrameTile";
 import GridIterations from "@/components/design/GridIterations";
 import EdgeOrnaments from "@/components/design/EdgeOrnaments";
 import PrecisionMarks from "@/components/design/PrecisionMarks";
@@ -482,6 +483,10 @@ import PrecisionMarks from "@/components/design/PrecisionMarks";
       <p class="text-foreground/50 mt-1 font-mono text-xs">
         Springs: duration 0.3s, bounce 0 (noBounce) for modals &amp; layout
       </p>
+
+      <div class="border-accent/20 my-6 border-t border-dashed"></div>
+
+      <ClaudeFrameTile client:visible />
     </Panel>
     <SectionDivider />
 
