@@ -9,6 +9,21 @@ import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
+import ataxRaw from "@/assets/atax.svg?raw";
+import nightingaleRaw from "@/assets/nightingale.svg?raw";
+import smeetRaw from "@/assets/smeet-seo.svg?raw";
+import fmeetRaw from "@/assets/fmeet-seo.svg?raw";
+import yieldRaw from "@/assets/yield.svg?raw";
+import pioneerRaw from "@/assets/pioneer.svg?raw";
+
+const PROJECT_MARKS = [
+  { id: "nightingale", svg: nightingaleRaw },
+  { id: "atax", svg: ataxRaw },
+  { id: "smeet-seo", svg: smeetRaw },
+  { id: "fmeet-seo", svg: fmeetRaw },
+  { id: "yield", svg: yieldRaw },
+  { id: "pioneer", svg: pioneerRaw },
+] as const;
 
 const t = CSS_TRANSITIONS.border;
 const tFast = CSS_TRANSITIONS.fade;
@@ -202,6 +217,49 @@ function StageFigure() {
   );
 }
 
+/**
+ * A project-grid SVG with one of the mark treatments below. The raw markup
+ * is injected as-is — CSS wins over the SVGs' own fill/stroke presentation
+ * attributes, so every treatment is a class string, no per-file editing.
+ */
+function StyledMark({ svg, className }: { svg: string; className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`relative z-10 block h-10 w-16 [&_svg]:h-full [&_svg]:w-full [&_svg]:overflow-visible ${className ?? ""}`}
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}
+
+const MARK_VARIANTS = [
+  {
+    id: "outline",
+    note: "card fill · 1px accent stroke",
+    cls: "[&_*]:fill-card [&_*]:stroke-accent/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
+  },
+  {
+    id: "line",
+    note: "no fill · accent stroke",
+    cls: "[&_*]:fill-transparent [&_*]:stroke-accent/80 [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
+  },
+  {
+    id: "solid",
+    note: "foreground silhouette · source shading kept",
+    cls: "[&_*]:fill-foreground/80 [&_*]:[stroke-width:0]",
+  },
+  {
+    id: "duotone",
+    note: "muted fill · tertiary stroke",
+    cls: "[&_*]:fill-muted [&_*]:stroke-tertiary/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
+  },
+  {
+    id: "original",
+    note: "source colors, untouched",
+    cls: "",
+  },
+] as const;
+
 function Chip({ k, v }: { k: string; v: string }) {
   return (
     <span>
@@ -307,23 +365,14 @@ function ProjectCardV2({ onOpen, spring }: CardProps) {
       </motion.div>
 
       <div className="relative flex grow flex-col p-3 md:p-4">
-        <div className="flex items-baseline gap-1.5">
-          <span
-            className="text-accent group-hover:text-tertiary font-mono text-sm transition-colors motion-reduce:transition-none"
-            style={tFast}
-            aria-hidden="true"
-          >
-            &gt;
-          </span>
-          <motion.h3
-            layoutId="demo-title-pv2"
-            className="text-foreground line-clamp-2 font-serif text-sm leading-snug"
-            transition={spring}
-          >
-            {sampleProject.title}
-          </motion.h3>
-        </div>
-        <p className="text-foreground/60 mt-1.5 line-clamp-2 pl-4 text-xs leading-normal">
+        <motion.h3
+          layoutId="demo-title-pv2"
+          className="text-foreground line-clamp-2 font-serif text-sm leading-snug"
+          transition={spring}
+        >
+          {sampleProject.title}
+        </motion.h3>
+        <p className="text-foreground/60 mt-1.5 line-clamp-2 text-xs leading-normal">
           {sampleProject.description}
         </p>
       </div>
@@ -475,8 +524,7 @@ function Plate({
   return (
     <div className="group bg-muted relative flex h-28 items-center justify-center overflow-hidden sm:h-32">
       <DashedBorders />
-      <CornerBrackets />
-      <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
+      <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-30 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)]" />
       {children}
       {type && (
         <span className="text-accent absolute bottom-2 left-3 z-10 font-mono text-[0.6875rem] tracking-wide">
@@ -714,6 +762,33 @@ export default function GridIterations() {
             </Labeled>
           </div>
         </div>
+
+        {MARK_VARIANTS.map(({ id: variantId, note, cls }, variantIndex) => (
+          <div key={variantId} className="space-y-6">
+            <div className="border-accent/20 border-t border-dashed" />
+            <div>
+              <p className="text-foreground/50 mb-3 font-mono text-xs">
+                Project marks · {variantId}
+                <span className="text-foreground/30"> — {note}</span>
+              </p>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+                {PROJECT_MARKS.map(({ id, svg }) =>
+                  variantIndex === 0 ? (
+                    <Labeled key={id} caption={id}>
+                      <Plate>
+                        <StyledMark svg={svg} className={cls} />
+                      </Plate>
+                    </Labeled>
+                  ) : (
+                    <Plate key={id}>
+                      <StyledMark svg={svg} className={cls} />
+                    </Plate>
+                  ),
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );
