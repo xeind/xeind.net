@@ -152,10 +152,22 @@ const structuredData = {
     })();
   </script>
 
-  <script>
-    import { animate } from "motion";
+  <style is:global>
+    [data-email-icon] {
+      transition:
+        transform 180ms cubic-bezier(0.2, 0, 0, 1),
+        opacity 180ms cubic-bezier(0.2, 0, 0, 1),
+        filter 180ms cubic-bezier(0.2, 0, 0, 1);
+    }
 
-    const EASE: [number, number, number, number] = [0.2, 0, 0, 1];
+    @media (prefers-reduced-motion: reduce) {
+      [data-email-icon] {
+        transition: none;
+      }
+    }
+  </style>
+
+  <script>
     const revertTimers = new WeakMap<Element, ReturnType<typeof setTimeout>>();
 
     document.addEventListener("click", (event) => {
@@ -164,24 +176,29 @@ const structuredData = {
       if (!btn) return;
 
       const email = btn.getAttribute("data-copy-email");
-      const mail = btn.querySelector('[data-email-icon="mail"]');
-      const check = btn.querySelector('[data-email-icon="check"]');
+      const mail = btn.querySelector<HTMLElement>('[data-email-icon="mail"]');
+      const check = btn.querySelector<HTMLElement>('[data-email-icon="check"]');
       if (!email || !mail || !check) return;
 
       navigator.clipboard.writeText(email).then(() => {
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const options = { duration: reduceMotion ? 0 : 0.18, ease: EASE };
-
         clearTimeout(revertTimers.get(btn));
-        animate(mail, { scale: 0.25, opacity: 0, filter: "blur(4px)" }, options);
-        animate(check, { scale: 1, opacity: 1, filter: "blur(0px)" }, options);
+        mail.style.transform = "scale(0.25)";
+        mail.style.opacity = "0";
+        mail.style.filter = "blur(4px)";
+        check.style.transform = "scale(1)";
+        check.style.opacity = "1";
+        check.style.filter = "blur(0)";
         btn.setAttribute("aria-label", "Copied");
 
         revertTimers.set(
           btn,
           setTimeout(() => {
-            animate(mail, { scale: 1, opacity: 1, filter: "blur(0px)" }, options);
-            animate(check, { scale: 0.25, opacity: 0, filter: "blur(4px)" }, options);
+            mail.style.transform = "scale(1)";
+            mail.style.opacity = "1";
+            mail.style.filter = "blur(0)";
+            check.style.transform = "scale(0.25)";
+            check.style.opacity = "0";
+            check.style.filter = "blur(4px)";
             btn.setAttribute("aria-label", "Copy email address");
           }, 2000),
         );
