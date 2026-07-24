@@ -283,6 +283,9 @@ export default function ProjectLogo({ projectId, theme, className, alt }: Projec
       <img
         src={externalLogoSrc}
         alt={alt}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
         width={externalLogo?.width}
         height={externalLogo?.height}
         data-project-logo={externalLogo?.file}

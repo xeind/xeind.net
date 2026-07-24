@@ -127,7 +127,6 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       as="font"
       type="font/woff2"
       crossorigin
-      fetchpriority="low"
     />
     <style is:inline>
       @font-face {
@@ -218,5 +217,31 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
 
     <script is:inline src="/hero-interactions.js" defer></script>
     <script is:inline src="/edge-glow.js" defer></script>
+    <script is:inline>
+      (() => {
+        const installBeacon = () => {
+          if (document.querySelector("script[data-cf-beacon]")) return;
+
+          const script = document.createElement("script");
+          script.type = "module";
+          script.src = "https://static.cloudflareinsights.com/beacon.min.js";
+          script.setAttribute("fetchpriority", "low");
+          script.setAttribute(
+            "data-cf-beacon",
+            JSON.stringify({ token: "e7a6cc938bc9460ab6216b1734501e83" }),
+          );
+          script.crossOrigin = "anonymous";
+          document.head.append(script);
+        };
+
+        const scheduleBeacon = () => window.setTimeout(installBeacon, 0);
+
+        if (document.readyState === "complete") {
+          scheduleBeacon();
+        } else {
+          window.addEventListener("load", scheduleBeacon, { once: true });
+        }
+      })();
+    </script>
   </body>
 </html>
