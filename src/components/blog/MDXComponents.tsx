@@ -1,5 +1,3 @@
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import PretextBlock from "./PretextBlock";
 import PullQuoteCard from "./PullQuoteCard";
@@ -97,102 +95,6 @@ function MdxBlockquote(props: React.HTMLAttributes<HTMLQuoteElement>) {
 }
 
 /* ── Code ── */
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }, [text]);
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="text-accent hover:text-tertiary absolute top-2 right-2 z-10 flex h-10 w-10 items-center justify-center rounded-[5px] transition-colors"
-      aria-label={copied ? "Copied" : "Copy code"}
-    >
-      <div className="relative h-4 w-4">
-        <AnimatePresence initial={false} mode="wait">
-          {copied ? (
-            <motion.svg
-              key="check"
-              initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-              className="absolute inset-0"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 6 9 17l-5-5" />
-            </motion.svg>
-          ) : (
-            <motion.svg
-              key="copy"
-              initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-              transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-              className="absolute inset-0"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect width="14" height="14" x="8" y="8" rx="2" />
-              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-            </motion.svg>
-          )}
-        </AnimatePresence>
-      </div>
-    </button>
-  );
-}
-
-function MdxPre(props: React.HTMLAttributes<HTMLPreElement>) {
-  const { className: _className, style: _style, ...rest } = props;
-  const childEl = props.children as React.ReactElement<{
-    children?: React.ReactNode;
-    className?: string;
-  }> | null;
-  const codeText =
-    typeof childEl === "object" && childEl !== null && "props" in childEl
-      ? String(childEl.props.children || "")
-      : "";
-
-  // Extract language from className (e.g. "astro-code" or "language-ts")
-  const langClass = typeof childEl?.props?.className === "string" ? childEl.props.className : "";
-  const langMatch = langClass.match(/language-(\w+)/);
-  const lang = langMatch?.[1] ?? null;
-
-  return (
-    <div className="group relative my-4">
-      {lang && (
-        <span className="text-accent/50 absolute top-2.5 left-3.5 z-10 font-mono text-[0.65rem] tracking-wider uppercase select-none">
-          {lang}
-        </span>
-      )}
-      <CopyButton text={codeText.trim()} />
-      <pre
-        className={`border-accent/15 bg-muted overflow-x-auto border border-dashed font-mono text-[0.8125rem] leading-relaxed ${lang ? "pt-8 pr-4 pb-4 pl-4" : "p-4"}`}
-        {...rest}
-      />
-    </div>
-  );
-}
 
 function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
   const isCodeBlock = typeof props.children !== "string";

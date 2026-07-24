@@ -9,6 +9,7 @@ import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
+import { useMounted } from "@/lib/hooks/useMounted";
 import ataxRaw from "@/assets/atax.svg?raw";
 import nightingaleRaw from "@/assets/nightingale.svg?raw";
 import smeetRaw from "@/assets/smeet-seo.svg?raw";
@@ -100,14 +101,8 @@ function CornerBrackets() {
   return (
     <>
       <div className="absolute top-0 left-0 z-10">
-        <div
-          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
-          style={t}
-        />
-        <div
-          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
-          style={t}
-        />
+        <div className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" style={t} />
+        <div className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" style={t} />
       </div>
       <div className="absolute top-0 right-0 z-10">
         <div
@@ -120,14 +115,8 @@ function CornerBrackets() {
         />
       </div>
       <div className="absolute bottom-0 left-0 z-10">
-        <div
-          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
-          style={t}
-        />
-        <div
-          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
-          style={t}
-        />
+        <div className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" style={t} />
+        <div className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" style={t} />
       </div>
       <div className="absolute right-0 bottom-0 z-10">
         <div
@@ -275,9 +264,7 @@ function Labeled({ caption, children }: { caption: string; children: ReactNode }
   return (
     <div>
       {children}
-      <p className="text-foreground/50 mt-2 font-mono text-[0.6875rem]">
-        {caption}
-      </p>
+      <p className="text-foreground/50 mt-2 font-mono text-[0.6875rem]">{caption}</p>
     </div>
   );
 }
@@ -308,9 +295,7 @@ function ProjectCardV1({ onOpen, spring }: CardProps) {
         transition={spring}
       >
         <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-        <div className="text-foreground/60 font-mono text-[0.6875rem]">
-          {sampleProject.id}
-        </div>
+        <div className="text-foreground/60 font-mono text-[0.6875rem]">{sampleProject.id}</div>
       </motion.div>
 
       <div className="relative flex h-1/2 flex-col overflow-hidden p-3 md:p-4">
@@ -353,9 +338,7 @@ function ProjectCardV2({ onOpen, spring }: CardProps) {
         transition={spring}
       >
         <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-        <div className="text-foreground/60 font-mono text-[0.6875rem]">
-          {sampleProject.id}
-        </div>
+        <div className="text-foreground/60 font-mono text-[0.6875rem]">{sampleProject.id}</div>
         <p className="text-accent absolute bottom-2 left-3 z-10 font-mono text-[0.6875rem] tracking-wide">
           {sampleProject.type}
         </p>
@@ -379,9 +362,7 @@ function ProjectCardV2({ onOpen, spring }: CardProps) {
 
       <div className="border-accent/20 relative mt-auto flex w-full items-center justify-between gap-2 border-t border-dashed px-3 py-2.5 md:px-4">
         <span className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-[0.625rem] tracking-wide">
-          {sampleProject.year && (
-            <Chip k="year" v={String(sampleProject.year)} />
-          )}
+          {sampleProject.year && <Chip k="year" v={String(sampleProject.year)} />}
           {sampleProject.technologies[0] && (
             <Chip k="stack" v={sampleProject.technologies[0].toLowerCase()} />
           )}
@@ -419,9 +400,7 @@ function AwardCardV1({ onOpen, spring }: CardProps) {
         transition={spring}
       >
         <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-        <div className="text-foreground/60 font-mono text-[0.6875rem]">
-          {sampleAward.id}
-        </div>
+        <div className="text-foreground/60 font-mono text-[0.6875rem]">{sampleAward.id}</div>
       </motion.div>
 
       <div className="relative flex h-1/2 flex-col overflow-hidden p-3 md:p-4">
@@ -512,19 +491,11 @@ function AwardCardV2({ onOpen, spring }: CardProps) {
 }
 
 /** Canvas plate only: grid-pattern stage with optional type + FIG labels */
-function Plate({
-  type,
-  fig,
-  children,
-}: {
-  type?: string;
-  fig?: string;
-  children: ReactNode;
-}) {
+function Plate({ type, fig, children }: { type?: string; fig?: string; children: ReactNode }) {
   return (
     <div className="group bg-muted relative flex h-28 items-center justify-center overflow-hidden sm:h-32">
       <DashedBorders />
-      <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-30 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)]" />
+      <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
       {children}
       {type && (
         <span className="text-accent absolute bottom-2 left-3 z-10 font-mono text-[0.6875rem] tracking-wide">
@@ -542,16 +513,13 @@ function Plate({
 
 export default function GridIterations() {
   const [active, setActive] = useState<DemoId | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const modalRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const spring: Transition = prefersReducedMotion
-    ? { duration: 0 }
-    : SPRING_CONFIG.noBounce;
+  const spring: Transition = prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce;
 
   const isAward = active === "av1" || active === "av2";
 
-  useEffect(() => setMounted(true), []);
   useScrollbarCompensation(!!active);
   useFocusTrap(modalRef, !!active);
 
@@ -661,11 +629,7 @@ export default function GridIterations() {
                             </p>
                             <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[0.625rem] tracking-wide">
                               {(sampleAward.stats || []).map((stat) => (
-                                <Chip
-                                  key={stat.key}
-                                  k={stat.key}
-                                  v={stat.value}
-                                />
+                                <Chip key={stat.key} k={stat.key} v={stat.value} />
                               ))}
                             </div>
                           </>
@@ -678,17 +642,10 @@ export default function GridIterations() {
                             </div>
                             <div className="border-accent/20 my-4 border-t border-dashed" />
                             <ul className="text-foreground/80 space-y-1 text-sm leading-relaxed">
-                              {(
-                                sampleProject.longDescription || [
-                                  sampleProject.description,
-                                ]
-                              )
+                              {(sampleProject.longDescription || [sampleProject.description])
                                 .filter((point) => point.trim().length > 0)
                                 .map((point, i) => (
-                                  <li
-                                    key={i}
-                                    className="flex items-start gap-3"
-                                  >
+                                  <li key={i} className="flex items-start gap-3">
                                     <div className="bg-foreground/50 mt-2 h-1 w-1 shrink-0" />
                                     <span className="font-serif text-sm leading-relaxed [text-wrap:pretty]">
                                       {point}
@@ -732,9 +689,7 @@ export default function GridIterations() {
         <div className="border-accent/20 border-t border-dashed" />
 
         <div>
-          <p className="text-foreground/50 mb-3 font-mono text-xs">
-            Plate only
-          </p>
+          <p className="text-foreground/50 mb-3 font-mono text-xs">Plate only</p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <Labeled caption="plain">
               <Plate>

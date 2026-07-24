@@ -1,14 +1,8 @@
-import {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  type ReactNode,
-  type SVGProps,
-} from "react";
+import { useEffect, useState, useRef, useCallback, type SVGProps } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { projects } from "@/lib/data/projects";
+import { useMounted } from "@/lib/hooks/useMounted";
 import Badge from "@/components/ui/Badge";
 import ProjectLogo from "@/components/sections/ProjectLogo";
 import { ICON_CONFIG } from "@/lib/config/design";
@@ -16,12 +10,7 @@ import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
-import {
-  useAudioUnlock,
-  playBrush,
-  playClickLow,
-  playClickSharp,
-} from "@/lib/hooks/useClickSound";
+import { useAudioUnlock, playBrush, playClickLow, playClickSharp } from "@/lib/hooks/useClickSound";
 import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
@@ -52,12 +41,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
   strokeWidth: number;
 };
 
-function ArrowUpRightIcon({
-  size,
-  strokeWidth,
-  className,
-  ...props
-}: IconProps) {
+function ArrowUpRightIcon({ size, strokeWidth, className, ...props }: IconProps) {
   return (
     <svg
       width={size}
@@ -234,13 +218,11 @@ function ModalCornerBrackets() {
 }
 
 export default function ProjectGrid() {
-  const [activeProject, setActiveProject] = useState<
-    (typeof projects)[0] | null
-  >(null);
+  const [activeProject, setActiveProject] = useState<(typeof projects)[0] | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(getResolvedTheme);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const prefersReducedMotion = useReducedMotion();
   useAudioUnlock();
   const brush = useCallback(() => {
@@ -255,11 +237,7 @@ export default function ProjectGrid() {
     if (prefersReducedMotion) return;
     playClickSharp();
   }, [prefersReducedMotion]);
-  const activeProjectUrl = activeProject
-    ? getPrimaryProjectUrl(activeProject)
-    : undefined;
-
-  useEffect(() => setMounted(true), []);
+  const activeProjectUrl = activeProject ? getPrimaryProjectUrl(activeProject) : undefined;
 
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
@@ -351,18 +329,14 @@ export default function ProjectGrid() {
   // Handle click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         handleClose();
       }
     }
 
     if (activeProject) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [activeProject, handleClose]);
 
@@ -378,11 +352,7 @@ export default function ProjectGrid() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0 }
-                      : SPRING_CONFIG.noBounce
-                  }
+                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                   className="fixed inset-0 z-40 bg-black/30"
                 />
               )}
@@ -396,11 +366,7 @@ export default function ProjectGrid() {
                     className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
                     style={{ borderRadius: 0 }}
                     ref={modalRef}
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0 }
-                        : SPRING_CONFIG.noBounce
-                    }
+                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="modal-title"
@@ -425,11 +391,7 @@ export default function ProjectGrid() {
                     <motion.div
                       layoutId={`image-${activeProject.id}`}
                       className="bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
-                      transition={
-                        prefersReducedMotion
-                          ? { duration: 0 }
-                          : SPRING_CONFIG.noBounce
-                      }
+                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
                       <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                       {activeProject.imageUrl ? (
@@ -450,11 +412,7 @@ export default function ProjectGrid() {
                     <motion.div
                       layoutId={`content-${activeProject.id}`}
                       className="scrollbar-hide relative flex flex-col overflow-y-auto px-8 py-6"
-                      transition={
-                        prefersReducedMotion
-                          ? { duration: 0 }
-                          : SPRING_CONFIG.noBounce
-                      }
+                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
                       {/* Header — same order as card: type then title */}
                       <div className="mb-4">
@@ -462,27 +420,19 @@ export default function ProjectGrid() {
                           layoutId={`type-${activeProject.id}`}
                           className="mb-1 flex items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
                           transition={
-                            prefersReducedMotion
-                              ? { duration: 0 }
-                              : SPRING_CONFIG.noBounce
+                            prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
                           }
                         >
-                          <span className="text-accent">
-                            {activeProject.type}
-                          </span>
+                          <span className="text-accent">{activeProject.type}</span>
                           <span className="text-foreground/60">·</span>
-                          <span className="text-tertiary">
-                            {activeProject.year}
-                          </span>
+                          <span className="text-tertiary">{activeProject.year}</span>
                         </motion.div>
                         <motion.h3
                           id="modal-title"
                           layoutId={`title-${activeProject.id}`}
                           className="text-foreground font-serif text-xl"
                           transition={
-                            prefersReducedMotion
-                              ? { duration: 0 }
-                              : SPRING_CONFIG.noBounce
+                            prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
                           }
                         >
                           {activeProjectUrl ? (
@@ -509,60 +459,58 @@ export default function ProjectGrid() {
                           )}
                         </motion.h3>
 
-                        {activeProject.projectLinks &&
-                          activeProject.projectLinks.length > 0 && (
-                            <motion.div
-                              layout
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{
-                                opacity: 0,
-                                transition: { duration: 0.05 },
-                              }}
-                              className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
-                            >
-                              {activeProject.projectLinks.map((link) => (
-                                <a
-                                  key={link.url}
-                                  href={link.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onMouseEnter={brush}
-                                  onClick={clickLow}
-                                  className="text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
-                                  style={t}
-                                >
-                                  <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
-                                    {link.label}
-                                  </span>
-                                  <ArrowUpRightIcon
-                                    size={ICON_CONFIG.sizes.sm}
-                                    strokeWidth={ICON_CONFIG.strokeWidth}
-                                    className="shrink-0"
-                                  />
-                                </a>
-                              ))}
-                            </motion.div>
-                          )}
+                        {activeProject.projectLinks && activeProject.projectLinks.length > 0 && (
+                          <motion.div
+                            layout
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{
+                              opacity: 0,
+                              transition: { duration: 0.05 },
+                            }}
+                            className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
+                          >
+                            {activeProject.projectLinks.map((link) => (
+                              <a
+                                key={link.url}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onMouseEnter={brush}
+                                onClick={clickLow}
+                                className="text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
+                                style={t}
+                              >
+                                <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
+                                  {link.label}
+                                </span>
+                                <ArrowUpRightIcon
+                                  size={ICON_CONFIG.sizes.sm}
+                                  strokeWidth={ICON_CONFIG.strokeWidth}
+                                  className="shrink-0"
+                                />
+                              </a>
+                            ))}
+                          </motion.div>
+                        )}
 
                         {/* Technologies */}
-                        {activeProject.technologies &&
-                          activeProject.technologies.length > 0 && (
-                            <motion.div
-                              layout
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{
-                                opacity: 0,
-                                transition: { duration: 0.05 },
-                              }}
-                              className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
-                            >
-                              {activeProject.technologies.map((tech) => (
-                                <Badge key={tech}>{tech}</Badge>
-                              ))}
-                            </motion.div>
-                          )}
+                        {activeProject.technologies && activeProject.technologies.length > 0 && (
+                          <motion.div
+                            layout
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{
+                              opacity: 0,
+                              transition: { duration: 0.05 },
+                            }}
+                            className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
+                          >
+                            {activeProject.technologies.map((tech) => (
+                              <Badge key={tech}>{tech}</Badge>
+                            ))}
+                          </motion.div>
+                        )}
                       </div>
 
                       {/* Dashed separator */}
@@ -576,11 +524,7 @@ export default function ProjectGrid() {
                         exit={{ opacity: 0, transition: { duration: 0.05 } }}
                         className={`text-foreground/80 mb-4 text-sm leading-relaxed ${STACK_SPACING.tight}`}
                       >
-                        {(
-                          activeProject.longDescription || [
-                            activeProject.description,
-                          ]
-                        )
+                        {(activeProject.longDescription || [activeProject.description])
                           .filter((point) => point.trim().length > 0)
                           .map((point, i) => (
                             <li key={i} className="flex items-start gap-3">
@@ -604,9 +548,7 @@ export default function ProjectGrid() {
       <div className={STACK_SPACING.normal}>
         <h2 className="text-foreground font-serif text-2xl">Projects</h2>
 
-        <div
-          className={`grid w-full grid-cols-2 ${GAP_SPACING.sm} md:grid-cols-3`}
-        >
+        <div className={`grid w-full grid-cols-2 ${GAP_SPACING.sm} md:grid-cols-3`}>
           {projects.map((project) => {
             const primaryUrl = getPrimaryProjectUrl(project);
 
@@ -618,11 +560,7 @@ export default function ProjectGrid() {
                 onClick={() => handleProjectClick(project)}
                 className="group bg-card focus-visible:ring-accent focus-visible:ring-offset-background relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                 style={{ borderRadius: 0 }}
-                transition={
-                  prefersReducedMotion
-                    ? { duration: 0 }
-                    : SPRING_CONFIG.noBounce
-                }
+                transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
               >
                 <span className="sr-only">View details for</span>
                 <DashedBorders />
@@ -657,11 +595,7 @@ export default function ProjectGrid() {
                 <motion.div
                   layoutId={`image-${project.id}`}
                   className="bg-muted border-accent/30 absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed"
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0 }
-                      : SPRING_CONFIG.noBounce
-                  }
+                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                 >
                   <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                   {project.imageUrl ? (
@@ -682,31 +616,19 @@ export default function ProjectGrid() {
                 <motion.div
                   layoutId={`content-${project.id}`}
                   className="absolute inset-x-0 bottom-0 flex h-1/2 flex-col p-3 md:p-5"
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0 }
-                      : SPRING_CONFIG.noBounce
-                  }
+                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                 >
                   <motion.p
                     layoutId={`type-${project.id}`}
                     className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0 }
-                        : SPRING_CONFIG.noBounce
-                    }
+                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                   >
                     {project.type}
                   </motion.p>
                   <motion.h3
                     layoutId={`title-${project.id}`}
                     className="text-foreground line-clamp-2 pr-6 font-serif text-sm leading-tight md:text-base"
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0 }
-                        : SPRING_CONFIG.noBounce
-                    }
+                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                   >
                     {project.title}
                   </motion.h3>
