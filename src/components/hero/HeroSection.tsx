@@ -158,7 +158,8 @@ function HeroSocialLink({ href, label, icon }: { href: string; label: string; ic
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="h-[1.25em] w-[1.25em]"
+        width={ICON_CONFIG.sizes.md}
+        height={ICON_CONFIG.sizes.md}
         aria-hidden
       >
         <path d={SOCIAL_ICONS[icon]} />
@@ -179,7 +180,10 @@ function HeroEmailButton({ email }: { email: string }) {
       className="text-foreground/80 hover:text-tertiary focus-visible:ring-accent focus-visible:ring-offset-background inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={CSS_TRANSITIONS.border}
     >
-      <span className="relative inline-flex h-[1.25em] w-[1.25em]">
+      <span
+        className="relative inline-flex"
+        style={{ width: ICON_CONFIG.sizes.md, height: ICON_CONFIG.sizes.md }}
+      >
         <span
           data-email-icon="mail"
           className="absolute inset-0 inline-flex items-center justify-center will-change-[transform,opacity,filter]"
