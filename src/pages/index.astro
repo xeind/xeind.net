@@ -8,6 +8,7 @@ import CalloutBand from "@/components/ui/CalloutBand";
 import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import { SITE, absoluteUrl } from "@/lib/config/site";
+import { PROJECT_LOGO_URLS } from "@/lib/data/project-logo-urls";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -82,33 +83,36 @@ const structuredData = {
     </Panel>
     <SectionDivider variant="grid" />
 
-    {/* Last section on purpose: the grid is the page's only React island
+    {
+      /* Last section on purpose: the grid is the page's only React island
         (~100KB with the runtime), so it sits below Experience where its
         client:visible fetch happens while the reader scrolls — out of the
         initial load's critical window. rootMargin pre-fetches ~a third of
         a viewport early so it's hydrated on arrival; it must stay smaller
         than the grid's ~600px gap below the mobile fold or the fetch
-        fires at load and defeats the deferral. */}
+        fires at load and defeats the deferral. */
+    }
     <Panel>
       <ProjectGrid client:visible={{ rootMargin: "300px" }} />
     </Panel>
   </div>
 
-  <script is:inline>
+  <script is:inline define:vars={{ logoUrls: PROJECT_LOGO_URLS }}>
     (() => {
-      const files = ["fmeet-seo", "smeet-seo", "nightingale"];
       const themes = ["light", "dark", "nightingale"];
       const themeAttribute = document.documentElement.getAttribute("data-theme");
       const activeTheme = themes.includes(themeAttribute) ? themeAttribute : "light";
 
       document.querySelectorAll("[data-project-logo]").forEach((logo) => {
         const file = logo.getAttribute("data-project-logo");
-        if (file) logo.setAttribute("src", `/projects/${file}-${activeTheme}.svg`);
+        if (file && logoUrls[file]) logo.setAttribute("src", logoUrls[file][activeTheme]);
       });
 
+      /* Preload the other themes' variants only on theme-switch intent
+         (hover/focus on the cycle button) — not on every page load. */
       const preloadAlternateLogos = () => {
         window.__projectLogoPreload ??= Promise.all(
-          files.flatMap((file) =>
+          Object.values(logoUrls).flatMap((byTheme) =>
             themes
               .filter((theme) => theme !== activeTheme)
               .map(
@@ -117,20 +121,20 @@ const structuredData = {
                     const image = new Image();
                     image.onload = resolve;
                     image.onerror = resolve;
-                    image.src = `/projects/${file}-${theme}.svg`;
+                    image.src = byTheme[theme];
                   }),
               ),
           ),
         ).then(() => undefined);
       };
 
-      if (document.readyState === "complete") {
-        preloadAlternateLogos();
-      } else {
-        window.addEventListener("load", () => window.setTimeout(preloadAlternateLogos, 0), {
-          once: true,
-        });
-      }
+      const onIntent = (event) => {
+        if (event.target instanceof Element && event.target.closest("[data-theme-cycle]")) {
+          preloadAlternateLogos();
+        }
+      };
+      document.addEventListener("pointerover", onIntent, { passive: true });
+      document.addEventListener("focusin", onIntent);
     })();
   </script>
 </Layout>

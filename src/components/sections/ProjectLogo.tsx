@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
+import { PROJECT_LOGO_URLS } from "@/lib/data/project-logo-urls";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
@@ -32,39 +33,23 @@ function getExternalLogo(projectId: string) {
 
 function getExternalLogoSrc(projectId: string, theme: ResolvedTheme) {
   const logo = getExternalLogo(projectId);
-  return logo ? `/projects/${logo.file}-${theme}.svg` : undefined;
+  return logo ? PROJECT_LOGO_URLS[logo.file][theme] : undefined;
 }
 
 function preloadAlternateLogos(activeTheme: ResolvedTheme) {
-  window.__projectLogoPreload ??= new Promise<void>((resolve) => {
-    const preload = () => {
-      const sources = Object.values(EXTERNAL_LOGOS).flatMap(({ file }) =>
-        THEMES.filter((theme) => theme !== activeTheme).map(
-          (theme) => `/projects/${file}-${theme}.svg`,
-        ),
-      );
-
-      void Promise.all(
-        sources.map(
-          (src) =>
-            new Promise<void>((imageLoaded) => {
-              const image = new Image();
-              image.onload = () => imageLoaded();
-              image.onerror = () => imageLoaded();
-              image.src = src;
-            }),
-        ),
-      ).then(() => resolve());
-    };
-
-    if (document.readyState === "complete") {
-      preload();
-    } else {
-      window.addEventListener("load", () => window.setTimeout(preload, 0), {
-        once: true,
-      });
-    }
-  });
+  window.__projectLogoPreload ??= Promise.all(
+    Object.values(EXTERNAL_LOGOS).flatMap(({ file }) =>
+      THEMES.filter((theme) => theme !== activeTheme).map(
+        (theme) =>
+          new Promise<void>((imageLoaded) => {
+            const image = new Image();
+            image.onload = () => imageLoaded();
+            image.onerror = () => imageLoaded();
+            image.src = PROJECT_LOGO_URLS[file][theme];
+          }),
+      ),
+    ),
+  ).then(() => undefined);
 
   return window.__projectLogoPreload;
 }
@@ -259,8 +244,23 @@ export default function ProjectLogo({ projectId, theme, className, alt }: Projec
   const externalLogo = getExternalLogo(projectId);
   const externalLogoSrc = getExternalLogoSrc(projectId, theme);
 
+  // Preload the other themes' variants only when the visitor shows intent
+  // to switch (hover/focus on the theme cycle button) — most sessions never
+  // touch it, so eager preloading wasted six downloads per visit.
   useEffect(() => {
-    if (externalLogoSrc) void preloadAlternateLogos(theme);
+    if (!externalLogoSrc) return;
+
+    const onIntent = (event: Event) => {
+      if (event.target instanceof Element && event.target.closest("[data-theme-cycle]")) {
+        void preloadAlternateLogos(theme);
+      }
+    };
+    document.addEventListener("pointerover", onIntent, { passive: true });
+    document.addEventListener("focusin", onIntent);
+    return () => {
+      document.removeEventListener("pointerover", onIntent);
+      document.removeEventListener("focusin", onIntent);
+    };
   }, [externalLogoSrc, theme]);
 
   if (projectId === "atax") {
