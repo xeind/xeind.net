@@ -100,17 +100,31 @@ const structuredData = {
   <script is:inline define:vars={{ logoUrls: PROJECT_LOGO_URLS }}>
     (() => {
       const themes = ["light", "dark", "nightingale"];
-      const themeAttribute = document.documentElement.getAttribute("data-theme");
-      const activeTheme = themes.includes(themeAttribute) ? themeAttribute : "light";
 
-      document.querySelectorAll("[data-project-logo]").forEach((logo) => {
-        const file = logo.getAttribute("data-project-logo");
-        if (file && logoUrls[file]) logo.setAttribute("src", logoUrls[file][activeTheme]);
-      });
+      const getActiveTheme = () => {
+        const themeAttribute = document.documentElement.getAttribute("data-theme");
+        return themes.includes(themeAttribute) ? themeAttribute : "light";
+      };
+
+      const applyActiveLogoSources = () => {
+        const activeTheme = getActiveTheme();
+        document.querySelectorAll("[data-project-logo]").forEach((logo) => {
+          const file = logo.getAttribute("data-project-logo");
+          if (file && logoUrls[file]) logo.setAttribute("src", logoUrls[file][activeTheme]);
+        });
+      };
+
+      applyActiveLogoSources();
+      /* ClientRouter swaps in the prebuilt HTML (dark srcs baked by SSR) but
+         de-dupes inline scripts, so this script won't re-run when navigating
+         back here from the blog. The document persists across swaps, so this
+         listener does the re-correction instead. */
+      document.addEventListener("astro:after-swap", applyActiveLogoSources);
 
       /* Preload the other themes' variants only on theme-switch intent
          (hover/focus on the cycle button) — not on every page load. */
       const preloadAlternateLogos = () => {
+        const activeTheme = getActiveTheme();
         window.__projectLogoPreload ??= Promise.all(
           Object.values(logoUrls).flatMap((byTheme) =>
             themes
