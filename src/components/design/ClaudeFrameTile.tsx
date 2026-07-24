@@ -18,7 +18,7 @@ function OutlinedFrame({ frame, visible }: { frame: ClaudeFramePaths; visible: b
         <path
           key={i}
           d={d}
-          strokeWidth={1}
+          strokeWidth={0.4}
           vectorEffect="non-scaling-stroke"
           strokeLinejoin="round"
         />

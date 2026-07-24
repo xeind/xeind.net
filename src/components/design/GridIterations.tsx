@@ -235,13 +235,13 @@ function StyledMark({ svg, className }: { svg: string; className?: string }) {
 const MARK_VARIANTS = [
   {
     id: "outline",
-    note: "card fill · 1px accent stroke",
-    cls: "[&_*]:fill-card [&_*]:stroke-accent/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
+    note: "card fill · 0.4px accent stroke",
+    cls: "[&_*]:fill-card [&_*]:stroke-accent/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:0.4px] [&_*]:[vector-effect:non-scaling-stroke]",
   },
   {
     id: "line",
     note: "no fill · accent stroke",
-    cls: "[&_*]:fill-transparent [&_*]:stroke-accent/80 [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
+    cls: "[&_*]:fill-transparent [&_*]:stroke-accent/80 [&_*]:[stroke-width:0.4px] [&_*]:[vector-effect:non-scaling-stroke]",
   },
   {
     id: "solid",
@@ -251,7 +251,7 @@ const MARK_VARIANTS = [
   {
     id: "duotone",
     note: "muted fill · tertiary stroke",
-    cls: "[&_*]:fill-muted [&_*]:stroke-tertiary/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
+    cls: "[&_*]:fill-muted [&_*]:stroke-tertiary/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:0.4px] [&_*]:[vector-effect:non-scaling-stroke]",
   },
   {
     id: "original",
