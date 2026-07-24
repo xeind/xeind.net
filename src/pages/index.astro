@@ -137,4 +137,41 @@ const structuredData = {
       document.addEventListener("focusin", onIntent);
     })();
   </script>
+
+  <script>
+    import { animate } from "motion";
+
+    const EASE: [number, number, number, number] = [0.2, 0, 0, 1];
+    const revertTimers = new WeakMap<Element, ReturnType<typeof setTimeout>>();
+
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const btn = event.target.closest("[data-copy-email]");
+      if (!btn) return;
+
+      const email = btn.getAttribute("data-copy-email");
+      const mail = btn.querySelector('[data-email-icon="mail"]');
+      const check = btn.querySelector('[data-email-icon="check"]');
+      if (!email || !mail || !check) return;
+
+      navigator.clipboard.writeText(email).then(() => {
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const options = { duration: reduceMotion ? 0 : 0.18, ease: EASE };
+
+        clearTimeout(revertTimers.get(btn));
+        animate(mail, { scale: 0.25, opacity: 0, filter: "blur(4px)" }, options);
+        animate(check, { scale: 1, opacity: 1, filter: "blur(0px)" }, options);
+        btn.setAttribute("aria-label", "Copied");
+
+        revertTimers.set(
+          btn,
+          setTimeout(() => {
+            animate(mail, { scale: 1, opacity: 1, filter: "blur(0px)" }, options);
+            animate(check, { scale: 0.25, opacity: 0, filter: "blur(4px)" }, options);
+            btn.setAttribute("aria-label", "Copy email address");
+          }, 2000),
+        );
+      });
+    });
+  </script>
 </Layout>
