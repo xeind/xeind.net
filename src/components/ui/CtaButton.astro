@@ -7,7 +7,8 @@ interface Props {
 
 const { href, label, shortcut } = Astro.props;
 const t = "transition-duration:0.2s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
-const tFast = "transition-duration:0.15s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
+const tFast =
+  "transition-duration:0.15s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
 ---
 
 <a
@@ -37,47 +38,27 @@ const tFast = "transition-duration:0.15s;transition-timing-function:cubic-bezier
   </div>
   {/* Corner brackets */}
   <div class="absolute top-0 left-0 z-10">
-    <div
-      class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
-      style={t}
-    >
-    </div><div
+    <div class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all" style={t}></div><div
       class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
       style={t}
     >
     </div>
   </div>
   <div class="absolute top-0 right-0 z-10">
-    <div
-      class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
-      style={t}
-    >
-    </div><div
-      class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
-      style={t}
-    >
+    <div class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all" style={t}>
+    </div><div class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all" style={t}>
     </div>
   </div>
   <div class="absolute bottom-0 left-0 z-10">
-    <div
-      class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
-      style={t}
-    >
-    </div><div
+    <div class="bg-accent group-hover:bg-tertiary h-2 w-px transition-all" style={t}></div><div
       class="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
       style={t}
     >
     </div>
   </div>
   <div class="absolute right-0 bottom-0 z-10">
-    <div
-      class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
-      style={t}
-    >
-    </div><div
-      class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
-      style={t}
-    >
+    <div class="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all" style={t}>
+    </div><div class="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all" style={t}>
     </div>
   </div>
   {/* Gradient overlays */}

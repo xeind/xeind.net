@@ -22,7 +22,7 @@ I kept shipping code with loose ends. An exported function nobody imported. A ty
 
 None of it broke the build. All of it added up.
 
-There are tools that find this stuff, but they live in a terminal, in a separate window, a context switch away from where I actually work. I wanted the answers *in the editor*, in a split, next to the code they were about.
+There are tools that find this stuff, but they live in a terminal, in a separate window, a context switch away from where I actually work. I wanted the answers _in the editor_, in a split, next to the code they were about.
 
 So I built **vallow.nvim**.<Cite n={1} />
 
@@ -30,7 +30,7 @@ It brings static analysis straight into Neovim<Cite n={2} />: unused exports, de
 
 ![vallow.nvim analyzing this very site: unused files, duplicate groups, and complexity hotspots in a native split](./vallow-nvim.webp)
 
-That screenshot is vallow running on the codebase for *this site*. It's flagging the exact loose ends I'd let pile up: three helper scripts nothing imports, a component I'd built and never wired in, and a data file where 80% of the exports were dead.
+That screenshot is vallow running on the codebase for _this site_. It's flagging the exact loose ends I'd let pile up: three helper scripts nothing imports, a component I'd built and never wired in, and a data file where 80% of the exports were dead.
 
 The constraint I'm proudest of is the "no config" part. Every tool in this space eventually grows a settings file that becomes its own small project to maintain. I wanted the opposite: a thing you install and forget.
 
@@ -58,7 +58,7 @@ Here's the part that makes me grin.
 
 fallow, the engine behind vallow, has been running on this site the whole time. It's how I found a sound-effect module I'd duplicated across two files, a dependency my icon script relied on by accident, and a 190-line button I'd copy-pasted instead of turning into a component.
 
-The tool I built to keep my code honest keeps *this* code honest too. Build a thing, use the thing, let the thing improve the next thing. That loop is the whole reason any of this is worth doing.
+The tool I built to keep my code honest keeps _this_ code honest too. Build a thing, use the thing, let the thing improve the next thing. That loop is the whole reason any of this is worth doing.
 
 ---
 

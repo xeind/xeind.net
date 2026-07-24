@@ -16,11 +16,11 @@ function DimensionLine({ label }: { label: string }) {
       {/* Dimension line */}
       <div className="bg-accent/25 absolute inset-x-0 top-1/2 h-px" />
       {/* End caps (extension lines) */}
-      <div className="bg-current absolute top-1/2 left-0 h-3 w-px -translate-y-1/2" />
-      <div className="bg-current absolute top-1/2 right-0 h-3 w-px -translate-y-1/2" />
+      <div className="absolute top-1/2 left-0 h-3 w-px -translate-y-1/2 bg-current" />
+      <div className="absolute top-1/2 right-0 h-3 w-px -translate-y-1/2 bg-current" />
       {/* 45deg ticks centered on each cap/line intersection */}
-      <div className="bg-current absolute top-1/2 left-0 h-px w-2 -translate-x-1/2 -translate-y-1/2 rotate-45" />
-      <div className="bg-current absolute top-1/2 right-0 h-px w-2 translate-x-1/2 -translate-y-1/2 rotate-45" />
+      <div className="absolute top-1/2 left-0 h-px w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-current" />
+      <div className="absolute top-1/2 right-0 h-px w-2 translate-x-1/2 -translate-y-1/2 rotate-45 bg-current" />
       {/* Label sits on the line, masking it */}
       <span className="bg-card text-foreground/50 relative z-10 px-2 font-mono text-[0.625rem] tracking-wide">
         {label}
@@ -109,10 +109,7 @@ function GridReferences() {
 /** Scale bar: alternating filled segments over a 4px base unit */
 function ScaleBar() {
   return (
-    <div
-      className="flex items-center gap-3 font-mono text-[0.625rem]"
-      aria-hidden="true"
-    >
+    <div className="flex items-center gap-3 font-mono text-[0.625rem]" aria-hidden="true">
       <div className="border-accent/40 flex h-1.5 border">
         <div className="bg-accent/40 w-4" />
         <div className="w-4" />
@@ -129,8 +126,8 @@ function CenterMarkDivider() {
   return (
     <div className="text-accent/50 relative h-3 w-full" aria-hidden="true">
       <div className="bg-accent/20 absolute top-1/2 right-0 left-0 h-px" />
-      <div className="bg-current absolute top-0 bottom-0 left-0 w-px" />
-      <div className="bg-current absolute top-0 right-0 bottom-0 w-px" />
+      <div className="absolute top-0 bottom-0 left-0 w-px bg-current" />
+      <div className="absolute top-0 right-0 bottom-0 w-px bg-current" />
       <svg
         width="9"
         height="9"
@@ -138,12 +135,7 @@ function CenterMarkDivider() {
         xmlns="http://www.w3.org/2000/svg"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       >
-        <path
-          d="M4.5 0v9M0 4.5h9"
-          stroke="currentColor"
-          strokeWidth="0.75"
-          fill="none"
-        />
+        <path d="M4.5 0v9M0 4.5h9" stroke="currentColor" strokeWidth="0.75" fill="none" />
       </svg>
     </div>
   );

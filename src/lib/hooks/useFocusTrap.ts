@@ -4,10 +4,7 @@ import { useEffect, type RefObject } from "react";
  * Hook to trap focus within a container element (e.g., modal)
  * Ensures keyboard navigation stays within the trap when active
  */
-export function useFocusTrap(
-  containerRef: RefObject<HTMLElement | null>,
-  isActive: boolean,
-) {
+export function useFocusTrap(containerRef: RefObject<HTMLElement | null>, isActive: boolean) {
   useEffect(() => {
     if (!isActive || !containerRef.current) return;
 
@@ -16,9 +13,7 @@ export function useFocusTrap(
       'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
     const getFocusableElements = () => {
-      return Array.from(
-        container.querySelectorAll<HTMLElement>(focusableSelector),
-      );
+      return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector));
     };
 
     // Focus first element when trap activates

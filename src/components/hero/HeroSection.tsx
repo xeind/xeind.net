@@ -117,13 +117,8 @@ function HeroActionLink({
         />
       </div>
 
-      <div
-        className={`relative z-10 flex items-center justify-center gap-3 ${GAP_SPACING.xs}`}
-      >
-        <span
-          className="font-serif text-sm transition-all"
-          style={CSS_TRANSITIONS.border}
-        >
+      <div className={`relative z-10 flex items-center justify-center gap-3 ${GAP_SPACING.xs}`}>
+        <span className="font-serif text-sm transition-all" style={CSS_TRANSITIONS.border}>
           {children}
         </span>
         {badge && (
@@ -146,15 +141,7 @@ const SOCIAL_ICONS: Record<string, string> = {
     "M20.447 20.452H16.89V14.87c0-1.332-.027-3.045-1.856-3.045-1.857 0-2.142 1.45-2.142 2.948v5.68H9.336V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.605 0 4.272 2.372 4.272 5.456zM5.337 7.433a2.063 2.063 0 1 1 0-4.127 2.063 2.063 0 0 1 0 4.127M7.119 20.452H3.555V9h3.564zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0Z",
 };
 
-function HeroSocialLink({
-  href,
-  label,
-  icon,
-}: {
-  href: string;
-  label: string;
-  icon: string;
-}) {
+function HeroSocialLink({ href, label, icon }: { href: string; label: string; icon: string }) {
   return (
     <a
       href={href}
@@ -195,16 +182,8 @@ export default function HeroSection() {
               </h1>
 
               <div className="-my-1 flex shrink-0 items-center gap-1">
-                <HeroSocialLink
-                  href={personalInfo.githubUrl}
-                  label="GitHub"
-                  icon="github"
-                />
-                <HeroSocialLink
-                  href={personalInfo.linkedinUrl}
-                  label="LinkedIn"
-                  icon="linkedin"
-                />
+                <HeroSocialLink href={personalInfo.githubUrl} label="GitHub" icon="github" />
+                <HeroSocialLink href={personalInfo.linkedinUrl} label="LinkedIn" icon="linkedin" />
               </div>
             </div>
             <address className="text-foreground/60 flex items-center gap-1 text-sm not-italic">

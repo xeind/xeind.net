@@ -1,9 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import {
-  prepareWithSegments,
-  layoutWithLines,
-  type LayoutLine,
-} from "@chenglou/pretext";
+import { prepareWithSegments, layoutWithLines, type LayoutLine } from "@chenglou/pretext";
 
 interface PretextBlockProps {
   children: string;

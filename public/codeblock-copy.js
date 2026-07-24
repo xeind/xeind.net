@@ -69,9 +69,7 @@
   }
 
   function enhanceBlocks() {
-    var blocks = document.querySelectorAll(
-      "pre.astro-code:not([data-copy-ready])",
-    );
+    var blocks = document.querySelectorAll("pre.astro-code:not([data-copy-ready])");
 
     blocks.forEach(function (pre) {
       /* Bail if detached from DOM (ClientRouter timing) */
@@ -82,9 +80,7 @@
         var firstLine = pre.querySelector(".line:first-child");
         if (firstLine) {
           var text = firstLine.textContent || "";
-          var match = text.match(
-            /^\s*(?:\/\/|#|--|\/\*)\s*(.+?)(?:\s*\*\/)?\s*$/,
-          );
+          var match = text.match(/^\s*(?:\/\/|#|--|\/\*)\s*(.+?)(?:\s*\*\/)?\s*$/);
           if (match) {
             title = match[1];
             firstLine.remove();
@@ -101,8 +97,7 @@
         var header = document.createElement("div");
         header.className =
           "flex h-10 items-center border-b border-dashed border-accent/20 bg-muted/40 px-4 font-mono text-xs tracking-wider";
-        header.innerHTML =
-          '<span class="text-accent/50 shrink-0">' + title + "</span>";
+        header.innerHTML = '<span class="text-accent/50 shrink-0">' + title + "</span>";
         wrapper.appendChild(header);
       }
 
@@ -126,10 +121,7 @@
           var children = [].slice.call(code.childNodes);
           for (var i = 0; i < children.length; i++) {
             var child = children[i];
-            if (
-              child.nodeType === Node.TEXT_NODE &&
-              !child.textContent?.trim()
-            ) {
+            if (child.nodeType === Node.TEXT_NODE && !child.textContent?.trim()) {
               child.remove();
               continue;
             }

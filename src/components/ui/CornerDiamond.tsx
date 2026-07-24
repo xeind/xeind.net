@@ -76,7 +76,5 @@ export default function CornerDiamond({
 
   const pos = positions[position];
 
-  return (
-    <span className={baseClass} style={{ width: size, height: size, ...pos }} />
-  );
+  return <span className={baseClass} style={{ width: size, height: size, ...pos }} />;
 }

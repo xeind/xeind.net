@@ -49,9 +49,6 @@ const targets = [
 ];
 
 for (const [svg, file, size] of targets) {
-  await sharp(Buffer.from(svg), { density: 300 })
-    .resize(size, size)
-    .png()
-    .toFile(file);
+  await sharp(Buffer.from(svg), { density: 300 }).resize(size, size).png().toFile(file);
   console.log(`${file} (${size}x${size})`);
 }

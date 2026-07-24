@@ -100,10 +100,7 @@
     const ih = full.naturalHeight || rect.height;
 
     // How the target displays the image (object-fit: cover, centered).
-    const coverScale = Math.max(
-      targetRect.width / iw,
-      targetRect.height / ih,
-    );
+    const coverScale = Math.max(targetRect.width / iw, targetRect.height / ih);
     // The overlay's own display scale (contain => uniform).
     const s0 = rect.width / iw;
 
@@ -112,10 +109,8 @@
     const vh = (targetRect.height / coverScale) * s0;
 
     const k = coverScale / s0; // uniform scale factor
-    const dx =
-      targetRect.left + targetRect.width / 2 - (rect.left + rect.width / 2);
-    const dy =
-      targetRect.top + targetRect.height / 2 - (rect.top + rect.height / 2);
+    const dx = targetRect.left + targetRect.width / 2 - (rect.left + rect.width / 2);
+    const dy = targetRect.top + targetRect.height / 2 - (rect.top + rect.height / 2);
 
     // Clip insets in the element's local (pre-transform) box.
     const ix = Math.max(0, (rect.width - vw) / 2);
@@ -150,16 +145,10 @@
     // 6+ ones, which are reachable via next/prev). Standalone images are a
     // gallery of one — no controls.
     const grid = button.closest("[data-image-grid]");
-    const items = grid
-      ? Array.from(grid.querySelectorAll(".blog-zoom"))
-      : [button];
+    const items = grid ? Array.from(grid.querySelectorAll(".blog-zoom")) : [button];
     const index = Math.max(0, items.indexOf(button));
 
-    const { backdrop, stage, full, counter } = buildOverlay(
-      src,
-      alt,
-      items.length,
-    );
+    const { backdrop, stage, full, counter } = buildOverlay(src, alt, items.length);
     const prevOverflow = lockScroll();
     state = { backdrop, stage, full, counter, items, index, prevOverflow };
     updateCounter();

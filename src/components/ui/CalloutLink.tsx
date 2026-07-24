@@ -8,12 +8,7 @@ interface CalloutLinkProps {
   external?: boolean;
 }
 
-export default function CalloutLink({
-  href,
-  label,
-  icon,
-  external = false,
-}: CalloutLinkProps) {
+export default function CalloutLink({ href, label, icon, external = false }: CalloutLinkProps) {
   const externalProps = external
     ? {
         target: "_blank",

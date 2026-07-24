@@ -69,9 +69,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
           </div>
         </div>
 
-        <p className="text-foreground/80 text-sm leading-relaxed">
-          {exp.description}
-        </p>
+        <p className="text-foreground/80 text-sm leading-relaxed">{exp.description}</p>
 
         {exp.technologies && exp.technologies.length > 0 && (
           <div className={`mt-4 flex flex-wrap ${GAP_SPACING.xs}`}>

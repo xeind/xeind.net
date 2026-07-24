@@ -16,13 +16,9 @@ import { toolCategories } from "@/lib/data/tools";
       {
         toolCategories.map((category, index) => (
           <div>
-            {index > 0 && (
-              <div class="border-accent/20 my-6 border-t border-dashed" />
-            )}
+            {index > 0 && <div class="border-accent/20 my-6 border-t border-dashed" />}
             <div>
-              <h2 class="text-accent mb-3 font-mono text-xs tracking-wide">
-                {category.label}
-              </h2>
+              <h2 class="text-accent mb-3 font-mono text-xs tracking-wide">{category.label}</h2>
               <ul class="space-y-1">
                 {category.tools.map((tool) => (
                   <li class="text-foreground/80 text-sm leading-relaxed">
@@ -38,10 +34,7 @@ import { toolCategories } from "@/lib/data/tools";
                     ) : (
                       <span class="text-foreground">{tool.name}</span>
                     )}
-                    <span class="text-foreground/50">
-                      {" "}
-                      &mdash; {tool.description}
-                    </span>
+                    <span class="text-foreground/50"> &mdash; {tool.description}</span>
                   </li>
                 ))}
               </ul>

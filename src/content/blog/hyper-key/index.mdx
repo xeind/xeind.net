@@ -85,9 +85,7 @@ Each binding is a `shell_command` that runs `open https://...`. No browser exten
 
 ```jsonc
 {
-  "conditions": [
-    { "name": "hyper_sublayer_b", "type": "variable_if", "value": 1 },
-  ],
+  "conditions": [{ "name": "hyper_sublayer_b", "type": "variable_if", "value": 1 }],
   "from": { "key_code": "g" },
   "to": [{ "shell_command": "open https://github.com" }],
 }
@@ -115,9 +113,7 @@ Same idea, but for applications. Hold `✦ + O`, press a letter, the app opens o
 
 ```jsonc
 {
-  "conditions": [
-    { "name": "hyper_sublayer_o", "type": "variable_if", "value": 1 },
-  ],
+  "conditions": [{ "name": "hyper_sublayer_o", "type": "variable_if", "value": 1 }],
   "from": { "key_code": "t" },
   "to": [{ "shell_command": "open -a 'Ghostty.app'" }],
 }

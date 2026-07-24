@@ -38,9 +38,7 @@ export default function PullQuoteCard({
 
   const authorBlock = (
     <div className="min-w-0">
-      <p className="text-foreground text-[0.8125rem] leading-none font-medium">
-        {author}
-      </p>
+      <p className="text-foreground text-[0.8125rem] leading-none font-medium">{author}</p>
       {role ? (
         <p className="text-foreground/55 mt-1 font-mono text-[0.64rem] tracking-[0.18em] uppercase">
           {role}
@@ -51,7 +49,7 @@ export default function PullQuoteCard({
 
   return (
     <figure
-      className={`group relative my-8 overflow-hidden border border-dashed border-accent/25 bg-card p-5 sm:p-6 ${className}`}
+      className={`group border-accent/25 bg-card relative my-8 overflow-hidden border border-dashed p-5 sm:p-6 ${className}`}
     >
       <div className="absolute top-0 left-0 z-10">
         <div
@@ -96,7 +94,7 @@ export default function PullQuoteCard({
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--color-accent)_16%,transparent)_0%,color-mix(in_srgb,var(--color-accent)_9%,transparent)_38%,transparent_100%)]" />
       <svg
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 size-full text-accent/45 opacity-20 [mask-image:linear-gradient(to_bottom,black,transparent_92%)]"
+        className="text-accent/45 pointer-events-none absolute inset-0 z-0 size-full [mask-image:linear-gradient(to_bottom,black,transparent_92%)] opacity-20"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
@@ -131,7 +129,7 @@ export default function PullQuoteCard({
           <span className="text-accent/35 font-serif text-6xl leading-none">“</span>
         </div>
 
-        <blockquote className="text-foreground/90 font-serif text-base leading-[1.9] tracking-[-0.01em] [hanging-punctuation:first_last] [text-wrap:pretty] [&_mark]:rounded-[2px] [&_mark]:bg-accent/15 [&_mark]:px-0.5 [&_mark]:py-px [&_mark]:text-foreground [&_mark]:not-italic [&_mark]:selection:bg-accent/30">
+        <blockquote className="text-foreground/90 [&_mark]:bg-accent/15 [&_mark]:text-foreground [&_mark]:selection:bg-accent/30 font-serif text-base leading-[1.9] tracking-[-0.01em] [text-wrap:pretty] [hanging-punctuation:first_last] [&_mark]:rounded-[2px] [&_mark]:px-0.5 [&_mark]:py-px [&_mark]:not-italic">
           {children}
         </blockquote>
 
@@ -157,7 +155,7 @@ export default function PullQuoteCard({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent hover:text-tertiary min-w-0 border-b border-dashed border-accent/30 pb-px transition-colors hover:border-solid"
+              className="text-accent hover:text-tertiary border-accent/30 min-w-0 border-b border-dashed pb-px transition-colors hover:border-solid"
             >
               {authorBlock}
             </a>

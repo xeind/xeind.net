@@ -79,14 +79,7 @@ function RulerDivider({ id }: { id: string }) {
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <pattern id={id} width="200" height="20" patternUnits="userSpaceOnUse">
           {RULER_TICKS.map((tick, i) => (
-            <rect
-              key={i}
-              x={tick.x}
-              y={0}
-              width="1"
-              height={tick.h}
-              fill="currentColor"
-            />
+            <rect key={i} x={tick.x} y={0} width="1" height={tick.h} fill="currentColor" />
           ))}
         </pattern>
         <rect width="100%" height="100%" fill={`url(#${id})`} />
@@ -101,15 +94,15 @@ export default function EdgeOrnaments() {
       {/* 1 — Frame rails */}
       <div>
         <p className="text-foreground/50 mb-3 font-mono text-xs">
-          Frame rails — ticks bleed outward from the main column borders (left
-          edge: segmented dash · right edge: solid hairline)
+          Frame rails — ticks bleed outward from the main column borders (left edge: segmented dash
+          · right edge: solid hairline)
         </p>
         <div className="relative mx-auto h-56 w-full max-w-sm">
           {/* Column edges */}
           <div className="text-accent/50 absolute top-0 bottom-0 left-0">
             <SegmentedDash />
           </div>
-          <div className="bg-accent/20 absolute top-0 bottom-0 right-0 w-px" />
+          <div className="bg-accent/20 absolute top-0 right-0 bottom-0 w-px" />
 
           {/* Outward tick rails */}
           <div
@@ -119,16 +112,14 @@ export default function EdgeOrnaments() {
             <TickRail anchor="right" id="edge-rail-left" />
           </div>
           <div
-            className="text-accent/30 absolute top-0 bottom-0 right-0 w-8 translate-x-full"
+            className="text-accent/30 absolute top-0 right-0 bottom-0 w-8 translate-x-full"
             aria-hidden="true"
           >
             <TickRail anchor="left" id="edge-rail-right" />
           </div>
 
           <div className="flex h-full items-center justify-center">
-            <span className="text-foreground/40 font-mono text-[0.6875rem]">
-              main column
-            </span>
+            <span className="text-foreground/40 font-mono text-[0.6875rem]">main column</span>
           </div>
         </div>
       </div>
@@ -159,15 +150,13 @@ export default function EdgeOrnaments() {
             <TickRail anchor="left" id="edge-hero-left" />
           </div>
           <div
-            className="text-accent/30 absolute top-0 bottom-0 right-0 w-8 [mask-image:linear-gradient(to_bottom,black,transparent)]"
+            className="text-accent/30 absolute top-0 right-0 bottom-0 w-8 [mask-image:linear-gradient(to_bottom,black,transparent)]"
             aria-hidden="true"
           >
             <TickRail anchor="right" id="edge-hero-right" />
           </div>
           <div className="flex h-full items-center justify-center">
-            <span className="text-foreground/40 font-mono text-[0.6875rem]">
-              hero panel
-            </span>
+            <span className="text-foreground/40 font-mono text-[0.6875rem]">hero panel</span>
           </div>
         </div>
       </div>
@@ -187,20 +176,12 @@ export default function EdgeOrnaments() {
           </div>
           <div className="flex flex-col gap-8 py-4">
             <div>
-              <p className="text-foreground/70 font-mono text-sm">
-                Timeline entry
-              </p>
-              <p className="text-foreground/40 font-mono text-[0.6875rem]">
-                2026 — Present
-              </p>
+              <p className="text-foreground/70 font-mono text-sm">Timeline entry</p>
+              <p className="text-foreground/40 font-mono text-[0.6875rem]">2026 — Present</p>
             </div>
             <div>
-              <p className="text-foreground/70 font-mono text-sm">
-                Earlier entry
-              </p>
-              <p className="text-foreground/40 font-mono text-[0.6875rem]">
-                2024 — 2026
-              </p>
+              <p className="text-foreground/70 font-mono text-sm">Earlier entry</p>
+              <p className="text-foreground/40 font-mono text-[0.6875rem]">2024 — 2026</p>
             </div>
           </div>
         </div>

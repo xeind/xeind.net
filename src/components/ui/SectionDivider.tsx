@@ -17,9 +17,7 @@ function DividerAccent() {
   );
 }
 
-export default function SectionDivider({
-  variant = "dashed",
-}: SectionDividerProps) {
+export default function SectionDivider({ variant = "dashed" }: SectionDividerProps) {
   if (variant === "grid") {
     return (
       <div
@@ -62,7 +60,10 @@ export default function SectionDivider({
           style={{ bottom: "-1px" }}
           aria-hidden="true"
         />
-        <div className="divider-grid-broken absolute inset-x-0" style={{ top: "1px", bottom: "1px" }} />
+        <div
+          className="divider-grid-broken absolute inset-x-0"
+          style={{ top: "1px", bottom: "1px" }}
+        />
       </div>
     );
   }

@@ -69,11 +69,8 @@ This is ~300 bytes and runs before paint (blocking, deliberately):
 <script is:inline>
   (() => {
     const saved = localStorage.getItem("theme");
-    const theme = ["dark", "light", "nightingale"].includes(saved)
-      ? saved
-      : "dark";
-    if (theme === "light")
-      document.documentElement.removeAttribute("data-theme");
+    const theme = ["dark", "light", "nightingale"].includes(saved) ? saved : "dark";
+    if (theme === "light") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", theme);
   })();
 </script>
@@ -132,19 +129,11 @@ If you're building content-forward site, start with Astro. Add React islands whe
 The source for this site is [on GitHub](https://github.com/xeind/xeind.net/commit/23a8fe2eb1c4baca18e516c110fa2c581ac86d98).
 
 <References>
-  <Ref
-    n={1}
-    href="https://nextjs.org/docs/app/building-your-application/rendering"
-  >
-    Next.js Rendering documentation — App Router hydration and server/client
-    component model
+  <Ref n={1} href="https://nextjs.org/docs/app/building-your-application/rendering">
+    Next.js Rendering documentation — App Router hydration and server/client component model
   </Ref>
-  <Ref
-    n={2}
-    href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu"
-  >
-    Radix UI Dropdown Menu — accessible but ships significant JS for simple
-    menus
+  <Ref n={2} href="https://www.radix-ui.com/primitives/docs/components/dropdown-menu">
+    Radix UI Dropdown Menu — accessible but ships significant JS for simple menus
   </Ref>
   <Ref n={3} href="https://www.patterns.dev/react/react-selective-hydration">
     Selective Hydration in React 18 — patterns.dev

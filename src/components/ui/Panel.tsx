@@ -71,9 +71,7 @@ export default function Panel({
           aria-hidden="true"
         />
       )}
-      {showGrid && (
-        <div className="bg-hero-grid pointer-events-none absolute inset-0 opacity-20" />
-      )}
+      {showGrid && <div className="bg-hero-grid pointer-events-none absolute inset-0 opacity-20" />}
       <div className="relative z-10 mx-auto w-full max-w-7xl">{children}</div>
     </div>
   );

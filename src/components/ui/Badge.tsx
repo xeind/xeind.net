@@ -24,11 +24,7 @@ interface BadgeProps {
  *   <Badge>TypeScript</Badge>
  *   <Badge variant="accent">Featured</Badge>
  */
-export default function Badge({
-  children,
-  variant = "default",
-  className = "",
-}: BadgeProps) {
+export default function Badge({ children, variant = "default", className = "" }: BadgeProps) {
   const variantStyles = {
     default: "border-accent/30 text-foreground/70",
     accent: "border-accent/40 text-accent",

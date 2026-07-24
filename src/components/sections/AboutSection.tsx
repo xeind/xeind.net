@@ -10,12 +10,10 @@ export default function AboutSection() {
   return (
     <div className={STACK_SPACING.normal}>
       <h2 className="text-foreground font-serif text-2xl">About</h2>
-      <div
-        className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}
-      >
+      <div className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}>
         <p>
-          I&apos;m a full-stack engineer specializing in UI craft, motion, and
-          microinteractions. Currently working at{" "}
+          I&apos;m a full-stack engineer specializing in UI craft, motion, and microinteractions.
+          Currently working at{" "}
           <a
             href="https://www.pioneerdev.ai/"
             target="_blank"
@@ -23,10 +21,7 @@ export default function AboutSection() {
             data-hero-sfx="click"
             className={inlineLinkClass}
           >
-            <InlineIcon
-              src={pioneerIcon.src}
-              className="mr-[0.175rem] ml-[0.175rem]"
-            />
+            <InlineIcon src={pioneerIcon.src} className="mr-[0.175rem] ml-[0.175rem]" />
             Pioneer
           </a>
           .
@@ -34,15 +29,11 @@ export default function AboutSection() {
 
         <p>
           I enjoy using{" "}
-          <InlineLink
-            href="https://github.com/xeind/dotfiles"
-            external
-            hintLabel="my dotfiles"
-          >
+          <InlineLink href="https://github.com/xeind/dotfiles" external hintLabel="my dotfiles">
             open‑source tools
           </InlineLink>{" "}
-          and experiment with custom configs and self‑hosted environments to
-          improve my developer workflow.
+          and experiment with custom configs and self‑hosted environments to improve my developer
+          workflow.
         </p>
       </div>
     </div>

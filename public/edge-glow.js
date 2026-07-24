@@ -83,10 +83,7 @@
     // radius so nothing can pop on at partial strength when crossing it.
     // Any shell that owns full-bleed lines (horizontal dividers, and the
     // vertical page frame's top/bottom strips) must never gate on X.
-    const padX =
-      isHorizontal || lines.length > 0
-        ? Number.POSITIVE_INFINITY
-        : GLOW_RADIUS;
+    const padX = isHorizontal || lines.length > 0 ? Number.POSITIVE_INFINITY : GLOW_RADIUS;
     const padY = GLOW_RADIUS;
     const inside =
       pointerX >= rect.left - padX &&
@@ -126,8 +123,7 @@
         );
         washStrength = smoothFalloff(distToBorder, GLOW_RADIUS);
       } else if (isHorizontal) {
-        const distToBand =
-          relY < 0 ? -relY : relY > rect.height ? relY - rect.height : 0;
+        const distToBand = relY < 0 ? -relY : relY > rect.height ? relY - rect.height : 0;
         washStrength = smoothFalloff(distToBand, GLOW_RADIUS);
       } else {
         washStrength = 1;
@@ -144,16 +140,8 @@
       const nodeRect = node.getBoundingClientRect();
       const nodeX = nodeRect.left - rect.left + nodeRect.width / 2;
       const nodeY = nodeRect.top - rect.top + nodeRect.height / 2;
-      const strength = inside
-        ? falloff(Math.hypot(relX - nodeX, relY - nodeY), GLOW_RADIUS)
-        : 0;
-      write(
-        node,
-        cache,
-        `n${i}`,
-        "--edge-node-strength",
-        strength.toFixed(3),
-      );
+      const strength = inside ? falloff(Math.hypot(relX - nodeX, relY - nodeY), GLOW_RADIUS) : 0;
+      write(node, cache, `n${i}`, "--edge-node-strength", strength.toFixed(3));
     }
 
     // Glow lines: strength from vertical distance to each line, using the

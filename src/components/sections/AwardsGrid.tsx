@@ -157,13 +157,9 @@ function StageFigure() {
 export default function AwardsGrid() {
   return (
     <div className={STACK_SPACING.normal}>
-      <h2 className="text-foreground font-serif text-2xl">
-        Awards &amp; Certifications
-      </h2>
+      <h2 className="text-foreground font-serif text-2xl">Awards &amp; Certifications</h2>
 
-      <div
-        className={`grid w-full grid-cols-1 sm:grid-cols-2 ${GAP_SPACING.sm} lg:grid-cols-3`}
-      >
+      <div className={`grid w-full grid-cols-1 sm:grid-cols-2 ${GAP_SPACING.sm} lg:grid-cols-3`}>
         {awards.map((award, index) => {
           const Card = award.url ? "a" : "article";
           const figNumber = String(index + 1).padStart(2, "0");

@@ -6,9 +6,7 @@ interface Props {
 
 const { commit, buildDate } = Astro.props;
 const date = new Date(buildDate);
-const year = Number.isNaN(date.getTime())
-  ? new Date().getFullYear()
-  : date.getFullYear();
+const year = Number.isNaN(date.getTime()) ? new Date().getFullYear() : date.getFullYear();
 const compactDate = Number.isNaN(date.getTime())
   ? "dev"
   : date.toISOString().slice(0, 10).replaceAll("-", "");
@@ -21,9 +19,7 @@ const compactDate = Number.isNaN(date.getTime())
   <div class="bg-accent absolute inset-0"></div>
   <div class="relative mx-auto h-full w-full max-w-5xl">
     <div class="relative z-10 flex h-full items-center p-6 px-6 sm:px-8 md:p-8 md:px-12">
-      <div
-        class="grid w-full grid-cols-[1fr_auto] items-center gap-4 sm:gap-6 md:gap-8"
-      >
+      <div class="grid w-full grid-cols-[1fr_auto] items-center gap-4 sm:gap-6 md:gap-8">
         <div class="flex flex-col gap-1">
           <p class="text-background flex items-center gap-2 font-mono text-xs">
             <span>© {year} XD</span>
@@ -35,9 +31,7 @@ const compactDate = Number.isNaN(date.getTime())
               Design
             </a>
           </p>
-          <p
-            class="text-background flex items-center gap-1.5 font-mono text-xs"
-          >
+          <p class="text-background flex items-center gap-1.5 font-mono text-xs">
             <span>Shipped with</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -73,18 +67,14 @@ const compactDate = Number.isNaN(date.getTime())
             </svg>
             <span>Astro</span>
           </p>
-          <p
-            class="text-background hidden items-center gap-2 font-mono text-xs sm:flex"
-          >
+          <p class="text-background hidden items-center gap-2 font-mono text-xs sm:flex">
             Latin Modern
             <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
             Inter
             <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
             JetBrains Mono
           </p>
-          <p
-            class="text-background flex items-center gap-2 font-mono text-xs opacity-70"
-          >
+          <p class="text-background flex items-center gap-2 font-mono text-xs opacity-70">
             {commit}
             <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
             Last Built: {compactDate}
@@ -123,9 +113,9 @@ const compactDate = Number.isNaN(date.getTime())
     } else {
       document.documentElement.setAttribute("data-theme", theme);
     }
-    document.querySelectorAll<HTMLElement>("[data-theme-label]").forEach(
-      (el) => (el.textContent = labels[theme]),
-    );
+    document
+      .querySelectorAll<HTMLElement>("[data-theme-label]")
+      .forEach((el) => (el.textContent = labels[theme]));
   }
 
   function syncTheme() {

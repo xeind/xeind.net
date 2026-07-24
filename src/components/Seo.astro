@@ -38,11 +38,7 @@ const robots = noindex
 <meta name="description" content={description} />
 <meta name="robots" content={robots} />
 <link rel="canonical" href={canonical} />
-{
-  keywords && keywords.length > 0 && (
-    <meta name="keywords" content={keywords.join(", ")} />
-  )
-}
+{keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
 
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={SITE.name} />
@@ -74,17 +70,11 @@ const robots = noindex
 {type === "article" && <meta property="article:author" content={SITE.name} />}
 {
   type === "article" &&
-    keywords?.map((keyword) => (
-      <meta property="article:tag" content={keyword} />
-    ))
+    keywords?.map((keyword) => <meta property="article:tag" content={keyword} />)
 }
 
 {
   structuredData && (
-    <script
-      is:inline
-      type="application/ld+json"
-      set:html={JSON.stringify(structuredData)}
-    />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   )
 }

@@ -31,14 +31,9 @@
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
     const noise = audio.createBufferSource();
-    const buf = audio.createBuffer(
-      1,
-      audio.sampleRate * 0.012,
-      audio.sampleRate,
-    );
+    const buf = audio.createBuffer(1, audio.sampleRate * 0.012, audio.sampleRate);
     const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++)
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 80);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 80);
     noise.buffer = buf;
     const filter = audio.createBiquadFilter();
     filter.type = "bandpass";
@@ -56,14 +51,9 @@
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
     const noise = audio.createBufferSource();
-    const buf = audio.createBuffer(
-      1,
-      audio.sampleRate * 0.005,
-      audio.sampleRate,
-    );
+    const buf = audio.createBuffer(1, audio.sampleRate * 0.005, audio.sampleRate);
     const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++)
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);
     noise.buffer = buf;
     const filter = audio.createBiquadFilter();
     filter.type = "bandpass";
@@ -104,15 +94,13 @@
 
     const path = document.createElementNS(SVG_NS, "path");
     path.style.fill = "var(--color-card)";
-    path.style.stroke =
-      "color-mix(in srgb, var(--color-accent) 30%, transparent)";
+    path.style.stroke = "color-mix(in srgb, var(--color-accent) 30%, transparent)";
     path.setAttribute("stroke-width", "1");
     path.setAttribute("stroke-dasharray", "3 2");
 
     const text = document.createElementNS(SVG_NS, "text");
     text.setAttribute("text-anchor", "middle");
-    text.style.fill =
-      "color-mix(in srgb, var(--color-foreground) 80%, transparent)";
+    text.style.fill = "color-mix(in srgb, var(--color-foreground) 80%, transparent)";
     text.style.fontFamily = "var(--font-family-sans)";
     text.style.fontSize = "0.875rem";
 
@@ -155,10 +143,7 @@
       ].join(" "),
     );
     parts.text.setAttribute("x", String(center));
-    parts.text.setAttribute(
-      "y",
-      String(1 + HINT_PAD_Y + Math.ceil(textBox.height) * 0.82),
-    );
+    parts.text.setAttribute("y", String(1 + HINT_PAD_Y + Math.ceil(textBox.height) * 0.82));
 
     const rect = target.getBoundingClientRect();
     parts.root.style.left = `${rect.left + rect.width / 2 - svgWidth / 2}px`;
@@ -190,9 +175,7 @@
     "click",
     (event) => {
       const target =
-        event.target instanceof Element
-          ? event.target.closest(heroLinkSelector)
-          : null;
+        event.target instanceof Element ? event.target.closest(heroLinkSelector) : null;
       if (!target) return;
       void (async () => {
         await prime();
@@ -205,10 +188,7 @@
   document.addEventListener(
     "pointerover",
     (event) => {
-      const target =
-        event.target instanceof Element
-          ? event.target.closest(hoverSelector)
-          : null;
+      const target = event.target instanceof Element ? event.target.closest(hoverSelector) : null;
       if (!target || target === lastHoverTarget) return;
       lastHoverTarget = target;
       if (primed) void playFidget();
@@ -220,10 +200,7 @@
   document.addEventListener(
     "pointerout",
     (event) => {
-      const target =
-        event.target instanceof Element
-          ? event.target.closest(hoverSelector)
-          : null;
+      const target = event.target instanceof Element ? event.target.closest(hoverSelector) : null;
       if (target === lastHoverTarget) {
         lastHoverTarget = null;
         hideHint();
@@ -233,18 +210,12 @@
   );
 
   document.addEventListener("focusin", (event) => {
-    const target =
-      event.target instanceof Element
-        ? event.target.closest(hintSelector)
-        : null;
+    const target = event.target instanceof Element ? event.target.closest(hintSelector) : null;
     if (target) showHint(target);
   });
 
   document.addEventListener("focusout", (event) => {
-    const target =
-      event.target instanceof Element
-        ? event.target.closest(hintSelector)
-        : null;
+    const target = event.target instanceof Element ? event.target.closest(hintSelector) : null;
     if (target === hintTarget) hideHint();
   });
 
@@ -258,8 +229,7 @@
   );
 
   window.addEventListener("keydown", (event) => {
-    if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey)
-      return;
+    if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) return;
     if (
       event.target instanceof HTMLInputElement ||
       event.target instanceof HTMLTextAreaElement ||

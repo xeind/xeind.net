@@ -26,9 +26,7 @@ export function mdxToPlainMarkdown(body: string): string {
   out = out.replace(/<\/References>/g, "");
 
   // Images point at build-time-resolved assets; keep just the caption.
-  out = out.replace(/!\[([^\]]*)\]\([^)]*\)/g, (_m, alt) =>
-    alt ? `[Image: ${alt}]` : "",
-  );
+  out = out.replace(/!\[([^\]]*)\]\([^)]*\)/g, (_m, alt) => (alt ? `[Image: ${alt}]` : ""));
 
   // Any remaining JSX component tags (capitalized): drop the tags, keep
   // inner content.

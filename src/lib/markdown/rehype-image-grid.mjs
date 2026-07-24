@@ -17,8 +17,7 @@
  * untouched and keeps the MdxImg figure treatment.
  */
 export default function rehypeImageGrid() {
-  const isWhitespace = (node) =>
-    node.type === "text" && node.value.trim() === "";
+  const isWhitespace = (node) => node.type === "text" && node.value.trim() === "";
 
   // Returns the <img> children of a <p> if images are ALL it contains
   // (ignoring whitespace/newline text nodes and <br>s), else null.
@@ -28,9 +27,7 @@ export default function rehypeImageGrid() {
       (c) => !isWhitespace(c) && !(c.type === "element" && c.tagName === "br"),
     );
     if (meaningful.length === 0) return null;
-    const allImages = meaningful.every(
-      (c) => c.type === "element" && c.tagName === "img",
-    );
+    const allImages = meaningful.every((c) => c.type === "element" && c.tagName === "img");
     return allImages ? meaningful : null;
   };
 

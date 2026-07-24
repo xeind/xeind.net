@@ -9,7 +9,5 @@
     "src/components/sections/AwardsGrid.tsx",
     "src/lib/markdown/rehype-image-grid.mjs"
   ],
-  "ignoreDependencies": [
-    "tailwindcss"
-  ]
+  "ignoreDependencies": ["tailwindcss"]
 }

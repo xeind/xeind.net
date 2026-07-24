@@ -11,10 +11,7 @@ export const GET: APIRoute = async () => {
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
   const postLines = posts
-    .map(
-      (post) =>
-        `- [${post.data.title}](${SITE.url}/blog/${post.id}.md): ${post.data.excerpt}`,
-    )
+    .map((post) => `- [${post.data.title}](${SITE.url}/blog/${post.id}.md): ${post.data.excerpt}`)
     .join("\n");
 
   const text = `# ${SITE.name}

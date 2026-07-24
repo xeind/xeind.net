@@ -6,12 +6,7 @@ tags: ["meta", "astro"]
 draft: true
 ---
 
-import {
-  Cite,
-  PullQuoteCard,
-  Ref,
-  References,
-} from "@/components/blog/MDXComponents";
+import { Cite, PullQuoteCard, Ref, References } from "@/components/blog/MDXComponents";
 
 This is my first blog post. I'm using MDX so I can embed React components directly in my writing.<Cite n={1} />
 
@@ -52,9 +47,8 @@ function formatDate(date: Date): string {
   avatarSrc="https://avatars.githubusercontent.com/u/6402205?v=4"
   href="https://github.com/ethancperez"
 >
-  <mark>I like this format for standout moments inside long posts.</mark> It
-  gives a quote or testimonial more presence than a plain blockquote while still
-  fitting into the writing flow.
+  <mark>I like this format for standout moments inside long posts.</mark> It gives a quote or
+  testimonial more presence than a plain blockquote while still fitting into the writing flow.
 </PullQuoteCard>
 
 ## Image grids

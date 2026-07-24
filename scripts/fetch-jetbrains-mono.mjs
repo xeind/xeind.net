@@ -8,8 +8,7 @@ import { writeFileSync } from "node:fs";
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-const cssUrl =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap";
+const cssUrl = "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap";
 
 const css = await (await fetch(cssUrl, { headers: { "User-Agent": UA } })).text();
 
