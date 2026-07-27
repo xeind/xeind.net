@@ -2,17 +2,33 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const selector = ".edge-glow-shell";
 
-  // One radius, one curve, for every glow effect — the cursor acts as a
-  // single lamp: diamonds, side rails, divider lines, and washes all light
-  // in proportion to their true distance from it, so nearby edges read as
-  // one illuminated system rather than separate effects with separate
-  // trigger distances.
-  const GLOW_RADIUS = 180;
+  // One lamp: the cursor. Every lit thing — diamonds, side rails, divider
+  // strips — reads its own true distance from it, through one radius, one
+  // curve and one peak alpha.
+  //
+  // The split of labour is by geometry, not by effect. A diamond is a point,
+  // so this script scores it. A rail or a strip is unbounded along one axis,
+  // so its gradient is centred on the cursor and the paint scores every pixel
+  // of it. Neither path may own a distance term the other also applies, or
+  // the falloff squares itself.
+  //
+  // Reach, peak and spread live in CSS (--edge-glow-radius, --edge-glow-cap,
+  // --edge-glow-spread) because the gradients need them at paint time; this
+  // script reads them back so there is still only one of each number.
+  //
+  // The lamp is an ellipse, not a circle: an edge is unbounded along one
+  // axis, so that axis is stretched by --edge-glow-spread. The short axis is
+  // always the perpendicular one, which is what makes approach read as
+  // brightening rather than as a hotspot sliding into view.
+  let GLOW_RADIUS = 180;
+  let GLOW_SPREAD = 2;
   // Lines closer together than the lamp radius (a divider's two strips are
-  // ~20px apart) would read identical under the lamp alone — a tight local
-  // emphasis on top makes the line directly under the cursor clearly
-  // brightest without shrinking anyone's reach.
+  // ~20px apart) sit at near-identical distances — a tight local emphasis on
+  // top makes the strip directly under the cursor clearly brightest without
+  // shrinking anyone's reach.
   const LINE_EMPHASIS_RADIUS = 32;
+  // Floor of that emphasis: a faint echo of unity on the far strip.
+  const LINE_AMBIENT = 0.2;
 
   let shells = [];
   let frame = 0;
@@ -23,20 +39,19 @@
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  // Ease-out (sqrt): ramps up quickly on entry so effects react as soon as
-  // the cursor is in range — right for the diamonds, whose capped 1px
-  // outlines would be invisible without an early ramp.
+  // The curve. Smoothstep: zero slope at both ends, so nothing pops on at
+  // the edge of range and nothing flattens out under the cursor.
+  // --edge-glow-stops in global.css samples this same function at
+  // 0/25/50/75/100% (1, .844, .5, .156, 0) — change one, change both.
   const falloff = (distance, radius) => {
     const normalized = clamp(1 - distance / radius, 0, 1);
-    return Math.sqrt(normalized);
+    return normalized * normalized * (3 - 2 * normalized);
   };
 
-  // Smoothstep: near-zero at the edge of range, steepening on approach —
-  // right for the wash, whose large uncapped hotspot reads as "already on"
-  // under an ease-out curve.
-  const smoothFalloff = (distance, radius) => {
-    const normalized = clamp(1 - distance / radius, 0, 1);
-    return normalized * normalized * (3 - 2 * normalized);
+  const readNumber = (property, fallback) => {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue(property);
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) && value > 0 ? value : fallback;
   };
 
   // Skip style writes when the value hasn't changed — idle shells cost one
@@ -69,22 +84,27 @@
         (line) => line.closest(selector) === shell,
       ),
       isHorizontal: shell.classList.contains("edge-glow-shell-horizontal"),
-      isVertical: shell.classList.contains("edge-glow-shell-vertical"),
+      // Only a shell that owns a wash layer needs a hotspot Y or a gate
+      // opacity written — divider shells carry strips and nothing else.
+      hasLayer: Boolean(shell.querySelector(".edge-glow-layer")),
       cache: {},
       idle: false,
     });
   }
 
   function updateEntry(entry) {
-    const { shell, nodes, lines, isHorizontal, isVertical, cache } = entry;
+    const { shell, nodes, lines, isHorizontal, hasLayer, cache } = entry;
+
     const rect = shell.getBoundingClientRect();
 
-    // The gate only exists to skip work — it matches the shared falloff
-    // radius so nothing can pop on at partial strength when crossing it.
-    // Any shell that owns full-bleed lines (horizontal dividers, and the
-    // vertical page frame's top/bottom strips) must never gate on X.
+    // The gate only exists to skip work — it matches how far the lamp
+    // actually reaches on each axis, so nothing can pop on at partial
+    // strength when crossing it. A shell that owns full-bleed lines
+    // (horizontal dividers, and the vertical page frame's top/bottom strips)
+    // must never gate on X; a shell that owns a wash layer owns vertical
+    // rails, whose light runs GLOW_SPREAD × as far down them as across.
     const padX = isHorizontal || lines.length > 0 ? Number.POSITIVE_INFINITY : GLOW_RADIUS;
-    const padY = GLOW_RADIUS;
+    const padY = hasLayer ? GLOW_RADIUS * GLOW_SPREAD : GLOW_RADIUS;
     const inside =
       pointerX >= rect.left - padX &&
       pointerX <= rect.right + padX &&
@@ -96,45 +116,30 @@
     }
     entry.idle = !inside;
 
+    // True (unclamped) position: the hotspot follows the cursor into the
+    // gutters — full-bleed lines glow at the corners, and node distances stay
+    // honest instead of clamping to the column edge (which held diamonds at
+    // full strength across the gutter, then snapped them off at the gate).
     const relX = pointerX - rect.left;
     const relY = pointerY - rect.top;
-    // True (unclamped) X: the hotspot follows the cursor into the gutters —
-    // full-bleed lines glow at the corners, and node distances stay honest
-    // instead of clamping to the column edge (which held diamonds at full
-    // strength across the gutter, then snapped them off at the gate).
-    const nextX = relX;
-    const nextY = isHorizontal ? clamp(relY, 0, rect.height) : relY;
 
     // Hotspot position only matters while something is visible.
     if (inside) {
-      write(shell, cache, "x", "--edge-glow-x", `${nextX}px`);
-      write(shell, cache, "y", "--edge-glow-y", `${nextY}px`);
-    }
-
-    // Wash strength is graded by distance to the geometry that actually
-    // glows — nearest side border for vertical shells, the band itself for
-    // horizontal ones.
-    let washStrength = 0;
-    if (inside) {
-      if (isVertical) {
-        const distToBorder = Math.min(
-          Math.abs(pointerX - rect.left),
-          Math.abs(pointerX - rect.right),
-        );
-        washStrength = smoothFalloff(distToBorder, GLOW_RADIUS);
-      } else if (isHorizontal) {
-        const distToBand = relY < 0 ? -relY : relY > rect.height ? relY - rect.height : 0;
-        washStrength = smoothFalloff(distToBand, GLOW_RADIUS);
-      } else {
-        washStrength = 1;
+      write(shell, cache, "x", "--edge-glow-x", `${relX}px`);
+      if (hasLayer) {
+        write(shell, cache, "y", "--edge-glow-y", `${relY}px`);
       }
     }
-    write(shell, cache, "wash", "--edge-glow-opacity", washStrength.toFixed(3));
 
-    // Node strength from the TRUE cursor position (same rule as the lines
-    // below): the clamped nextY exists only for the visual hotspot. Using
-    // it for distance would collapse a horizontal shell's vertical axis —
-    // a diamond 150px above/below the line would read as "touching".
+    // No strength term here: the layer's gradient is the same ellipse centred
+    // on the cursor, so it already grades every pixel of the rails by
+    // distance. This is a gate, and it cannot pop — the gate sits at the lamp
+    // radius, where the gradient is transparent anyway.
+    if (hasLayer) {
+      write(shell, cache, "wash", "--edge-glow-opacity", inside ? "1" : "0");
+    }
+
+    // Diamonds are points, so the distance is scored here.
     for (let i = 0; i < nodes.length; i += 1) {
       const node = nodes[i];
       const nodeRect = node.getBoundingClientRect();
@@ -144,22 +149,19 @@
       write(node, cache, `n${i}`, "--edge-node-strength", strength.toFixed(3));
     }
 
-    // Glow lines: strength from vertical distance to each line, using the
-    // unclamped cursor Y (clamped nextY would report full strength from the
-    // whole gate away).
+    // Strips are unbounded along X, so their gradient carries the lamp: hand
+    // it the signed offset it needs to sit on the cursor, and keep only the
+    // local emphasis here. Applying the falloff again would square it.
     for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i];
       const lineRect = line.getBoundingClientRect();
       const lineY = lineRect.top - rect.top + lineRect.height / 2;
       let strength = 0;
       if (inside) {
-        const dist = Math.abs(relY - lineY);
-        const lamp = falloff(dist, GLOW_RADIUS);
-        const local = clamp(1 - dist / LINE_EMPHASIS_RADIUS, 0, 1);
-        // Shared lamp sets the reach; the squared local term makes the
-        // line under the cursor dominate. Low ambient floor (0.2) keeps a
-        // faint echo of unity without the far line reading as "on".
-        strength = lamp * (0.2 + 0.8 * local * local);
+        const dy = relY - lineY;
+        const local = clamp(1 - Math.abs(dy) / LINE_EMPHASIS_RADIUS, 0, 1);
+        strength = LINE_AMBIENT + (1 - LINE_AMBIENT) * local * local;
+        write(line, cache, `d${i}`, "--edge-line-dy", `${dy.toFixed(1)}px`);
       }
       write(line, cache, `l${i}`, "--edge-line-strength", strength.toFixed(3));
     }
@@ -196,6 +198,8 @@
     // View transitions swap page content without a reload — drop shells
     // whose elements were removed so they stop being measured forever.
     shells = shells.filter((entry) => entry.shell.isConnected);
+    GLOW_RADIUS = readNumber("--edge-glow-radius", GLOW_RADIUS);
+    GLOW_SPREAD = readNumber("--edge-glow-spread", GLOW_SPREAD);
     document.querySelectorAll(selector).forEach(bind);
   }
 
