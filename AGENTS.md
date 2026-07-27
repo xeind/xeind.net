@@ -1,6 +1,6 @@
 # xeind.net
 
-Xein Deniel's personal portfolio. Static Astro site, deployed to Cloudflare Workers static assets. Full stack, structure, and SEO details: `README.md`.
+Xein Deniel's personal portfolio. Static Astro site, deployed to Cloudflare Pages. Full stack, structure, and SEO details: `README.md`.
 
 ## Commands
 

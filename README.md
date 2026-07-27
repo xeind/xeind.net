@@ -1,14 +1,14 @@
 # xeind.net
 
 Xein Deniel's personal portfolio, built as a static Astro site and deployed
-through Cloudflare Workers static assets.
+through Cloudflare Pages.
 
 ## Stack
 
 - Astro for routing, layouts, metadata, and static HTML
 - React islands only where client-side state or animation is required
 - Tailwind CSS v4 for styling
-- Cloudflare Workers static assets for deployment
+- Cloudflare Pages for deployment
 
 ## Project structure
 
