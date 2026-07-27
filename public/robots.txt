@@ -19,32 +19,38 @@ Allow: /
 User-agent: Perplexity-User
 Allow: /
 
-# AI model-training crawlers remain opted out. This mirrors Cloudflare's
-# managed policy using standard robots.txt syntax; the managed version's
-# non-standard Content-Signal directive fails Lighthouse validation.
-
-User-agent: Amazonbot
-Disallow: /
+# Training crawlers belonging to assistants people actually ask questions in.
+# Opted in deliberately: retrieval only reaches someone already searching,
+# whereas training is the one path by which a model might know this site
+# without being sent to it. Might — nothing here guarantees recall, and the
+# opt-in cannot be walked back once a crawl has happened.
 
 User-agent: Applebot-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# Bulk scrapers with no answer product behind them stay opted out. CCBot in
+# particular feeds public, permanent archives that redistribute far beyond
+# whoever crawled the page.
+
+User-agent: Amazonbot
 Disallow: /
 
 User-agent: Bytespider
 Disallow: /
 
 User-agent: CCBot
-Disallow: /
-
-User-agent: ClaudeBot
-Disallow: /
-
-User-agent: Google-Extended
-Disallow: /
-
-User-agent: GPTBot
-Disallow: /
-
-User-agent: meta-externalagent
 Disallow: /
 
 User-agent: *

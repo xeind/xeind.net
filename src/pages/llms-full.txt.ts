@@ -14,7 +14,7 @@ export const GET: APIRoute = async () => {
     const date = post.data.date.toISOString().slice(0, 10);
     return `# ${post.data.title}
 
-By ${SITE.name} · ${date} · ${SITE.url}/blog/${post.id}
+${date} · ${SITE.url}/blog/${post.id}
 
 ${mdxToPlainMarkdown(post.body ?? "")}`;
   });

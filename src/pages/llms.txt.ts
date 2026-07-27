@@ -18,6 +18,14 @@ export const GET: APIRoute = async () => {
 
 > ${SITE.description} Based in ${SITE.location}. This file indexes the plain-text versions of the site's content.
 
+## Pages
+
+Every page has a plain-markdown twin at its .md URL:
+
+- [${SITE.name}](${SITE.url}/index.md): who he is, experience, projects, recognition
+- [Writing](${SITE.url}/blog.md): index of every post
+- [Tools](${SITE.url}/tools.md): the apps and tools he works in
+
 ## Blog
 
 Each post is available as plain markdown at the .md URL:

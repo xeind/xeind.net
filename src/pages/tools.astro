@@ -2,12 +2,42 @@
 import Layout from "../layouts/Layout.astro";
 import Panel from "@/components/ui/Panel";
 import { toolCategories } from "@/lib/data/tools";
+import { SITE, absoluteUrl } from "@/lib/config/site";
+
+// "What does Xein Deniel use?" is a question an answer engine can be asked
+// directly, so name the list and its owner rather than leaving the page as
+// anonymous markup.
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": absoluteUrl("/tools/#tools"),
+  url: absoluteUrl("/tools"),
+  name: `Tools ${SITE.name} uses`,
+  description: `Apps and tools ${SITE.name}, a ${SITE.jobTitle} based in the ${SITE.location}, uses for development, design, and productivity.`,
+  inLanguage: SITE.language,
+  isPartOf: { "@id": absoluteUrl("/#website") },
+  about: { "@id": absoluteUrl("/#person") },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: toolCategories.reduce((n, c) => n + c.tools.length, 0),
+    itemListElement: toolCategories.flatMap((category) =>
+      category.tools.map((tool) => ({
+        "@type": "ListItem",
+        name: tool.name,
+        description: tool.description,
+        ...(tool.url ? { url: tool.url } : {}),
+      })),
+    ),
+  },
+};
 ---
 
 <Layout
   title="Tools | Xein Deniel"
   description="Apps and tools I use for development, design, and productivity."
   canonicalPath="/tools"
+  markdownPath="/tools.md"
+  structuredData={structuredData}
 >
   <Panel edges="bottom" ornaments="bottom">
     <h1 class="text-foreground mb-8 font-serif text-2xl">Tools</h1>

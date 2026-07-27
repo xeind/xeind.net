@@ -78,6 +78,17 @@
   Cache-Control: public, max-age=0, must-revalidate
 /llms-full.txt
   Cache-Control: public, max-age=0, must-revalidate
+# One rule per markdown twin, none overlapping. A single /*.md would be
+# shorter, but Cloudflare's docs are ambiguous about whether a splat crosses a
+# /, so it would either miss the posts or double up with the rule below.
+# Content-Type needs no rule here: Pages already serves .md as
+# text/markdown; charset=utf-8 from the extension.
+/index.md
+  Cache-Control: public, max-age=0, must-revalidate
+/tools.md
+  Cache-Control: public, max-age=0, must-revalidate
+/blog.md
+  Cache-Control: public, max-age=0, must-revalidate
 /blog/*.md
   Cache-Control: public, max-age=0, must-revalidate
 /sitemap*.xml

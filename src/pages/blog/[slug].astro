@@ -38,6 +38,7 @@ const seriesIcon = seriesPosts[0]?.data.seriesIcon;
 const postPath = `/blog/${post.id}`;
 const postUrl = absoluteUrl(postPath);
 const publishedTime = post.data.date.toISOString();
+const modifiedTime = (post.data.updated ?? post.data.date).toISOString();
 const articleStructuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -45,7 +46,7 @@ const articleStructuredData = {
   headline: post.data.title,
   description: post.data.excerpt,
   datePublished: publishedTime,
-  dateModified: publishedTime,
+  dateModified: modifiedTime,
   mainEntityOfPage: {
     "@type": "WebPage",
     "@id": postUrl,
@@ -76,7 +77,8 @@ const articleStructuredData = {
   canonicalPath={postPath}
   type="article"
   publishedTime={publishedTime}
-  modifiedTime={publishedTime}
+  modifiedTime={modifiedTime}
+  markdownPath={`${postPath}.md`}
   keywords={post.data.tags}
   structuredData={articleStructuredData}
 >

@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ props }) => {
 
   const text = `# ${post.data.title}
 
-By Xein Deniel · ${date} · ${absoluteUrl(`/blog/${post.id}`)}
+${date} · ${absoluteUrl(`/blog/${post.id}`)}
 
 ${mdxToPlainMarkdown(post.body ?? "")}
 `;
