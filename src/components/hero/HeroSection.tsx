@@ -192,7 +192,7 @@ function HeroEmailButton({ email }: { email: string }) {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="h-full w-full"
+            className="h-full w-full scale-[1.15]"
             aria-hidden
           >
             <path d={SOCIAL_ICONS.mail} />
