@@ -64,9 +64,11 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
               "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12.5%, rgba(0,0,0,0.40) 37.5%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.40) 62.5%, rgba(0,0,0,0.15) 87.5%, transparent 100%)",
           }}
         />
-        {/* Hover state: full fill at 30% opacity */}
+        {/* Hover state: a flat fill across the whole band. Tinted with tertiary
+            and scaled by --surface-hover-fill, the same pair the hero CTAs use,
+            so the two land on the same colour. */}
         <div
-          className="bg-accent/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
+          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-(--surface-hover-fill)"
           style={CSS_TRANSITIONS.border}
         />
         {/* Active/Click state: intense gradient pulse */}

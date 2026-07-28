@@ -102,7 +102,7 @@ function HeroActionLink({
           }}
         />
         <div
-          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0"
+          className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-(--surface-hover-fill) group-active:opacity-0"
           style={CSS_TRANSITIONS.border}
         />
         <div
