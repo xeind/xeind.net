@@ -249,15 +249,19 @@ body {
 }
 
 [data-theme="nightingale"] {
-  --logo-ink-100: #dad2be;
-  --logo-ink-75: #aaa494;
-  --logo-ink-55: #837e73;
-  --logo-ink-35: #5c5952;
-  /* Yellow here, not the theme's green accent. Against cream ink on a dense
-     tile grid the green read as a second, competing hue; the tertiary yellow
-     is the same family as the ink and recedes behind it. */
-  --logo-accent-100: #ecce83;
-  --logo-accent-35: #62583d;
+  --logo-ink-100: #dcd7ba;
+  --logo-ink-75: #aba792;
+  --logo-ink-55: #848171;
+  --logo-ink-35: #5d5b51;
+  /* Yellow, not the theme's green accent: against cream ink on a dense tile
+     grid the green read as a second, competing hue.
+     These are the palette's documented hexes (#DCD7BA, #98BB6C, #E6C384), not
+     what the hsl() tokens above compute (#DAD2BE, #97B96A, #ECCE83) — the two
+     disagree, and smeet-seo-nightingale has always used the documented ones.
+     Deriving the ladder from hsl() put every other logo on the rounding error
+     and left the yellow visibly lemon next to smeet's amber. */
+  --logo-accent-100: #e6c384;
+  --logo-accent-35: #60543e;
 }
 
 /* PAPER BACKGROUND - Outermost container with noise */
