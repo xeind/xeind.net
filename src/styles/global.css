@@ -834,12 +834,18 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
     color-mix(in srgb, var(--edge-glow-ink) 15.6%, transparent) 75%, transparent 100%;
 }
 
-/* Inset 0, not -1px: the mask columns below are 1px wide and must land on
-   the shell's own border-box hairlines ([left, left+1) and [right-1, right)),
-   not one pixel outboard of them. */
+/* The -1px on left/right is not a nudge — it is the border width. An absolutely
+   positioned child resolves its offsets against the containing block's PADDING
+   box, and this shell draws 1px left/right borders, so `left: 0` would start a
+   pixel inside the hairline the mask columns below are meant to light. Pulling
+   back by the border width puts the layer on the border box, where
+   --edge-glow-x (measured from the shell's border box) also lines up. */
 .edge-glow-layer {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  left: -1px;
   z-index: 10;
   pointer-events: none;
   opacity: calc(var(--edge-glow-opacity) * var(--edge-glow-cap));
