@@ -22,6 +22,14 @@
   // brightening rather than as a hotspot sliding into view.
   let GLOW_RADIUS = 180;
   let GLOW_SPREAD = 2;
+  // A divider's two strips sit ~21px apart, far inside the perpendicular
+  // radius, so the lamp alone grades them near-identically (1.000 against
+  // 0.966) and you cannot tell which edge you are on. A local term over the
+  // last 32px separates them. The floor is high on purpose: at 0.5 the near
+  // strip reads about twice the far one, which distinguishes them without the
+  // snap a lower floor produced.
+  const LINE_EMPHASIS_RADIUS = 32;
+  const LINE_AMBIENT = 0.5;
 
   let shells = [];
   let frame = 0;
@@ -90,14 +98,14 @@
 
     const rect = shell.getBoundingClientRect();
 
-    // The gate only exists to skip work — it matches how far the lamp
-    // actually reaches on each axis, so nothing can pop on at partial
-    // strength when crossing it. A shell that owns full-bleed lines
-    // (horizontal dividers, and the vertical page frame's top/bottom strips)
-    // must never gate on X; a shell that owns a wash layer owns vertical
-    // rails, whose light runs GLOW_SPREAD × as far down them as across.
+    // The gate only exists to skip work, and it is measured from how far the
+    // lamp actually reaches here — not from which parts the shell owns — so
+    // nothing can pop on at partial strength when crossing it. A shell owning
+    // full-bleed lines (horizontal dividers, and the page frame's top/bottom
+    // strips) must never gate on X. Nodes reach the long axis in either
+    // direction, so any shell carrying them gates at the long radius.
     const padX = isHorizontal || lines.length > 0 ? Number.POSITIVE_INFINITY : GLOW_RADIUS;
-    const padY = hasLayer ? GLOW_RADIUS * GLOW_SPREAD : GLOW_RADIUS;
+    const padY = hasLayer || nodes.length ? GLOW_RADIUS * GLOW_SPREAD : GLOW_RADIUS;
     const inside =
       pointerX >= rect.left - padX &&
       pointerX <= rect.right + padX &&
@@ -124,37 +132,59 @@
       }
     }
 
-    // No strength term here: the layer's gradient is the same ellipse centred
-    // on the cursor, so it already grades every pixel of the rails by
-    // distance. This is a gate, and it cannot pop — the gate sits at the lamp
-    // radius, where the gradient is transparent anyway.
+    // No strength term: the layer's gradient is the same ellipse centred on the
+    // cursor, so it already grades every pixel of the rails by distance. What
+    // is written here is only visibility, flipped at the distance where that
+    // gradient has already reached zero — invisible, and it keeps a
+    // viewport-tall masked layer out of the composite across the whole middle
+    // of the page.
     if (hasLayer) {
-      write(shell, cache, "wash", "--edge-glow-opacity", inside ? "1" : "0");
+      const toNearerRail = Math.min(Math.abs(relX), Math.abs(relX - rect.width));
+      const washLit = inside && toNearerRail <= GLOW_RADIUS;
+      write(shell, cache, "wash", "--edge-glow-opacity", washLit ? "1" : "0");
     }
 
-    // Diamonds are points, so the distance is scored here.
+    // Diamonds are points, so the distance is scored here rather than painted.
+    // A diamond does not belong to one edge though — it sits where a rail meets
+    // a hairline — so it takes whichever orientation is nearer: lit while
+    // EITHER edge touching it would be lit at that distance. Scored against the
+    // rail alone, a corner mark went dark at 180px along a strip that was still
+    // glowing out to 360.
+    const alongAxis = GLOW_RADIUS * GLOW_SPREAD;
     for (let i = 0; i < nodes.length; i += 1) {
       const node = nodes[i];
       const nodeRect = node.getBoundingClientRect();
       const nodeX = nodeRect.left - rect.left + nodeRect.width / 2;
       const nodeY = nodeRect.top - rect.top + nodeRect.height / 2;
-      const strength = inside ? falloff(Math.hypot(relX - nodeX, relY - nodeY), GLOW_RADIUS) : 0;
+      // Normalised per axis, so 1 is the edge of the lamp whichever way it is
+      // measured; the smaller of the two is the edge that still holds it.
+      const dx = relX - nodeX;
+      const dy = relY - nodeY;
+      const reach = Math.min(
+        Math.hypot(dx / GLOW_RADIUS, dy / alongAxis),
+        Math.hypot(dx / alongAxis, dy / GLOW_RADIUS),
+      );
+      const strength = inside ? falloff(reach, 1) : 0;
       write(node, cache, `n${i}`, "--edge-node-strength", strength.toFixed(3));
     }
 
-    // Strips work exactly like the rails: hand the gradient the signed offset
-    // it needs to sit on the cursor and let the paint grade every pixel by
-    // distance. No strength term here — same reason the wash has none, and
-    // the same gate, which cannot pop because it sits where the gradient has
-    // already reached zero.
+    // Strips take the lamp from the paint like the rails do — hand the gradient
+    // the signed offset it needs to sit on the cursor — and carry only the local
+    // term that tells a divider's two edges apart. Beyond the perpendicular
+    // radius the gradient is already transparent, so dropping to zero there
+    // costs nothing visually and takes the strip out of the composite.
     for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i];
       const lineRect = line.getBoundingClientRect();
       const lineY = lineRect.top - rect.top + lineRect.height / 2;
-      if (inside) {
-        write(line, cache, `d${i}`, "--edge-line-dy", `${(relY - lineY).toFixed(1)}px`);
+      const dy = relY - lineY;
+      let strength = 0;
+      if (inside && Math.abs(dy) <= GLOW_RADIUS) {
+        const local = clamp(1 - Math.abs(dy) / LINE_EMPHASIS_RADIUS, 0, 1);
+        strength = LINE_AMBIENT + (1 - LINE_AMBIENT) * local * local;
+        write(line, cache, `d${i}`, "--edge-line-dy", `${dy.toFixed(1)}px`);
       }
-      write(line, cache, `l${i}`, "--edge-line-strength", inside ? "1" : "0");
+      write(line, cache, `l${i}`, "--edge-line-strength", strength.toFixed(3));
     }
   }
 
