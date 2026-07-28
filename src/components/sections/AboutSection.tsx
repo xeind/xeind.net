@@ -13,9 +13,6 @@ export default function AboutSection() {
       <div className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}>
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and microinteractions.
-        </p>
-
-        <p>
           Currently working at{" "}
           <a
             href="https://www.pioneerdev.ai/"
