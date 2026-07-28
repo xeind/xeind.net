@@ -26,8 +26,23 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
     >
       <CornerDiamond position="all" variant="accent" />
 
-      {/* Top border - stays consistent */}
-      <div className="border-accent/30 absolute top-0 right-0 left-0 border-t" />
+      {/* Three of this band's four edges are not its own to draw: it sits flush
+          inside the page frame, so its sides land on the vertical rails and its
+          top lands on the frame's own hairline. Drawing fresh borders there
+          would put a second line beside each and read as 2px. These overlay the
+          existing lines instead — invisible at rest, brightening the shared
+          hairline on hover so the whole boundary lights at once. The sides need
+          -1px because the band starts at the frame's padding box, one border
+          width inside the rail. */}
+      <div className="border-accent/30 group-hover:border-accent/60 absolute top-0 right-0 left-0 border-t transition-colors" />
+      <div
+        className="group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-l border-transparent transition-colors"
+        style={{ left: -1 }}
+      />
+      <div
+        className="group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-r border-transparent transition-colors"
+        style={{ right: -1 }}
+      />
 
       {/* Center highlight - accent color gradient (0-15-40-60-40-15-0) always visible, full on hover */}
       <div className="pointer-events-none absolute inset-0">
@@ -68,9 +83,10 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
         )}
       </div>
 
-      {/* Bottom edge - dashed by default, solid on hover, stays accent/30 */}
+      {/* Bottom edge — the only one the band owns. Dashed by default, solid on
+          hover, and brightening with the other three. */}
       <div
-        className="border-accent/30 absolute right-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
+        className="border-accent/30 group-hover:border-accent/60 absolute right-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
         style={{
           bottom: 0,
           zIndex: 5,
