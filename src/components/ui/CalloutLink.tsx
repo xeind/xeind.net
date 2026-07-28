@@ -24,7 +24,14 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
       style={CSS_TRANSITIONS.border}
       {...externalProps}
     >
-      <CornerDiamond position="all" variant="accent" />
+      {/* The corner marks light with the edges they terminate. Passed through
+          rather than baked into CornerDiamond, which is shared with Panels that
+          are not hoverable groups. */}
+      <CornerDiamond
+        position="all"
+        variant="accent"
+        className="group-hover:border-accent/60 transition-colors"
+      />
 
       {/* Three of this band's four edges are not its own to draw: it sits flush
           inside the page frame, so its sides land on the vertical rails and its
