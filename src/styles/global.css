@@ -176,6 +176,13 @@ svg {
   /* Unified Grid System: 16px base unit */
   --grid-cell-size: 16px;
 
+  /* Which ink a shortcut badge takes on hover. The rule used to be tertiary
+     everywhere, but tertiary is near-white in the dark themes and a mid grey
+     in Kozo — so the same declaration brightened a badge on a dark card and
+     greyed one out on a light card. Hover should always be the stronger
+     state, so Kozo reaches for the darkest ink it has instead. */
+  --badge-hover-ink: var(--color-accent);
+
   /* How firmly a hover fill lands, shared by the callout band and the hero
      CTAs. Both rest as a centre-weighted gradient and hover as a flat wash, so
      at 0.3 the hover state is a quarter the strength of the resting one and
@@ -249,6 +256,7 @@ body {
 }
 
 [data-theme="dark"] {
+  --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
   --logo-ink-100: #ecedee;
   --logo-ink-75: #b6b7b8;
@@ -259,6 +267,7 @@ body {
 }
 
 [data-theme="nightingale"] {
+  --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
   --logo-ink-100: #dcd7ba;
   --logo-ink-75: #aba792;
