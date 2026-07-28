@@ -22,13 +22,6 @@
   // brightening rather than as a hotspot sliding into view.
   let GLOW_RADIUS = 180;
   let GLOW_SPREAD = 2;
-  // Lines closer together than the lamp radius (a divider's two strips are
-  // ~20px apart) sit at near-identical distances — a tight local emphasis on
-  // top makes the strip directly under the cursor clearly brightest without
-  // shrinking anyone's reach.
-  const LINE_EMPHASIS_RADIUS = 32;
-  // Floor of that emphasis: a faint echo of unity on the far strip.
-  const LINE_AMBIENT = 0.2;
 
   let shells = [];
   let frame = 0;
@@ -149,21 +142,19 @@
       write(node, cache, `n${i}`, "--edge-node-strength", strength.toFixed(3));
     }
 
-    // Strips are unbounded along X, so their gradient carries the lamp: hand
-    // it the signed offset it needs to sit on the cursor, and keep only the
-    // local emphasis here. Applying the falloff again would square it.
+    // Strips work exactly like the rails: hand the gradient the signed offset
+    // it needs to sit on the cursor and let the paint grade every pixel by
+    // distance. No strength term here — same reason the wash has none, and
+    // the same gate, which cannot pop because it sits where the gradient has
+    // already reached zero.
     for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i];
       const lineRect = line.getBoundingClientRect();
       const lineY = lineRect.top - rect.top + lineRect.height / 2;
-      let strength = 0;
       if (inside) {
-        const dy = relY - lineY;
-        const local = clamp(1 - Math.abs(dy) / LINE_EMPHASIS_RADIUS, 0, 1);
-        strength = LINE_AMBIENT + (1 - LINE_AMBIENT) * local * local;
-        write(line, cache, `d${i}`, "--edge-line-dy", `${dy.toFixed(1)}px`);
+        write(line, cache, `d${i}`, "--edge-line-dy", `${(relY - lineY).toFixed(1)}px`);
       }
-      write(line, cache, `l${i}`, "--edge-line-strength", strength.toFixed(3));
+      write(line, cache, `l${i}`, "--edge-line-strength", inside ? "1" : "0");
     }
   }
 

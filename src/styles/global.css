@@ -914,7 +914,8 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   --edge-line-dy: 0px;
   pointer-events: none;
   opacity: calc(var(--edge-line-strength) * var(--edge-glow-cap));
-  transition: opacity 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Same duration as the wash layer — a strip and a rail settle together. */
+  transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1);
   /* The rails' ellipse, turned a quarter: strips run horizontally, so the
      long axis is the one along the strip and the short one is the vertical
      approach. Strip spans ±9999px and --edge-glow-x is relative to the
