@@ -2,42 +2,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="54" height="48" viewBox="0 0 54 48" fill="none" role="img" aria-labelledby="atax-logo-title atax-logo-desc">
   <title id="atax-logo-title">ATAX accumulation grid logo (atax-light.svg)</title>
   <desc id="atax-logo-desc">Five by five grid with accumulated A, A, X, T opacities and highlighted X diagonal</desc>
-  <g fill="#3A3A3A">
-    <rect x="3" y="0" width="8" height="8" fill-opacity="0.52" />
-    <rect x="13" y="0" width="8" height="8" fill-opacity="0.72" />
-    <rect x="23" y="0" width="8" height="8" fill-opacity="0.72" />
-    <rect x="33" y="0" width="8" height="8" fill-opacity="0.72" />
-    <rect x="43" y="0" width="8" height="8" fill-opacity="0.52" />
-    <rect x="3" y="10" width="8" height="8" fill-opacity="0.52" />
-    <rect x="13" y="10" width="8" height="8" fill-opacity="0.32" />
-    <rect x="23" y="10" width="8" height="8" fill-opacity="0.32" />
-    <rect x="33" y="10" width="8" height="8" fill-opacity="0.32" />
-    <rect x="43" y="10" width="8" height="8" fill-opacity="0.52" />
-    <rect x="3" y="20" width="8" height="8" fill-opacity="0.52" />
-    <rect x="13" y="20" width="8" height="8" fill-opacity="0.52" />
-    <rect x="23" y="20" width="8" height="8" fill-opacity="0.92" />
-    <rect x="33" y="20" width="8" height="8" fill-opacity="0.52" />
-    <rect x="43" y="20" width="8" height="8" fill-opacity="0.52" />
-    <rect x="3" y="30" width="8" height="8" fill-opacity="0.52" />
-    <rect x="13" y="30" width="8" height="8" fill-opacity="0.32" />
-    <rect x="23" y="30" width="8" height="8" fill-opacity="0.32" />
-    <rect x="33" y="30" width="8" height="8" fill-opacity="0.32" />
-    <rect x="43" y="30" width="8" height="8" fill-opacity="0.52" />
-    <rect x="3" y="40" width="8" height="8" fill-opacity="0.72" />
-    <rect x="13" y="40" width="8" height="8" fill-opacity="0.32" />
-    <rect x="23" y="40" width="8" height="8" fill-opacity="0.32" />
-    <rect x="33" y="40" width="8" height="8" fill-opacity="0.32" />
-    <rect x="43" y="40" width="8" height="8" fill-opacity="0.72" />
+  <g fill="#322E29">
+    <rect x="3" y="0" width="8" height="8" fill="#837F79" />
+    <rect x="13" y="0" width="8" height="8" fill="#5F5B55" />
+    <rect x="23" y="0" width="8" height="8" fill="#5F5B55" />
+    <rect x="33" y="0" width="8" height="8" fill="#5F5B55" />
+    <rect x="43" y="0" width="8" height="8" fill="#837F79" />
+    <rect x="3" y="10" width="8" height="8" fill="#837F79" />
+    <rect x="13" y="10" width="8" height="8" fill="#A8A49C" />
+    <rect x="23" y="10" width="8" height="8" fill="#A8A49C" />
+    <rect x="33" y="10" width="8" height="8" fill="#A8A49C" />
+    <rect x="43" y="10" width="8" height="8" fill="#837F79" />
+    <rect x="3" y="20" width="8" height="8" fill="#837F79" />
+    <rect x="13" y="20" width="8" height="8" fill="#837F79" />
+    <rect x="23" y="20" width="8" height="8" fill="#322E29" />
+    <rect x="33" y="20" width="8" height="8" fill="#837F79" />
+    <rect x="43" y="20" width="8" height="8" fill="#837F79" />
+    <rect x="3" y="30" width="8" height="8" fill="#837F79" />
+    <rect x="13" y="30" width="8" height="8" fill="#A8A49C" />
+    <rect x="23" y="30" width="8" height="8" fill="#A8A49C" />
+    <rect x="33" y="30" width="8" height="8" fill="#A8A49C" />
+    <rect x="43" y="30" width="8" height="8" fill="#837F79" />
+    <rect x="3" y="40" width="8" height="8" fill="#5F5B55" />
+    <rect x="13" y="40" width="8" height="8" fill="#A8A49C" />
+    <rect x="23" y="40" width="8" height="8" fill="#A8A49C" />
+    <rect x="33" y="40" width="8" height="8" fill="#A8A49C" />
+    <rect x="43" y="40" width="8" height="8" fill="#5F5B55" />
   </g>
-  <g fill="#6A6A6A">
-    <rect x="3" y="0" width="8" height="8" fill-opacity="0.38" />
-    <rect x="43" y="0" width="8" height="8" fill-opacity="0.38" />
-    <rect x="13" y="10" width="8" height="8" fill-opacity="0.38" />
-    <rect x="33" y="10" width="8" height="8" fill-opacity="0.38" />
-    <rect x="23" y="20" width="8" height="8" fill-opacity="0.38" />
-    <rect x="13" y="30" width="8" height="8" fill-opacity="0.38" />
-    <rect x="33" y="30" width="8" height="8" fill-opacity="0.38" />
-    <rect x="3" y="40" width="8" height="8" fill-opacity="0.38" />
-    <rect x="43" y="40" width="8" height="8" fill-opacity="0.38" />
+  <g fill="#696159">
+    <rect x="3" y="0" width="8" height="8" fill="#A8A49C" />
+    <rect x="43" y="0" width="8" height="8" fill="#A8A49C" />
+    <rect x="13" y="10" width="8" height="8" fill="#A8A49C" />
+    <rect x="33" y="10" width="8" height="8" fill="#A8A49C" />
+    <rect x="23" y="20" width="8" height="8" fill="#A8A49C" />
+    <rect x="13" y="30" width="8" height="8" fill="#A8A49C" />
+    <rect x="33" y="30" width="8" height="8" fill="#A8A49C" />
+    <rect x="3" y="40" width="8" height="8" fill="#A8A49C" />
+    <rect x="43" y="40" width="8" height="8" fill="#A8A49C" />
   </g>
 </svg>

@@ -74,9 +74,35 @@ const ATAX_COORDS = (() => {
 
   return coords;
 })();
-const ATAX_PRIMARY_OPACITY = [
-  0.52, 0.72, 0.72, 0.72, 0.52, 0.52, 0.32, 0.32, 0.32, 0.52, 0.52, 0.52, 0.92, 0.52, 0.52, 0.52,
-  0.32, 0.32, 0.32, 0.52, 0.72, 0.32, 0.32, 0.32, 0.72,
+// Tile depth comes from the shared logo ladder, not from opacity: each tile
+// names a solid tone that already accounts for the tile background, so these
+// match the hexes baked into the file-based logos exactly.
+const ATAX_TILE_TONE = [
+  "55",
+  "75",
+  "75",
+  "75",
+  "55",
+  "55",
+  "35",
+  "35",
+  "35",
+  "55",
+  "55",
+  "55",
+  "100",
+  "55",
+  "55",
+  "55",
+  "35",
+  "35",
+  "35",
+  "55",
+  "75",
+  "35",
+  "35",
+  "35",
+  "75",
 ] as const;
 const DEFAULT_ATAX_PRIMARY_ORDER = Array.from({ length: ATAX_COORDS.length }, (_, i) => i);
 const DEFAULT_ATAX_SECONDARY_ORDER = [0, 4, 6, 8, 12, 16, 18, 20, 24];
@@ -85,7 +111,7 @@ let lastAtaxFrame = {
   secondaryOrder: DEFAULT_ATAX_SECONDARY_ORDER,
 };
 
-// ATAX colors resolve via --atax-* CSS variables (global.css) so the SVG
+// ATAX colors resolve via --logo-* CSS variables (global.css) so the SVG
 // markup is identical across themes — theme-dependent attributes here would
 // desync from SSR output (hydration never patches attribute mismatches).
 
@@ -130,8 +156,8 @@ function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
         viewBox="0 0 54 48"
         className="h-full w-auto max-w-full"
       >
-        <g fill="var(--atax-primary)" style={{ opacity: "var(--atax-primary-scale, 1)" }}>
-          {ATAX_PRIMARY_OPACITY.map((opacity, i) => {
+        <g>
+          {ATAX_TILE_TONE.map((tone, i) => {
             const coord = ATAX_COORDS[primaryOrder[i]];
             return (
               <rect
@@ -140,12 +166,12 @@ function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
                 y={coord.y}
                 width="8"
                 height="8"
-                fillOpacity={opacity}
+                fill={`var(--logo-ink-${tone})`}
               />
             );
           })}
         </g>
-        <g fill="var(--atax-secondary)" style={{ opacity: "var(--atax-secondary-opacity, 0.38)" }}>
+        <g fill="var(--logo-accent-35)">
           {secondaryOrder.map((coordIdx, i) => {
             const coord = ATAX_COORDS[coordIdx];
             return <rect key={`b-${i}`} x={coord.x} y={coord.y} width="8" height="8" />;
@@ -165,9 +191,9 @@ const YIELD_PATH =
   "M32.43 0H26.2c-1.54 0-3.01.65-4.05 1.79l-.05.06-10.04 10.63c-.35.2-.75.32-1.18.32-.07 0-.14 0-.2 0-1.45-.12-2.32-1.67-1.78-3.02L12.79 0H6.86c-1.3 0-2.46.83-2.88 2.06L.87 11.13c-.85 2.46.81 5.16 3.41 5.34.1 0 .19.01.28.01H5c1.12-.01 2.21-.24 3.22-.67 1-.44 1.92-1.07 2.68-1.89L21.63 2.56c.96-.35 2.06.77 1.43 1.81 0 0-10.38 15.17-13.7 19.81-.19.28-.51.44-.84.44-.57 0-1.03-.46-1.03-1.03v-5.25H0v2.51c0 2.14 1.73 3.88 3.87 3.88l15.26-.02L33.07 1.09c.26-.49-.09-1.09-.64-1.09Z";
 
 const PIONEER_THEME: Record<ResolvedTheme, { body: string }> = {
-  light: { body: "var(--color-foreground)" },
-  dark: { body: "var(--color-foreground)" },
-  nightingale: { body: "var(--color-foreground)" },
+  light: { body: "var(--logo-ink-100)" },
+  dark: { body: "var(--logo-ink-100)" },
+  nightingale: { body: "var(--logo-ink-100)" },
 };
 
 function PioneerLogo({
@@ -233,7 +259,7 @@ function YieldLogo({ className, alt }: { className?: string; alt: string }) {
         viewBox="0 0 33.16 24.73"
         className="h-full w-auto max-w-full"
       >
-        <path d={YIELD_PATH} fill="var(--color-foreground)" />
+        <path d={YIELD_PATH} fill="var(--logo-ink-100)" />
       </svg>
     </span>
   );

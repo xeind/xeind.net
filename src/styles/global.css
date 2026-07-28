@@ -224,26 +224,37 @@ body {
   overflow-x: hidden;
 }
 
-/* ATAX animated logo — theme-mapped fills. Kept in CSS (not component props)
-   so the SVG markup is identical across themes and SSR/hydration stay in sync. */
+/* Project-logo ladder — the only colours any logo may use.
+   Four solid tones per theme, each one the theme's ink (or accent) already
+   composited over the tile background (--color-muted). Solid, because an
+   <img>-loaded SVG cannot read these variables and has to hardcode the same
+   hex: opacity would make the two halves of the system disagree. To retune a
+   theme, move these hexes and the matching values in src/assets/projects/. */
 :root {
-  --atax-primary: var(--color-foreground);
-  --atax-primary-scale: 1;
-  --atax-secondary: var(--color-secondary);
-  --atax-secondary-opacity: 0.38;
+  --logo-ink-100: #322e29;
+  --logo-ink-75: #5f5b55;
+  --logo-ink-55: #837f79;
+  --logo-ink-35: #a8a49c;
+  --logo-accent-100: #696159;
+  --logo-accent-35: #bbb6ad;
 }
 
 [data-theme="dark"] {
-  --atax-primary: var(--color-primary);
-  --atax-secondary: var(--color-tertiary);
-  --atax-secondary-opacity: 0.3;
+  --logo-ink-100: #ecedee;
+  --logo-ink-75: #b6b7b8;
+  --logo-ink-55: #8c8c8e;
+  --logo-ink-35: #616163;
+  --logo-accent-100: #b4b6bb;
+  --logo-accent-35: #4d4e51;
 }
 
 [data-theme="nightingale"] {
-  --atax-primary: var(--color-foreground);
-  --atax-primary-scale: 0.84;
-  --atax-secondary: var(--color-foreground);
-  --atax-secondary-opacity: 0.24;
+  --logo-ink-100: #dad2be;
+  --logo-ink-75: #aaa494;
+  --logo-ink-55: #837e73;
+  --logo-ink-35: #5c5952;
+  --logo-accent-100: #97b96a;
+  --logo-accent-35: #445035;
 }
 
 /* PAPER BACKGROUND - Outermost container with noise */
