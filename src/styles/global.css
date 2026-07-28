@@ -253,8 +253,11 @@ body {
   --logo-ink-75: #aaa494;
   --logo-ink-55: #837e73;
   --logo-ink-35: #5c5952;
-  --logo-accent-100: #97b96a;
-  --logo-accent-35: #445035;
+  /* Yellow here, not the theme's green accent. Against cream ink on a dense
+     tile grid the green read as a second, competing hue; the tertiary yellow
+     is the same family as the ink and recedes behind it. */
+  --logo-accent-100: #ecce83;
+  --logo-accent-35: #62583d;
 }
 
 /* PAPER BACKGROUND - Outermost container with noise */
