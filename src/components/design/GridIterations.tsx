@@ -228,24 +228,9 @@ const MARK_VARIANTS = [
     cls: "[&_*]:fill-card [&_*]:stroke-accent/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
   },
   {
-    id: "line",
-    note: "no fill · accent stroke",
-    cls: "[&_*]:fill-transparent [&_*]:stroke-accent/80 [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
-  },
-  {
     id: "solid",
     note: "foreground silhouette · source shading kept",
     cls: "[&_*]:fill-foreground/80 [&_*]:[stroke-width:0]",
-  },
-  {
-    id: "duotone",
-    note: "muted fill · tertiary stroke",
-    cls: "[&_*]:fill-muted [&_*]:stroke-tertiary/60 [&_*]:[fill-opacity:1] [&_*]:[stroke-width:1px] [&_*]:[vector-effect:non-scaling-stroke]",
-  },
-  {
-    id: "original",
-    note: "source colors, untouched",
-    cls: "",
   },
 ] as const;
 
