@@ -32,7 +32,7 @@ const tFast = CSS_TRANSITIONS.fade;
 const sampleProject = projects.find((p) => p.id === "atax") || projects[0];
 const sampleAward = awards[0];
 
-type DemoId = "pv1" | "pv2" | "av1" | "av2";
+type DemoId = "pv1" | "pv2" | "pv3" | "av1" | "av2";
 
 function ArrowUpRightIcon({ size }: { size: number }) {
   return (
@@ -379,6 +379,50 @@ function ProjectCardV2({ onOpen, spring }: CardProps) {
   );
 }
 
+/** v3 — plate: the figure treatment from the plate row, made clickable.
+    A plate on its own is inert by convention — dashed borders and nothing
+    else. Corner brackets and button semantics are what mark a thing as
+    opening the centre modal, so those are the whole difference here. The
+    title moves out from under the figure to a caption, since a plate has no
+    text body to put it in. */
+function ProjectCardV3({ onOpen, spring }: CardProps) {
+  return (
+    <motion.button
+      layoutId="demo-card-pv3"
+      onClick={() => onOpen("pv3")}
+      className="group relative flex w-full cursor-pointer flex-col text-left"
+      style={{ borderRadius: 0 }}
+      transition={spring}
+      aria-label={`View details for ${sampleProject.title}`}
+    >
+      <motion.div
+        layoutId="demo-image-pv3"
+        className="bg-muted relative flex h-28 w-full items-center justify-center overflow-hidden sm:h-32"
+        transition={spring}
+      >
+        <DashedBorders />
+        <CornerBrackets />
+        <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
+        <StageFigure />
+        <span className="text-accent absolute bottom-2 left-3 z-10 font-mono text-[0.6875rem] tracking-wide">
+          {sampleProject.type}
+        </span>
+        <span className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide">
+          FIG.01
+        </span>
+      </motion.div>
+
+      <motion.h3
+        layoutId="demo-title-pv3"
+        className="text-foreground mt-2 font-serif text-sm leading-snug"
+        transition={spring}
+      >
+        {sampleProject.title}
+      </motion.h3>
+    </motion.button>
+  );
+}
+
 /** v1 — award card draft: same split square as project cards */
 function AwardCardV1({ onOpen, spring }: CardProps) {
   return (
@@ -682,6 +726,19 @@ export default function GridIterations() {
             </Labeled>
             <Labeled caption="award · v2 · current">
               <AwardCardV2 onOpen={setActive} spring={spring} />
+            </Labeled>
+          </div>
+        </div>
+
+        <div className="border-accent/20 border-t border-dashed" />
+
+        <div>
+          <p className="text-foreground/50 mb-3 font-mono text-xs">
+            Plate as a card — brackets make it clickable, caption carries the title
+          </p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <Labeled caption="project · v3 · plate">
+              <ProjectCardV3 onOpen={setActive} spring={spring} />
             </Labeled>
           </div>
         </div>
