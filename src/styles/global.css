@@ -176,6 +176,13 @@ svg {
   /* Unified Grid System: 16px base unit */
   --grid-cell-size: 16px;
 
+  /* The badge's resting ink. Kozo and Nightingale sit mid-scale and have room
+     to move on hover; Manila's accent-hover is hsl(220 6% 98%), which is
+     already at the ceiling, so hovering it had nowhere brighter to go and the
+     badge simply did not react. It rests on secondary there instead, which is
+     what gives the hover somewhere to travel. */
+  --badge-ink: color-mix(in srgb, var(--color-accent-hover) 90%, transparent);
+
   /* Which ink a shortcut badge takes on hover. The rule used to be tertiary
      everywhere, but tertiary is near-white in the dark themes and a mid grey
      in Kozo — so the same declaration brightened a badge on a dark card and
@@ -256,6 +263,7 @@ body {
 }
 
 [data-theme="dark"] {
+  --badge-ink: var(--color-secondary);
   --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
   --logo-ink-100: #ecedee;

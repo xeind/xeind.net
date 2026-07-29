@@ -123,7 +123,7 @@ function HeroActionLink({
         </span>
         {badge && (
           <span
-            className="bg-accent/10 text-accent-hover/90 group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
             style={CSS_TRANSITIONS.border}
           >
             {badge}
