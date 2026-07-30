@@ -15,9 +15,8 @@ through Cloudflare Pages.
 ```text
 src/
   components/   Astro and React presentation components
-  config/       Site-wide metadata and canonical URL configuration
   layouts/      Shared document layout
-  lib/          Data, types, hooks, and design tokens
+  lib/          config/ (tokens, site metadata), data/, hooks/, types.ts
   pages/        File-based Astro routes
   styles/       Global theme and utility styles
 public/         Static assets, crawler files, headers, and redirects
@@ -42,7 +41,7 @@ npm run deploy       # build and deploy
 ## SEO and crawlers
 
 - Global metadata and social tags: `src/components/Seo.astro`
-- Canonical site details: `src/config/site.ts`
+- Canonical site details: `src/lib/config/site.ts`
 - Structured data: page-level `structuredData` passed to `Layout.astro`
 - Sitemap generation and exclusions: `astro.config.mjs`
 - Crawler policy: `public/robots.txt`

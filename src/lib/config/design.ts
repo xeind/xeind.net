@@ -5,8 +5,9 @@
 
 export const ICON_CONFIG = {
   /**
-   * Stroke width for all icons to match typography weight
-   * 1.5px provides optimal balance with text-sm (14px) font
+   * Stroke width for all icons, matched to the hairline weight the rest of the
+   * interface is drawn in. Heavier strokes exist only where the contrast is the
+   * point (the copy-confirm checkmark) or where the viewBox is huge.
    */
   strokeWidth: 1,
 
