@@ -190,6 +190,9 @@ const structuredData = {
       if (!email || !mail || !check) return;
 
       navigator.clipboard.writeText(email).then(() => {
+        /* Confirm tap-tap (hero-interactions.js) — after the write resolves,
+           so the sound lands with the checkmark, not the press. */
+        window.dispatchEvent(new CustomEvent("hero:copy-confirm"));
         clearTimeout(revertTimers.get(btn));
         mail.style.transform = "scale(0.25)";
         mail.style.opacity = "0";

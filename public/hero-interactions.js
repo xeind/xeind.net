@@ -67,6 +67,43 @@
     noise.start(audio.currentTime);
   };
 
+  /* Copy-confirm: two taps, the second brighter and a touch louder — the
+     sound of something seating. Same noise-burst language as the clicks; a
+     tonal "ding" would be the only musical note on the site. Fired by the
+     email button via the hero:copy-confirm event once the clipboard write
+     has actually resolved, so the sound lands with the checkmark swap. */
+  const playConfirm = async () => {
+    const audio = getCtx();
+    if (audio.state === "suspended") await audio.resume();
+
+    const tap = (at, freq, gainValue, decay) => {
+      const noise = audio.createBufferSource();
+      const buf = audio.createBuffer(1, audio.sampleRate * 0.014, audio.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++)
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / decay);
+      noise.buffer = buf;
+      const filter = audio.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = freq;
+      filter.Q.value = 2.5;
+      const gain = audio.createGain();
+      gain.gain.value = gainValue;
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audio.destination);
+      noise.start(at);
+    };
+
+    const now = audio.currentTime;
+    tap(now, 2600, 0.16, 70);
+    tap(now + 0.07, 4200, 0.22, 90);
+  };
+
+  window.addEventListener("hero:copy-confirm", () => {
+    void playConfirm();
+  });
+
   const heroLinkSelector = '[data-hero-sfx="click"]';
   const hoverSelector = "[data-hero-sfx-hover]";
   const hintSelector = "[data-link-hint]";
