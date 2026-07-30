@@ -22,3 +22,7 @@ jobs:
       - name: Dead code & duplication
         run: npm run audit
         continue-on-error: true
+      # Blocking from day one: the allowlist already grandfathers every known
+      # exception, so any hit here is a genuinely new violation.
+      - name: Design rules
+        run: npm run check:design

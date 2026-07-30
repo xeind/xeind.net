@@ -1,0 +1,62 @@
+[
+  {
+    "file": "src/components/blog/MDXComponents.tsx",
+    "rule": "text-size",
+    "match": "*",
+    "reason": "Grandfathered blog one-off sizes (em-based inline code, figcaptions) — design-system.md §4"
+  },
+  {
+    "file": "src/components/blog/PullQuoteCard.tsx",
+    "rule": "text-size",
+    "match": "*",
+    "reason": "Grandfathered blog one-off sizes + the text-6xl quote glyph — design-system.md §4"
+  },
+  {
+    "file": "src/pages/404.astro",
+    "rule": "text-size",
+    "match": "text-6xl",
+    "reason": "Ratified display outlier: the 404 numeral — design-system.md §4"
+  },
+  {
+    "file": "src/components/hero/HeroSection.tsx",
+    "rule": "raw-color",
+    "match": "rgba(",
+    "reason": "Mask-ramp alpha (rgba(0,0,0,…)) spanning multiple lines — design-system.md §3 exception"
+  },
+  {
+    "file": "src/components/ui/CalloutLink.tsx",
+    "rule": "raw-color",
+    "match": "rgba(",
+    "reason": "Mask-ramp alpha — design-system.md §3 exception"
+  },
+  {
+    "file": "src/components/ui/CtaButton.astro",
+    "rule": "raw-color",
+    "match": "rgba(",
+    "reason": "Mask-ramp alpha — design-system.md §3 exception"
+  },
+  {
+    "file": "src/components/ui/SectionDivider.tsx",
+    "rule": "raw-color",
+    "match": "rgba(",
+    "reason": "Mask-ramp alpha — design-system.md §3 exception"
+  },
+  {
+    "file": "src/layouts/Layout.astro",
+    "rule": "raw-color",
+    "match": "*",
+    "reason": "theme-color meta tags and the no-JS fallback background render before any CSS variable exists"
+  },
+  {
+    "file": "src/components/design/GridIterations.tsx",
+    "rule": "timing",
+    "match": "duration-300",
+    "reason": "StageFigure square cascade, paired with delay-[40/80/120ms] stagger — specimen page"
+  },
+  {
+    "file": "src/components/sections/AwardsGrid.tsx",
+    "rule": "timing",
+    "match": "duration-300",
+    "reason": "Same StageFigure cascade as the specimen — the two must move identically"
+  }
+]
