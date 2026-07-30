@@ -83,12 +83,11 @@ svg {
   --color-warning: hsl(20 15% 45%);
   /* Warning states */
 
-  /* Georgia first, on purpose. The site shipped for months with the utility
-     silently falling back to Georgia, and its weight became the look — Latin
-     Modern Roman renders a step too thin for these headings. The LMR woff2s
-     stay declared in Layout.astro; putting it first here is the one-line
-     switch back. */
-  --font-serif: Georgia, "Latin Modern Roman", serif;
+  /* Latin Modern Roman is the serif — the site's own file, finally rendering
+     now that the variable carries Tailwind's namespace. It is lighter than
+     the Georgia fallback the site accidentally shipped for months; that
+     hairline weight is the intended look. */
+  --font-serif: "Latin Modern Roman", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", Menlo, Monaco, monospace;
 
