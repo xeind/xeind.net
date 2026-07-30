@@ -171,7 +171,11 @@ function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
             );
           })}
         </g>
-        <g fill="var(--logo-accent-35)">
+        {/* The second layer shuffles on its own cadence, which is what makes the
+            grid shimmer. It used the accent, which in Nightingale is a gold and
+            read as brown boxes among cream ones; on the ink ladder's top tone it
+            still separates from the layer beneath without a second hue. */}
+        <g fill="var(--logo-ink-100)">
           {secondaryOrder.map((coordIdx, i) => {
             const coord = ATAX_COORDS[coordIdx];
             return <rect key={`b-${i}`} x={coord.x} y={coord.y} width="8" height="8" />;

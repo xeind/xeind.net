@@ -8,19 +8,10 @@ export const projects: Project[] = [
     description: "Static analysis inside Neovim",
     longDescription: [
       "Brings static analysis into a native Neovim split: unused exports, dead code, circular dependencies, duplicate exports and complexity hotspots.",
-      "Lua plugin over fallow, a Rust analysis engine. No LSP, no tree-sitter, no config to get started.",
-    ],
-    projectLinks: [
-      {
-        label: "Plugin",
-        url: "https://github.com/xeind/vallow.nvim",
-      },
-      {
-        label: "fallow engine",
-        url: "https://docs.fallow.tools",
-      },
+      "Lua plugin over [fallow](https://docs.fallow.tools), a Rust analysis engine. No LSP, no tree-sitter, no config to get started.",
     ],
     technologies: ["Lua", "Rust", "Neovim"],
+    liveUrl: "https://github.com/xeind/vallow.nvim",
     featured: true,
     year: 2026,
   },
@@ -72,8 +63,8 @@ export const projects: Project[] = [
     type: "Client",
     description: "Landing page redesign, 98+ Lighthouse performance",
     longDescription: [
-      "Redesigned the whole landing page — new themes, refreshed stack, moved to Astro.",
-      "Holds a Lighthouse performance score above 98.",
+      "Redesigned the landing page end to end: new themes, a rebuilt stack, and a move to [Astro](https://astro.build).",
+      "Lighthouse performance above 98.",
     ],
     technologies: ["Astro", "TypeScript"],
     liveUrl: "https://pioneerdev.ai",

@@ -6,6 +6,7 @@ import { useMounted } from "@/lib/hooks/useMounted";
 import Badge from "@/components/ui/Badge";
 import ProjectLogo from "@/components/sections/ProjectLogo";
 import ArrowUpRight from "@/components/ui/ArrowUpRight";
+import InlineLink from "@/components/ui/InlineLink";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
@@ -60,6 +61,26 @@ function CloseIcon({ size, strokeWidth, className, ...props }: IconProps) {
       <path d="m6 6 12 12" />
     </svg>
   );
+}
+
+/**
+ * Renders `[label](url)` inside a description line as a real link, so a project
+ * can point at a dependency mid-sentence instead of pushing it into a row of
+ * buttons underneath. Anything that is not a link passes through untouched.
+ */
+function withLinks(text: string) {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+
+  return parts.map((part, i) => {
+    const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (!match) return part;
+
+    return (
+      <InlineLink key={i} href={match[2]} external>
+        {match[1]}
+      </InlineLink>
+    );
+  });
 }
 
 function getPrimaryProjectUrl(project: (typeof projects)[0]) {
@@ -518,7 +539,7 @@ export default function ProjectGrid() {
                             <li key={i} className="flex items-start gap-3">
                               <div className="bg-foreground/50 mt-2 h-1 w-1 shrink-0" />
                               <span className="font-serif text-sm leading-relaxed [text-wrap:pretty]">
-                                {point}
+                                {withLinks(point)}
                               </span>
                             </li>
                           ))}
