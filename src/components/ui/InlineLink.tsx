@@ -14,7 +14,8 @@ interface InlineLinkProps {
  * Design Pattern:
  * - Dashed border-bottom (indicates clickability, matches button/callout borders)
  * - Text color changes on hover (accent → tertiary)
- * - Border becomes solid on hover but STAYS accent/30 (matches Button/CalloutLink)
+ * - Border becomes solid on hover and stays accent/30 (CalloutLink is the
+ *   ratified exception that also brightens to /60 — see design-system.md §5)
  * - Uses border-bottom instead of text-decoration for consistent dash rendering
  * - Smooth 200ms ease-out transition
  *

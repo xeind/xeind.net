@@ -101,7 +101,7 @@
     const text = document.createElementNS(SVG_NS, "text");
     text.setAttribute("text-anchor", "middle");
     text.style.fill = "color-mix(in srgb, var(--color-foreground) 80%, transparent)";
-    text.style.fontFamily = "var(--font-family-sans)";
+    text.style.fontFamily = "var(--font-sans)";
     text.style.fontSize = "0.875rem";
 
     svg.append(path, text);

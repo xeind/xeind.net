@@ -70,7 +70,7 @@ const structuredData = {
   <div class="flex flex-col">
     <CalloutBand href="/blog" label="Visit my blog" />
 
-    <Panel tone="hero" padding="lg" edges="bottom" ornaments="bottom">
+    <Panel padding="lg" edges="bottom" ornaments="bottom">
       <HeroSection />
     </Panel>
     <SectionDivider variant="grid" />
@@ -161,11 +161,12 @@ const structuredData = {
   </script>
 
   <style is:global>
+    /* House timing (0.2s ease-out-cubic) — was a one-off 180ms curve. */
     [data-email-icon] {
       transition:
-        transform 180ms cubic-bezier(0.2, 0, 0, 1),
-        opacity 180ms cubic-bezier(0.2, 0, 0, 1),
-        filter 180ms cubic-bezier(0.2, 0, 0, 1);
+        transform 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+        opacity 0.2s cubic-bezier(0.215, 0.61, 0.355, 1),
+        filter 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
     }
 
     @media (prefers-reduced-motion: reduce) {

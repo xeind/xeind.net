@@ -1,7 +1,6 @@
 import { experiences } from "@/lib/data/experience";
 import Badge from "@/components/ui/Badge";
 import type { Experience } from "@/lib/types";
-import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
 const inlineLinkClass =
   "inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -72,7 +71,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
         <p className="text-foreground/80 text-sm leading-relaxed">{exp.description}</p>
 
         {exp.technologies && exp.technologies.length > 0 && (
-          <div className={`mt-4 flex flex-wrap ${GAP_SPACING.xs}`}>
+          <div className="mt-4 flex flex-wrap gap-2">
             {exp.technologies.map((tech: string) => (
               <Badge key={tech}>{tech}</Badge>
             ))}
@@ -85,7 +84,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
 
 export default function ExperienceTimeline() {
   return (
-    <div className={STACK_SPACING.normal}>
+    <div className="space-y-4">
       <h2 className="text-foreground font-serif text-2xl">Experience</h2>
 
       {experiences.map((exp) => (

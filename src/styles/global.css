@@ -83,22 +83,22 @@ svg {
   --color-warning: hsl(20 15% 45%);
   /* Warning states */
 
-  --font-family-serif: "Latin Modern Roman", Georgia, serif;
-  --font-family-sans: "Inter", system-ui, sans-serif;
-  --font-family-mono: "JetBrains Mono", Menlo, Monaco, monospace;
+  --font-serif: "Latin Modern Roman", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Menlo, Monaco, monospace;
 
   /* Typography scale - uniform, minimal variation */
-  --font-size-xs: 0.75rem; /* 12px - Meta (mono only) */
-  --font-size-sm: 0.875rem; /* 14px - Body & UI */
-  --font-size-base: 1rem; /* 16px - Emphasis */
-  --font-size-lg: 1.125rem; /* 18px - H2 */
-  --font-size-xl: 1.25rem; /* 20px - H1 */
-  --font-size-2xl: 1.5rem; /* 24px - Display */
+  --text-xs: 0.75rem; /* 12px - Meta (mono only) */
+  --text-sm: 0.875rem; /* 14px - Body & UI */
+  --text-base: 1rem; /* 16px - Emphasis */
+  --text-lg: 1.125rem; /* 18px - H2 */
+  --text-xl: 1.25rem; /* 20px - H1 */
+  --text-2xl: 1.5rem; /* 24px - Display */
 
   /* Line heights for readability */
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
 }
 
 /* ========================================
@@ -199,6 +199,18 @@ svg {
      dark themes can — losing tint there still lands on a card. */
   --surface-hover-fill: 1;
 
+  /* Ink for labels sitting on a fixed black photo scrim (bg-black/50): the
+     lightbox counter and the collage "+N" overlay. Deliberately NOT a theme
+     token — the scrim is black in every theme, so the ink must stay cream in
+     every theme; a theme token would go near-black-on-black in Manila. */
+  --scrim-ink: #ebe5d8;
+
+  /* Panel's paper-grain wash. The dark themes run it fainter — grain that
+     reads as texture on Kozo's paper reads as dirt on a near-black card.
+     Was a `dark:` variant, which fires on the OS setting instead of the
+     picked theme; a per-theme variable follows data-theme correctly. */
+  --noise-opacity: 0.03;
+
   /* Edge glow — one lamp for the side rails, the divider strips and the
      corner diamonds: same reach, same peak, same curve. edge-glow.js reads
      --edge-glow-radius at init; --edge-glow-stops below samples the exact
@@ -218,7 +230,6 @@ svg {
   /* 8 cells × 16px = scroll reveal distance */
   --footer-bg-height: 100vh;
   /* Background extends full viewport */
-  --radius: 0.5rem;
   /* Divider dash pattern (consistent across horizontal and vertical dividers) */
   --divider-dash-length: 8px; /* visible dash length */
   --divider-dash-gap: 8px; /* gap between dashes */
@@ -241,7 +252,7 @@ body {
   overscroll-behavior: contain;
   background-color: var(--color-muted);
   color: var(--color-foreground);
-  font-family: var(--font-family-sans);
+  font-family: var(--font-sans);
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
@@ -266,6 +277,7 @@ body {
   --badge-ink: var(--color-secondary);
   --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
+  --noise-opacity: 0.012;
   --logo-ink-100: #ecedee;
   --logo-ink-75: #b6b7b8;
   --logo-ink-55: #8c8c8e;
@@ -277,6 +289,7 @@ body {
 [data-theme="nightingale"] {
   --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
+  --noise-opacity: 0.012;
   --logo-ink-100: #dcd7ba;
   --logo-ink-75: #aba792;
   --logo-ink-55: #848171;
@@ -549,7 +562,7 @@ body {
    ======================================== */
 
 code {
-  font-family: var(--font-family-mono);
+  font-family: var(--font-mono);
   font-size: 0.8125em;
   padding: 0.125rem 0.375rem;
   border: 1px dashed var(--color-accent);
@@ -676,7 +689,7 @@ pre.astro-code {
   position: relative;
   background-color: var(--color-muted) !important;
   border: 1px dashed color-mix(in srgb, var(--color-accent) 15%, transparent);
-  font-family: var(--font-family-mono) !important;
+  font-family: var(--font-mono) !important;
   font-size: 0.8125rem;
   line-height: 1.75;
   padding: 1rem;
@@ -696,7 +709,7 @@ pre.astro-code[data-language]::before {
   position: absolute;
   top: 0.625rem;
   left: 0.875rem;
-  font-family: var(--font-family-mono);
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1138,10 +1151,10 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   translate: -50% 0;
   z-index: 2;
   pointer-events: none;
-  font-family: var(--font-family-mono);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.025em;
-  color: #ebe5d8;
+  color: var(--scrim-ink);
   background: rgb(0 0 0 / 0.5);
   padding: 2px 8px;
 }

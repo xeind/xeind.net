@@ -1,4 +1,6 @@
-// Animation configuration following .github/animation-instruction.md
+// Animation configuration — rules and house defaults in docs/animation.md.
+// This file is a full palette on purpose: the HOUSE DEFAULT entries are what
+// you reach for; the rest are available with a stated reason, not endorsed.
 
 // Spring animations - default for Motion/Framer Motion
 export const SPRING_CONFIG = {
@@ -34,6 +36,7 @@ export const SPRING_CONFIG = {
     duration: 0.4,
     bounce: 0.4,
   },
+  // HOUSE DEFAULT for modals and layout animation.
   noBounce: {
     type: "spring" as const,
     duration: 0.3,
@@ -47,6 +50,7 @@ export const EASING = {
   ease: [0.25, 0.1, 0.25, 1],
 
   // ease-out: Best for elements entering the screen
+  // HOUSE DEFAULT curve: easeOutCubic.
   easeOutQuad: [0.25, 0.46, 0.45, 0.94],
   easeOutCubic: [0.215, 0.61, 0.355, 1],
   easeOutQuart: [0.165, 0.84, 0.44, 1],

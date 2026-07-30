@@ -248,24 +248,14 @@ Anywhere else, a hex in an SVG is a bug.
 Section headings are lowercase-eyebrow style: `text-accent font-mono text-xs tracking-wide`,
 in caps, e.g. `TYPOGRAPHY`. Follow that for any new section label.
 
-### ⚠️ Known trap: the `font-*` utilities are not wired to the self-hosted fonts
+### Variable names are Tailwind v4 namespaces — keep them exact
 
-`global.css` declares `--font-family-serif`, `--font-family-sans`,
-`--font-family-mono` in `@theme`. Tailwind v4 builds the `font-*` utilities from
-`--font-serif`, `--font-sans`, `--font-mono` — different names. So today
-`font-serif` renders `ui-serif, Georgia, …` and `font-mono` renders
-`ui-monospace, SFMono-Regular, …`, not the woff2 files in `public/fonts/`.
-
-What still works: `<body>` (uses `var(--font-family-sans)` directly), and `code`
-/ `pre.astro-code` (use `var(--font-family-mono)` directly). Those get the real
-fonts.
-
-Do not "fix" this by hand-writing `style={{ fontFamily: "Latin Modern Roman" }}`
-on a component. The fix is renaming the three variables in the `@theme` block,
-which changes the whole site's rendering at once and needs the author's
-go-ahead. Same story for `--font-size-*` (v4 wants `--text-*`) and
-`--line-height-*` (v4 wants `--leading-*`); the sizes happen to match Tailwind's
-defaults, `leading-relaxed` does not (1.75 intended, 1.625 rendered).
+The `@theme` block declares `--font-serif/sans/mono`, `--text-*` and
+`--leading-*`. Those exact prefixes are what Tailwind v4 builds the `font-*`,
+`text-*` and `leading-*` utilities from. Rename one (say, to
+`--font-family-serif`) and the utility silently falls back to Tailwind's
+defaults — the site once shipped months of Georgia headings this way. If a
+declared font doesn't render, check these names before anything else.
 
 ### Scale
 

@@ -1,4 +1,6 @@
 ---
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
+
 interface Props {
   href: string;
   label: string;
@@ -6,9 +8,13 @@ interface Props {
 }
 
 const { href, label, shortcut } = Astro.props;
-const t = "transition-duration:0.2s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
-const tFast =
-  "transition-duration:0.15s;transition-timing-function:cubic-bezier(0.215,0.61,0.355,1)";
+
+/* Astro templates take a style string, not React's style object, so serialize
+   the shared transitions rather than retyping their numbers here. */
+const css = (t: { transitionDuration: string; transitionTimingFunction: string }) =>
+  `transition-duration:${t.transitionDuration};transition-timing-function:${t.transitionTimingFunction}`;
+const t = css(CSS_TRANSITIONS.border);
+const tFast = css(CSS_TRANSITIONS.fade);
 ---
 
 <a

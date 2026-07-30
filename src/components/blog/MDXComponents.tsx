@@ -217,7 +217,7 @@ export function MdxImg(props: MdxImgProps) {
         />
         {extra > 0 && index === visible - 1 && (
           <span
-            className="pointer-events-none absolute inset-0 grid place-items-center bg-black/50 font-mono text-lg text-[#EBE5D8]"
+            className="pointer-events-none absolute inset-0 grid place-items-center bg-black/50 font-mono text-lg text-(--scrim-ink)"
             aria-hidden="true"
           >
             +{extra}

@@ -1,4 +1,3 @@
-import { STACK_SPACING } from "@/lib/config/spacing";
 import InlineIcon from "@/components/ui/InlineIcon";
 import InlineLink from "@/components/ui/InlineLink";
 import pioneerIcon from "@/assets/pioneer.svg";
@@ -8,9 +7,9 @@ const inlineLinkClass =
 
 export default function AboutSection() {
   return (
-    <div className={STACK_SPACING.normal}>
+    <div className="space-y-4">
       <h2 className="text-foreground font-serif text-2xl">About</h2>
-      <div className={`text-foreground/80 ${STACK_SPACING.normal} text-sm leading-relaxed`}>
+      <div className="text-foreground/80 space-y-4 text-sm leading-relaxed">
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and microinteractions.
           Currently working at{" "}

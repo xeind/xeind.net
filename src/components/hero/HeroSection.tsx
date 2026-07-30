@@ -1,6 +1,5 @@
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 import StaticLogo from "./StaticLogo";
-import { GAP_SPACING } from "@/lib/config/spacing";
 import { personalInfo } from "@/lib/data/personal";
 import { ICON_CONFIG } from "@/lib/config/design";
 
@@ -117,7 +116,7 @@ function HeroActionLink({
         />
       </div>
 
-      <div className={`relative z-10 flex items-center justify-center gap-3 ${GAP_SPACING.xs}`}>
+      <div className="relative z-10 flex items-center justify-center gap-3">
         <span className="font-serif text-sm transition-all" style={CSS_TRANSITIONS.border}>
           {children}
         </span>
