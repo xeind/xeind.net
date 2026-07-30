@@ -2,9 +2,33 @@ import type { Project } from "@/lib/types";
 
 export const projects: Project[] = [
   {
+    id: "vallow",
+    title: "vallow.nvim",
+    type: "Personal",
+    description: "Static analysis inside Neovim",
+    longDescription: [
+      "Brings static analysis into a native Neovim split: unused exports, dead code, circular dependencies, duplicate exports and complexity hotspots.",
+      "Lua plugin over fallow, a Rust analysis engine. No LSP, no tree-sitter, no config to get started.",
+    ],
+    projectLinks: [
+      {
+        label: "Plugin",
+        url: "https://github.com/xeind/vallow.nvim",
+      },
+      {
+        label: "fallow engine",
+        url: "https://docs.fallow.tools",
+      },
+    ],
+    technologies: ["Lua", "Rust", "Neovim"],
+    featured: true,
+    year: 2026,
+  },
+
+  {
     id: "nightingale",
     title: "Nightingale",
-    type: "Theme",
+    type: "Personal",
     description: "Theme for Zed and Neovim",
     longDescription: [
       "Warm contrast theme for Zed and Neovim.",
@@ -25,14 +49,15 @@ export const projects: Project[] = [
     year: 2025,
     imageUrl: "/projects/nightingale.svg",
   },
+
   {
     id: "atax",
     title: "ATAX",
-    type: "Tool",
+    type: "Personal",
     description: "Image encryption and decryption tool",
     longDescription: [
-      "Chaotic-map encryption scheme achieving high diffusion, randomness, and strong security",
-      "Validated with Entropy 7.9982, UACI 33.46%, NPCR 99.61%, Correlation -0.0008, and 21ms runtime",
+      "Chaotic-map encryption scheme achieving high diffusion, randomness, and strong security.",
+      "Validated with Entropy 7.9982, UACI 33.46%, NPCR 99.61%, Correlation -0.0008, and 21ms runtime.",
     ],
     technologies: ["TypeScript", "Python", "React", "Docker"],
     liveUrl: "https://atax.dev",
@@ -42,33 +67,29 @@ export const projects: Project[] = [
   },
 
   {
-    id: "slavicmeet",
-    title: "slavicmeet",
-    type: "Work",
-    description: "Dating site",
-    technologies: ["Astro", "Tailwind", "Cloudflare"],
-    liveUrl: "https://slavicmeet.app",
+    id: "pioneerdev-ai",
+    title: "Pioneer Dev",
+    type: "Client",
+    description: "Landing page redesign, 98+ Lighthouse performance",
+    longDescription: [
+      "Redesigned the whole landing page — new themes, refreshed stack, moved to Astro.",
+      "Holds a Lighthouse performance score above 98.",
+    ],
+    technologies: ["Astro", "TypeScript"],
+    liveUrl: "https://pioneerdev.ai",
     featured: true,
     year: 2026,
-    imageUrl: "/projects/smeet-seo.svg",
-    iconSize: "compact",
+    imageUrl: "/projects/pioneer.svg",
   },
-  {
-    id: "filipinameet",
-    title: "filipinameet",
-    type: "Work",
-    description: "Dating site",
-    technologies: ["React", "TypeScript"],
-    liveUrl: "https://filipinameet.com",
-    featured: true,
-    year: 2026,
-    imageUrl: "/projects/fmeet-seo.svg",
-  },
+
   {
     id: "yield",
     title: "Yield",
-    type: "Work",
+    type: "Client",
     description: "",
+    // No link and nothing written up yet, so there is nothing for a modal to
+    // show. Rendered as a plain plate until there is.
+    interactive: false,
     technologies: ["React", "TypeScript", "Prisma"],
     liveUrl: "",
     featured: true,
@@ -76,15 +97,37 @@ export const projects: Project[] = [
     imageUrl: "/projects/yield.svg",
     iconSize: "compact",
   },
+
   {
-    id: "pioneerdev-ai",
-    title: "Pioneer Dev",
-    type: "Work",
-    description: "",
-    technologies: ["Astro", "TypeScript"],
-    liveUrl: "https://pioneerdev.ai",
+    id: "filipinameet",
+    title: "filipinameet",
+    type: "Client",
+    description: "Framer to Astro, 67 to 90 Lighthouse performance",
+    longDescription: [
+      "Moved the marketing site off Framer and onto Astro.",
+      "Lighthouse performance score went from 67 to 90.",
+    ],
+    technologies: ["React", "TypeScript"],
+    liveUrl: "https://filipinameet.com",
     featured: true,
     year: 2026,
-    imageUrl: "/projects/pioneer.svg",
+    imageUrl: "/projects/fmeet-seo.svg",
+  },
+
+  {
+    id: "slavicmeet",
+    title: "slavicmeet",
+    type: "Client",
+    description: "Landing page, 85 Lighthouse performance",
+    longDescription: [
+      "Owned the landing page end to end.",
+      "Holds a Lighthouse performance score of 85.",
+    ],
+    technologies: ["Astro", "Tailwind", "Cloudflare"],
+    liveUrl: "https://slavicmeet.app",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/smeet-seo.svg",
+    iconSize: "compact",
   },
 ];

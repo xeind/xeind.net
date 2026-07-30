@@ -5,6 +5,7 @@ import AboutSection from "@/components/sections/AboutSection";
 import ExperienceTimeline from "@/components/sections/ExperienceTimeline";
 import ProjectGrid from "@/components/sections/ProjectGrid";
 import CalloutBand from "@/components/ui/CalloutBand";
+import AwardsGrid from "@/components/sections/AwardsGrid";
 import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import { SITE, absoluteUrl } from "@/lib/config/site";
@@ -95,6 +96,12 @@ const structuredData = {
     }
     <Panel>
       <ProjectGrid client:visible={{ rootMargin: "300px" }} />
+    </Panel>
+
+    <SectionDivider variant="grid" />
+
+    <Panel>
+      <AwardsGrid client:visible={{ rootMargin: "300px" }} />
     </Panel>
   </div>
 

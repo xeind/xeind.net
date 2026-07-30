@@ -5,13 +5,13 @@ import { projects } from "@/lib/data/projects";
 import { useMounted } from "@/lib/hooks/useMounted";
 import Badge from "@/components/ui/Badge";
 import ProjectLogo from "@/components/sections/ProjectLogo";
+import ArrowUpRight from "@/components/ui/ArrowUpRight";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 import { useAudioUnlock, playBrush, playClickLow, playClickSharp } from "@/lib/hooks/useClickSound";
-import { STACK_SPACING, GAP_SPACING } from "@/lib/config/spacing";
 
 type ResolvedTheme = "light" | "dark" | "nightingale";
 
@@ -40,27 +40,6 @@ type IconProps = SVGProps<SVGSVGElement> & {
   size: number;
   strokeWidth: number;
 };
-
-function ArrowUpRightIcon({ size, strokeWidth, className, ...props }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M7 17 17 7" />
-      <path d="M7 7h10v10" />
-    </svg>
-  );
-}
 
 function CloseIcon({ size, strokeWidth, className, ...props }: IconProps) {
   return (
@@ -408,60 +387,67 @@ export default function ProjectGrid() {
                       )}
                     </motion.div>
 
-                    {/* Content */}
+                    {/* Content. No layoutId: a plate has no content block to fly
+                        from, and a shared id with only one end is not a morph —
+                        it is a silent no-op that reads as jank. The body fades
+                        in on its own instead; the plate's two labels still
+                        morph, via title- and type-. */}
                     <motion.div
-                      layoutId={`content-${activeProject.id}`}
                       className="scrollbar-hide relative flex flex-col overflow-y-auto px-8 py-6"
                       transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
-                      {/* Header — same order as card: type then title */}
+                      {/* Header — the plate's arrangement kept: name on the left,
+                          kind opposite it on the right, rather than stacked. The
+                          two morph from the plate's corners into the same
+                          relationship, so nothing crosses the card on open. */}
                       <div className="mb-4">
-                        <motion.div
-                          layoutId={`type-${activeProject.id}`}
-                          className="mb-1 flex items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
-                          transition={
-                            prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
-                          }
-                        >
-                          <span className="text-accent">{activeProject.type}</span>
-                          <span className="text-foreground/60">·</span>
-                          <span className="text-tertiary">{activeProject.year}</span>
-                        </motion.div>
-                        <motion.h3
-                          id="modal-title"
-                          layoutId={`title-${activeProject.id}`}
-                          className="text-foreground font-serif text-xl"
-                          transition={
-                            prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
-                          }
-                        >
-                          {activeProjectUrl ? (
-                            <a
-                              href={activeProjectUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onMouseEnter={brush}
-                              onClick={clickLow}
-                              className="hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
-                              style={t}
-                            >
-                              <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
-                                {activeProject.title}
-                              </span>
-                              <ArrowUpRightIcon
-                                size={ICON_CONFIG.sizes.md}
-                                strokeWidth={ICON_CONFIG.strokeWidth}
-                                className="mt-0.5 shrink-0"
-                              />
-                            </a>
-                          ) : (
-                            activeProject.title
-                          )}
-                        </motion.h3>
+                        <div className="flex items-baseline justify-between gap-4">
+                          <motion.h3
+                            id="modal-title"
+                            layoutId={`title-${activeProject.id}`}
+                            className="text-foreground font-serif text-xl"
+                            transition={
+                              prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
+                            }
+                          >
+                            {activeProjectUrl ? (
+                              <a
+                                href={activeProjectUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onMouseEnter={brush}
+                                onClick={clickLow}
+                                className="group hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
+                                style={t}
+                              >
+                                <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
+                                  {activeProject.title}
+                                </span>
+                                <ArrowUpRight
+                                  size={ICON_CONFIG.sizes.md}
+                                  trigger="link"
+                                  className="mt-0.5 shrink-0"
+                                />
+                              </a>
+                            ) : (
+                              activeProject.title
+                            )}
+                          </motion.h3>
+                          <motion.div
+                            layoutId={`type-${activeProject.id}`}
+                            className="flex shrink-0 items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
+                            transition={
+                              prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
+                            }
+                          >
+                            <span className="text-accent">{activeProject.type}</span>
+                            <span className="text-foreground/60">·</span>
+                            <span className="text-tertiary">{activeProject.year}</span>
+                          </motion.div>
+                        </div>
 
                         {activeProject.projectLinks && activeProject.projectLinks.length > 0 && (
                           <motion.div
-                            layout
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{
@@ -478,15 +464,15 @@ export default function ProjectGrid() {
                                 rel="noopener noreferrer"
                                 onMouseEnter={brush}
                                 onClick={clickLow}
-                                className="text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
+                                className="group text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
                                 style={t}
                               >
                                 <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
                                   {link.label}
                                 </span>
-                                <ArrowUpRightIcon
+                                <ArrowUpRight
                                   size={ICON_CONFIG.sizes.sm}
-                                  strokeWidth={ICON_CONFIG.strokeWidth}
+                                  trigger="link"
                                   className="shrink-0"
                                 />
                               </a>
@@ -497,14 +483,13 @@ export default function ProjectGrid() {
                         {/* Technologies */}
                         {activeProject.technologies && activeProject.technologies.length > 0 && (
                           <motion.div
-                            layout
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{
                               opacity: 0,
                               transition: { duration: 0.05 },
                             }}
-                            className={`mt-3 flex flex-wrap ${GAP_SPACING.xs}`}
+                            className="mt-3 flex flex-wrap gap-2"
                           >
                             {activeProject.technologies.map((tech) => (
                               <Badge key={tech}>{tech}</Badge>
@@ -516,13 +501,16 @@ export default function ProjectGrid() {
                       {/* Dashed separator */}
                       <div className="border-accent/20 mb-4 border-t border-dashed" />
 
-                      {/* Description */}
+                      {/* Description. No `layout`: the modal is still resizing
+                          as it morphs from the plate, and a layout-animated
+                          child inside a resizing parent animates its own
+                          position too — which reads as the text sliding in from
+                          somewhere. It should only fade. */}
                       <motion.ul
-                        layout
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                        className={`text-foreground/80 mb-4 text-sm leading-relaxed ${STACK_SPACING.tight}`}
+                        className="text-foreground/80 mb-4 space-y-1 text-sm leading-relaxed"
                       >
                         {(activeProject.longDescription || [activeProject.description])
                           .filter((point) => point.trim().length > 0)
@@ -545,27 +533,34 @@ export default function ProjectGrid() {
         )}
 
       {/* Project Grid */}
-      <div className={STACK_SPACING.normal}>
+      <div className="space-y-4">
         <h2 className="text-foreground font-serif text-2xl">Projects</h2>
 
-        <div className={`grid w-full grid-cols-2 ${GAP_SPACING.sm} md:grid-cols-3`}>
+        <div className="grid w-full grid-cols-1 gap-4 min-[368px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {projects.map((project) => {
             const primaryUrl = getPrimaryProjectUrl(project);
+            // Nothing to open: no link, and no copy for a modal to show.
+            const openable =
+              project.interactive !== false &&
+              Boolean(primaryUrl || project.description || project.longDescription?.length);
 
             return (
               <motion.button
                 layoutId={`card-${project.id}`}
                 key={project.id}
-                onMouseEnter={brush}
-                onClick={() => handleProjectClick(project)}
-                className="group bg-card focus-visible:ring-accent focus-visible:ring-offset-background relative aspect-square cursor-pointer overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                {...(openable
+                  ? { onMouseEnter: brush, onClick: () => handleProjectClick(project) }
+                  : { disabled: true })}
+                className={`group bg-muted focus-visible:ring-accent focus-visible:ring-offset-background relative h-32 overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none sm:h-36 ${openable ? "cursor-pointer" : "cursor-default"}`}
                 style={{ borderRadius: 0 }}
                 transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
               >
-                <span className="sr-only">View details for</span>
+                {openable && <span className="sr-only">View details for</span>}
                 <DashedBorders />
-                <CornerBrackets />
-                <GradientBackground />
+                {/* Brackets promise a modal. A project with nothing written up
+                    and nowhere to go gets the dashed border alone. */}
+                {openable && <CornerBrackets />}
+                {openable && <GradientBackground />}
 
                 {/* External link indicator */}
                 {primaryUrl && (
@@ -583,21 +578,26 @@ export default function ProjectGrid() {
                       style={tFast}
                       aria-label={`Open ${project.title} in new tab`}
                     >
-                      <ArrowUpRightIcon
-                        size={ICON_CONFIG.sizes.md}
-                        strokeWidth={ICON_CONFIG.strokeWidth}
-                      />
+                      <ArrowUpRight size={ICON_CONFIG.sizes.md} />
                     </a>
                   </div>
                 )}
 
-                {/* Image area with layoutId */}
+                {/* The plate: one figure carrying its own labels. @container so
+                    the tag decides for itself whether it fits — the same card
+                    is used at three and at six per row. */}
                 <motion.div
                   layoutId={`image-${project.id}`}
-                  className="bg-muted border-accent/30 absolute inset-x-0 top-0 flex h-1/2 items-center justify-center border-b border-dashed"
+                  /* pb-4, not 0 and not the full label height. Centred on the
+                     box the mark crowds the name; centred on the free space
+                     above the labels it reads high, because the label row is
+                     light text and carries less visual weight than its height
+                     suggests. Measured on a 144px plate: ink lands 40 from the
+                     top and 32 clear of the text. */
+                  className="@container absolute inset-0 flex items-center justify-center pb-4"
                   transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                 >
-                  <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
+                  <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
                   {project.imageUrl ? (
                     <ProjectLogo
                       projectId={project.id}
@@ -606,35 +606,29 @@ export default function ProjectGrid() {
                       className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
                     />
                   ) : (
-                    <div className="text-foreground/60 font-mono text-[0.6875rem]">
-                      {project.id}
-                    </div>
+                    /* No mark yet — the id stands in for one rather than
+                       leaving the plate looking like a failed image. */
+                    <span className="border-accent/30 group-hover:border-accent/60 relative z-10 flex h-12 w-12 items-center justify-center border border-dashed transition-colors motion-reduce:transition-none">
+                      <span className="text-foreground/30 group-hover:text-foreground/60 font-mono text-[0.625rem] transition-colors motion-reduce:transition-none">
+                        {project.id}
+                      </span>
+                    </span>
                   )}
-                </motion.div>
 
-                {/* Card content with layoutId */}
-                <motion.div
-                  layoutId={`content-${project.id}`}
-                  className="absolute inset-x-0 bottom-0 flex h-1/2 flex-col p-3 md:p-5"
-                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
-                >
-                  <motion.p
-                    layoutId={`type-${project.id}`}
-                    className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide"
-                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
-                  >
-                    {project.type}
-                  </motion.p>
                   <motion.h3
                     layoutId={`title-${project.id}`}
-                    className="text-foreground line-clamp-2 pr-6 font-serif text-sm leading-tight md:text-base"
+                    className="text-accent absolute bottom-2 left-3 z-10 font-serif text-base leading-none"
                     transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                   >
                     {project.title}
                   </motion.h3>
-                  <p className="text-foreground/60 mt-2 line-clamp-2 hidden text-xs leading-relaxed min-[864px]:mt-auto min-[864px]:block lg:text-sm">
-                    {project.description}
-                  </p>
+                  <motion.p
+                    layoutId={`type-${project.id}`}
+                    className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden"
+                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                  >
+                    {project.type}
+                  </motion.p>
                 </motion.div>
               </motion.button>
             );

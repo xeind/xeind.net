@@ -17,7 +17,9 @@ export interface PersonalInfo {
 export interface Project {
   id: string;
   title: string;
-  type: string;
+  /** Who the work was for, not what kind of thing it is — one axis, so every
+      card's corner tag answers the same question. */
+  type: "Personal" | "Client";
   description: string;
   longDescription?: string[];
   projectLinks?: Array<{
@@ -29,6 +31,9 @@ export interface Project {
   liveUrl?: string;
   githubUrl?: string;
   featured?: boolean;
+  /** Set false for a project with nothing to open — the grid renders it as a
+      plate with no brackets and no modal, per the corner-bracket rule. */
+  interactive?: boolean;
   year?: number;
   iconSize?: "compact" | "normal" | "large";
 }
