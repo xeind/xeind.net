@@ -29,10 +29,10 @@ const PROJECT_MARKS = [
 const t = CSS_TRANSITIONS.border;
 const tFast = CSS_TRANSITIONS.fade;
 
-const sampleProject = projects.find((p) => p.id === "atax") || projects[0];
+const sampleProject = projects.find((p) => p.id === "vallow") || projects[0];
 const sampleAward = awards[0];
 
-type DemoId = "pv1" | "pv2" | "pv3" | "av1" | "av2";
+type DemoId = "pv1" | "pv2" | "pv3" | "pv4" | "av1" | "av2";
 
 function ArrowUpRightIcon({ size }: { size: number }) {
   return (
@@ -259,7 +259,9 @@ type CardProps = {
   spring: Transition;
 };
 
-/** v1 — production project card: split square, image half / content half */
+/** v1 — the card the home page shipped before the plate: split square, image
+    half over content half. Kept as the reference for what was replaced, not as
+    a draft — do not delete it because nothing renders it. */
 function ProjectCardV1({ onOpen, spring }: CardProps) {
   return (
     <motion.button
@@ -364,6 +366,29 @@ function ProjectCardV2({ onOpen, spring }: CardProps) {
   );
 }
 
+/** The card's plate without the interaction: same figure, same labels, no
+    layoutId and no brackets. Used where the point is how the labels behave at
+    a given width, not what happens on click — six interactive copies would
+    have shared one layoutId and the modal would morph from whichever the
+    renderer reached first. */
+function PlateFace() {
+  return (
+    <div className="group bg-muted @container relative flex h-28 w-full items-center justify-center overflow-hidden sm:h-32">
+      <DashedBorders />
+      <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
+      <span className="text-foreground/30 relative z-10 font-mono text-[0.625rem]">
+        {sampleProject.id}
+      </span>
+      <span className="text-accent absolute bottom-2 left-3 z-10 font-serif text-sm leading-none">
+        {sampleProject.title}
+      </span>
+      <span className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden">
+        {sampleProject.type}
+      </span>
+    </div>
+  );
+}
+
 /** v3 — plate: the figure treatment from the plate row, made clickable.
     A plate on its own is inert by convention — dashed borders and nothing
     else. Corner brackets and button semantics are what mark a thing as
@@ -382,28 +407,69 @@ function ProjectCardV3({ onOpen, spring }: CardProps) {
     >
       <motion.div
         layoutId="demo-image-pv3"
-        className="bg-muted relative flex h-28 w-full items-center justify-center overflow-hidden sm:h-32"
+        className="bg-muted @container relative flex h-28 w-full items-center justify-center overflow-hidden sm:h-32"
         transition={spring}
       >
         <DashedBorders />
         <CornerBrackets />
         <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
         <StageFigure />
-        <span className="text-accent absolute bottom-2 left-3 z-10 font-mono text-[0.6875rem] tracking-wide">
+        <motion.h3
+          layoutId="demo-title-pv3"
+          className="text-accent absolute bottom-2 left-3 z-10 font-serif text-sm leading-none"
+          transition={spring}
+        >
+          {sampleProject.title}
+        </motion.h3>
+        <span className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden">
           {sampleProject.type}
         </span>
-        <span className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide">
-          FIG.01
-        </span>
       </motion.div>
+    </motion.button>
+  );
+}
 
-      <motion.h3
-        layoutId="demo-title-pv3"
-        className="text-foreground mt-2 font-serif text-sm leading-snug"
+/** v4 — plate holding an empty slot: the mark is withheld until the modal
+    opens. Tests whether a grid of unlabelled slots reads as a set of things
+    worth opening, or just as missing images. */
+function ProjectCardV4({ onOpen, spring }: CardProps) {
+  return (
+    <motion.button
+      layoutId="demo-card-pv4"
+      onClick={() => onOpen("pv4")}
+      className="group relative flex w-full cursor-pointer flex-col text-left"
+      style={{ borderRadius: 0 }}
+      transition={spring}
+      aria-label={`View details for ${sampleProject.title}`}
+    >
+      <motion.div
+        layoutId="demo-image-pv4"
+        className="bg-muted @container relative flex h-28 w-full items-center justify-center overflow-hidden sm:h-32"
         transition={spring}
       >
-        {sampleProject.title}
-      </motion.h3>
+        <DashedBorders />
+        <CornerBrackets />
+        <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
+        <span
+          className="border-accent/30 group-hover:border-accent/60 relative z-10 flex h-12 w-12 items-center justify-center border border-dashed transition-colors motion-reduce:transition-none"
+          style={tFast}
+          aria-hidden="true"
+        >
+          <span className="text-foreground/30 group-hover:text-foreground/60 font-mono text-[0.625rem] transition-colors motion-reduce:transition-none">
+            {sampleProject.id}
+          </span>
+        </span>
+        <motion.h3
+          layoutId="demo-title-pv4"
+          className="text-accent absolute bottom-2 left-3 z-10 font-serif text-sm leading-none"
+          transition={spring}
+        >
+          {sampleProject.title}
+        </motion.h3>
+        <span className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden">
+          {sampleProject.type}
+        </span>
+      </motion.div>
     </motion.button>
   );
 }
@@ -613,7 +679,7 @@ export default function GridIterations() {
                       transition={spring}
                     >
                       <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
-                      {active === "av2" ? (
+                      {active === "av2" || active === "pv4" ? (
                         <StageFigure />
                       ) : (
                         <div className="text-foreground/60 font-mono text-[0.6875rem]">
@@ -700,7 +766,7 @@ export default function GridIterations() {
             With text body — click a card to open its center modal
           </p>
           <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 md:grid-cols-4">
-            <Labeled caption="project · v1 · production">
+            <Labeled caption="project · v1 · shipped until Jul 2026">
               <ProjectCardV1 onOpen={setActive} spring={spring} />
             </Labeled>
             <Labeled caption="project · v2 · shelved">
@@ -719,12 +785,25 @@ export default function GridIterations() {
 
         <div>
           <p className="text-foreground/50 mb-3 font-mono text-xs">
-            Plate as a card — brackets make it clickable, caption carries the title
+            Plate as a card — name and type sit in the plate, so it stands alone
           </p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <Labeled caption="project · v3 · plate">
               <ProjectCardV3 onOpen={setActive} spring={spring} />
             </Labeled>
+            <Labeled caption="project · v4 · slot, mark on open">
+              <ProjectCardV4 onOpen={setActive} spring={spring} />
+            </Labeled>
+          </div>
+
+          <p className="text-foreground/50 mt-6 mb-3 font-mono text-xs">
+            Same card at six per row — the plate is a container, so the tag drops itself below 11rem
+            and the name keeps the corner
+          </p>
+          <div className="grid grid-cols-3 gap-4 md:grid-cols-6">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <PlateFace key={i} />
+            ))}
           </div>
         </div>
 
