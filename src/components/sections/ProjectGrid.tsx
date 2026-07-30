@@ -346,7 +346,7 @@ export default function ProjectGrid() {
       {mounted &&
         createPortal(
           <>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {activeProject && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -358,7 +358,7 @@ export default function ProjectGrid() {
               )}
             </AnimatePresence>
 
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {activeProject && (
                 <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
                   <motion.div
@@ -566,35 +566,88 @@ export default function ProjectGrid() {
               Boolean(primaryUrl || project.description || project.longDescription?.length);
 
             return (
-              <motion.button
-                layoutId={`card-${project.id}`}
-                key={project.id}
-                {...(openable
-                  ? { onMouseEnter: brush, onClick: () => handleProjectClick(project) }
-                  : { disabled: true })}
-                className={`group bg-muted focus-visible:ring-accent focus-visible:ring-offset-background relative h-32 overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none sm:h-36 ${openable ? "cursor-pointer" : "cursor-default"}`}
-                style={{ borderRadius: 0 }}
-                transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
-              >
-                {openable && <span className="sr-only">View details for</span>}
-                <DashedBorders />
-                {/* Brackets promise a modal. A project with nothing written up
+              /* The wrapper is the hover group and owns the cell box; the
+                 button fills it. The external-link anchor is a SIBLING of the
+                 button, layered above it — an <a> inside a <button> is invalid
+                 interactive nesting, unreliable for keyboards and readers. As
+                 siblings each is its own tab stop and clicks never cross. */
+              <div key={project.id} className="group relative h-32 sm:h-36">
+                <motion.button
+                  layoutId={`card-${project.id}`}
+                  {...(openable
+                    ? { onMouseEnter: brush, onClick: () => handleProjectClick(project) }
+                    : { disabled: true })}
+                  className={`bg-muted focus-visible:ring-accent focus-visible:ring-offset-background absolute inset-0 overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none ${openable ? "cursor-pointer" : "cursor-default"}`}
+                  style={{ borderRadius: 0 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                >
+                  {openable && <span className="sr-only">View details for</span>}
+                  <DashedBorders />
+                  {/* Brackets promise a modal. A project with nothing written up
                     and nowhere to go gets the dashed border alone. */}
-                {openable && <CornerBrackets />}
-                {openable && <GradientBackground />}
+                  {openable && <CornerBrackets />}
+                  {openable && <GradientBackground />}
 
-                {/* External link indicator */}
+                  {/* The plate: one figure carrying its own labels. @container so
+                    the tag decides for itself whether it fits — the same card
+                    is used at three and at six per row. */}
+                  <motion.div
+                    layoutId={`image-${project.id}`}
+                    /* pb-4, not 0 and not the full label height. Centred on the
+                     box the mark crowds the name; centred on the free space
+                     above the labels it reads high, because the label row is
+                     light text and carries less visual weight than its height
+                     suggests. Measured on a 144px plate: ink lands 40 from the
+                     top and 32 clear of the text. */
+                    className="@container absolute inset-0 flex items-center justify-center pb-4"
+                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                  >
+                    <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
+                    {project.imageUrl ? (
+                      <ProjectLogo
+                        projectId={project.id}
+                        theme={resolvedTheme}
+                        alt={project.title}
+                        className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
+                      />
+                    ) : (
+                      /* No mark yet — the id stands in for one rather than
+                       leaving the plate looking like a failed image. */
+                      <span className="border-accent/30 group-hover:border-accent/60 relative z-10 flex h-12 w-12 items-center justify-center border border-dashed transition-colors motion-reduce:transition-none">
+                        <span className="text-foreground/30 group-hover:text-foreground/60 font-mono text-[0.625rem] transition-colors motion-reduce:transition-none">
+                          {project.id}
+                        </span>
+                      </span>
+                    )}
+
+                    <motion.h3
+                      layoutId={`title-${project.id}`}
+                      className="text-accent absolute bottom-2 left-3 z-10 font-serif text-base leading-none"
+                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                    >
+                      {project.title}
+                    </motion.h3>
+                    <motion.p
+                      layoutId={`type-${project.id}`}
+                      className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden"
+                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                    >
+                      {project.type}
+                    </motion.p>
+                  </motion.div>
+                </motion.button>
+
+                {/* External link — sibling of the button, above it. Revealed by
+                    hovering anywhere on the cell or focusing either control. */}
                 {primaryUrl && (
                   <div
-                    className="absolute top-4 right-4 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+                    className="absolute top-4 right-4 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
                     style={t}
                   >
                     <a
                       href={primaryUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      onKeyDown={(e) => e.stopPropagation()}
                       className="text-accent hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
                       style={tFast}
                       aria-label={`Open ${project.title} in new tab`}
@@ -603,55 +656,7 @@ export default function ProjectGrid() {
                     </a>
                   </div>
                 )}
-
-                {/* The plate: one figure carrying its own labels. @container so
-                    the tag decides for itself whether it fits — the same card
-                    is used at three and at six per row. */}
-                <motion.div
-                  layoutId={`image-${project.id}`}
-                  /* pb-4, not 0 and not the full label height. Centred on the
-                     box the mark crowds the name; centred on the free space
-                     above the labels it reads high, because the label row is
-                     light text and carries less visual weight than its height
-                     suggests. Measured on a 144px plate: ink lands 40 from the
-                     top and 32 clear of the text. */
-                  className="@container absolute inset-0 flex items-center justify-center pb-4"
-                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
-                >
-                  <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
-                  {project.imageUrl ? (
-                    <ProjectLogo
-                      projectId={project.id}
-                      theme={resolvedTheme}
-                      alt={project.title}
-                      className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
-                    />
-                  ) : (
-                    /* No mark yet — the id stands in for one rather than
-                       leaving the plate looking like a failed image. */
-                    <span className="border-accent/30 group-hover:border-accent/60 relative z-10 flex h-12 w-12 items-center justify-center border border-dashed transition-colors motion-reduce:transition-none">
-                      <span className="text-foreground/30 group-hover:text-foreground/60 font-mono text-[0.625rem] transition-colors motion-reduce:transition-none">
-                        {project.id}
-                      </span>
-                    </span>
-                  )}
-
-                  <motion.h3
-                    layoutId={`title-${project.id}`}
-                    className="text-accent absolute bottom-2 left-3 z-10 font-serif text-base leading-none"
-                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
-                  >
-                    {project.title}
-                  </motion.h3>
-                  <motion.p
-                    layoutId={`type-${project.id}`}
-                    className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden"
-                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
-                  >
-                    {project.type}
-                  </motion.p>
-                </motion.div>
-              </motion.button>
+              </div>
             );
           })}
         </div>

@@ -100,6 +100,9 @@ export default function AwardsGrid() {
 
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {awards.map((award) => {
+          // `stats` and `year` are defined on every award but rendered nowhere
+          // yet — reserved for the shared project/award modal (plan step 4).
+          // The `a` branch is likewise dormant until an award carries a url.
           const Card = award.url ? "a" : "article";
           const logo = resolveImageUrl(award.imageUrl);
 

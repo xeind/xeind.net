@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useClaudeFrames } from "@/lib/hooks/useClaudeFrames";
 
 export type ClaudeAnimationSet = readonly string[];
 
@@ -75,21 +76,6 @@ function preloadAnimationSets(animationSets: readonly ClaudeAnimationSet[]) {
   );
 }
 
-function useReducedMotion() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => setReducedMotion(query.matches);
-
-    updatePreference();
-    query.addEventListener("change", updatePreference);
-    return () => query.removeEventListener("change", updatePreference);
-  }, []);
-
-  return reducedMotion;
-}
-
 function frameMaskStyle(src: string, visible: boolean): CSSProperties {
   return {
     position: "absolute",
@@ -121,15 +107,8 @@ export default function ClaudeSpinner({
   label = "Claude mark",
   className,
 }: ClaudeSpinnerProps) {
-  const reducedMotion = useReducedMotion();
   const [framesMounted, setFramesMounted] = useState(false);
   const [framesReady, setFramesReady] = useState(false);
-  const [activeSet, setActiveSet] = useState(0);
-  const [activeFrame, setActiveFrame] = useState(0);
-  const frameCursors = useRef<number[]>([]);
-  const nextSet = useRef(0);
-  const wasPlaying = useRef(false);
-  const lastActivation = useRef(activation);
 
   useEffect(() => {
     let cancelled = false;
@@ -157,58 +136,19 @@ export default function ClaudeSpinner({
     };
   }, [framesMounted]);
 
-  useEffect(() => {
-    const activationChanged = activation !== lastActivation.current;
+  const frameCounts = useMemo(() => animationSets.map((frames) => frames.length), [animationSets]);
 
-    if (playing && (!wasPlaying.current || activationChanged) && animationSets.length > 0) {
-      if (activationChanged && resetOnStopSets.includes(activeSet)) {
-        frameCursors.current[activeSet] = 0;
-      }
-
-      const setIndex = nextSet.current % animationSets.length;
-      const frameIndex = frameCursors.current[setIndex] ?? 0;
-
-      setActiveSet(setIndex);
-      setActiveFrame(frameIndex);
-      nextSet.current = (setIndex + 1) % animationSets.length;
-    }
-
-    if (!playing && wasPlaying.current && resetOnStopSets.includes(activeSet)) {
-      frameCursors.current[activeSet] = 0;
-      setActiveFrame(0);
-    }
-
-    wasPlaying.current = playing;
-    lastActivation.current = activation;
-  }, [activation, activeSet, animationSets.length, playing, resetOnStopSets]);
-
-  useEffect(() => {
-    const frames = animationSets[activeSet];
-    if (reducedMotion || !playing || !framesReady || !frames?.length) return;
-
-    const frameDelay =
-      activeFrame === frames.length - 1
-        ? (lastFrameHoldMsBySet[activeSet] ?? frameDuration)
-        : frameDuration;
-    const timer = window.setTimeout(() => {
-      const frameIndex = ((frameCursors.current[activeSet] ?? 0) + 1) % frames.length;
-      frameCursors.current[activeSet] = frameIndex;
-      setActiveFrame(frameIndex);
-    }, frameDelay);
-
-    return () => window.clearTimeout(timer);
-  }, [
-    activeFrame,
-    activeSet,
-    animationSets,
-    frameDuration,
-    framesReady,
-    lastFrameHoldMsBySet,
+  // Frame-flip state machine shared with ClaudeMark — one implementation, so
+  // the outlined mark and this masked one cannot drift.
+  const { activeSet, activeFrame, showBase } = useClaudeFrames({
     playing,
-    reducedMotion,
-  ]);
-
-  const showBase = reducedMotion || !playing || !framesReady;
+    activation,
+    frameCounts,
+    frameDuration,
+    resetOnStopSets,
+    lastFrameHoldMsBySet,
+    ready: framesReady,
+  });
 
   return (
     <span

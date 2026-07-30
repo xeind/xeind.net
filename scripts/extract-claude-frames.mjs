@@ -1,5 +1,5 @@
 /**
- * Regenerates src/components/design/claude-frame-paths.ts from the frame
+ * Regenerates src/lib/claude-frame-paths.ts from the frame
  * SVGs in public/projects/claude-mark/ and public/projects/claude-thinking/.
  * Run after editing any frame: node scripts/extract-claude-frames.mjs
  *
@@ -11,7 +11,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const PAD = 8;
-const OUT = "src/components/design/claude-frame-paths.ts";
+const OUT = "src/lib/claude-frame-paths.ts";
 
 function frame(path) {
   const svg = readFileSync(path, "utf8");

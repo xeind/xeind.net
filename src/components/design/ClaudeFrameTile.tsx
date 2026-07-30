@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ClaudeSpinner from "@/components/ui/ClaudeSpinner";
-import { ClaudeMark } from "@/components/ui/ClaudeMark";
+import ClaudeMark from "@/components/ui/ClaudeMark";
 
 function ClaudeProjectTile() {
   const [hovered, setHovered] = useState(false);
