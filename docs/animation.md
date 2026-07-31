@@ -187,7 +187,9 @@ Safari janks.
 
 ---
 
-## 5. Hydration cost
+## 5. Loading & navigation
+
+### Islands
 
 Motion plus React is roughly 100KB. The home page carries two islands —
 `ProjectGrid` and `AwardsGrid` — both late in the stack on purpose, both
@@ -195,8 +197,42 @@ Motion plus React is roughly 100KB. The home page carries two islands —
 scrolls. The margin must stay smaller than the section's gap below the mobile
 fold, or the fetch fires at load and the deferral is wasted.
 
+**`client:visible` is the only directive in normal use.** `client:load`
+hydrates on arrival and competes with the view transition for the main
+thread — the /design Claude tile did exactly this and made every navigation
+there feel heavy. Reach for `client:load` only when something must be
+interactive above the fold at t=0, and say why in a comment.
+
 Adding another island is an ask-first change (`AGENTS.md`). Before asking,
-check whether CSS can do it. Most of this
-site's motion is CSS — the hover states, the corner marks, the edge glow, the
-logo crossfade, the view transitions, the blog lightbox — and none of it costs
-hydration.
+check whether CSS can do it. Most of this site's motion is CSS — the hover
+states, the corner marks, the edge glow, the logo crossfade, the view
+transitions, the blog lightbox — and none of it costs hydration.
+
+### Prefetch
+
+`ClientRouter` enables prefetch by default: `prefetchAll: true`, strategy
+`hover`. That covers desktop for free. **Phones have no hover**, so primary
+navigation — the callout band, the footer's /design link — carries
+`data-astro-prefetch="viewport"`: the page is fetched the moment the link
+scrolls into view, and a tap swaps instantly. Use `viewport` only on the few
+links a reader is likely to tap (each one costs a page download); leave
+everything else on the hover default. External links never prefetch.
+
+### The crossfade
+
+Page navigations fade out 100ms / in 160ms (`::view-transition-*` in
+`global.css`). These run concurrently, so the perceived settle is ~160ms —
+inside the house 0.15–0.3s band, but at the fast end on purpose: navigation
+is user-initiated, and every millisecond here sits on top of fetch + parse.
+Don't slow it down to make it "smoother"; the smoothness budget belongs to
+the modal, not the page swap.
+
+### Page weight
+
+The router fetches the whole next page on click, so HTML size IS navigation
+latency. `inlineStylesheets: "always"` puts ~74KB of CSS in every page — a
+deliberate first-paint trade that taxes every subsequent navigation; revisit
+it before adding any other global payload. /design carries ~117KB of inline
+specimen SVG and is the slowest page by design — it is a specimen sheet, not
+a template to copy. A new content page should stay near the ~100KB the blog
+pages weigh.

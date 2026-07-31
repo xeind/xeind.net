@@ -454,7 +454,11 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
 
       <div class="border-accent/20 my-6 border-t border-dashed"></div>
 
-      <ClaudeFrameTile client:load />
+      {
+        /* client:visible, not load — this tile sits mid-page; hydrating it on
+          arrival competed with the view transition for the main thread. */
+      }
+      <ClaudeFrameTile client:visible />
     </Panel>
     <SectionDivider />
 

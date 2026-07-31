@@ -20,6 +20,9 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
     <a
       href={href}
       data-hero-sfx="click"
+      // Primary-nav band: prefetch when it scrolls into view, because phones
+      // have no hover to trigger the router's default hover prefetch.
+      {...(external ? {} : { "data-astro-prefetch": "viewport" })}
       className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block px-12 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={CSS_TRANSITIONS.border}
       {...externalProps}

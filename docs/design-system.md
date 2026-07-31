@@ -310,6 +310,24 @@ names, strong prose), `font-bold` (display only: the 404 numeral, a demo h1).
 There is no `font-semibold` and no `font-light` — don't introduce them.
 `font-synthesis: none` is set, so never rely on faked weights.
 
+### Code blocks
+
+Shiki with the `css-variables` theme — token colors are CSS variables
+(`--astro-code-*`), defined per theme in `global.css`, so code recolors with
+`data-theme` like everything else. The whole treatment is owned there:
+
+- `pre.astro-code` — `bg-muted`, dashed `accent/15` border, mono at
+  `0.8125rem`, line numbers via CSS counters, language label from
+  `data-language`.
+- Inline `code` — same dashed border language, `accent/20`, `0.8125em`.
+- The copy button is injected by `public/codeblock-copy.js` — vanilla, no
+  hydration, plain CSS classes.
+
+Rules: **never add a syntax-highlighting theme or library** — new languages
+need nothing, Shiki handles them and the variables color them. New token
+colors are a theme decision: edit the three `--astro-code-*` blocks in
+`global.css` together, same as any token. Don't style code blocks per-page.
+
 ### Text opacity
 
 Text de-emphasis steps down the opacity ladder above. The working steps:
