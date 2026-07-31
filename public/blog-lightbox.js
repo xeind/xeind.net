@@ -134,12 +134,30 @@
     }
   }
 
-  function openZoom(button) {
+  async function openZoom(button) {
     if (state || busy) return;
     const thumb = button.querySelector("img");
     if (!thumb) return;
     const src = button.dataset.zoomSrc || thumb.src;
     const alt = button.dataset.zoomAlt || thumb.alt || "";
+
+    // Never morph an undecoded image. On the first click after a page load
+    // (or a ClientRouter swap) the full-size asset has no pixels yet: the
+    // overlay paints blank then pops in mid-morph, and naturalWidth is 0 so
+    // coverMorph computes the wrong start frame. Decode first — cached
+    // images resolve within a frame, and while an uncached one loads the
+    // thumbnail is still sitting untouched on the page, so the wait is
+    // invisible. Same discipline showAt() already applies to next/prev.
+    busy = true;
+    const pre = new Image();
+    pre.src = src;
+    try {
+      await pre.decode();
+    } catch {
+      /* still open — browser will paint when ready */
+    }
+    busy = false;
+    if (state) return; // something else opened while we decoded
 
     // Gallery: all cells of the enclosing image grid (including the hidden
     // 6+ ones, which are reachable via next/prev). Standalone images are a

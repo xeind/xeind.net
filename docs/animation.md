@@ -157,6 +157,28 @@ this pattern.
 
 Read `src/components/sections/ProjectGrid.tsx` before writing a new one.
 
+### Images in motion
+
+**Never animate an undecoded image.** An `<img>` without pixels paints blank,
+pops in mid-animation, and reports `naturalWidth: 0` — which silently breaks
+any geometry computed from it (the lightbox's cover-aware FLIP did exactly
+this on the first click after a page swap). The pattern, used by both the
+lightbox's open and its next/prev:
+
+```js
+const pre = new Image();
+pre.src = src;
+try {
+  await pre.decode();
+} catch {}
+// now measure, then animate
+```
+
+Cached images resolve within a frame, so this costs nothing after the first
+encounter. While an uncached one decodes, whatever triggered the animation is
+still on screen untouched — the wait is invisible. This applies to any future
+image morph, carousel, or reveal.
+
 ### Scroll-linked motion
 
 Use `useScroll` + `useTransform` from `motion/react`. Never a `useEffect`
