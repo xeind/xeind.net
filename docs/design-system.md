@@ -19,18 +19,18 @@ authority:
 Change a value in the owning file. Nowhere else. Every other place either reads
 it or renders it.
 
-| Thing                        | Owner                                                              |
-| ---------------------------- | ------------------------------------------------------------------ |
-| Colors, themes, CSS vars     | `src/styles/global.css` (`@theme` + the two `[data-theme]` blocks) |
-| Shared CSS classes           | `src/styles/global.css`                                            |
-| Motion timing and springs    | `src/lib/config/animation.ts`                                      |
-| Gaps and stacks              | §5 of this file (no config module — see there for why)             |
-| Icon sizes and stroke        | `src/lib/config/design.ts`                                         |
-| Site metadata, canonical URL | `src/lib/config/site.ts`                                           |
-| Content (projects, jobs, …)  | `src/lib/data/*` typed by `src/lib/types.ts`                       |
-| Reusable UI                  | `src/components/ui/*`                                              |
-| Page shell                   | `src/layouts/Layout.astro`                                         |
-| The rules                    | this file and `docs/animation.md`                                  |
+| Thing                                          | Owner                                                                      |
+| ---------------------------------------------- | -------------------------------------------------------------------------- |
+| Colors, themes, CSS vars                       | `src/styles/global.css` (`@theme` + the two `[data-theme]` blocks)         |
+| Shared CSS classes                             | `src/styles/global.css`                                                    |
+| Motion timing and springs                      | `src/lib/config/animation.ts`                                              |
+| Closed sets (type, spacing, opacity, z, radii) | `scripts/check-design-rules.mjs` constants — the tables here describe them |
+| Icon sizes and stroke                          | `src/lib/config/design.ts`                                                 |
+| Site metadata, canonical URL                   | `src/lib/config/site.ts`                                                   |
+| Content (projects, jobs, …)                    | `src/lib/data/*` typed by `src/lib/types.ts`                               |
+| Reusable UI                                    | `src/components/ui/*`                                                      |
+| Page shell                                     | `src/layouts/Layout.astro`                                                 |
+| The rules                                      | this file and `docs/animation.md`                                          |
 
 **`/design` owns nothing.** `src/pages/design.astro` is a rendered specimen — a
 place to look at the system in all three themes. It repeats token values as
@@ -133,8 +133,8 @@ generic ones.
 
 ### Opacity ladder
 
-Slash opacities step through a fixed set. This is the closed set in use — adding
-a step means editing this table, not just typing a new number.
+Slash opacities step through a fixed set. Adding a step is a design decision:
+extend the owner (`scripts/check-design-rules.mjs`) and this table together.
 
 `8 · 10 · 15 · 20 · 25 · 30 · 35 · 40 · 45 · 50 · 55 · 60 · 70 · 80 · 85 · 90`
 
@@ -396,7 +396,8 @@ Everything else steps in 4s.
 Write the Tailwind class. There is no spacing config module, and that is
 deliberate: an alias like `GAP_SPACING.xs = "gap-2"` renames a value without
 constraining anything — it never stopped anyone writing `gap-7`. The scale is a
-closed set, documented here and enforced by `npm run check:design`.
+closed set, owned by `scripts/check-design-rules.mjs` and enforced by
+`npm run check:design`; the ladder below describes it.
 
 **Legal gaps**: `gap-1` `gap-1.5` `gap-2` `gap-3` `gap-4` `gap-5` `gap-6`
 `gap-8`, plus the axis forms in use: `gap-x-3` `gap-x-4` `gap-y-1` `gap-y-2`.

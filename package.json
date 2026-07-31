@@ -17,10 +17,11 @@
     "deploy:dry": "npm run build",
     "lighthouse": "lighthouse http://localhost:3181 --view --chrome-flags=\"--headless\"",
     "lighthouse:mobile": "lighthouse http://localhost:3181 --preset=mobile --view --chrome-flags=\"--headless\"",
-    "lighthouse:ci": "lighthouse http://localhost:3000 --output=json --output=html --output-path=./lighthouse-report --chrome-flags=\"--headless\"",
+    "lighthouse:ci": "lighthouse http://localhost:3181 --output=json --output=html --output-path=./lighthouse-report --chrome-flags=\"--headless\"",
     "check:design": "node scripts/check-design-rules.mjs",
     "audit": "fallow --production",
-    "audit:ci": "fallow --production --ci"
+    "audit:ci": "fallow --production --ci",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

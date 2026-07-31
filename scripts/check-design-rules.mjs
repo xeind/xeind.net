@@ -23,8 +23,10 @@ const EXTENSIONS = new Set([".tsx", ".ts", ".astro", ".css", ".mdx"]);
 const TIMING_SOURCES = new Set(["src/lib/config/animation.ts", "src/styles/global.css"]);
 const COLOR_SOURCES = new Set(["src/styles/global.css"]);
 
-// Closed sets, mirroring docs/design-system.md. Changing one is a design
-// decision: edit the doc first, then this list.
+// THE closed sets — this block is the owner (design-system.md §0). The doc's
+// tables describe these values for humans; when they disagree, these win.
+// Extending a set is a design decision: change it here, then update the doc's
+// prose in the same commit.
 const Z_CLASSES = new Set(["-z-10", "z-0", "z-10", "z-20", "z-30", "z-40", "z-50"]);
 const TEXT_ARBITRARY = new Set(["text-[0.625rem]", "text-[0.6875rem]", "text-[0.8125rem]"]);
 const GAPS = new Set([
@@ -173,6 +175,102 @@ const RULES = [
 
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Content shape — enforces docs/content.md against src/lib/data/. Nothing on
+// this site truncates, so length is layout: a long description inflates a
+// whole card row; overlong bullets vanish below the modal's hidden-scrollbar
+// fold; an empty description opens an empty modal.
+
+const BANNED_VOICE = /\b(seamless(?:ly)?|robust|cutting[- ]edge|leverag\w*|passionate)\b/i;
+
+function parseEntries(source) {
+  // Top-level array entries only: split on brace depth, remember start lines.
+  const entries = [];
+  let depth = 0;
+  let current = null;
+  source.split("\n").forEach((line, i) => {
+    for (const ch of line) {
+      if (ch === "{") {
+        depth += 1;
+        if (depth === 1 && !current) current = { line: i + 1, text: "" };
+      } else if (ch === "}") {
+        depth -= 1;
+        if (depth === 0 && current) {
+          entries.push(current);
+          current = null;
+        }
+      }
+    }
+    if (current) current.text += line + "\n";
+  });
+  return entries;
+}
+
+const field = (text, name) => text.match(new RegExp(`${name}:\\s*"([^"]*)"`))?.[1];
+const bullets = (text) => {
+  const seg = text.match(/longDescription:\s*\[([\s\S]*?)\]/)?.[1];
+  return seg ? [...seg.matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
+};
+
+function checkContent() {
+  const out = [];
+  const push = (file, line, match, message) =>
+    out.push({ file, line, rule: "content", match, message });
+
+  const pFile = "src/lib/data/projects.ts";
+  for (const e of parseEntries(readFileSync(join(ROOT, pFile), "utf8"))) {
+    const id = field(e.text, "id");
+    if (!id) continue; // brace noise (imports, type annotations), not a data entry
+    const title = field(e.text, "title") ?? "";
+    const desc = field(e.text, "description");
+    const pts = bullets(e.text);
+    const interactive = !/interactive:\s*false/.test(e.text);
+
+    if (title.length > 16) push(pFile, e.line, id, `title ${title.length} chars (max 16)`);
+    if (desc !== undefined && desc.length > 50)
+      push(pFile, e.line, id, `description ${desc.length} chars (max 50)`);
+    if (interactive && !(desc?.trim() || pts.length))
+      push(
+        pFile,
+        e.line,
+        id,
+        "opens an empty modal: no description, no bullets, not interactive:false",
+      );
+    if (pts.length > 3) push(pFile, e.line, id, `${pts.length} bullets (max 3)`);
+    for (const b of pts)
+      if (b.length > 160) push(pFile, e.line, id, `bullet ${b.length} chars (max 160)`);
+    const total = pts.reduce((n, b) => n + b.length, 0);
+    if (total > 550)
+      push(pFile, e.line, id, `bullets total ${total} chars — below the modal fold past ~550`);
+    for (const s of [desc ?? "", ...pts]) {
+      const bad = s.match(BANNED_VOICE);
+      if (bad) push(pFile, e.line, id, `marketing register: "${bad[0]}"`);
+    }
+  }
+
+  const aFile = "src/lib/data/awards.ts";
+  for (const e of parseEntries(readFileSync(join(ROOT, aFile), "utf8"))) {
+    const id = field(e.text, "id");
+    if (!id) continue;
+    const title = field(e.text, "title") ?? "";
+    const issuer = field(e.text, "issuer") ?? "";
+    const desc = field(e.text, "description") ?? "";
+    if (title.length > 32) push(aFile, e.line, id, `title ${title.length} chars (max 32)`);
+    if (issuer.length > 28) push(aFile, e.line, id, `issuer ${issuer.length} chars (max 28)`);
+    if (desc.length < 120 || desc.length > 170)
+      push(
+        aFile,
+        e.line,
+        id,
+        `description ${desc.length} chars (band 120–170 so the row reads as a set)`,
+      );
+    const bad = desc.match(BANNED_VOICE);
+    if (bad) push(aFile, e.line, id, `marketing register: "${bad[0]}"`);
+  }
+
+  return out;
+}
+
 function* walk(dir) {
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
@@ -220,6 +318,11 @@ function scan() {
         }
       }
     });
+  }
+
+  for (const entry of checkContent()) {
+    if (isAllowed(allowlist, entry.file, entry.rule, entry.match)) allowed.push(entry);
+    else violations.push(entry);
   }
 
   return { violations, allowed, allowlist };
@@ -280,8 +383,13 @@ if (args.includes("--list-allowlisted")) {
 if (violations.length > 0) {
   const byRule = Object.groupBy(violations, (v) => v.rule);
   for (const [rule, entries] of Object.entries(byRule)) {
-    console.error(`\n${rule} — ${entries[0].message}`);
-    for (const v of entries) console.error(`  ${v.file}:${v.line}  ${v.match}`);
+    if (rule === "content") {
+      console.error(`\ncontent — docs/content.md limits`);
+      for (const v of entries) console.error(`  ${v.file}:${v.line}  [${v.match}] ${v.message}`);
+    } else {
+      console.error(`\n${rule} — ${entries[0].message}`);
+      for (const v of entries) console.error(`  ${v.file}:${v.line}  ${v.match}`);
+    }
   }
   console.error(
     `\n✗ ${violations.length} violation(s). Ratified exception? Add it to ` +

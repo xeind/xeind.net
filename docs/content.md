@@ -1,7 +1,9 @@
 # Content shape
 
 Length rules for the data in `src/lib/data/`. Companion to
-`docs/design-system.md`.
+`docs/design-system.md`. **Enforced**: `npm run check:design` parses the data
+files and fails on anything outside these bands, including marketing register
+("seamless", "robust", "cutting-edge", "leveraging", "passionate").
 
 ## Why length is a design rule here
 
@@ -27,7 +29,7 @@ So content length is layout. Write to the budget.
 | Field             | Rule                                                                            | Observed |
 | ----------------- | ------------------------------------------------------------------------------- | -------- |
 | `title`           | ≤ 16 chars. Sits on the plate in a 4-up grid.                                   | max 12   |
-| `description`     | **Required, non-empty.** One noun phrase, ≤ 40 chars, no full stop.             | max 36   |
+| `description`     | **Required unless `interactive: false`.** One phrase, ≤ 50 chars, no full stop. | max 49   |
 | `longDescription` | 2 bullets (3 at a push). Each one sentence, ≤ 150 chars, ending in a full stop. | max 143  |
 | `technologies`    | 3–5. They render as `Badge`es and wrap.                                         | 2–5      |
 | `projectLinks`    | 0–2. Label ≤ 16 chars.                                                          | 0–2      |

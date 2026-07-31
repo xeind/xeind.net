@@ -105,5 +105,16 @@ questions instead of guessing.
 
 ## Critical rules learned here
 
-None logged yet. Add one only after a real mistake in this repo — not guessed in
-advance.
+Each earned by a real mistake in this repo. Add new ones the same way — never
+guessed in advance.
+
+- **Never `git stash` this tree.** Parallel sessions edit it; a stash cycle
+  once briefly reverted another session's uncommitted work.
+- **Re-read a file immediately before editing.** Files changed mid-edit four
+  times in one session. `git diff` before staging anything in a shared file.
+- **Every commit to `main` is production in ~2 minutes** (Cloudflare Pages
+  auto-build). Commit only green states; the pre-push gate (`.githooks/`)
+  enforces it, `git push --no-verify` bypasses it knowingly.
+- **Visual calls need a rendered comparison before deciding.** The serif
+  choice took five commits because each look was judged from description
+  instead of side by side.

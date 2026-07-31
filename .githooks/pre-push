@@ -1,0 +1,7 @@
+#!/bin/sh
+# Every push to main deploys to production in ~2 minutes (Cloudflare Pages
+# auto-build), and CI runs in parallel with the deploy — it cannot stop a bad
+# one. This gate is the only check that runs BEFORE production. Bypass, when
+# you must, with: git push --no-verify
+echo "pre-push gate: check · lint · format · design rules · build"
+npm run check && npm run lint && npm run format:check && npm run check:design && npm run build
