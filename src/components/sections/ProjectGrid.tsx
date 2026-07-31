@@ -537,7 +537,13 @@ export default function ProjectGrid() {
                           .filter((point) => point.trim().length > 0)
                           .map((point, i) => (
                             <li key={i} className="flex items-start gap-3">
-                              <div className="bg-foreground/50 mt-2 h-1 w-1 shrink-0" />
+                              {/* h-7 is one line of leading-relaxed text at this
+                                  size, so the dot centres on the first line
+                                  instead of being nudged down by a margin that
+                                  goes stale the moment the type scale moves. */}
+                              <div className="flex h-7 shrink-0 items-center">
+                                <div className="bg-foreground/50 h-1 w-1" />
+                              </div>
                               <span className="font-serif text-base leading-relaxed [text-wrap:pretty]">
                                 {withLinks(point)}
                               </span>
