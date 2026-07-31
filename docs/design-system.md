@@ -30,7 +30,7 @@ it or renders it.
 | Content (projects, jobs, …)                    | `src/lib/data/*` typed by `src/lib/types.ts`                               |
 | Reusable UI                                    | `src/components/ui/*`                                                      |
 | Page shell                                     | `src/layouts/Layout.astro`                                                 |
-| The rules                                      | this file and `docs/animation.md`                                          |
+| The rules                                      | this file, `docs/animation.md`, `docs/content.md`, `docs/building.md`      |
 
 **`/design` owns nothing.** `src/pages/design.astro` is a rendered specimen — a
 place to look at the system in all three themes. It repeats token values as
@@ -287,10 +287,6 @@ default), `text-xs` for small controls.
 **Mono — the meta voice.** `text-xs` and the micro sizes below; eyebrows,
 badges, timestamps, plate tags. Mono never carries prose.
 
-Where regular Latin Modern reads too thin at a small size on a prominent
-element, the fix is the shipped **Bold cut** (`font-bold`), not a size bump —
-the modal title and the callout band label do this.
-
 Below 12px the site uses three ratified micro sizes — labels on plates, tile
 captions, specimen annotations:
 
@@ -308,12 +304,11 @@ legal there, not precedent anywhere else.
 
 ### Weight
 
-Three weights: regular (default), `font-medium` (inline emphasis — company
-names, strong prose), `font-bold` (the 404 numeral, the modal title, the
-callout band label — small-but-prominent serif that needs the Bold cut).
-There is no `font-semibold` and no `font-light` — don't introduce them. The
-serif ships regular and bold only, so `font-medium` on serif text synthesizes;
-keep it on sans/mono.
+Three weights: regular (default — Georgia carries enough weight that headings
+need no bolding), `font-medium` (inline emphasis on sans/mono — company
+names, strong prose), `font-bold` (display only: the 404 numeral, a demo h1).
+There is no `font-semibold` and no `font-light` — don't introduce them.
+`font-synthesis: none` is set, so never rely on faked weights.
 
 ### Text opacity
 
