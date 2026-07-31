@@ -623,14 +623,14 @@ export default function ProjectGrid() {
 
                     <motion.h3
                       layoutId={`title-${project.id}`}
-                      className="text-accent absolute bottom-2 left-3 z-10 font-serif text-base leading-none"
+                      className="text-accent absolute bottom-3 left-3 z-10 font-serif text-base leading-none"
                       transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
                       {project.title}
                     </motion.h3>
                     <motion.p
                       layoutId={`type-${project.id}`}
-                      className="text-foreground/40 absolute right-3 bottom-2 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden"
+                      className="text-foreground/40 absolute right-3 bottom-3 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden"
                       transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
                       {project.type}
@@ -642,7 +642,7 @@ export default function ProjectGrid() {
                     hovering anywhere on the cell or focusing either control. */}
                 {primaryUrl && (
                   <div
-                    className="absolute top-4 right-4 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                    className="absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
                     style={t}
                   >
                     <a
