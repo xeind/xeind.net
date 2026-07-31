@@ -268,18 +268,18 @@ Three voices, each owning its few sizes — that is the differentiation system.
 Family says what kind of thing you're reading; size says its rank within the
 voice.
 
-**Serif — the reading voice.** Two body tiers plus a heading ladder:
+**Serif — the reading voice.** One body size plus a heading ladder:
 
-| Size        | px  | Job                                                               |
-| ----------- | --- | ----------------------------------------------------------------- |
-| `text-sm`   | 14  | Descriptions: modal bullets, timeline, blog excerpts, band labels |
-| `text-base` | 16  | Prose paragraphs, card titles                                     |
-| `text-lg`   | 18  | h2 inside prose                                                   |
-| `text-xl`   | 20  | h1, the modal title (bold)                                        |
-| `text-2xl`  | 24  | Section headings                                                  |
+| Size        | px  | Job                                                           |
+| ----------- | --- | ------------------------------------------------------------- |
+| `text-base` | 16  | ALL reading text: prose, modal bullets, excerpts, card titles |
+| `text-lg`   | 18  | h2 inside prose                                               |
+| `text-xl`   | 20  | h1, the modal title                                           |
+| `text-2xl`  | 24  | Section headings                                              |
 
-The 14/16 split is deliberate: prose reads at 16, a card's supporting copy
-reads at 14. Don't collapse them and don't add a third body tier.
+Serif `text-sm` survives only as apparatus and labels — MDX tables, footnote
+references, button/band labels (CTA, hero actions, callout). If it reads as a
+paragraph, it is `text-base`; don't reintroduce a 14px reading tier.
 
 **Sans — the UI voice.** `text-sm` almost everywhere (it is the `<body>`
 default), `text-xs` for small controls.

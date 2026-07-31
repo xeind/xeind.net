@@ -33,10 +33,10 @@ So content length is layout. Write to the budget.
 | `projectLinks`    | 0–2. Label ≤ 16 chars.                                                          | 0–2      |
 | `type`            | `Personal` or `Client`. One axis — see the comment in `types.ts`.               | —        |
 
-**Total bullet budget: ~400 characters.** The modal body has roughly 250px of
-vertical room after the header, badges and separator; at `text-sm` with
-`leading-relaxed` that is about 10 lines, and the `max-w-xl` column fits ~68
-characters per line. 400 leaves real headroom. Past ~650 you are writing below
+**Total bullet budget: ~350 characters.** The modal body has roughly 250px of
+vertical room after the header, badges and separator; at `text-base` with
+`leading-relaxed` that is about 9 lines, and the `max-w-xl` column fits ~60
+characters per line. 350 leaves real headroom. Past ~550 you are writing below
 the fold.
 
 ### `description` is not shown on the card

@@ -538,7 +538,7 @@ export default function ProjectGrid() {
                           .map((point, i) => (
                             <li key={i} className="flex items-start gap-3">
                               <div className="bg-foreground/50 mt-2 h-1 w-1 shrink-0" />
-                              <span className="font-serif text-sm leading-relaxed [text-wrap:pretty]">
+                              <span className="font-serif text-base leading-relaxed [text-wrap:pretty]">
                                 {withLinks(point)}
                               </span>
                             </li>

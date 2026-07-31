@@ -21,11 +21,11 @@ export const awards: Award[] = [
   },
   {
     id: "dep-builder",
-    title: "Data Engineering Foundations",
+    title: "DEP Engineering Program",
     issuer: "Data Engineering Pilipinas",
     type: "Cohort",
     description:
-      "One of 50 Builders in the inaugural 2026 Open Track. Finishers ship a live pipeline, a documented repo and a public dashboard.",
+      "A six-month build sprint where selected builders ship a public GitHub project, a real data pipeline, and a deployable dashboard.",
     stats: [
       { key: "selected", value: "1/50" },
       { key: "track", value: "open" },
