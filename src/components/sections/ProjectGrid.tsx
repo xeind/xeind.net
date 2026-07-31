@@ -558,7 +558,7 @@ export default function ProjectGrid() {
 
       {/* Project Grid */}
       <div className="space-y-4">
-        <h2 className="text-foreground font-serif text-2xl font-bold">Projects</h2>
+        <h2 className="text-foreground font-serif text-2xl">Projects</h2>
 
         <div className="grid w-full grid-cols-1 gap-4 min-[368px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {projects.map((project) => {

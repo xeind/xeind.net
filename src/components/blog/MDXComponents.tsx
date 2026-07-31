@@ -30,7 +30,7 @@ function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
 function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className="text-secondary mt-10 mb-4 font-serif text-2xl font-bold [text-wrap:balance] first:mt-0"
+      className="text-secondary mt-10 mb-4 font-serif text-2xl [text-wrap:balance] first:mt-0"
       {...props}
     />
   );
@@ -38,19 +38,13 @@ function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
 
 function MdxH2(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2
-      className="text-secondary mt-8 mb-3 font-serif text-xl font-bold [text-wrap:balance]"
-      {...props}
-    />
+    <h2 className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]" {...props} />
   );
 }
 
 function MdxH3(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3
-      className="text-secondary mt-6 mb-2 font-serif text-lg font-bold [text-wrap:balance]"
-      {...props}
-    />
+    <h3 className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]" {...props} />
   );
 }
 

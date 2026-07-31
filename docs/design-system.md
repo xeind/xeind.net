@@ -307,19 +307,12 @@ legal there, not precedent anywhere else.
 
 ### Weight
 
-**Serif headings are bold; serif body is regular.** Latin Modern is a book
-face and takes the book treatment: every serif heading (page h1s, section
-h2s, prose h1–h3, the modal title) renders the shipped Bold cut via
-`font-bold`, and body text stays regular. Small-but-prominent serif labels
-(the callout band) also take Bold rather than a size bump.
-
-Exceptions: the hero name is pinned `font-normal` on purpose, and display
-glyphs (PullQuote's quote mark) stay regular.
-
-Other weights: `font-medium` for inline emphasis on sans/mono only — the
-serif ships regular and bold, so medium on serif synthesizes (and
-`font-synthesis: none` blocks it anyway). No `font-semibold`, no
-`font-light`.
+Three weights: regular (default), `font-medium` (inline emphasis — company
+names, strong prose), `font-bold` (the 404 numeral, the modal title, the
+callout band label — small-but-prominent serif that needs the Bold cut).
+There is no `font-semibold` and no `font-light` — don't introduce them. The
+serif ships regular and bold only, so `font-medium` on serif text synthesizes;
+keep it on sans/mono.
 
 ### Text opacity
 

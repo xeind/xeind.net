@@ -85,7 +85,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
 export default function ExperienceTimeline() {
   return (
     <div className="space-y-4">
-      <h2 className="text-foreground font-serif text-2xl font-bold">Experience</h2>
+      <h2 className="text-foreground font-serif text-2xl">Experience</h2>
 
       {experiences.map((exp) => (
         <ExperienceItem key={exp.id} exp={exp} />
