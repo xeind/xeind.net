@@ -1,8 +1,21 @@
 ---
+import globalCss from "../styles/global.css?raw";
+
 interface Props {
   commit: string;
   buildDate: string;
 }
+
+/* The font credits derive from the @theme block at build time, so this line
+   cannot drift from what actually renders — swapping the serif in global.css
+   updates the footer in the same commit, no second edit to remember. */
+const firstFamily = (name: string) =>
+  globalCss
+    .match(new RegExp(`--font-${name}:\\s*([^;]+);`))?.[1]
+    .split(",")[0]
+    .trim()
+    .replace(/"/g, "") ?? name;
+const fontCredits = [firstFamily("serif"), firstFamily("sans"), firstFamily("mono")];
 
 const { commit, buildDate } = Astro.props;
 const date = new Date(buildDate);
@@ -68,11 +81,14 @@ const compactDate = Number.isNaN(date.getTime())
             <span>Astro</span>
           </p>
           <p class="text-background hidden items-center gap-2 font-mono text-xs sm:flex">
-            Latin Modern
-            <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
-            Inter
-            <span class="bg-background inline-block h-1 w-1 shrink-0"></span>
-            JetBrains Mono
+            {
+              fontCredits.map((font, i) => (
+                <>
+                  {i > 0 && <span class="bg-background inline-block h-1 w-1 shrink-0" />}
+                  {font}
+                </>
+              ))
+            }
           </p>
           <p class="text-background flex items-center gap-2 font-mono text-xs opacity-70">
             {commit}
