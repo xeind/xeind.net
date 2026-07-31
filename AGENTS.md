@@ -5,6 +5,9 @@ Ink-on-paper interface with three themes, drawn in hairlines and dashed borders.
 
 This site has a real design system. Follow it — do not invent one.
 
+- **`docs/building.md`** — the recipe for anything NEW: priority order, four
+  passes, per-case recipes (section, card, modal, page, affordance, content).
+  Read it before adding something that doesn't exist yet.
 - **`docs/design-system.md`** — tokens, color, type, shape, page architecture.
   Read it before your first visual change in a session.
 - **`docs/animation.md`** — timing, easing, reduced motion, modal expansion.
