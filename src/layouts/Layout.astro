@@ -136,10 +136,22 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
         font-style: normal;
         font-display: optional;
       }
+      /* Subsets, not the 31KB variable file: printable ASCII plus the site's
+         handful of specials (· — → ⌘ ⌥ ⌃ ⇧ ✦), no ligatures — 5KB a weight.
+         The full variable font in the mono stack measured +300ms FCP and was
+         the difference between 99 and 100. Regenerate with scripts noted in
+         the commit that introduced these. */
       @font-face {
         font-family: JetBrains Mono;
-        src: url(/fonts/JetBrainsMono-Variable.woff2) format("woff2");
-        font-weight: 100 800;
+        src: url(/fonts/JetBrainsMono-Subset.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: optional;
+      }
+      @font-face {
+        font-family: JetBrains Mono;
+        src: url(/fonts/JetBrainsMono-Subset-Bold.woff2) format("woff2");
+        font-weight: 700;
         font-style: normal;
         font-display: optional;
       }
