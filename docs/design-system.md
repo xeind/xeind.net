@@ -263,16 +263,32 @@ declared font doesn't render, check these names before anything else.
 
 ### Scale
 
-The canonical scale, for anything reading as text:
+Three voices, each owning its few sizes — that is the differentiation system.
+Family says what kind of thing you're reading; size says its rank within the
+voice.
 
-| Size        | px  | Job                       | Uses |
-| ----------- | --- | ------------------------- | ---- |
-| `text-xs`   | 12  | Meta, badges, eyebrows    | 77   |
-| `text-sm`   | 14  | Body and UI — the default | 48   |
-| `text-base` | 16  | Emphasis, prose           | 18   |
-| `text-lg`   | 18  | h2                        | 7    |
-| `text-xl`   | 20  | h1                        | 4    |
-| `text-2xl`  | 24  | Display                   | 13   |
+**Serif — the reading voice.** Two body tiers plus a heading ladder:
+
+| Size        | px  | Job                                                               |
+| ----------- | --- | ----------------------------------------------------------------- |
+| `text-sm`   | 14  | Descriptions: modal bullets, timeline, blog excerpts, band labels |
+| `text-base` | 16  | Prose paragraphs, card titles                                     |
+| `text-lg`   | 18  | h2 inside prose                                                   |
+| `text-xl`   | 20  | h1, the modal title (bold)                                        |
+| `text-2xl`  | 24  | Section headings                                                  |
+
+The 14/16 split is deliberate: prose reads at 16, a card's supporting copy
+reads at 14. Don't collapse them and don't add a third body tier.
+
+**Sans — the UI voice.** `text-sm` almost everywhere (it is the `<body>`
+default), `text-xs` for small controls.
+
+**Mono — the meta voice.** `text-xs` and the micro sizes below; eyebrows,
+badges, timestamps, plate tags. Mono never carries prose.
+
+Where regular Latin Modern reads too thin at a small size on a prominent
+element, the fix is the shipped **Bold cut** (`font-bold`), not a size bump —
+the modal title and the callout band label do this.
 
 Below 12px the site uses three ratified micro sizes — labels on plates, tile
 captions, specimen annotations:
@@ -292,7 +308,8 @@ legal there, not precedent anywhere else.
 ### Weight
 
 Three weights: regular (default), `font-medium` (inline emphasis — company
-names, strong prose), `font-bold` (display only — the 404 numeral, a demo h1).
+names, strong prose), `font-bold` (the 404 numeral, the modal title, the
+callout band label — small-but-prominent serif that needs the Bold cut).
 There is no `font-semibold` and no `font-light` — don't introduce them. The
 serif ships regular and bold only, so `font-medium` on serif text synthesizes;
 keep it on sans/mono.

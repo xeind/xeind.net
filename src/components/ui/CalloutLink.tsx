@@ -81,7 +81,9 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
       </div>
 
       <div className="relative z-10 flex items-center justify-center gap-2">
-        <span className="font-serif text-sm">{label}</span>
+        {/* LMR Bold — at text-sm the regular cut reads hairline on a band
+            this prominent. */}
+        <span className="font-serif text-sm font-bold">{label}</span>
         {icon && (
           <span
             className="text-accent group-hover:text-tertiary flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1"
