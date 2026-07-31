@@ -83,11 +83,12 @@ svg {
   --color-warning: hsl(20 15% 45%);
   /* Warning states */
 
-  /* Latin Modern Roman is the serif — the site's own file, finally rendering
-     now that the variable carries Tailwind's namespace. It is lighter than
-     the Georgia fallback the site accidentally shipped for months; that
-     hairline weight is the intended look. */
-  --font-serif: "Latin Modern Roman", Georgia, serif;
+  /* Georgia, decided — after seeing both. The site shipped Georgia by
+     accident for months, then rendered its real Latin Modern Roman files,
+     with and without the Bold cut on headings; the owner picked Georgia's
+     weight. LMR stays declared in Layout.astro — swapping the order here is
+     the whole switch. */
+  --font-serif: Georgia, "Latin Modern Roman", serif;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", Menlo, Monaco, monospace;
 

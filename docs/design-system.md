@@ -239,15 +239,16 @@ Anywhere else, a hex in an SVG is a bug.
 
 ### Families
 
-| Utility      | Face               | Use for                                  |
-| ------------ | ------------------ | ---------------------------------------- |
-| `font-serif` | Latin Modern Roman | Headings, prose, project titles, labels  |
-| `font-sans`  | Inter              | Body copy, UI text (set on `<body>`)     |
-| `font-mono`  | JetBrains Mono     | Metadata, badges, section eyebrows, code |
+| Utility      | Face           | Use for                                  |
+| ------------ | -------------- | ---------------------------------------- |
+| `font-serif` | Georgia        | Headings, prose, project titles, labels  |
+| `font-sans`  | Inter          | Body copy, UI text (set on `<body>`)     |
+| `font-mono`  | JetBrains Mono | Metadata, badges, section eyebrows, code |
 
-Latin Modern Roman is lighter than the Georgia fallback the site accidentally
-shipped for months. That hairline weight is the intended look — don't "fix" it
-by fattening headings or reordering the stack.
+Georgia is a decision, not a fallback: the owner compared it against the
+shipped Latin Modern Roman (regular and with bold headings) and chose
+Georgia's weight. The LMR files stay declared; the stack order on
+`--font-serif` in `global.css` is the whole switch.
 
 Section headings are lowercase-eyebrow style: `text-accent font-mono text-xs tracking-wide`,
 in caps, e.g. `TYPOGRAPHY`. Follow that for any new section label.

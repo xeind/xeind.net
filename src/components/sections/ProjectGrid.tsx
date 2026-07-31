@@ -426,10 +426,7 @@ export default function ProjectGrid() {
                           <motion.h3
                             id="modal-title"
                             layoutId={`title-${activeProject.id}`}
-                            /* LMR Bold (the shipped 700 file, not synthesis —
-                               font-synthesis is off). Regular LMR read hairline-
-                               thin at this size in the modal's centre. */
-                            className="text-foreground font-serif text-xl font-bold"
+                            className="text-foreground font-serif text-xl"
                             transition={
                               prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
                             }
