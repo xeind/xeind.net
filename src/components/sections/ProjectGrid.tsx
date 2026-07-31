@@ -611,9 +611,10 @@ export default function ProjectGrid() {
                         className={`relative z-10 ${ICON_SIZES[project.iconSize || "normal"].grid}`}
                       />
                     ) : (
-                      /* No mark yet — the id stands in for one rather than
-                       leaving the plate looking like a failed image. */
-                      <span className="border-accent/30 group-hover:border-accent/60 relative z-10 flex h-12 w-12 items-center justify-center border border-dashed transition-colors motion-reduce:transition-none">
+                      /* No mark yet — the bare id stands in for one. No box
+                       around it: a dashed outline reads as a border treatment
+                       on this plate, and the plate already has one. */
+                      <span className="relative z-10 flex h-12 w-12 items-center justify-center">
                         <span className="text-foreground/30 group-hover:text-foreground/60 font-mono text-[0.625rem] transition-colors motion-reduce:transition-none">
                           {project.id}
                         </span>
