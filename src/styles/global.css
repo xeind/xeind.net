@@ -90,7 +90,16 @@ svg {
      the whole switch. */
   --font-serif: Georgia, "Latin Modern Roman", serif;
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", Menlo, Monaco, monospace;
+  /* No JetBrains Mono in the stack — deliberately, and order is not enough.
+     Until the namespace fix in aefa31d, font-mono resolved to the system
+     stack and JBM never downloaded; the "100 across the board" era never
+     shipped it. Wiring it up put a 30KB variable font in the pre-FCP window
+     on every page for a handful of small labels. Listing it after
+     ui-monospace still downloaded it (measured): on Linux runners
+     ui-monospace can resolve to nothing and per-glyph fallback reaches the
+     webfont. Its @font-face stays in Layout.astro; add it back here only
+     with a subset worth its bytes. */
+  --font-mono: ui-monospace, Menlo, Monaco, monospace;
 
   /* Typography scale - uniform, minimal variation */
   --text-xs: 0.75rem; /* 12px - Meta (mono only) */
