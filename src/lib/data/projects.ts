@@ -35,7 +35,7 @@ export const projects: Project[] = [
         url: "https://github.com/xeind/nightingale.nvim",
       },
     ],
-    technologies: ["Zed", "Neovim", "Lua", "JSON", "TreeSitter"],
+    technologies: ["Zed", "Neovim", "Lua", "TreeSitter"],
     featured: true,
     year: 2025,
     imageUrl: "/projects/nightingale.svg",

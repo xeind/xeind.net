@@ -270,7 +270,7 @@ export default function ProjectGrid() {
                 <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
                   <motion.div
                     layoutId={`card-${activeProject.id}`}
-                    className="bg-card pointer-events-auto relative flex h-[50vh] w-full max-w-xl flex-col overflow-hidden"
+                    className="bg-card pointer-events-auto relative flex max-h-[70vh] w-full max-w-xl flex-col overflow-hidden"
                     style={{ borderRadius: 0 }}
                     ref={modalRef}
                     transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
@@ -297,7 +297,7 @@ export default function ProjectGrid() {
                     {/* Image area */}
                     <motion.div
                       layoutId={`image-${activeProject.id}`}
-                      className="bg-muted border-accent/30 relative flex h-2/5 shrink-0 items-center justify-center border-b border-dashed"
+                      className="bg-muted border-accent/30 relative flex h-[20vh] shrink-0 items-center justify-center border-b border-dashed"
                       transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
                       <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />

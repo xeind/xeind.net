@@ -15,10 +15,10 @@ below:
    (`sm:grid-cols-2 lg:grid-cols-3`) with default `align-items: stretch`. One
    long description doesn't just make its own card tall — it inflates every card
    beside it, and the short ones fill with dead space.
-2. **The project modal is a fixed box with a hidden scrollbar.** It is
-   `h-[50vh] max-w-xl`, and its body carries both `overflow-y-auto` and
-   `scrollbar-hide`. Content past the fold still scrolls, but there is no
-   scrollbar to say so. Overlong copy doesn't clip — it silently disappears.
+2. **The project modal sizes to its content, capped at `70vh`.** Short copy
+   makes a short modal — no dead space — but past the cap the body scrolls
+   with a hidden scrollbar (`scrollbar-hide`): there is nothing to say more
+   exists. Overlong copy doesn't clip — it silently disappears below 70vh.
 
 So content length is layout. Write to the budget.
 
@@ -35,11 +35,11 @@ So content length is layout. Write to the budget.
 | `projectLinks`    | 0–2. Label ≤ 16 chars.                                                          | 0–2      |
 | `type`            | `Personal` or `Client`. One axis — see the comment in `types.ts`.               | —        |
 
-**Total bullet budget: ~350 characters.** The modal body has roughly 250px of
-vertical room after the header, badges and separator; at `text-base` with
-`leading-relaxed` that is about 9 lines, and the `max-w-xl` column fits ~60
-characters per line. 350 leaves real headroom. Past ~550 you are writing below
-the fold.
+**Total bullet budget: ~350 characters.** The modal grows to fit, so the
+budget is no longer about filling a fixed box — it is about the 70vh cap on a
+phone: after the 20vh stage, header and badges, roughly 12 lines of
+`text-base` fit, and the `max-w-xl` column carries ~60 characters per line.
+350 keeps a one-thumb read; past ~700 you are below the cap on small phones.
 
 ### `description` is not shown on the card
 
