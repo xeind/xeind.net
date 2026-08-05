@@ -174,7 +174,8 @@ function HeroEmailButton({ email }: { email: string }) {
       type="button"
       aria-label="Copy email address"
       data-copy-email={email}
-      data-hero-sfx="click"
+      /* no data-hero-sfx="click": the copy-confirm tap-tap is this button's
+         click voice — stacking the generic click on top played three taps */
       data-hero-sfx-hover
       className="text-foreground/80 hover:text-tertiary focus-visible:ring-accent focus-visible:ring-offset-background inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={CSS_TRANSITIONS.border}

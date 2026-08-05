@@ -349,7 +349,7 @@ export default function ProjectGrid() {
                                 className="group hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
                                 style={t}
                               >
-                                <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
+                                <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
                                   {activeProject.title}
                                 </span>
                                 <ArrowUpRight
@@ -396,7 +396,7 @@ export default function ProjectGrid() {
                                 className="group text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
                                 style={t}
                               >
-                                <span className="border-accent/30 border-b border-dashed pb-px transition-all hover:border-solid">
+                                <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
                                   {link.label}
                                 </span>
                                 <ArrowUpRight
