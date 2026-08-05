@@ -3,7 +3,7 @@ import type { Project } from "@/lib/types";
 export const projects: Project[] = [
   {
     id: "vallow",
-    title: "vallow",
+    title: "Vallow",
     type: "Personal",
     description: "Static analysis in the terminal and Neovim",
     longDescription: [
