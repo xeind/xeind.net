@@ -76,7 +76,7 @@ unless it must animate. Look at `AboutSection` (simplest) and `AwardsGrid`
 
 ### A new card in a grid
 
-Copy the plate: `bg-muted` stage, `DashedBorders`, labels in the plate
+Copy the plate: `bg-muted` stage, `DashedBorders` from `ui/frame`, labels in the plate
 (serif title bottom-left, mono tag bottom-right, `@container` so the tag
 drops itself when narrow). **Brackets + `GradientBackground` only if clicking
 opens the modal** — a card with nothing to open gets the dashed border alone

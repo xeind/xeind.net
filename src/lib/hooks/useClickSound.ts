@@ -63,7 +63,21 @@ export function useAudioUnlock() {
   }, []);
 }
 
-export function playClickLow() {
+/**
+ * One synth for every click: a filtered noise burst. The three sounds are the
+ * same instrument with different settings — length and decay set how hard the
+ * tap is, frequency and Q where it sits, gain how close. Jitter keeps repeats
+ * from sounding sampled.
+ */
+function playTap(opts: {
+  lengthS: number;
+  decay: number;
+  freq: number;
+  freqJitter: number;
+  q: number;
+  gain: number;
+  gainJitter: number;
+}) {
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -72,84 +86,60 @@ export function playClickLow() {
   }
 
   const noise = ctx.createBufferSource();
-  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.01, ctx.sampleRate);
+  const buf = ctx.createBuffer(1, ctx.sampleRate * opts.lengthS, ctx.sampleRate);
   const data = buf.getChannelData(0);
   for (let i = 0; i < data.length; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 60);
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / opts.decay);
   }
   noise.buffer = buf;
 
   const filter = ctx.createBiquadFilter();
   filter.type = "bandpass";
-  filter.frequency.value = 2200 + Math.random() * 300;
-  filter.Q.value = 2.5;
+  filter.frequency.value = opts.freq + Math.random() * opts.freqJitter;
+  filter.Q.value = opts.q;
 
   const gain = ctx.createGain();
-  gain.gain.value = 0.36 + Math.random() * 0.08;
+  gain.gain.value = opts.gain + Math.random() * opts.gainJitter;
 
   noise.connect(filter);
   filter.connect(gain);
   gain.connect(ctx.destination);
   noise.start(ctx.currentTime);
+}
+
+export function playClickLow() {
+  playTap({
+    lengthS: 0.01,
+    decay: 60,
+    freq: 2200,
+    freqJitter: 300,
+    q: 2.5,
+    gain: 0.36,
+    gainJitter: 0.08,
+  });
 }
 
 export function playClickSharp() {
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  if (ctx.state === "suspended") {
-    ctx.resume();
-  }
-
-  const noise = ctx.createBufferSource();
-  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.004, ctx.sampleRate);
-  const data = buf.getChannelData(0);
-  for (let i = 0; i < data.length; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 20);
-  }
-  noise.buffer = buf;
-
-  const filter = ctx.createBiquadFilter();
-  filter.type = "bandpass";
-  filter.frequency.value = 4000 + Math.random() * 500;
-  filter.Q.value = 5;
-
-  const gain = ctx.createGain();
-  gain.gain.value = 0.3 + Math.random() * 0.06;
-
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start(ctx.currentTime);
+  playTap({
+    lengthS: 0.004,
+    decay: 20,
+    freq: 4000,
+    freqJitter: 500,
+    q: 5,
+    gain: 0.3,
+    gainJitter: 0.06,
+  });
 }
 
+/** Soft tactile brush — very quiet, wide-band, ultra-short */
 export function playBrush() {
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  if (ctx.state === "suspended") {
-    ctx.resume();
-  }
-
-  // Soft tactile brush — very quiet, wide-band, ultra-short
-  const noise = ctx.createBufferSource();
-  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.007, ctx.sampleRate);
-  const data = buf.getChannelData(0);
-  for (let i = 0; i < data.length; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 25);
-  }
-  noise.buffer = buf;
-
-  const filter = ctx.createBiquadFilter();
-  filter.type = "bandpass";
-  filter.frequency.value = 2000 + Math.random() * 500;
-  filter.Q.value = 1.2;
-
-  const gain = ctx.createGain();
-  gain.gain.value = 0.06 + Math.random() * 0.02;
-
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start(ctx.currentTime);
+  playTap({
+    lengthS: 0.007,
+    decay: 25,
+    freq: 2000,
+    freqJitter: 500,
+    q: 1.2,
+    gain: 0.06,
+    gainJitter: 0.02,
+  });
 }

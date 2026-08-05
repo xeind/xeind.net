@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { awards } from "@/lib/data/awards";
 import ClaudeSpinner from "@/components/ui/ClaudeSpinner";
+import { DashedBorders, GradientBackground } from "@/components/ui/frame";
 import ArrowUpRight from "@/components/ui/ArrowUpRight";
 import { ICON_CONFIG } from "@/lib/config/design";
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
@@ -14,7 +15,6 @@ function resolveImageUrl(imageUrl: Award["imageUrl"]) {
   return { url: imageUrl.src, width: imageUrl.width, height: imageUrl.height };
 }
 
-const t = CSS_TRANSITIONS.border;
 const tFast = CSS_TRANSITIONS.fade;
 
 const ICON_SIZES = {
@@ -22,42 +22,6 @@ const ICON_SIZES = {
   normal: "h-10 sm:h-12",
   large: "h-12 sm:h-14",
 };
-
-/** Dashed borders (4 sides) that become solid on group hover */
-function DashedBorders() {
-  return (
-    <>
-      <div
-        className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-      <div
-        className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-      <div
-        className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-      <div
-        className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-    </>
-  );
-}
-
-/** Hover gradient background layer */
-function GradientBackground() {
-  return (
-    <div className="pointer-events-none absolute inset-0">
-      <div
-        className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30"
-        style={t}
-      />
-    </div>
-  );
-}
 
 /**
  * Four outlined squares that rearrange from a 2x2 grid into a diagonal
@@ -129,7 +93,7 @@ export default function AwardsGrid() {
               {/* Dashed border only. Corner brackets are reserved for things
                   that open the centre modal, and nothing here does. */}
               <DashedBorders />
-              <GradientBackground />
+              <GradientBackground flash={false} />
 
               {/* The frame-study shape: mark on the stage, caption beneath —
                   issuer, title, then the one detail worth reading. */}

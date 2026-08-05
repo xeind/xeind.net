@@ -212,11 +212,7 @@ const bullets = (text) => {
   return seg ? [...seg.matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
 };
 
-function checkContent() {
-  const out = [];
-  const push = (file, line, match, message) =>
-    out.push({ file, line, rule: "content", match, message });
-
+function checkProjects(push) {
   const pFile = "src/lib/data/projects.ts";
   for (const e of parseEntries(readFileSync(join(ROOT, pFile), "utf8"))) {
     const id = field(e.text, "id");
@@ -247,7 +243,9 @@ function checkContent() {
       if (bad) push(pFile, e.line, id, `marketing register: "${bad[0]}"`);
     }
   }
+}
 
+function checkAwards(push) {
   const aFile = "src/lib/data/awards.ts";
   for (const e of parseEntries(readFileSync(join(ROOT, aFile), "utf8"))) {
     const id = field(e.text, "id");
@@ -267,7 +265,14 @@ function checkContent() {
     const bad = desc.match(BANNED_VOICE);
     if (bad) push(aFile, e.line, id, `marketing register: "${bad[0]}"`);
   }
+}
 
+function checkContent() {
+  const out = [];
+  const push = (file, line, match, message) =>
+    out.push({ file, line, rule: "content", match, message });
+  checkProjects(push);
+  checkAwards(push);
   return out;
 }
 

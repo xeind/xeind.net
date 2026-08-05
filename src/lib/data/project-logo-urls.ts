@@ -31,5 +31,3 @@ export const PROJECT_LOGO_URLS = {
     nightingale: nightingaleNightingale.src,
   },
 } as const;
-
-export type ProjectLogoFile = keyof typeof PROJECT_LOGO_URLS;

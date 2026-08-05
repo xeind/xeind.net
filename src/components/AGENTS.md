@@ -9,18 +9,19 @@ is the shortcut: what already exists, and which file to put a new thing in.
 
 Most requests are already solved. Reach for the existing primitive.
 
-| You need                         | Use                                   | Don't                       |
-| -------------------------------- | ------------------------------------- | --------------------------- |
-| A page section                   | `ui/Panel`                            | Hand-roll a wrapper `<div>` |
-| A rule between sections          | `ui/SectionDivider`                   | An `<hr>` or a bare border  |
-| A tag, chip, tech label          | `ui/Badge`                            | A styled `<span>`           |
-| A link inside a sentence         | `ui/InlineLink`                       | A bare `<a>`                |
-| A full-width link band           | `ui/CalloutLink` (via `CalloutBand`)  | —                           |
-| A primary action with a shortcut | `ui/CtaButton.astro`                  | A `<button>` from scratch   |
-| A corner mark on a surface       | `ui/CornerDiamond`                    | Positioned `<div>`s         |
-| A small icon that follows text   | `ui/InlineIcon` + an SVG in `public/` | An icon library             |
-| A quote block in a post          | `blog/PullQuoteCard`                  | A styled `<blockquote>`     |
-| A card that opens a modal        | Copy `sections/ProjectGrid`           | A new modal implementation  |
+| You need                         | Use                                                                  | Don't                       |
+| -------------------------------- | -------------------------------------------------------------------- | --------------------------- |
+| A page section                   | `ui/Panel`                                                           | Hand-roll a wrapper `<div>` |
+| A rule between sections          | `ui/SectionDivider`                                                  | An `<hr>` or a bare border  |
+| A tag, chip, tech label          | `ui/Badge`                                                           | A styled `<span>`           |
+| A link inside a sentence         | `ui/InlineLink`                                                      | A bare `<a>`                |
+| A full-width link band           | `ui/CalloutLink` (via `CalloutBand`)                                 | —                           |
+| A primary action with a shortcut | `ui/CtaButton.astro`                                                 | A `<button>` from scratch   |
+| A corner mark on a surface       | `ui/CornerDiamond`                                                   | Positioned `<div>`s         |
+| A card's hover frame             | `ui/frame` — `DashedBorders`, `CornerBrackets`, `GradientBackground` | Copy-pasting them again     |
+| A small icon that follows text   | `ui/InlineIcon` + an SVG in `public/`                                | An icon library             |
+| A quote block in a post          | `blog/PullQuoteCard`                                                 | A styled `<blockquote>`     |
+| A card that opens a modal        | Copy `sections/ProjectGrid`                                          | A new modal implementation  |
 
 There is no icon library. `lucide-react` is not installed and must not be added.
 

@@ -8,7 +8,7 @@ const THINKING_SPIN_FRAMES = Array.from(
   (_, index) => `/projects/claude-thinking/frame-${index + 4}.svg`,
 );
 
-export const CLAUDE_ANIMATION_SETS = [
+const CLAUDE_ANIMATION_SETS = [
   Array.from({ length: 8 }, (_, index) => `/projects/claude-mark/frame-${index + 1}.svg`),
   [
     "/projects/claude-thinking/frame-2.svg",

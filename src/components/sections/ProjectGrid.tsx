@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { projects } from "@/lib/data/projects";
 import { useMounted } from "@/lib/hooks/useMounted";
 import Badge from "@/components/ui/Badge";
+import { DashedBorders, CornerBrackets, GradientBackground } from "@/components/ui/frame";
 import ProjectLogo from "@/components/sections/ProjectLogo";
 import ArrowUpRight from "@/components/ui/ArrowUpRight";
 import InlineLink from "@/components/ui/InlineLink";
@@ -85,100 +86,6 @@ function withLinks(text: string) {
 
 function getPrimaryProjectUrl(project: (typeof projects)[0]) {
   return project.liveUrl || project.projectLinks?.[0]?.url || project.githubUrl;
-}
-
-/** Dashed borders (4 sides) that become solid on group hover */
-function DashedBorders() {
-  return (
-    <>
-      <div
-        className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-      <div
-        className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-      <div
-        className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-      <div
-        className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
-        style={t}
-      />
-    </>
-  );
-}
-
-/** L-shaped corner brackets that change color on group hover */
-function CornerBrackets() {
-  return (
-    <>
-      {/* Top-Left */}
-      <div className="absolute top-0 left-0 z-10">
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-px w-2 transition-all"
-          style={t}
-        />
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-2 w-px transition-all"
-          style={t}
-        />
-      </div>
-      {/* Top-Right */}
-      <div className="absolute top-0 right-0 z-10">
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-px w-2 transition-all"
-          style={t}
-        />
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-2 w-px transition-all"
-          style={t}
-        />
-      </div>
-      {/* Bottom-Left */}
-      <div className="absolute bottom-0 left-0 z-10">
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-2 w-px transition-all"
-          style={t}
-        />
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-px w-2 transition-all"
-          style={t}
-        />
-      </div>
-      {/* Bottom-Right */}
-      <div className="absolute right-0 bottom-0 z-10">
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-2 w-px transition-all"
-          style={t}
-        />
-        <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-px w-2 transition-all"
-          style={t}
-        />
-      </div>
-    </>
-  );
-}
-
-/** Hover + active gradient background layers */
-function GradientBackground() {
-  return (
-    <div className="pointer-events-none absolute inset-0">
-      {/* Hover wash */}
-      <div
-        className="bg-tertiary/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-30 group-active:opacity-0"
-        style={t}
-      />
-      {/* Click flash — brighter wash that carries into the layout animation */}
-      <div
-        className="bg-tertiary/15 absolute inset-0 opacity-0 transition-opacity group-active:opacity-100"
-        style={tFast}
-      />
-    </div>
-  );
 }
 
 /** Static borders for the modal (no hover effects) */
