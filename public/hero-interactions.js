@@ -124,7 +124,7 @@
     root.id = "link-hint-tooltip";
     root.setAttribute("role", "tooltip");
     root.style.cssText =
-      "position:fixed;z-index:50;pointer-events:none;visibility:hidden;opacity:0;transition:opacity 120ms cubic-bezier(0.215,0.61,0.355,1);";
+      "position:fixed;z-index:9999;pointer-events:none;visibility:hidden;opacity:0;transition:opacity 120ms cubic-bezier(0.215,0.61,0.355,1);";
 
     const svg = document.createElementNS(SVG_NS, "svg");
     svg.style.display = "block";

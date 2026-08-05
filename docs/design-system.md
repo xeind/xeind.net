@@ -470,17 +470,17 @@ footer sits behind at `-z-10`. Don't change that without reading `Footer.astro`.
 
 ### z-index ladder
 
-| Layer     | Contents                                                                                       |
-| --------- | ---------------------------------------------------------------------------------------------- |
-| `-10`     | Footer, behind the page                                                                        |
-| `0`       | Written explicitly (`z-0`, 15 uses) to pin backgrounds under content in a new stacking context |
-| `10`      | Content inside a Panel, edge-glow strips                                                       |
-| `20`      | Corner diamonds and brackets                                                                   |
-| `30`      | Modal close button                                                                             |
-| `40`      | Modal backdrop (`bg-black/30`)                                                                 |
-| `50`      | Modal content                                                                                  |
-| `2`       | Lightbox nav/counter, plain CSS inside the 9998/9999 layers                                    |
-| 9998/9999 | Blog image lightbox (plain CSS, `global.css`)                                                  |
+| Layer     | Contents                                                                                                                                                                                                           |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `-10`     | Footer, behind the page                                                                                                                                                                                            |
+| `0`       | Written explicitly (`z-0`, 15 uses) to pin backgrounds under content in a new stacking context                                                                                                                     |
+| `10`      | Content inside a Panel, edge-glow strips                                                                                                                                                                           |
+| `20`      | Corner diamonds and brackets                                                                                                                                                                                       |
+| `30`      | Modal close button                                                                                                                                                                                                 |
+| `40`      | Modal backdrop (`bg-black/30`)                                                                                                                                                                                     |
+| `50`      | Modal content                                                                                                                                                                                                      |
+| `2`       | Lightbox nav/counter, plain CSS inside the 9998/9999 layers                                                                                                                                                        |
+| 9998/9999 | Blog image lightbox (`global.css`) and the link-hint tooltip (`hero-interactions.js`) — cursor-transients that must clear the modal portal, which mounts later in `<body>` and out-paints anything at its own z-50 |
 
 Stay on this ladder. A new value means a new layer, and there is no room for one.
 

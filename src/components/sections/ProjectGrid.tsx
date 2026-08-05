@@ -67,17 +67,18 @@ function CloseIcon({ size, strokeWidth, className, ...props }: IconProps) {
 /**
  * Renders `[label](url)` inside a description line as a real link, so a project
  * can point at a dependency mid-sentence instead of pushing it into a row of
- * buttons underneath. Anything that is not a link passes through untouched.
+ * buttons underneath. Markdown's title syntax — `[label](url "hint")` — becomes
+ * the link-hint tooltip. Anything that is not a link passes through untouched.
  */
 function withLinks(text: string) {
   const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
 
   return parts.map((part, i) => {
-    const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    const match = part.match(/^\[([^\]]+)\]\(([^\s)]+)(?:\s+"([^"]*)")?\)$/);
     if (!match) return part;
 
     return (
-      <InlineLink key={i} href={match[2]} external>
+      <InlineLink key={i} href={match[2]} external hintLabel={match[3]}>
         {match[1]}
       </InlineLink>
     );
