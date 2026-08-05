@@ -774,8 +774,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 /* ========================================
    XEIN LOGO - Per-Shape Hover Effect
-   Each shape independently crossfades on hover
-   Matches Button hover behavior exactly
+   Hovering the whole mark breaks it apart
    ======================================== */
 
 .xein-logo {
@@ -783,101 +782,109 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   display: inline-block;
 }
 
-/* Each shape wrapper */
 .logo-shape {
   position: relative;
 }
 
-/* Filled shape - visible by default */
-.shape-filled {
-  opacity: 1;
-  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
+/* Break-apart: xeinred.gif's assembly played backwards. The gif builds
+   the X first, then the ] slides in big from the right while the {
+   slides in small, both scaling to true size once the X has settled.
+   Hovering breaks that apart — every shape scales first, then moves,
+   in a ~100ms stagger: the ] pops toward the screen and exits right,
+   the { shrinks and slides out left, the \ surges toward the screen
+   and exits further left, the / recedes and sinks straight down.
+   Translations are SVG user units (viewBox is ~7084 wide), so 300
+   units ≈ 2.7px at the hero's 64px render. overflow: visible because
+   the ] sits on the viewBox edge and would clip mid-slide. */
+.xein-logo svg {
+  overflow: visible;
 }
 
-/* Fill overlay - hidden by default, appears on hover at 30% like Button */
-.shape-fill-overlay {
-  opacity: 0;
-  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
-  pointer-events: none;
-}
-
-/* Outline shape - hidden by default */
-.shape-outline {
-  opacity: 0;
-  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
-  pointer-events: none;
-}
-
-/* Hover state - matches Button: fill at 30%, outline fully visible */
-.logo-shape:hover .shape-filled {
-  opacity: 0;
-}
-
-.logo-shape:hover .shape-fill-overlay {
-  opacity: 0.3;
-}
-
-.logo-shape:hover .shape-outline {
-  opacity: 1;
-}
-
-/* Respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  .shape-filled,
-  .shape-fill-overlay,
-  .shape-outline {
-    transition: none;
-  }
-}
-
-/* Each shape wrapper */
 .logo-shape {
-  position: relative;
-  cursor: pointer;
-}
+  /* Anchor each shape at its own centre. fill-box + `center` should do
+     this, but Safari misresolves it for the individual scale property,
+     so the origins are pinned explicitly: each shape's bounding-box
+     midpoint in viewBox user units (transform-box: view-box).
 
-/* Filled shape - visible by default */
-.shape-filled {
-  opacity: 1;
-  transition: opacity 300ms cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-/* Outline shape - hidden by default */
-.shape-outline {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+     The curve is a bounce-0 spring: ease-out-expo covers most of the
+     distance early and spends the rest of the duration settling — the
+     springy tail without any overshoot (same curve as the crossfade
+     above). And because these are transitions — not keyframes — the
+     break is interruptible: leave mid-break and every shape returns
+     home from its current position. The reassembly mirrors the break's
+     grammar in reverse: slide home first (no delay), then scale back to
+     true size (200ms later). */
+  transform-box: view-box;
   transition:
-    opacity 300ms cubic-bezier(0.19, 1, 0.22, 1),
-    visibility 0ms 300ms;
+    translate 450ms cubic-bezier(0.19, 1, 0.22, 1),
+    scale 450ms cubic-bezier(0.19, 1, 0.22, 1);
+  transition-delay: 0ms, 200ms;
 }
 
-/* Hover state - crossfade from filled to outline for individual shape */
-.logo-shape:hover .shape-filled {
-  opacity: 0;
+/* The X strokes rejoin on their own beats — without these the whole
+   mark returns in unison, which reads canned next to the staggered
+   break. Delays pair as translate, scale: slide home, then scale. */
+.logo-shape[data-shape="1"] {
+  transform-origin: 1649px 3227px; /* the / */
+  transition-delay: 200ms, 400ms;
 }
 
-.logo-shape:hover .shape-outline {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity 300ms cubic-bezier(0.19, 1, 0.22, 1),
-    visibility 0ms 0ms;
+.logo-shape[data-shape="2"] {
+  transform-origin: 1649px 4326px; /* the \ */
+  transition-delay: 100ms, 300ms;
 }
 
-/* Respect prefers-reduced-motion */
+.logo-shape[data-shape="3"] {
+  transform-origin: 6386px 3776px; /* the ] */
+}
+
+.logo-shape[data-shape="4"] {
+  transform-origin: 4043px 3777px; /* the { */
+}
+
+/* Each shape still scales before it slides, but the beats overlap in a
+   ~100ms stagger instead of queueing — the break reads as one gesture.
+   transition-delay pairs with the base transition's property order:
+   first value = translate, second = scale. */
+.xein-logo:hover .logo-shape[data-shape="3"] {
+  /* the ] pops toward the screen, then slides out right */
+  scale: 1.12;
+  translate: 620px 0;
+  transition-delay: 120ms, 0ms;
+}
+
+.xein-logo:hover .logo-shape[data-shape="4"] {
+  /* the { shrinks, then slides out left */
+  scale: 0.7;
+  translate: -500px 0;
+  transition-delay: 220ms, 100ms;
+}
+
+.xein-logo:hover .logo-shape[data-shape="2"] {
+  /* the \ surges toward the screen, then exits hard left — the mirror
+     of its from-near entrance in the gif */
+  scale: 1.2;
+  translate: -1000px 0;
+  transition-delay: 300ms, 200ms;
+}
+
+.xein-logo:hover .logo-shape[data-shape="1"] {
+  /* the / recedes, then sinks down */
+  scale: 0.7;
+  translate: 0 600px;
+  transition-delay: 420ms, 300ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .shape-filled,
-  .shape-outline {
+  .logo-shape {
     transition: none;
   }
 
-  .shape-outline {
-    visibility: hidden;
-  }
-
-  .logo-shape:hover .shape-outline {
-    visibility: visible;
+  /* [data-shape] matches the per-shape hover rules' specificity so this
+     actually wins and the shapes hold still. */
+  .xein-logo:hover .logo-shape[data-shape] {
+    translate: none;
+    scale: none;
   }
 }
 
