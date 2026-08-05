@@ -32,8 +32,13 @@ function getResolvedTheme(): ResolvedTheme {
 const t = CSS_TRANSITIONS.border;
 const tFast = CSS_TRANSITIONS.fade;
 
+/* Heights tuned by measured ink, not by eye alone: each mark was rasterized
+   at plate size and its alpha coverage blended with its tight box
+   (scratchpad ink-audit, 2026-08). compact sits at 40px desktop — one step
+   under normal — which lands the wide airy marks (yield, smeet) in the same
+   optical band as the solid 48px ones. */
 const ICON_SIZES = {
-  compact: { grid: "h-8 sm:h-9", modal: "h-9 sm:h-10" },
+  compact: { grid: "h-9 sm:h-10", modal: "h-10 sm:h-11" },
   normal: { grid: "h-10 sm:h-12", modal: "h-12 sm:h-14" },
   large: { grid: "h-12 sm:h-14", modal: "h-14 sm:h-16" },
 };
