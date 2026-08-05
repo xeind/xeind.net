@@ -8,7 +8,7 @@ export const projects: Project[] = [
     description: "Static analysis inside Neovim",
     longDescription: [
       "Brings static analysis into a native Neovim split: unused exports, dead code, circular dependencies, duplicate exports and complexity hotspots.",
-      "Lua plugin over [fallow](https://docs.fallow.tools), a Rust analysis engine. No LSP, no tree-sitter, no config to get started.",
+      "Lua plugin over [fallow](https://docs.fallow.tools).",
     ],
     technologies: ["Lua", "Rust", "Neovim"],
     liveUrl: "https://github.com/xeind/vallow.nvim",
