@@ -231,8 +231,10 @@ the modal, not the page swap.
 
 The router fetches the whole next page on click, so HTML size IS navigation
 latency. `inlineStylesheets: "always"` puts ~74KB of CSS in every page — a
-deliberate first-paint trade that taxes every subsequent navigation; revisit
-it before adding any other global payload. /design carries ~117KB of inline
+**decided** first-paint trade (2026-08): `"auto"` was tried, measured to cut
+every page 40–70%, and rejected — the owner keeps first-visit LCP unburdened
+by a render-blocking CSS request. Don't re-propose it; do think twice before
+adding any other global payload, since every page carries it. /design carries ~117KB of inline
 specimen SVG and is the slowest page by design — it is a specimen sheet, not
 a template to copy. A new content page should stay near the ~100KB the blog
 pages weigh.
