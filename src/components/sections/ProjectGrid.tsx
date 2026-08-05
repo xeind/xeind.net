@@ -543,7 +543,13 @@ export default function ProjectGrid() {
                     </motion.h3>
                     <motion.p
                       layoutId={`type-${project.id}`}
-                      className="text-foreground/40 absolute right-3 bottom-3 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:hidden"
+                      /* invisible, not hidden: this tag is the modal tag's
+                         layoutId source. display:none leaves Motion no rect
+                         to morph from, so on narrow plates (phones) the
+                         modal's tag flew in from a garbage position.
+                         visibility keeps the measurable box at the plate
+                         corner — same look (it's absolute), real origin. */
+                      className="text-foreground/40 absolute right-3 bottom-3 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:invisible"
                       transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                     >
                       {project.type}

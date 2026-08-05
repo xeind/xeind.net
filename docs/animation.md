@@ -147,6 +147,11 @@ this pattern.
 1. The card and the modal share a `layoutId`.
 2. **Children share `layoutId`s too** — title, image, badges. Without this the
    text stretches like rubber during the morph.
+   **A `layoutId` source must be measurable.** Hiding one with `display: none`
+   (`hidden`, or a container-query `@max-*:hidden`) leaves Motion no rect, and
+   the counterpart flies in from a garbage position — the plate tag did this
+   on phones. Hide a source with `invisible` instead: same look on an
+   absolutely-positioned element, but the rect survives for the morph.
 3. `AnimatePresence` swaps them. Never animate width/height in CSS to fake it.
 4. Backdrop is `fixed inset-0 z-40 bg-black/30`; the modal is `z-50`; the close
    button is `z-30` inside it.
