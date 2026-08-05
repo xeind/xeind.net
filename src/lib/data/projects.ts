@@ -11,6 +11,7 @@ export const projects: Project[] = [
       "Began as a native Neovim split in Lua; the Go rewrite runs anywhere a terminal does.",
     ],
     technologies: ["Go", "Rust", "Lua", "Neovim"],
+    imageUrl: "/projects/fallow.svg",
     projectLinks: [
       { label: "Terminal UI", url: "https://github.com/xeind/vallow" },
       { label: "Neovim Plugin", url: "https://github.com/xeind/vallow.nvim" },
