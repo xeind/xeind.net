@@ -782,6 +782,15 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   display: inline-block;
 }
 
+/* Invisible 10px apron on every side so the break triggers a touch
+   before the cursor reaches the ink. Pseudo-element hit areas count
+   toward the parent's :hover; the box itself stays 64px in layout. */
+.xein-logo::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+}
+
 .logo-shape {
   position: relative;
 }
