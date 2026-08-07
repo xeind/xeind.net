@@ -174,35 +174,47 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
   <body class="font-sans antialiased">
     <div class="paper-background min-h-dvh overflow-x-clip" tabindex="-1">
       <div class="mx-auto max-w-5xl">
+        {
+          /* The page's outer frame is accent/30, one rung above the accent/20
+            of Panel edges and SectionDividers — the boundary of the sheet
+            should read stronger than the rules drawn inside it. This only
+            holds if it is painted once: a Panel that sits flush against main
+            must yield the shared edge (edges="bottom" on the first, "top" on
+            the last), or the two 20%/30% lines composite and that one edge
+            comes out darker than the rails beside it. */
+        }
         <main
-          class="edge-glow-shell edge-glow-shell-vertical bg-card border-accent/20 before:bg-accent/20 after:bg-accent/20 relative isolate mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:h-px after:content-['']"
+          class="edge-glow-shell edge-glow-shell-vertical bg-card border-accent/30 before:bg-accent/30 after:bg-accent/30 relative isolate mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:z-10 before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:z-10 after:h-px after:content-['']"
         >
           <div class="edge-glow-layer" aria-hidden="true"></div>
           {
             /* Glow strips on main's own full-bleed top/bottom hairlines —
-              the vertical wash only covers the left/right borders. */
+              the vertical wash only covers the left/right borders. At z-20 they
+              sit above the base hairlines (z-10) they light, and below the
+              corner diamonds (also z-20, later in the DOM), which stay opaque
+              rather than getting a lit line drawn across their faces. */
           }
           <div
-            class="edge-glow-line absolute top-0 right-[-9999px] left-[-9999px] z-10 h-px"
+            class="edge-glow-line absolute top-0 right-[-9999px] left-[-9999px] z-20 h-px"
             aria-hidden="true"
           >
           </div>
           <div
-            class="edge-glow-line absolute right-[-9999px] bottom-0 left-[-9999px] z-10 h-px"
+            class="edge-glow-line absolute right-[-9999px] bottom-0 left-[-9999px] z-20 h-px"
             aria-hidden="true"
           >
           </div>
           <span
-            class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
+            class="edge-glow-node bg-card border-accent/30 absolute top-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
           <span
-            class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
+            class="edge-glow-node bg-card border-accent/30 absolute top-[-3.5px] right-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
           <span
-            class="edge-glow-node bg-card border-accent/20 absolute bottom-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
+            class="edge-glow-node bg-card border-accent/30 absolute bottom-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
           <span
-            class="edge-glow-node bg-card border-accent/20 absolute right-[-4.5px] bottom-[-3.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
+            class="edge-glow-node bg-card border-accent/30 absolute right-[-4.5px] bottom-[-3.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
           ></span>
           <slot />
         </main>

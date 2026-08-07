@@ -44,7 +44,7 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
           hairline on hover so the whole boundary lights at once. The sides need
           -1px because the band starts at the frame's padding box, one border
           width inside the rail. */}
-      <div className="border-accent/30 group-hover:border-accent/60 absolute top-0 right-0 left-0 border-t transition-colors" />
+      <div className="group-hover:border-accent/60 absolute top-0 right-0 left-0 border-t border-transparent transition-colors" />
       <div
         className="group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-l border-transparent transition-colors"
         style={{ left: -1 }}

@@ -140,17 +140,17 @@ extend the owner (`scripts/check-design-rules.mjs`) and this table together.
 
 The load-bearing steps and their jobs:
 
-| Value | Where                                                        |
-| ----- | ------------------------------------------------------------ |
-| `/8`  | Badge fill                                                   |
-| `/10` | Very subtle wash (`bg-tertiary/10` hover fills)              |
-| `/15` | Code block borders                                           |
-| `/20` | Structural hairlines, panel edges, dividers (82 uses)        |
-| `/30` | Card and interactive borders, focus rings (the workhorse)    |
-| `/40` | Emphasis borders, quiet meta text                            |
-| `/50` | Active state, secondary text (`text-foreground/50`, 49 uses) |
-| `/60` | Secondary ink and brightened hover borders (41 uses)         |
-| `/80` | Body text at reduced emphasis (`text-foreground/80`)         |
+| Value | Where                                                                             |
+| ----- | --------------------------------------------------------------------------------- |
+| `/8`  | Badge fill                                                                        |
+| `/10` | Very subtle wash (`bg-tertiary/10` hover fills)                                   |
+| `/15` | Code block borders                                                                |
+| `/20` | Inner structure: Panel edges, dividers, section hairlines                         |
+| `/30` | The page's outer frame, card and interactive borders, focus rings (the workhorse) |
+| `/40` | Emphasis borders, quiet meta text                                                 |
+| `/50` | Active state, secondary text (`text-foreground/50`, 49 uses)                      |
+| `/60` | Secondary ink and brightened hover borders (41 uses)                              |
+| `/80` | Body text at reduced emphasis (`text-foreground/80`)                              |
 
 The steps between (`25 35 45 55 70 85 90`) are rarer — mostly optical tuning in
 `PrecisionMarks`, `PullQuoteCard` and text shades. Legal, but reach for a
@@ -436,6 +436,7 @@ Every page is the same sandwich, and `Layout.astro` builds the bread:
   .mx-auto.max-w-5xl
     main.edge-glow-shell     card surface, left/right borders, full-bleed
                              top/bottom hairlines, 4 corner diamonds
+                             — the outer frame, all at accent/30
       <slot />               ← your page
   <Footer />                 fixed at -z-10, revealed by main's bottom margin
 ```
@@ -444,13 +445,19 @@ Inside the slot, a page is an alternating stack — nothing else:
 
 ```astro
 <div class="flex flex-col">
-  <Panel>…</Panel>
+  <Panel edges="bottom" ornaments="bottom">…</Panel>
   <SectionDivider variant="grid" />
   <Panel>…</Panel>
   <SectionDivider variant="grid" />
-  <Panel>…</Panel>
+  <Panel edges="top" ornaments="top">…</Panel>
 </div>
 ```
+
+The first and last Panel yield the edge they share with `main`. `main` already
+paints that hairline and those two corner diamonds, and a Panel drawing its own
+on the same pixel row composites `accent/20` over `accent/30` — one edge comes
+out darker than the rails beside it. Panels in the middle keep the default
+`edges="both"`.
 
 `Panel` owns section padding, the card surface, the full-bleed hairlines and the
 corner diamonds. **Never hand-roll a section wrapper.** If a section needs
