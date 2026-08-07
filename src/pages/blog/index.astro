@@ -43,8 +43,15 @@ const blogStructuredData = {
   markdownPath="/blog.md"
   structuredData={blogStructuredData}
 >
-  <div class="flex flex-col">
-    <Panel edges="bottom" ornaments="bottom">
+  {
+    /* min-h-screen matches main's own, so the stack fills the frame even with
+      few posts, and the list panel takes up the slack. Without it the trailing
+      divider and the Home row float mid-sheet with bare card beneath them —
+      and a divider cannot close that gap, since it draws no lines of its own
+      and there is nothing below it to light. */
+  }
+  <div class="flex min-h-screen flex-col">
+    <Panel edges="bottom" ornaments="bottom" className="flex-1">
       {
         posts.length === 0 ? (
           <p class="text-foreground/80 font-serif text-base leading-relaxed">No posts yet.</p>
