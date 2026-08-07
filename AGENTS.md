@@ -1,7 +1,8 @@
 # xeind.net
 
-Xein Deniel's personal portfolio. Static Astro site on Cloudflare Pages.
-Ink-on-paper interface with three themes, drawn in hairlines and dashed borders.
+Xein Deniel's personal site — portfolio, tools list and blog. Static Astro on
+Cloudflare Pages. Ink-on-paper interface with three themes, drawn in hairlines
+and dashed borders.
 
 This site has a real design system. Follow it — do not invent one.
 
@@ -16,6 +17,8 @@ This site has a real design system. Follow it — do not invent one.
   truncates, so length is layout.
 - **`src/components/AGENTS.md`** — what already exists, where new files go.
   Scope-loads when you touch `src/components/` (its `CLAUDE.md` is a pointer).
+- **`src/content/blog/CLAUDE.md`** — frontmatter, voice, post skeleton, images.
+  Scope-loads when you touch a post. Read it before writing or editing one.
 - **`README.md`** — stack, SEO, crawler files, deployment.
 
 ---
@@ -62,35 +65,44 @@ This site has a real design system. Follow it — do not invent one.
 - Honour `prefers-reduced-motion`.
 - Keep routes, layouts and metadata in Astro. React only for runtime state or
   Motion animation.
-- Run `npm run check && npm run lint && npm run format:check && npm run build`
-  before calling a change done.
+- Run `npm run check && npm run lint && npm run format:check && npm run check:design && npm run build`
+  before calling a change done. That is the same gate `.githooks/pre-push` runs.
 
 ---
 
 ## Commands
 
-| Command                | Does                                           |
-| ---------------------- | ---------------------------------------------- |
-| `npm run dev`          | Local dev, port 3180                           |
-| `npm run check`        | Astro + TypeScript diagnostics                 |
-| `npm run lint`         | ESLint                                         |
-| `npm run format:check` | Prettier check (`npm run format` to fix)       |
-| `npm run build`        | Production build                               |
-| `npm run audit`        | Dead-code audit (fallow)                       |
-| `npm run check:design` | Design-rule checker (closed sets, allowlist)   |
-| `npm run deploy:dry`   | Validate a deploy without shipping             |
-| `npm run deploy`       | Ship to production — **needs an explicit yes** |
+| Command                 | Does                                           |
+| ----------------------- | ---------------------------------------------- |
+| `npm run dev`           | Local dev, port 3180 (drafts render here)      |
+| `npm run preview`       | Serve the built site, port 3181                |
+| `npm run check`         | Astro + TypeScript diagnostics                 |
+| `npm run lint`          | ESLint                                         |
+| `npm run format:check`  | Prettier check (`npm run format` to fix)       |
+| `npm run build`         | Production build                               |
+| `npm run audit`         | Dead-code audit (fallow)                       |
+| `npm run check:design`  | Design-rule checker (closed sets, allowlist)   |
+| `npm run blog:images`   | Convert a post's images to WebP, downscale     |
+| `npm run claude:frames` | Re-extract the Claude mark's animation frames  |
+| `npm run lighthouse`    | Lighthouse against `preview` on 3181           |
+| `npm run deploy:dry`    | Validate a deploy without shipping             |
+| `npm run deploy`        | Ship to production — **needs an explicit yes** |
 
 ## Map
 
 ```
 src/pages/        Routes. Each page = <Panel> / <SectionDivider> stack.
+                  Plus non-HTML endpoints: rss.xml, llms.txt, *.md.
 src/layouts/      Layout.astro — document, theme script, fonts, edge-glow shell.
 src/components/   ui/ primitives · sections/ · hero/ · blog/ · design/ (specimens)
-src/lib/          config/ tokens · data/ content · hooks/ · types.ts
+src/content/      blog/<slug>/index.mdx — one folder per post, images beside it.
+src/lib/          config/ tokens · data/ content · hooks/ · markdown/ · types.ts
 src/styles/       global.css — @theme tokens, all three themes, shared classes
+src/assets/       Per-theme project marks routed through the asset pipeline
+                  (hashed /_astro/ URLs); public/projects/ holds the rest.
 public/           Assets, vanilla scripts, robots.txt, _headers, _redirects
-docs/             Design system and animation reference
+scripts/          Design checker, image and icon tooling. Run via npm scripts.
+docs/             Design system, animation, content and building reference
 ```
 
 `src/styles/global.css` is the single source of truth for every token. Its
@@ -103,8 +115,9 @@ first before touching any of them.
 
 ## MCP
 
-`astro-docs` is configured in `.mcp.json`, project-scoped. Use it for Astro API
-questions instead of guessing.
+`.mcp.json` is project-scoped and holds three servers: `astro-docs` for Astro
+API questions instead of guessing, and `cloudflare-builds` /
+`cloudflare-observability` for reading deploy builds and logs.
 
 ## Critical rules learned here
 
