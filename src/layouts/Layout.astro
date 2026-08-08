@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
 import Seo from "../components/Seo.astro";
+import CornerDiamond from "@/components/ui/CornerDiamond";
 import { ClientRouter } from "astro:transitions";
 import { SITE } from "@/lib/config/site";
 
@@ -204,18 +205,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
             aria-hidden="true"
           >
           </div>
-          <span
-            class="edge-glow-node bg-card border-accent/30 absolute top-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
-          ></span>
-          <span
-            class="edge-glow-node bg-card border-accent/30 absolute top-[-3.5px] right-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
-          ></span>
-          <span
-            class="edge-glow-node bg-card border-accent/30 absolute bottom-[-3.5px] left-[-4.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
-          ></span>
-          <span
-            class="edge-glow-node bg-card border-accent/30 absolute right-[-4.5px] bottom-[-3.5px] z-20 h-2 w-2 rotate-45 rounded-[1px] border"
-          ></span>
+          <CornerDiamond position="all" variant="frame" />
           <slot />
         </main>
       </div>

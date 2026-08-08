@@ -42,15 +42,14 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
   edges="none | top | bottom | both"      // default: both — full-bleed hairlines
   ornaments="none | top | bottom | all"   // default: all  — corner diamonds
   padding="sm | md | lg"                  // default: md
-  showGrid={false}                        // 16px grid wash
-  showNoise={false}                       // paper grain
 />
 
 <SectionDivider variant="dashed | grid | grid-broken" />   // default: dashed
 
 <Badge variant="default | accent | muted">TypeScript</Badge>
 
-<CornerDiamond position="tl | tr | bl | br | all" size={8} variant="default | accent" />
+<CornerDiamond position="tl | tr | bl | br | all" size={8} variant="default | accent | frame" />
+// `frame` (accent/30) is the page's outer edge in Layout.astro — nothing else.
 
 <InlineLink href="…" external hintLabel="…">text</InlineLink>
 

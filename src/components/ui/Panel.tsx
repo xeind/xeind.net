@@ -5,8 +5,6 @@ interface PanelProps {
   edges?: "none" | "top" | "bottom" | "both";
   ornaments?: "none" | "top" | "bottom" | "all";
   padding?: "sm" | "md" | "lg";
-  showGrid?: boolean;
-  showNoise?: boolean;
   className?: string;
 }
 
@@ -15,8 +13,6 @@ export default function Panel({
   edges = "both",
   ornaments = "all",
   padding = "md",
-  showGrid = false,
-  showNoise = false,
   className = "",
 }: PanelProps) {
   const paddingClasses = {
@@ -50,18 +46,6 @@ export default function Panel({
           <CornerDiamond position="tr" variant="accent" />
         </>
       ) : null}
-      {showNoise && (
-        <div
-          className="pointer-events-none absolute inset-0 opacity-(--noise-opacity)"
-          style={{
-            backgroundImage: "url(/noise.svg)",
-            backgroundSize: "180px 180px",
-            backgroundRepeat: "repeat",
-          }}
-          aria-hidden="true"
-        />
-      )}
-      {showGrid && <div className="bg-hero-grid pointer-events-none absolute inset-0 opacity-20" />}
       <div className="relative z-10 mx-auto w-full max-w-7xl">{children}</div>
     </div>
   );

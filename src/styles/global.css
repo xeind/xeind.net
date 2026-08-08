@@ -214,12 +214,6 @@ svg {
      every theme; a theme token would go near-black-on-black in Manila. */
   --scrim-ink: #ebe5d8;
 
-  /* Panel's paper-grain wash. The dark themes run it fainter — grain that
-     reads as texture on Kozo's paper reads as dirt on a near-black card.
-     Was a `dark:` variant, which fires on the OS setting instead of the
-     picked theme; a per-theme variable follows data-theme correctly. */
-  --noise-opacity: 0.03;
-
   /* Edge glow — one lamp for the side rails, the divider strips and the
      corner diamonds: same reach, same peak, same curve. edge-glow.js reads
      --edge-glow-radius at init; --edge-glow-stops below samples the exact
@@ -286,7 +280,6 @@ body {
   --badge-ink: var(--color-secondary);
   --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
-  --noise-opacity: 0.012;
   --logo-ink-100: #ecedee;
   --logo-ink-75: #b6b7b8;
   --logo-ink-55: #8c8c8e;
@@ -298,7 +291,6 @@ body {
 [data-theme="nightingale"] {
   --badge-hover-ink: var(--color-tertiary);
   --surface-hover-fill: 0.3;
-  --noise-opacity: 0.012;
   --logo-ink-100: #dcd7ba;
   --logo-ink-75: #aba792;
   --logo-ink-55: #848171;
@@ -313,7 +305,7 @@ body {
   --logo-accent-35: #60543e;
 }
 
-/* PAPER BACKGROUND - Outermost container with noise */
+/* PAPER BACKGROUND - Outermost container */
 .paper-background {
   position: relative;
   background-color: var(--color-muted);

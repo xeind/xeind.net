@@ -47,8 +47,6 @@
   Cache-Control: public, max-age=604800
 /map-pin.svg
   Cache-Control: public, max-age=604800
-/noise.svg
-  Cache-Control: public, max-age=604800
 /ograph.jpg
   Cache-Control: public, max-age=604800
 /opengraph-img.jpg

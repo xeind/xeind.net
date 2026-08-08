@@ -2,8 +2,16 @@ interface CornerDiamondProps {
   position?: "tl" | "tr" | "bl" | "br" | "all";
   size?: number;
   className?: string;
-  variant?: "default" | "accent";
+  variant?: "default" | "accent" | "frame";
 }
+
+const variantBorders = {
+  default: "border-border",
+  accent: "border-accent/20",
+  // `frame` is the page's outer edge only — one rung above the accent/20 of
+  // the rules drawn inside it. See the note above <main> in Layout.astro.
+  frame: "border-accent/30",
+};
 
 export default function CornerDiamond({
   position = "all",
@@ -11,10 +19,7 @@ export default function CornerDiamond({
   className = "",
   variant = "default",
 }: CornerDiamondProps) {
-  const baseClass =
-    variant === "accent"
-      ? `edge-glow-node absolute z-20 rotate-45 rounded-[1px] border border-accent/20 bg-card ${className}`
-      : `edge-glow-node absolute z-20 rotate-45 rounded-[1px] border border-border bg-card ${className}`;
+  const baseClass = `edge-glow-node absolute z-20 rotate-45 rounded-[1px] border ${variantBorders[variant]} bg-card ${className}`;
 
   // Different offsets for visual alignment with rotated square
   const topOffset = "-3.5px"; // Top/bottom positioning
