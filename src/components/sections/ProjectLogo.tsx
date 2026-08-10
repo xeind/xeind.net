@@ -149,7 +149,7 @@ function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
     <span
       role="img"
       aria-label={alt}
-      className={clsx("inline-flex items-center justify-center", className)}
+      className={clsx("inline-flex items-center justify-center select-none", className)}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -221,7 +221,7 @@ function PioneerLogo({
     <span
       role="img"
       aria-label={alt}
-      className={clsx("inline-flex items-center justify-center", className)}
+      className={clsx("inline-flex items-center justify-center select-none", className)}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +261,7 @@ function VallowLogo({ className, alt }: { className?: string; alt: string }) {
     <span
       role="img"
       aria-label={alt}
-      className={clsx("inline-flex items-center justify-center", className)}
+      className={clsx("inline-flex items-center justify-center select-none", className)}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -279,7 +279,7 @@ function YieldLogo({ className, alt }: { className?: string; alt: string }) {
     <span
       role="img"
       aria-label={alt}
-      className={clsx("inline-flex items-center justify-center", className)}
+      className={clsx("inline-flex items-center justify-center select-none", className)}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -337,6 +337,10 @@ export default function ProjectLogo({ projectId, theme, className, alt }: Projec
 
   if (externalLogoSrc) {
     return (
+      /* select-none matches the inline-SVG marks above. An <img> is inline
+         replaced content, so a drag-selection across the card paints a
+         highlight box over it; the SVG marks never did, which left half the
+         grid highlightable and half not. */
       <img
         src={externalLogoSrc}
         alt={alt}
@@ -346,13 +350,13 @@ export default function ProjectLogo({ projectId, theme, className, alt }: Projec
         width={externalLogo?.width}
         height={externalLogo?.height}
         data-project-logo={externalLogo?.file}
-        className={clsx("block w-auto max-w-full", className)}
+        className={clsx("block w-auto max-w-full select-none", className)}
       />
     );
   }
 
   return (
-    <span className={className} aria-hidden>
+    <span className={clsx("select-none", className)} aria-hidden>
       {projectId}
     </span>
   );
