@@ -207,6 +207,38 @@ svg {
   /* #FF9E3B - orange warning */
 }
 
+/* Blueprint — cyanotype sheet, white drafting lines on cobalt.
+   Ported from the marketing site's blueprint mode, so the two sites read as
+   the same sheet: #0d3b78 paper, #12498f surface, white ink, cyan for the
+   one accent that is allowed to be a hue. The paper is the darkest layer
+   here, the way it is in Kozo — a card lifts off the page rather than
+   sinking into it. */
+[data-theme="blueprint"] {
+  --color-background: #0c3568;
+  --color-foreground: #f6fbff;
+  --color-card: #12498f;
+  --color-border: #3667a2;
+  --color-muted: #0d3b78;
+  --color-accent: #e8f4ff;
+  --color-accent-hover: #ffffff;
+  --color-destructive: #ff9b9b;
+  --color-success: #7fd7b0;
+
+  /* Extended palette — the drafting-line ladder. Secondary is the light
+     blue-gray of a printed guide line, tertiary the unexposed white. The
+     secondary → tertiary gradient every mark uses therefore runs guide line
+     to drawn line, which is the whole motif. */
+  --color-primary: #e8f4ff;
+  --color-primary-hover: #ffffff;
+  --color-secondary: #b8d4e3;
+  --color-secondary-hover: #d3e6f2;
+  --color-tertiary: #ffffff;
+  --color-tertiary-hover: #dbf1ff;
+  --color-info: #2fa4d7;
+  /* #2FA4D7 - drafting cyan, the only saturated hue in the theme */
+  --color-warning: #ffc46b;
+}
+
 :root {
   /* Font Rendering for that "High-End Editor" look */
   font-synthesis: none;
@@ -335,6 +367,21 @@ body {
      hexes themselves, so ladder and tokens agree by construction. */
   --logo-accent-100: #e6c384;
   --logo-accent-35: #60543e;
+}
+
+[data-theme="blueprint"] {
+  --badge-ink: var(--color-secondary);
+  --badge-hover-ink: var(--color-tertiary);
+  --surface-hover-fill: 0.3;
+  /* White ink at 100/75/55/35%, each one already composited over the
+     blueprint tile (--color-muted, #0d3b78) — the ladder's rule. The accent
+     is the drafting cyan over the same paper. */
+  --logo-ink-100: #f6fbff;
+  --logo-ink-75: #bdcbdd;
+  --logo-ink-55: #8da5c2;
+  --logo-ink-35: #5f7ea7;
+  --logo-accent-100: #2fa4d7;
+  --logo-accent-35: #196099;
 }
 
 /* PAPER BACKGROUND - Outermost container */
@@ -734,6 +781,43 @@ pre code {
      than the constant pink. */
   --diff-add-ink: hsl(130 40% 50%);
   --diff-del-ink: hsl(0 60% 52%);
+}
+
+/* Blueprint — ink on a cobalt sheet. The paper is already a saturated blue,
+   so every token here is lighter than its bed; a mid-tone that works on the
+   other two dark themes disappears into this one. */
+[data-theme="blueprint"] {
+  --shiki-color-text: hsl(205 55% 90%);
+  --shiki-color-background: transparent;
+  --shiki-foreground: hsl(205 55% 90%);
+  --shiki-background: transparent;
+  --astro-code-foreground: hsl(205 55% 90%);
+  --astro-code-background: transparent;
+  --astro-code-token-keyword: hsl(199 70% 66%);
+  --astro-code-token-function: hsl(46 62% 76%);
+  --astro-code-token-constant: hsl(14 70% 74%);
+  --astro-code-token-string: hsl(160 40% 68%);
+  --astro-code-token-comment: hsl(210 25% 58%);
+  --astro-code-token-parameter: hsl(205 40% 84%);
+  --astro-code-token-string-expression: hsl(160 40% 68%);
+  --astro-code-token-punctuation: hsl(207 30% 64%);
+  --astro-code-token-link: hsl(199 70% 66%);
+  --shiki-token-constant: hsl(14 70% 74%);
+  --shiki-token-string: hsl(160 40% 68%);
+  --shiki-token-comment: hsl(210 25% 58%);
+  --shiki-token-keyword: hsl(199 70% 66%);
+  --shiki-token-parameter: hsl(205 40% 84%);
+  --shiki-token-function: hsl(46 62% 76%);
+  --shiki-token-string-expression: hsl(160 40% 68%);
+  --shiki-token-punctuation: hsl(207 30% 64%);
+  --shiki-token-link: hsl(199 70% 66%);
+
+  /* Diff — see the Kozo block. Steel gray for del was tried here, on the
+     argument that a blueprint has no red ink; it vanished into the cobalt at
+     a 12% wash. The pair stays green/red because the sign has to be readable
+     before it is thematic — both cooled and lightened to sit on the sheet. */
+  --diff-add-ink: hsl(150 45% 58%);
+  --diff-del-ink: hsl(355 70% 70%);
 }
 
 /* Code blocks — dashed border + muted background */

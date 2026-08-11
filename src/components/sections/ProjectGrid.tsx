@@ -15,14 +15,14 @@ import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 import { useAudioUnlock, playBrush, playClickLow, playClickSharp } from "@/lib/hooks/useClickSound";
 
-type ResolvedTheme = "light" | "dark" | "nightingale";
+type ResolvedTheme = "light" | "dark" | "nightingale" | "blueprint";
 
 function getResolvedTheme(): ResolvedTheme {
   if (typeof document === "undefined") return "dark";
 
   const themeAttr = document.documentElement.getAttribute("data-theme");
 
-  if (themeAttr === "dark" || themeAttr === "nightingale") {
+  if (themeAttr === "dark" || themeAttr === "nightingale" || themeAttr === "blueprint") {
     return themeAttr;
   }
 

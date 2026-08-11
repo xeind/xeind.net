@@ -60,7 +60,7 @@ is ask-first.
 What is genuinely yours to decide in this pass: internal layout of the
 content, which tier of each ladder, and copy. That's it.
 
-**4. Review** — Before "done": all three themes (Kozo first), narrow + wide,
+**4. Review** — Before "done": all four themes (Kozo first), narrow + wide,
 keyboard (visible focus, Escape closes), reduced motion, then
 `npm run check && npm run lint && npm run format:check && npm run check:design && npm run build`.
 

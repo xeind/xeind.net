@@ -115,6 +115,7 @@ const compactDate = Number.isNaN(date.getTime())
             <span class="invisible col-start-1 row-start-1" aria-hidden="true">Manila</span>
             <span class="invisible col-start-1 row-start-1" aria-hidden="true">Kozo</span>
             <span class="invisible col-start-1 row-start-1" aria-hidden="true">Nightingale</span>
+            <span class="invisible col-start-1 row-start-1" aria-hidden="true">Blueprint</span>
             <span class="col-start-1 row-start-1" data-theme-label>Manila</span>
           </span>
         </button>
@@ -124,12 +125,13 @@ const compactDate = Number.isNaN(date.getTime())
 </footer>
 
 <script>
-  type ThemeName = "dark" | "light" | "nightingale";
-  const themes: ThemeName[] = ["dark", "light", "nightingale"];
+  type ThemeName = "dark" | "light" | "nightingale" | "blueprint";
+  const themes: ThemeName[] = ["dark", "light", "nightingale", "blueprint"];
   const labels = {
     dark: "Manila",
     light: "Kozo",
     nightingale: "Nightingale",
+    blueprint: "Blueprint",
   } satisfies Record<ThemeName, string>;
 
   function isThemeName(value: string | null): value is ThemeName {

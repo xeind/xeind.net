@@ -47,7 +47,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     <script is:inline>
       (() => {
         try {
-          const themes = ["dark", "light", "nightingale"];
+          const themes = ["dark", "light", "nightingale", "blueprint"];
           const root = document.documentElement;
           const saved = localStorage.getItem("theme");
           const theme = themes.includes(saved) ? saved : "dark";

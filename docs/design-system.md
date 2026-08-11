@@ -33,7 +33,7 @@ it or renders it.
 | The rules                                      | this file, `docs/animation.md`, `docs/content.md`, `docs/building.md`      |
 
 **`/design` owns nothing.** `src/pages/design.astro` is a rendered specimen — a
-place to look at the system in all three themes. It repeats token values as
+place to look at the system in all four themes. It repeats token values as
 sample text. Changing a swatch there changes the demo and not the system, and a
 value there can go stale without breaking anything. When something looks wrong
 on `/design`, fix the owner above, then check `/design` reflects it.
@@ -51,7 +51,7 @@ a shadow. Three themes, one shape.
 
 ## 2. Themes
 
-Three, switched by `data-theme` on `<html>`. The switch happens in an inline
+Four, switched by `data-theme` on `<html>`. The switch happens in an inline
 script in `src/layouts/Layout.astro`.
 
 | Theme           | `data-theme`         | Character                         |
@@ -59,11 +59,15 @@ script in `src/layouts/Layout.astro`.
 | **Kozo**        | _absent_ (`light`)   | Warm paper, ink on mulberry fibre |
 | **Manila**      | `dark` (**default**) | Deep night, sodium lamps          |
 | **Nightingale** | `nightingale`        | The author's Neovim colorscheme   |
+| **Blueprint**   | `blueprint`          | Cyanotype sheet, white lines      |
+
+Blueprint is ported from the marketing site's blueprint mode — same cobalt
+paper, same white drafting ink — so the two sites read as one sheet.
 
 Kozo is the fallback in CSS (declared in `@theme`), but Manila is what an
 unknown visitor sees — the script picks `dark` when nothing is stored.
 
-**Rule: every visual change must hold in all three themes.** Kozo is the one
+**Rule: every visual change must hold in all four themes.** Kozo is the one
 that breaks. It is light-on-light (`#F8F6F2` card on a `#F0EBE2` page), so any
 effect that removes contrast makes the element vanish there while looking fine
 in the two dark themes. `--surface-hover-fill` exists for exactly this reason —
@@ -94,7 +98,7 @@ or Tailwind's slash opacity (`border-accent/30`).
 ### The tokens
 
 Each theme defines the same set. Add a token to one theme and you must add it to
-all three, or that theme falls back to Kozo's value and looks wrong.
+all four, or that theme falls back to Kozo's value and looks wrong.
 
 | Token                     | Role                                          |
 | ------------------------- | --------------------------------------------- |
@@ -216,7 +220,8 @@ stops is frozen in one theme and will be wrong in the other two.
 
 **5. `<img>`-loaded logos need one file per theme.** An `<img>` has its own
 document and cannot see your CSS variables, so those logos ship as
-`*-light.svg`, `*-dark.svg` and `*-nightingale.svg` with the ladder's hexes
+`*-light.svg`, `*-dark.svg`, `*-nightingale.svg` and `*-blueprint.svg` with the
+ladder's hexes
 baked in, swapped by `PROJECT_LOGO_URLS` and an inline script on theme change.
 **Both halves must agree:** retuning means editing `src/assets/projects/*.svg`
 _and_ the matching variables in `global.css`. Read the comment above

@@ -1,9 +1,12 @@
+import fmeetBlueprint from "@/assets/projects/fmeet-seo-blueprint.svg";
 import fmeetDark from "@/assets/projects/fmeet-seo-dark.svg";
 import fmeetLight from "@/assets/projects/fmeet-seo-light.svg";
 import fmeetNightingale from "@/assets/projects/fmeet-seo-nightingale.svg";
+import smeetBlueprint from "@/assets/projects/smeet-seo-blueprint.svg";
 import smeetDark from "@/assets/projects/smeet-seo-dark.svg";
 import smeetLight from "@/assets/projects/smeet-seo-light.svg";
 import smeetNightingale from "@/assets/projects/smeet-seo-nightingale.svg";
+import nightingaleBlueprint from "@/assets/projects/nightingale-blueprint.svg";
 import nightingaleDark from "@/assets/projects/nightingale-dark.svg";
 import nightingaleLight from "@/assets/projects/nightingale-light.svg";
 import nightingaleNightingale from "@/assets/projects/nightingale-nightingale.svg";
@@ -19,15 +22,18 @@ export const PROJECT_LOGO_URLS = {
     light: fmeetLight.src,
     dark: fmeetDark.src,
     nightingale: fmeetNightingale.src,
+    blueprint: fmeetBlueprint.src,
   },
   "smeet-seo": {
     light: smeetLight.src,
     dark: smeetDark.src,
     nightingale: smeetNightingale.src,
+    blueprint: smeetBlueprint.src,
   },
   nightingale: {
     light: nightingaleLight.src,
     dark: nightingaleDark.src,
     nightingale: nightingaleNightingale.src,
+    blueprint: nightingaleBlueprint.src,
   },
 } as const;

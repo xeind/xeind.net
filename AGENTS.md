@@ -1,7 +1,7 @@
 # xeind.net
 
 Xein Deniel's personal site — portfolio, tools list and blog. Static Astro on
-Cloudflare Pages. Ink-on-paper interface with three themes, drawn in hairlines
+Cloudflare Pages. Ink-on-paper interface with four themes, drawn in hairlines
 and dashed borders.
 
 This site has a real design system. Follow it — do not invent one.
@@ -54,7 +54,7 @@ This site has a real design system. Follow it — do not invent one.
 
 ## Always
 
-- Check the change in all three themes. **Kozo (light) is the one that breaks** —
+- Check the change in all four themes. **Kozo (light) is the one that breaks** —
   it is light-on-light, so anything that drains contrast makes the element vanish
   there while looking fine in Manila and Nightingale.
 - Reuse the primitive. `Panel` for sections, `SectionDivider` between them,
@@ -97,7 +97,7 @@ src/layouts/      Layout.astro — document, theme script, fonts, edge-glow shel
 src/components/   ui/ primitives · sections/ · hero/ · blog/ · design/ (specimens)
 src/content/      blog/<slug>/index.mdx — one folder per post, images beside it.
 src/lib/          config/ tokens · data/ content · hooks/ · markdown/ · types.ts
-src/styles/       global.css — @theme tokens, all three themes, shared classes
+src/styles/       global.css — @theme tokens, all four themes, shared classes
 src/assets/       Per-theme project marks routed through the asset pipeline
                   (hashed /_astro/ URLs); public/projects/ holds the rest.
 public/           Assets, vanilla scripts, robots.txt, _headers, _redirects

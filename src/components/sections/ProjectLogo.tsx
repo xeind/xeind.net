@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 import { PROJECT_LOGO_URLS } from "@/lib/data/project-logo-urls";
 
-type ResolvedTheme = "light" | "dark" | "nightingale";
+type ResolvedTheme = "light" | "dark" | "nightingale" | "blueprint";
 
 declare global {
   interface Window {
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-const THEMES: readonly ResolvedTheme[] = ["light", "dark", "nightingale"];
+const THEMES: readonly ResolvedTheme[] = ["light", "dark", "nightingale", "blueprint"];
 const EXTERNAL_LOGOS = {
   filipinameet: { file: "fmeet-seo", width: 54, height: 48 },
   slavicmeet: { file: "smeet-seo", width: 392.9, height: 225.3 },
@@ -198,6 +198,7 @@ const PIONEER_THEME: Record<ResolvedTheme, { body: string }> = {
   light: { body: "var(--logo-ink-100)" },
   dark: { body: "var(--logo-ink-100)" },
   nightingale: { body: "var(--logo-ink-100)" },
+  blueprint: { body: "var(--logo-ink-100)" },
 };
 
 function PioneerLogo({

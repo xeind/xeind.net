@@ -171,8 +171,8 @@ screen in one theme is not a result:
 - [ ] **Every affected page**, not just the one you edited. `Panel`,
       `SectionDivider` and anything in `ui/` are shared — list who imports it
       before you claim done.
-- [ ] **All three themes.** Kozo (no `data-theme`), Manila (`dark`),
-      Nightingale. Kozo is the one that breaks.
+- [ ] **All four themes.** Kozo (no `data-theme`), Manila (`dark`),
+      Nightingale, Blueprint. Kozo is the one that breaks.
 - [ ] **Narrow and wide.** The layout caps at `max-w-5xl`; check mobile width
       and past the cap.
 - [ ] **Keyboard.** Tab to it. A visible `focus-visible` ring, and a working
@@ -184,5 +184,5 @@ Then read your diff against these three questions:
 
 1. Did I write a color, a radius, a shadow, or a duration? Remove it — use the
    owner listed in `docs/design-system.md` §0.
-2. Does it hold in all three themes?
+2. Does it hold in all four themes?
 3. Did I rebuild something in the table at the top of this file?
