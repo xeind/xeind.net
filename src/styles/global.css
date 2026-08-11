@@ -25,6 +25,38 @@ html {
   }
 }
 
+/* ----------------------------------------------------------------
+   /lab — agent-interface specimens.
+
+   docs/building.md rejects pulsing dots as decorative. That reject
+   stands for every reading page. /lab is a specimen sheet, like
+   /design: the motion IS the subject there, so this keyframe is
+   scoped to it by name and used nowhere else.
+
+   Opacity only, so it stays on the compositor even though it runs
+   forever. PixelGrid sets its own per-pattern delays and cycle
+   inline — the cycle length is the whole idea of each pattern, so it
+   cannot live in a shared constant.
+
+   The streaming caret has no keyframe: it is a static block.
+   ---------------------------------------------------------------- */
+
+@keyframes lab-pixel-on {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-pixel {
+    animation: none;
+  }
+}
+
 /* ========================================
    CSS RESET - Normalize browser defaults
    Applied after Tailwind to preserve utilities
@@ -626,6 +658,15 @@ pre code {
   --shiki-token-string-expression: hsl(140 22% 38%);
   --shiki-token-punctuation: hsl(34 10% 54%);
   --shiki-token-link: hsl(210 30% 42%);
+
+  /* Diff. Deliberately NOT the syntax string/constant pair: those two are
+     the colors of the code sitting on top of the wash, so a line of string
+     literals used to dissolve into its own row. Add is cooler and deeper
+     than the string green; del is a true red rather than constant's
+     terracotta. Used for the sign, a 12% wash and a 55% rule — never for
+     the code itself. */
+  --diff-add-ink: hsl(158 34% 32%);
+  --diff-del-ink: hsl(355 45% 45%);
 }
 
 /* Manila — night traffic, sodium glow */
@@ -654,6 +695,11 @@ pre code {
   --shiki-token-string-expression: hsl(95 37% 60%);
   --shiki-token-punctuation: hsl(25 5% 44%);
   --shiki-token-link: hsl(200 47% 68%);
+
+  /* Diff — see the Kozo block. Add moves to teal-green, away from the
+     string's yellow-green; del to pink-red, away from constant's orange. */
+  --diff-add-ink: hsl(150 45% 55%);
+  --diff-del-ink: hsl(348 60% 60%);
 }
 
 /* Nightingale mode — warm color palette */
@@ -682,6 +728,12 @@ pre code {
   --shiki-token-string-expression: hsl(74 28% 58%);
   --shiki-token-punctuation: hsl(0 0% 50%);
   --shiki-token-link: hsl(166 27% 66%);
+
+  /* Diff — see the Kozo block. This theme spends 74 on strings and 350 on
+     constants, so add takes a clean green and del a deeper, redder tone
+     than the constant pink. */
+  --diff-add-ink: hsl(130 40% 50%);
+  --diff-del-ink: hsl(0 60% 52%);
 }
 
 /* Code blocks — dashed border + muted background */

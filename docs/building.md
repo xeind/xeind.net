@@ -127,7 +127,11 @@ Reflexes to suppress, beyond the Never table:
 - Wrapping everything in cards; nesting panels in panels.
 - Decorative animation — pulsing dots, marquees, typing cursors, parallax.
   Motion here means: state feedback, or the modal morph. Nothing ambient
-  except the edge glow.
+  except the edge glow. **One scoped exception: `/lab`**, a specimen sheet
+  with the same standing as `/design`. There the loader's pulse and the
+  stream's caret are the subject on display, not motion laid over something a
+  reader is reading. The reject holds everywhere else — a specimen does not
+  earn its way onto a content page by existing.
 - A new hue. The themes own hue; components own none.
 - Centering a section's prose. Text sits left; only marks and stages centre.
 - "While I'm here" refactors of neighbouring code.

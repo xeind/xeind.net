@@ -7,6 +7,7 @@ draft: true
 ---
 
 import { Cite, PullQuoteCard, Ref, References } from "@/components/blog/MDXComponents";
+import DiffBlock from "@/components/blog/DiffBlock.astro";
 
 This is my first blog post. I'm using MDX so I can embed React components directly in my writing.<Cite n={1} />
 
@@ -34,6 +35,29 @@ function formatDate(date: Date): string {
   });
 }
 ```
+
+The same component with no signs is a plain code block:
+
+<DiffBlock
+  lang="ts"
+  lines={[{ text: `const greeting = "Hello world";` }, { text: `console.log(greeting);` }]}
+/>
+
+Give a line a sign and it becomes a change. One removed line on its own keeps
+both rules; a removed run followed straight by an added run shares them:
+
+<DiffBlock
+  lang="ts"
+  lines={[
+    { text: `function greet(name: string) {` },
+    { sign: "-", text: `  console.log("Hello world");` },
+    { text: `` },
+    { sign: "-", text: `  return "hello";` },
+    { sign: "+", text: `  console.log(\`Hello \${name}\`);` },
+    { sign: "+", text: `  return \`hello \${name}\`;` },
+    { text: `}` },
+  ]}
+/>
 
 ## Blockquotes
 

@@ -1,0 +1,124 @@
+---
+import { Code } from "astro:components";
+import type { ComponentProps } from "astro/types";
+
+/**
+ * A code block that can show changes: removed lines, added lines, and
+ * unchanged context, highlighted like every other code block on the site.
+ *
+ * With no signs it is just a code block. That is the point — one component for
+ * both, so a post can show plain code and a change in the same visual language
+ * rather than two that nearly match.
+ *
+ * Astro, not React, for two reasons. A diff has no state, and static content
+ * must never become an island. And shiki only runs at build time, so the
+ * highlighting has to happen here; a React component would have to ship a
+ * highlighter to the browser to do the same job.
+ *
+ * `theme="css-variables"` is load-bearing. It makes shiki emit
+ * `var(--astro-code-token-*)` instead of baked hex, which is how a code block
+ * follows the theme switcher. Without it this renders in github-dark and
+ * ignores Kozo entirely. The markdown pipeline sets the same theme in
+ * `astro.config.mjs`; the <Code> component does not read that config, so it is
+ * repeated here on purpose.
+ *
+ * Whitespace is the whole trick here. A <pre> preserves every newline in this
+ * template, so laying rows out as indented block elements inside one prints
+ * the indentation as blank lines. The <pre> therefore runs `whitespace-normal`
+ * — its literal whitespace collapses away — and each shiki <code> restores
+ * `whitespace-pre` for the code itself. The <pre> stays because `pre code` in
+ * global.css is what strips the dashed box a loose <code> would otherwise get.
+ * A blank line has nothing to give the row height, so it collapsed to a
+ * hairline and made two runs read as one block split by a rule. `min-h-[1lh]`
+ * holds every row at one line of the current leading.
+ *
+ * Line numbers come first, at the width and tone a fenced block gets from
+ * `pre.astro-code .line::before` in global.css — 1.5rem, right aligned,
+ * foreground at 25%. They are drawn here rather than by a counter because these
+ * rows are plain divs, not shiki's `.line` spans, and because a counter can
+ * only count rows. A diff needs two counts, old file and new: a removed line
+ * has an old number and no new one, an added line the reverse. A block with no
+ * signs shows the one column, like a fenced block does.
+ *
+ * Signal is carried three ways, none of them the code's own color:
+ *   · the sign column, in the removed/added ink
+ *   · a 12% wash behind the row
+ *   · a rule above and below each run of changed rows, at 55%
+ *
+ * That ink is `--diff-add-ink` / `--diff-del-ink`, a pair defined per theme in
+ * global.css — NOT the syntax string/constant tokens. Those two are the colors
+ * of the code sitting on the wash, so a line of string literals used to
+ * dissolve into its own row and rule. The diff pair is deliberately off the
+ * syntax hues in every theme.
+ *
+ * The rule sits on the outside of a run only. Removed lines followed straight
+ * by added ones are one run, so the rule goes above the first and below the
+ * last — a line between them would cut one change into two. An unchanged line
+ * ends the run, so the next change gets its own pair of rules. One changed line
+ * on its own gets both.
+ */
+
+export type DiffLine = {
+  /** "-" removed, "+" added, anything else (or omitted) is unchanged context. */
+  sign?: string;
+  text: string;
+};
+
+interface Props {
+  lines: readonly DiffLine[];
+  /** Any shiki language id. Defaults to the site's own stack. */
+  lang?: ComponentProps<typeof Code>["lang"];
+  class?: string;
+}
+
+const { lines, lang = "tsx", class: className = "" } = Astro.props;
+
+const isChange = (sign?: string) => sign === "-" || sign === "+";
+const ink = (sign?: string) => (sign === "-" ? "var(--diff-del-ink)" : "var(--diff-add-ink)");
+
+const changed = lines.map((line) => isChange(line.sign));
+const hasChanges = changed.some(Boolean);
+
+// Two counts, because a diff is two files. A removed line advances the old
+// count only, an added line the new count only, context both. With no signs
+// anywhere the two are identical, so the block drops to one column and reads
+// like a fenced code block.
+let oldCount = 0;
+let newCount = 0;
+const numbers = lines.map((line) => {
+  if (line.sign === "-") return { old: ++oldCount, new: null };
+  if (line.sign === "+") return { old: null, new: ++newCount };
+  oldCount += 1;
+  newCount += 1;
+  return { old: oldCount, new: newCount };
+});
+
+function rowStyle(line: DiffLine, i: number) {
+  if (!changed[i]) return undefined;
+  const tone = ink(line.sign);
+  const edge = `1px solid color-mix(in srgb, ${tone} 55%, transparent)`;
+  return [
+    `background-color:color-mix(in srgb, ${tone} 12%, transparent)`,
+    changed[i - 1] ? "" : `border-top:${edge}`,
+    changed[i + 1] ? "" : `border-bottom:${edge}`,
+  ]
+    .filter(Boolean)
+    .join(";");
+}
+---
+
+<pre
+  class={`bg-muted border-accent/20 overflow-x-auto border border-dashed p-3 font-mono text-[0.6875rem] leading-relaxed whitespace-normal ${className}`}>{
+    lines.map((line, i) => (
+      <div class="-mx-3 flex min-h-[1lh] gap-2 px-3" style={rowStyle(line, i)}>
+        {hasChanges && (
+          <span class="text-foreground/25 w-6 shrink-0 select-none text-right" aria-hidden="true">{numbers[i].old}</span>
+        )}
+        <span class="text-foreground/25 w-6 shrink-0 select-none text-right" aria-hidden="true">{numbers[i].new}</span>
+        <span class="w-2 shrink-0 select-none" style={isChange(line.sign) ? `color:${ink(line.sign)}` : undefined} aria-hidden="true">
+          {isChange(line.sign) ? line.sign : ""}
+        </span>
+        <Code code={line.text} lang={lang} theme="css-variables" inline class="whitespace-pre" />
+      </div>
+    ))
+  }</pre>

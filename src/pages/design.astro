@@ -10,6 +10,9 @@ import ClaudeFrameTile from "@/components/design/ClaudeFrameTile";
 import GridIterations from "@/components/design/GridIterations";
 import EdgeOrnaments from "@/components/design/EdgeOrnaments";
 import PrecisionMarks from "@/components/design/PrecisionMarks";
+import LoadingState from "@/components/lab/LoadingState";
+import PixelGridSet from "@/components/lab/PixelGridSet";
+import TaskRows from "@/components/lab/TaskRows";
 import { DURATION, EASING, SPRING_CONFIG } from "@/lib/config/animation";
 
 /* This page renders the system, it does not restate it — see docs/design-system.md §0.
@@ -502,6 +505,26 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         Drafting-sheet marks — dimensions, title block, coordinates
       </p>
       <PrecisionMarks />
+    </Panel>
+    <SectionDivider />
+
+    {/* Agent interface — the /lab specimens, summarised */}
+    <Panel>
+      <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">AGENT INTERFACE</h2>
+      <p class="text-foreground/50 mb-6 font-mono text-xs">
+        Loading and state, drawn in this system — the full set lives on /lab
+      </p>
+
+      <div class="space-y-8">
+        <LoadingState client:visible={{ rootMargin: "300px" }} />
+        <PixelGridSet client:visible={{ rootMargin: "300px" }} />
+        <TaskRows client:visible={{ rootMargin: "300px" }} />
+      </div>
+
+      <p class="text-foreground/60 mt-8 text-sm">
+        <InlineLink href="/lab">See all five on /lab</InlineLink> — streaming text, a reasoning trace
+        and an approval card as well.
+      </p>
     </Panel>
     <SectionDivider />
 

@@ -104,6 +104,8 @@ components/
   hero/        The hero and its logo.
   blog/        MDX components and post furniture.
   design/      Specimens for /design only. Nothing here ships to a real page.
+  lab/         Agent-interface specimens for /lab. Same rule — specimens only.
+               Their scenario copy lives in lib/data/lab.ts.
 lib/
   config/      Tokens as TS: animation.ts, design.ts, site.ts
                (no spacing module — write the Tailwind class, see design-system.md §5)
