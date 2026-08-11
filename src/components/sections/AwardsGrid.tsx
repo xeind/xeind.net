@@ -118,7 +118,11 @@ export default function AwardsGrid() {
                 )}
               </div>
 
-              <div className="relative flex flex-col p-4 md:p-5">
+              {/* The same rule the footer draws, so the stage, the caption and
+                  the link row are separated by one boundary treatment rather
+                  than by a tone change on one edge and a hairline on the
+                  other. */}
+              <div className="border-accent/20 relative flex flex-col border-t border-dashed p-4 md:p-5">
                 <p className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide">
                   {award.issuer}
                 </p>
