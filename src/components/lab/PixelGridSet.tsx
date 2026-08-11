@@ -18,7 +18,7 @@ const PATTERNS: { key: PixelPattern; note: string }[] = [
   { key: "drive", note: "has a direction" },
   { key: "scan", note: "whole columns" },
   { key: "bloom", note: "no direction" },
-  { key: "orbit", note: "hollow centre" },
+  { key: "orbit", note: "winds inward" },
 ];
 
 interface PixelGridSetProps {

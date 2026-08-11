@@ -15,8 +15,11 @@ import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
  *            Flatter than drive, and calmer for a row that sits in a list.
  *   bloom  — rings out from the centre. No direction at all, which suits
  *            waiting on something that has not started moving yet.
- *   orbit  — one lit cell lapping the perimeter. The interior never lights, so
- *            the shape stays a ring instead of reading as noise.
+ *   orbit  — one lit cell walking the square, ring by ring, winding inward.
+ *            It used to be the perimeter alone. That reads as a ring at 3,
+ *            where the perimeter is 8 of 9 cells, and as a thin loop around 16
+ *            dead ones at 6 — which broke the rule below. Spiralling in covers
+ *            every cell at every size and keeps the one travelling cell.
  *
  * Every pattern is a function of the grid size, so 3 and 6 are the same four
  * ideas at two resolutions rather than two sets of hand-tuned numbers. At 6 the
@@ -29,8 +32,8 @@ import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
  * durations are past the 0.3s house band (docs/animation.md §2) on purpose —
  * the motion is the message here, not a transition.
  *
- * `null` means a cell never lights: it holds the dim state and the shape.
- * Reduced motion freezes every cell there.
+ * Every pattern now lights every cell, so a cell's dim state is only its
+ * resting point in the cycle. Reduced motion freezes all of them there.
  */
 
 export type PixelPattern = "drive" | "scan" | "bloom" | "orbit";
@@ -40,16 +43,30 @@ const TIMING: Record<PixelPattern, { step: number; hold: number }> = {
   drive: { step: 90, hold: 380 },
   scan: { step: 130, hold: 390 },
   bloom: { step: 150, hold: 550 },
-  orbit: { step: 110, hold: 180 },
+  // Orbit's hold pays back the step the centre cell added when the pattern
+  // became a spiral, so the 3×3 lap is still the 950ms it has always been.
+  orbit: { step: 110, hold: 70 },
 };
 
-/** Perimeter cell indices, clockwise from the top-left corner. */
-function ring(n: number): number[] {
-  const top = Array.from({ length: n }, (_, c) => c);
-  const right = Array.from({ length: n - 2 }, (_, r) => (r + 1) * n + (n - 1));
-  const bottom = Array.from({ length: n }, (_, c) => (n - 1) * n + (n - 1 - c));
-  const left = Array.from({ length: n - 2 }, (_, r) => (n - 2 - r) * n);
+/**
+ * The k-th ring in from the edge of an n×n grid, clockwise from its top-left.
+ * An odd grid ends on a 1×1 ring, which is the single centre cell.
+ */
+function ring(n: number, k: number): number[] {
+  const side = n - 2 * k;
+  const at = (r: number, c: number) => (k + r) * n + (k + c);
+  if (side === 1) return [at(0, 0)];
+
+  const top = Array.from({ length: side }, (_, c) => at(0, c));
+  const right = Array.from({ length: side - 2 }, (_, r) => at(r + 1, side - 1));
+  const bottom = Array.from({ length: side }, (_, c) => at(side - 1, side - 1 - c));
+  const left = Array.from({ length: side - 2 }, (_, r) => at(side - 2 - r, 0));
   return [...top, ...right, ...bottom, ...left];
+}
+
+/** Every cell, outermost ring first, winding inward. */
+function spiral(n: number): number[] {
+  return Array.from({ length: Math.ceil(n / 2) }, (_, k) => ring(n, k)).flat();
 }
 
 function buildPattern(pattern: PixelPattern, n: number) {
@@ -59,14 +76,11 @@ function buildPattern(pattern: PixelPattern, n: number) {
   const row = (i: number) => Math.floor(i / n);
   const col = (i: number) => i % n;
 
-  let delays: (number | null)[];
+  let delays: number[];
 
   if (pattern === "orbit") {
-    const order = ring(n);
-    delays = cells.map((i) => {
-      const at = order.indexOf(i);
-      return at === -1 ? null : at * step;
-    });
+    const order = spiral(n);
+    delays = cells.map((i) => order.indexOf(i) * step);
   } else if (pattern === "drive") {
     // Distance from the left edge plus distance from the middle row.
     delays = cells.map((i) => Math.round(col(i) + Math.abs(row(i) - mid)) * step);
@@ -80,7 +94,7 @@ function buildPattern(pattern: PixelPattern, n: number) {
     );
   }
 
-  const sweep = delays.reduce<number>((max, d) => (d === null ? max : Math.max(max, d)), 0);
+  const sweep = Math.max(...delays);
   return { delays, cycle: sweep + hold };
 }
 
@@ -122,10 +136,9 @@ export default function PixelGrid({ pattern = "drive", size = 3, className = "" 
             width: cell,
             height: cell,
             opacity: 0.2,
-            animation:
-              prefersReducedMotion || delay === null
-                ? undefined
-                : `lab-pixel-on ${cycle}ms ease-in-out ${delay}ms infinite`,
+            animation: prefersReducedMotion
+              ? undefined
+              : `lab-pixel-on ${cycle}ms ease-in-out ${delay}ms infinite`,
           }}
         />
       ))}
