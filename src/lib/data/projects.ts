@@ -26,19 +26,10 @@ export const projects: Project[] = [
     type: "Personal",
     description: "Theme for Zed and Neovim",
     longDescription: [
-      "Warm contrast theme for Zed and Neovim.",
+      "Warm contrast theme for [Zed](https://zed.dev/extensions/nightingale) and [Neovim](https://github.com/xeind/nightingale.nvim).",
       "Dark and light variants with full TreeSitter support for Neovim.",
     ],
-    projectLinks: [
-      {
-        label: "Install for Zed",
-        url: "https://zed.dev/extensions/nightingale",
-      },
-      {
-        label: "Neovim Theme",
-        url: "https://github.com/xeind/nightingale.nvim",
-      },
-    ],
+    liveUrl: "https://zed.dev/extensions/nightingale",
     technologies: ["Zed", "Neovim", "Lua", "TreeSitter"],
     featured: true,
     year: 2025,

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback, type SVGProps } from "react";
+import { useEffect, useState, useRef, useCallback, Fragment, type SVGProps } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { projects } from "@/lib/data/projects";
@@ -287,10 +287,14 @@ export default function ProjectGrid() {
                     <ModalBorders />
                     <ModalCornerBrackets />
 
-                    {/* Close button */}
+                    {/* Close on the left, the project's link on the right. The
+                        arrow keeps the corner it occupies on the plate, so it
+                        travels straight up as the card opens instead of cutting
+                        across it. Close stays first in the DOM and first in the
+                        tab order. */}
                     <button
                       onClick={handleClose}
-                      className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 focus-visible:ring-accent absolute top-4 right-4 z-30 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2 motion-reduce:transition-none"
+                      className="text-accent hover:text-tertiary border-accent/30 hover:border-tertiary/50 focus-visible:ring-accent absolute top-4 left-4 z-30 border border-dashed p-1.5 transition-colors focus:outline-none focus-visible:ring-2 motion-reduce:transition-none"
                       style={tFast}
                       aria-label="Close modal"
                     >
@@ -299,6 +303,33 @@ export default function ProjectGrid() {
                         strokeWidth={ICON_CONFIG.strokeWidth}
                       />
                     </button>
+
+                    {activeProjectUrl && (
+                      /* aria-hidden and out of the tab order: the title below is
+                         already a link to the same place, and this glyph carries
+                         no name of its own. */
+                      <motion.a
+                        layoutId={`link-${activeProject.id}`}
+                        href={activeProjectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onMouseEnter={brush}
+                        onClick={clickLow}
+                        aria-hidden="true"
+                        tabIndex={-1}
+                        /* It flies and fades at once: the plate's arrow is
+                           invisible until hover, so a keyboard open would
+                           otherwise launch it from nothing. */
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                        className="text-accent hover:text-tertiary absolute top-4 right-4 z-30 flex items-center leading-none transition-colors motion-reduce:transition-none"
+                        style={tFast}
+                      >
+                        <ArrowUpRight size={ICON_CONFIG.sizes.md} />
+                      </motion.a>
+                    )}
 
                     {/* Image area */}
                     <motion.div
@@ -351,17 +382,12 @@ export default function ProjectGrid() {
                                 rel="noopener noreferrer"
                                 onMouseEnter={brush}
                                 onClick={clickLow}
-                                className="group hover:text-tertiary inline-flex items-center gap-0.75 transition-all motion-reduce:transition-none"
+                                className="group hover:text-tertiary transition-all motion-reduce:transition-none"
                                 style={t}
                               >
                                 <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
                                   {activeProject.title}
                                 </span>
-                                <ArrowUpRight
-                                  size={ICON_CONFIG.sizes.md}
-                                  trigger="link"
-                                  className="mt-0.5 shrink-0"
-                                />
                               </a>
                             ) : (
                               activeProject.title
@@ -388,28 +414,34 @@ export default function ProjectGrid() {
                               opacity: 0,
                               transition: { duration: 0.05 },
                             }}
-                            className="mt-3 flex flex-wrap gap-x-4 gap-y-2"
+                            className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2"
                           >
-                            {activeProject.projectLinks.map((link) => (
-                              <a
-                                key={link.url}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onMouseEnter={brush}
-                                onClick={clickLow}
-                                className="group text-accent hover:text-tertiary inline-flex items-center gap-1 text-sm transition-all motion-reduce:transition-none"
-                                style={t}
-                              >
-                                <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
-                                  {link.label}
-                                </span>
-                                <ArrowUpRight
-                                  size={ICON_CONFIG.sizes.sm}
-                                  trigger="link"
-                                  className="shrink-0"
-                                />
-                              </a>
+                            {/* No arrow per entry: the corner already carries one
+                                for the project, and a row of them turns two
+                                labels into six marks. The square between them is
+                                the same bullet the description list uses. */}
+                            {activeProject.projectLinks.map((link, i) => (
+                              <Fragment key={link.url}>
+                                {i > 0 && (
+                                  <span
+                                    aria-hidden="true"
+                                    className="bg-foreground/50 h-1 w-1 shrink-0"
+                                  />
+                                )}
+                                <a
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onMouseEnter={brush}
+                                  onClick={clickLow}
+                                  className="group text-accent hover:text-tertiary inline-flex items-center text-sm transition-all motion-reduce:transition-none"
+                                  style={t}
+                                >
+                                  <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
+                                    {link.label}
+                                  </span>
+                                </a>
+                              </Fragment>
                             ))}
                           </motion.div>
                         )}
@@ -564,22 +596,29 @@ export default function ProjectGrid() {
                 </motion.button>
 
                 {/* External link — sibling of the button, above it. Revealed by
-                    hovering anywhere on the cell or focusing either control. */}
+                    hovering anywhere on the cell or focusing either control.
+                    Its own corner, well clear of the plate's labels and of the
+                    middle, where the eye aims to open the card. */}
                 {primaryUrl && (
                   <div
                     className="absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
                     style={t}
                   >
-                    <a
+                    {/* The modal's arrow shares this layoutId and is the same
+                        size, so opening a card carries the mark from this corner
+                        to the modal's opposite one — a translate, no scaling. */}
+                    <motion.a
+                      layoutId={`link-${project.id}`}
                       href={primaryUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-accent hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
                       style={tFast}
+                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                       aria-label={`Open ${project.title} in new tab`}
                     >
                       <ArrowUpRight size={ICON_CONFIG.sizes.md} />
-                    </a>
+                    </motion.a>
                   </div>
                 )}
               </div>
