@@ -3,7 +3,7 @@ title: "Moving from tmux to herdr"
 date: 2026-08-12
 excerpt: "I moved from tmux to herdr in an afternoon and spent the evening debugging one dropped keystroke. The bug was in my hand, not the software."
 tags: ["herdr", "tmux", "terminal", "keyboard"]
-draft: true
+draft: false
 ---
 
 import { Cite, Ref, References } from "@/components/blog/MDXComponents";
@@ -64,9 +64,27 @@ I wrote the whole thing up for the herdr maintainers in [a discussion post](http
 
 ---
 
-Herdr still doesn't have `bind -r`, so `prefix h l` still costs two prefix presses where tmux charges one. I'd love to see that land. But the fix that mattered today wasn't upstream, it was four lines of config and a correct diagnosis.
+## What else is missing
 
-> I spent the evening fixing a delay that never existed. The bug was between my `Ctrl` key and my `h`.
+The Ctrl leak was my hand. These are herdr's.
+
+**No `bind -r`.** `prefix h l` costs two prefix presses where tmux charges one. Discussion 599 asks for a repeat window; nothing has landed.
+
+**No conditional keybindings.** tmux can ask a question before it acts: `if -F "#{@pane-is-vim}"` sends `Ctrl+h` to vim when vim owns the pane, to the multiplexer when it doesn't.<Cite n={4} /> Herdr has neither the conditional nor a per-pane option to keep the answer in, so plugins rebuild the check on every keypress. vim-herdr-navigation (80 stars) polls process info through bash and `jq`.<Cite n={5} /> herdr-nvim-nav (15 stars) ships a C binary and a marker file in `$XDG_CACHE_HOME`.<Cite n={6} /> herdr-splits.nvim (44 stars) has the most features.<Cite n={7} /> All three exist because herdr is missing one primitive.
+
+I installed none of them. I never ran vim-tmux-navigator under tmux either, and the four lines above cover it.
+
+**No theme files.** Pick the closest built-in, then override every token — that's the comment at the top of my config. Nightingale is kanagawa plus twenty-odd `[theme.custom]` lines. It works, and there's nothing to hand anyone else.
+
+**No `swap-window`.** Moving a space up or down the sidebar took a shell script against the socket API, bound to `prefix+shift+up/down`. The socket path only resolves for the default session. When it doesn't resolve, nothing happens and nothing tells you why.
+
+**Resurrect is experimental.** `pane_history = true` keeps scrollback across server restarts. Built in, where tmux wants two plugins, and flagged experimental.
+
+**The plugin index is a GitHub topic.** Search `herdr-plugin` and you find most of what I'd want: floax, automatic-rename with jump keys, a sessionizer, a tmuxinator-style YAML layout tool.<Cite n={8} /> No review, no sandbox. Every one of them is a stranger's code holding my terminal.
+
+---
+
+One day in, none of that has sent me back. The fix that mattered today was four lines of config and a correct diagnosis.
 
 <References>
   <Ref n={1} href="https://github.com/herdrdev/herdr">
@@ -77,5 +95,20 @@ Herdr still doesn't have `bind -r`, so `prefix h l` still costs two prefix press
   </Ref>
   <Ref n={3} href="https://github.com/herdrdev/herdr/discussions/599">
     Herdr discussion 599, repeatable keybindings (tmux bind -r)
+  </Ref>
+  <Ref n={4} href="https://man.openbsd.org/tmux#if-shell">
+    tmux manual, if-shell and format conditionals
+  </Ref>
+  <Ref n={5} href="https://github.com/paulbkim-dev/vim-herdr-navigation">
+    vim-herdr-navigation, vim-aware pane movement for herdr
+  </Ref>
+  <Ref n={6} href="https://github.com/aimdevlee/herdr-nvim-nav">
+    herdr-nvim-nav, Neovim pane navigation via a C helper
+  </Ref>
+  <Ref n={7} href="https://github.com/lmilojevicc/herdr-splits.nvim">
+    herdr-splits.nvim, split and pane control from Neovim
+  </Ref>
+  <Ref n={8} href="https://github.com/topics/herdr-plugin">
+    GitHub topic herdr-plugin, the de facto plugin index
   </Ref>
 </References>
