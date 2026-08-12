@@ -1,0 +1,81 @@
+---
+title: "Moving from tmux to herdr"
+date: 2026-08-12
+excerpt: "I moved from tmux to herdr in an afternoon and spent the evening debugging one dropped keystroke. The bug was in my hand, not the software."
+tags: ["herdr", "tmux", "terminal", "keyboard"]
+draft: true
+---
+
+import { Cite, Ref, References } from "@/components/blog/MDXComponents";
+
+I moved from tmux to herdr today. Herdr<Cite n={1} /> is a terminal workspace manager built around coding agents — panes, tabs and workspaces like tmux, plus a sidebar that knows which agent is working and which one is waiting on you.
+
+The migration took an afternoon. First thing I did was port Nightingale, this site's dark theme, onto herdr's kanagawa base — same ink, same accent, every token overridden in `config.toml`. It felt like home immediately.
+
+Except one thing. My pane switches kept vanishing.
+
+---
+
+## The vanishing switch
+
+In tmux, `prefix h` then `prefix l` is one motion. Hop left, hop right, done before you finish the thought.
+
+In herdr, the first switch worked. The second one, typed at normal speed, did nothing. No pane switch. No stray character in the pane. Prefix mode just gone, so I had to press `Ctrl+B` again and wait a beat before the key would land.
+
+Wait. A multiplexer where waiting is part of the keybinding.
+
+---
+
+## Blaming the wrong thing
+
+I blamed the obvious ghost first: tmux's `bind -r`. In tmux, the pane-select keys are bound repeatable — after one use they stay live for `repeat-time`, 500 ms by default, so a fast second key repeats the action instead of falling through to the pane.<Cite n={2} /> Herdr has no repeat mechanism, and there's an open request asking for one.<Cite n={3} />
+
+The theory fit perfectly. Missing repeat window, dropped second key, case closed.
+
+Then a five-second test broke it: press `Ctrl+B`, keep holding `Ctrl`, press `h`. Nothing — every single time, at any speed. Release `Ctrl` before the `h`, and it works every single time, at any speed.
+
+---
+
+## It was my Ctrl finger
+
+Typing `Ctrl+B h` fast means `Ctrl` is still down when the `h` lands. Herdr doesn't see `h` — it sees `Ctrl+h`. Nothing is bound to `Ctrl+h` in prefix mode, so it silently swallows the key and exits prefix mode. No switch, no character, no feedback.
+
+The "delay" I was trying to fix never existed. The pause that made it work was just my finger leaving the `Ctrl` key.
+
+Every chorded interface has to decide what a leaked modifier means. tmux doubles up several of its own defaults for this reason — `C-b C-o` and `C-b o` do the same thing. Herdr decides it means nothing, silently.
+
+---
+
+## The fix
+
+Herdr's keybindings take arrays, and `prefix+ctrl+h` is valid syntax. Four lines in `~/.config/herdr/config.toml`:
+
+```toml
+[keys]
+focus_pane_left  = ["prefix+h", "prefix+ctrl+h"]
+focus_pane_down  = ["prefix+j", "prefix+ctrl+j"]
+focus_pane_up    = ["prefix+k", "prefix+ctrl+k"]
+focus_pane_right = ["prefix+l", "prefix+ctrl+l"]
+```
+
+Reload with `prefix+shift+r`. Now the modifier can leak all it wants — `Ctrl+B h` switches panes with `Ctrl` held down the whole way.
+
+I wrote the whole thing up for the herdr maintainers in [a discussion post](https://github.com/herdrdev/herdr/discussions/2699), workaround included. Their contribution model is unusual — no outside pull requests at all, maintainers implement accepted reports with their own agents — so a precise report is the whole contribution.
+
+---
+
+Herdr still doesn't have `bind -r`, so `prefix h l` still costs two prefix presses where tmux charges one. I'd love to see that land. But the fix that mattered today wasn't upstream, it was four lines of config and a correct diagnosis.
+
+> I spent the evening fixing a delay that never existed. The bug was between my `Ctrl` key and my `h`.
+
+<References>
+  <Ref n={1} href="https://github.com/herdrdev/herdr">
+    Herdr, terminal workspace manager for AI coding agents
+  </Ref>
+  <Ref n={2} href="https://man.openbsd.org/tmux#repeat-time">
+    tmux manual, repeat-time option
+  </Ref>
+  <Ref n={3} href="https://github.com/herdrdev/herdr/discussions/599">
+    Herdr discussion 599, repeatable keybindings (tmux bind -r)
+  </Ref>
+</References>
