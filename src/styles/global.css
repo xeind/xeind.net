@@ -1045,6 +1045,20 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
     color-mix(in srgb, var(--edge-glow-ink) 15.6%, transparent) 75%, transparent 100%;
 }
 
+/* Blueprint lights its edges with the unexposed white rather than the derived
+   mix. The default ink is 68% accent + 32% foreground, which on this theme
+   lands near #edf6ff — near-white, but carrying the same blue cast as every
+   other token, so the rails read as one more cobalt line instead of a drawn
+   one. Tertiary is the theme's pure white and already the top of the drafting
+   ladder, so the lamp matches the CTA's hover brackets.
+
+   This has to sit at shell scope. --edge-glow-ink is declared on
+   .edge-glow-shell itself, so a [data-theme] rule on the document would never
+   reach it — the element's own declaration wins over an inherited value. */
+[data-theme="blueprint"] .edge-glow-shell {
+  --edge-glow-ink: var(--color-tertiary);
+}
+
 /* The -1px on left/right is not a nudge — it is the border width. An absolutely
    positioned child resolves its offsets against the containing block's PADDING
    box, and this shell draws 1px left/right borders, so `left: 0` would start a
