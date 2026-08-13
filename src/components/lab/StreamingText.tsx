@@ -62,7 +62,7 @@ export default function StreamingText({ text, className = "" }: StreamingTextPro
     <div className={className}>
       {/* The full text is in the DOM for assistive tech and for anyone reading
           the source — only the tail is visually hidden while it arrives. */}
-      <p className="text-foreground/80 text-sm leading-relaxed">
+      <p className="text-foreground/80 text-sm leading-6">
         <span className="sr-only">{text}</span>
         <span aria-hidden="true">
           {words.slice(0, visible).join(" ")}

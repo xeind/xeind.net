@@ -127,7 +127,7 @@ export default function AwardsGrid() {
                   {award.issuer}
                 </p>
                 <h3 className="text-foreground font-serif text-base">{award.title}</h3>
-                <p className="text-foreground/60 mt-4 text-xs leading-relaxed [text-wrap:pretty] lg:text-sm">
+                <p className="text-foreground/60 mt-4 text-xs leading-6 [text-wrap:pretty] lg:text-sm">
                   {award.description}
                 </p>
               </div>

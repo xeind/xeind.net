@@ -30,7 +30,7 @@ function MdxLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
 function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className="text-secondary mt-10 mb-4 font-serif text-2xl [text-wrap:balance] first:mt-0"
+      className="text-secondary mt-10 mb-4 font-serif text-2xl leading-8 [text-wrap:balance] first:mt-0"
       {...props}
     />
   );
@@ -38,13 +38,19 @@ function MdxH1(props: React.HTMLAttributes<HTMLHeadingElement>) {
 
 function MdxH2(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className="text-secondary mt-8 mb-3 font-serif text-xl [text-wrap:balance]" {...props} />
+    <h2
+      className="text-secondary mt-8 mb-4 font-serif text-xl leading-8 [text-wrap:balance]"
+      {...props}
+    />
   );
 }
 
 function MdxH3(props: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className="text-secondary mt-6 mb-2 font-serif text-lg [text-wrap:balance]" {...props} />
+    <h3
+      className="text-secondary mt-6 mb-2 font-serif text-lg leading-6 [text-wrap:balance]"
+      {...props}
+    />
   );
 }
 
@@ -57,7 +63,7 @@ function MdxParagraph(props: React.HTMLAttributes<HTMLParagraphElement>) {
 
   if (typeof children === "string") {
     return (
-      <div className="text-foreground/85 mb-5" {...rest}>
+      <div className="text-foreground/85 mb-6" {...rest}>
         <PretextBlock className="font-serif text-base">{children}</PretextBlock>
       </div>
     );
@@ -66,7 +72,7 @@ function MdxParagraph(props: React.HTMLAttributes<HTMLParagraphElement>) {
   // Fall back to native rendering for paragraphs with inline elements
   return (
     <p
-      className="text-foreground/85 mb-5 font-serif text-base leading-[1.8] [text-wrap:pretty]"
+      className="text-foreground/85 mb-6 font-serif text-base leading-8 [text-wrap:pretty]"
       {...rest}
     >
       {children}
@@ -86,8 +92,8 @@ function MdxEm(props: React.HTMLAttributes<HTMLElement>) {
 
 function MdxBlockquote(props: React.HTMLAttributes<HTMLQuoteElement>) {
   return (
-    <blockquote className="border-accent/30 my-6 border-l border-dashed py-1 pl-5" {...props}>
-      <div className="text-foreground/60 font-serif text-base leading-[1.8] italic">
+    <blockquote className="border-accent/30 my-6 border-l border-dashed py-2 pl-6" {...props}>
+      <div className="text-foreground/60 font-serif text-base leading-8 italic">
         {props.children}
       </div>
     </blockquote>
@@ -115,7 +121,7 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 
 function MdxHr() {
   return (
-    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-5 my-5 h-px sm:-mx-8 md:-mx-12">
+    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 my-6 h-px sm:-mx-8 md:-mx-12">
       {/* Full-bleed glow strip (like main's hairlines) — the dashed line
           extends ±9999px past the card, so its glow must too. A clipped
           .edge-glow-layer would go dark the moment the cursor leaves the
@@ -135,17 +141,14 @@ function MdxHr() {
 
 function MdxUl(props: React.HTMLAttributes<HTMLUListElement>) {
   return (
-    <ul
-      className="text-foreground/85 mb-5 space-y-2 font-serif text-base leading-[1.8]"
-      {...props}
-    />
+    <ul className="text-foreground/85 mb-6 space-y-2 font-serif text-base leading-8" {...props} />
   );
 }
 
 function MdxOl(props: React.HTMLAttributes<HTMLOListElement>) {
   return (
     <ol
-      className="text-foreground/85 mb-5 space-y-2 font-serif text-base leading-[1.8] [counter-reset:list-counter]"
+      className="text-foreground/85 mb-6 space-y-2 font-serif text-base leading-8 [counter-reset:list-counter]"
       {...props}
     />
   );
@@ -153,8 +156,10 @@ function MdxOl(props: React.HTMLAttributes<HTMLOListElement>) {
 
 function MdxLi(props: React.HTMLAttributes<HTMLLIElement>) {
   return (
-    <li className="flex items-start gap-3" {...props}>
-      <div className="bg-foreground/50 mt-[0.72em] h-1 w-1 shrink-0" />
+    <li className="flex items-start gap-4" {...props}>
+      {/* 32px line box: first-line centre sits at 16px, so the 4px dot tops
+          out at 14px = 0.875em. */}
+      <div className="bg-foreground/50 mt-[0.875em] h-1 w-1 shrink-0" />
       <span>{props.children}</span>
     </li>
   );
@@ -227,6 +232,17 @@ export function MdxImg(props: MdxImgProps) {
     );
   }
 
+  // Snap the figure's rendered height to the 8px half-cell so the baselines
+  // below it stay on the grid. At the max-w-xl cap the image box is 566px
+  // wide (576 minus the mat's border and padding); round the height it
+  // would have there to a multiple of 8, then give the mat's 2px of border
+  // back (image = 8k − 2, mat padding + border = 10, total = 8k + 8).
+  // Expressed as an aspect ratio it holds exactly at the cap and is merely
+  // ≤4px cropped (object-cover) at any other width. Remote images without
+  // dimensions keep their intrinsic ratio.
+  const snappedHeight =
+    width && height ? Math.round((566 * height) / width / 8) * 8 - 2 : undefined;
+
   return (
     <figure className="mx-auto my-6 max-w-xl">
       <button
@@ -245,11 +261,12 @@ export function MdxImg(props: MdxImgProps) {
           width={width}
           height={height}
           loading="lazy"
-          className="block w-full"
+          className="block w-full object-cover"
+          style={snappedHeight ? { aspectRatio: `566 / ${snappedHeight}` } : undefined}
         />
       </button>
       {alt && (
-        <figcaption className="text-foreground/50 mt-2 text-center font-mono text-xs">
+        <figcaption className="text-foreground/50 mt-2 text-center font-mono text-xs leading-4">
           {alt}
         </figcaption>
       )}
@@ -295,7 +312,7 @@ function MdxTable(props: React.HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="my-6 overflow-x-auto">
       <table
-        className="border-accent/20 w-full border-collapse border border-dashed font-serif text-sm"
+        className="border-accent/20 w-full border-collapse border border-dashed font-serif text-sm leading-6"
         {...props}
       />
     </div>
@@ -305,7 +322,7 @@ function MdxTable(props: React.HTMLAttributes<HTMLTableElement>) {
 function MdxTh(props: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
-      className="border-accent/20 bg-muted text-foreground border border-dashed px-4 py-2 text-left font-mono text-xs font-normal tracking-wide"
+      className="border-accent/20 bg-muted text-foreground border border-dashed px-4 py-2 text-left font-mono text-xs leading-4 font-normal tracking-wide"
       {...props}
     />
   );
@@ -343,7 +360,7 @@ export function Ref({
   return (
     <li
       id={`ref-${n}`}
-      className="text-foreground/60 flex items-start gap-2 font-serif text-sm leading-relaxed"
+      className="text-foreground/60 flex items-start gap-2 font-serif text-sm leading-6"
     >
       <span className="text-accent mt-px shrink-0 font-mono text-[0.7rem]">[{n}]</span>
       <span>
@@ -366,9 +383,9 @@ export function Ref({
 
 export function References({ children }: { children: React.ReactNode }) {
   return (
-    <div className="[&_p]:mb-0 [&_p]:text-sm [&_p]:leading-relaxed">
+    <div className="[&_p]:mb-0 [&_p]:text-sm [&_p]:leading-6">
       <div className="border-accent/20 mb-4 border-t border-dashed" />
-      <h3 className="text-secondary mb-3 font-mono text-xs tracking-wide">REFERENCES</h3>
+      <h3 className="text-secondary mb-4 font-mono text-xs tracking-wide">REFERENCES</h3>
       <ol className="list-none space-y-2 pl-0">{children}</ol>
     </div>
   );

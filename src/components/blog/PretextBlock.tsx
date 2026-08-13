@@ -16,7 +16,7 @@ interface PretextBlockProps {
 export default function PretextBlock({
   children,
   font = '16px "Latin Modern Roman", "Iowan Old Style", Georgia, serif',
-  lineHeight = 28.8, // 16px * 1.8
+  lineHeight = 32, // 16px type on the 8px baseline grid — matches leading-8 prose
   className = "",
 }: PretextBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);

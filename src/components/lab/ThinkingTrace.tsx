@@ -66,7 +66,7 @@ export default function ThinkingTrace({ className = "" }: { className?: string }
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="text-foreground block text-sm">{step.label}</span>
-                  <span className="text-foreground/60 block text-[0.8125rem] leading-relaxed">
+                  <span className="text-foreground/60 block text-[0.8125rem] leading-6">
                     {step.detail}
                   </span>
                 </span>

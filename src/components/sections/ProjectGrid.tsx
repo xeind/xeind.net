@@ -476,20 +476,20 @@ export default function ProjectGrid() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                        className="text-foreground/80 mb-4 space-y-1 text-sm leading-relaxed"
+                        className="text-foreground/80 mb-4 space-y-2 text-sm leading-6"
                       >
                         {(activeProject.longDescription || [activeProject.description])
                           .filter((point) => point.trim().length > 0)
                           .map((point, i) => (
                             <li key={i} className="flex items-start gap-4">
-                              {/* h-7 is one line of leading-relaxed text at this
+                              {/* h-8 is one line of leading-8 text at this
                                   size, so the dot centres on the first line
                                   instead of being nudged down by a margin that
                                   goes stale the moment the type scale moves. */}
-                              <div className="flex h-7 shrink-0 items-center">
+                              <div className="flex h-8 shrink-0 items-center">
                                 <div className="bg-foreground/50 h-1 w-1" />
                               </div>
-                              <span className="font-serif text-base leading-relaxed [text-wrap:pretty]">
+                              <span className="font-serif text-base leading-8 [text-wrap:pretty]">
                                 {withLinks(point)}
                               </span>
                             </li>

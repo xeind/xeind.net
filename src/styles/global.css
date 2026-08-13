@@ -863,7 +863,8 @@ pre.astro-code {
   border: 1px dashed color-mix(in srgb, var(--color-accent) 15%, transparent);
   font-family: var(--font-mono) !important;
   font-size: 0.8125rem;
-  line-height: 1.75;
+  /* 24px — 13px mono on the 8px baseline grid (was 1.75 ≈ 22.75px). */
+  line-height: 1.5rem;
   padding: 1rem;
   overflow-x: auto;
   counter-reset: line;
@@ -923,7 +924,7 @@ pre.astro-code code {
 }
 pre.astro-code code > .line {
   font-size: 0.8125rem;
-  line-height: 1.75;
+  line-height: 1.5rem;
 }
 
 /* After title extraction, Shiki leaves an empty first .line.
@@ -1280,6 +1281,28 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 .blog-grid-2 {
   grid-template-columns: 1fr 1fr;
   aspect-ratio: 16 / 9;
+}
+
+/* Above the sheet cap the article column is a constant width, so each
+   collage's aspect-driven height is a constant too — a fractional one that
+   pushes every baseline after it off the 8px half-cell. Pin the box heights
+   to the grid there (nearest 8px step to what the ratios produced) and let
+   the ratios keep governing below the cap, where there are no gutters to
+   register against. object-cover absorbs the ≤4px difference. */
+@media (min-width: 1024px) {
+  .blog-grid-2 {
+    aspect-ratio: auto;
+    height: 520px;
+  }
+  .blog-grid-3,
+  .blog-grid-5 {
+    aspect-ratio: auto;
+    height: 696px;
+  }
+  .blog-grid-4 {
+    aspect-ratio: auto;
+    height: 584px;
+  }
 }
 
 /* 3-up: big top (one full-width image, two below) */

@@ -108,9 +108,9 @@ function rowStyle(line: DiffLine, i: number) {
 ---
 
 <pre
-  class={`bg-muted border-accent/20 overflow-x-auto border border-dashed p-3 font-mono text-[0.6875rem] leading-relaxed whitespace-normal ${className}`}>{
+  class={`bg-muted border-accent/20 overflow-x-auto border border-dashed p-4 font-mono text-[0.6875rem] leading-4 whitespace-normal ${className}`}>{
     lines.map((line, i) => (
-      <div class="-mx-3 flex min-h-[1lh] gap-2 px-3" style={rowStyle(line, i)}>
+      <div class="-mx-4 flex min-h-[1lh] gap-2 px-4" style={rowStyle(line, i)}>
         <span class="text-foreground/25 flex shrink-0 select-none" aria-hidden="true">
           {/* Two counts read as one gutter: no gap between them, and 1.25rem
               each rather than the 1.5rem a fenced block uses, so the pair of

@@ -34,24 +34,39 @@ out of scope.
 
 ## Phase 3 — type rhythm (8px baseline)
 
-Every `leading-*` in use is relative, so no text sits on the baseline today.
-Computed line-heights at the legal sizes:
+Resolved 2026-08-13. The owner picked the airy candidate from rendered
+side-by-sides (phase2-final | tight | airy at 1440, Kozo + Blueprint —
+`shots/phase3-compare.html`). Verified by measurement, not eye:
+`scripts/phase3-measure.mjs` walks a post and reports every computed
+line-height and every flow-box height (margins in, 1px hairlines out) that
+misses the 8px half-cell. All five posts measure clean; the only residue is
+hairline strokes and collapsed table borders, ratified below.
 
-| Pair in use                                   | Count                | Computed                      | Snap to                             |
-| --------------------------------------------- | -------------------- | ----------------------------- | ----------------------------------- |
-| `leading-relaxed` (1.625) on `text-base` 16px | 34 uses total        | 26px                          | 24 or 32 — by eye                   |
-| `leading-relaxed` on `text-sm` 14px           | (within count above) | 22.75px                       | 24                                  |
-| `leading-[1.8]` (blog prose)                  | 5                    | 28.8px on 16px                | 32 (blog reads airier)              |
-| `leading-[1.9]`                               | 1                    | 30.4px                        | 32                                  |
-| `leading-normal` (1.5)                        | 7                    | 24px on 16px ✓ / 21px on 14px | per-size audit                      |
-| `leading-snug` (1.375)                        | 4                    | 22px on 16px                  | 24                                  |
-| `leading-tight` (1.25)                        | 3                    | 20px on 16px / 25px on 20px   | 24                                  |
-| `leading-none`                                | 12                   | = font-size                   | fine where it sits in a snapped box |
+| Owner                                      | Was                                      | Now                                          |
+| ------------------------------------------ | ---------------------------------------- | -------------------------------------------- |
+| Sans/serif `text-sm`, 13px UI voice        | `leading-relaxed` ≈ 22.75px              | `leading-6` = 24px, everywhere               |
+| Blog serif prose 16px                      | `leading-[1.8]`/`[1.9]`, Pretext 28.8    | 32px (`leading-8`; PretextBlock default 32)  |
+| Non-blog serif base (index excerpts, modal)| `leading-relaxed` = 28px                 | `leading-8` = 32px (airy)                    |
+| Headings                                   | browser `normal`                         | 24/32 + 20/32 `leading-8`, 18/24 `leading-6` |
+| MDX paragraph/list margins                 | `mb-5` (20px)                            | `mb-6` (24px)                                |
+| MDX h2 margin, quote-card label            | `mb-3` (12px)                            | `mb-4` (16px)                                |
+| MdxHr / blog-index divider                 | `my-5`, stale `-mx-5`                    | `my-6`, `-mx-4` (matches Phase 2 `px-4`)     |
+| MDX blockquote                             | `py-1 pl-5`                              | `py-2 pl-6`                                  |
+| MdxLi                                      | `gap-3`, bullet `mt-[0.72em]`            | `gap-4`, `mt-[0.875em]` (centres on 32px)    |
+| `PullQuoteCard`                            | `p-5 sm:p-6`, micro type off-baseline    | `p-6`; label/author/role `leading-4`; quote mark `text-[3.5rem]` (56 keeps the header row on the half-cell); `gap-4` |
+| `DiffBlock`                                | `p-3`, `leading-relaxed` (11px ≈ 19.25)  | `p-4`, `leading-4` = 16px                    |
+| `pre.astro-code` (+ /design specimens)     | `line-height: 1.75` ≈ 22.75px            | `1.5rem` = 24px                              |
+| `[slug].astro` series box                  | `p-5`, `space-y-1.5`                     | `p-6`, `space-y-2`                           |
+| MDX table                                  | cells at browser `normal`                | `leading-6` cells, `leading-4` mono headers  |
+| Single blog figures                        | intrinsic ratio → fractional height      | aspect-ratio 566/(8k−2): snapped at the max-w-xl cap, ≤4px object-cover crop elsewhere |
+| `.blog-grid` collages                      | `aspect-ratio` → fractional height       | fixed heights ≥1024px (520/696/584/696), ratios keep governing below the cap |
+| Mono micro (`leading-none`)                | = font-size                              | ✓ kept inside snapped boxes                  |
 
-Direction (final picks by rendered comparison, PRD Phase 3): serif 16/24,
-18/24, 20/32, 24/32; sans 14/24 (relabeling the UI voice onto the baseline);
-mono micro sizes keep `leading-none` inside snapped containers. Prose margins
-(`mb-3`, `my-5`, `space-y-*` odd steps) move to 8px steps in the same pass.
+Ratified residue: 1px/2px hairline borders (figure mats absorb theirs via the
+8k−2 image box; tables and diff rows keep theirs — line weight is not
+spacing). Deferred to Phase 4: `Badge` `leading-tight`, toast `--leading-*`
+tokens, button interiors. `design/`/`lab/` specimens stay out of scope
+(`GridIterations`, `ApprovalCard`).
 
 ## Phase 4 — furniture (grid-sized, not registered)
 
