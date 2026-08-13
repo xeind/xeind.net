@@ -465,7 +465,7 @@ export default function ProjectGrid() {
                       </div>
 
                       {/* Dashed separator */}
-                      <div className="border-accent/20 mb-4 border-t border-dashed" />
+                      <div className="border-accent/20 -mt-px mb-4 border-t border-dashed" />
 
                       {/* Description. No `layout`: the modal is still resizing
                           as it morphs from the plate, and a layout-animated

@@ -67,7 +67,7 @@ const blogStructuredData = {
                 >
                   <time
                     datetime={post.data.date.toISOString()}
-                    class="text-accent mb-2 block font-mono text-xs tracking-wide tabular-nums"
+                    class="text-accent mb-2 block font-mono text-xs leading-4 tracking-wide tabular-nums"
                   >
                     {post.data.date.toLocaleDateString("en-US", {
                       year: "numeric",
@@ -94,7 +94,9 @@ const blogStructuredData = {
                     bottom edge cannot do that job here: it is `flex-1` inside
                     a min-h-screen column, so it stretches to the fold and its
                     hairline lands far below the final tag row. */}
-                <div class="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 my-6 h-px sm:-mx-8 md:-mx-12">
+                {/* mt is 24px minus the rule's own pixel, so each entry
+                    contributes a whole number of half-cells to the list. */}
+                <div class="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 mt-[calc(1.5rem-1px)] mb-6 h-px sm:-mx-8 md:-mx-12">
                   {/* Full-bleed glow strip (like main's hairlines) — the
                       dashed line extends ±9999px past the card, so its
                       glow must too. */}
@@ -115,13 +117,16 @@ const blogStructuredData = {
     <SectionDivider variant="grid" />
 
     <Panel edges="top" ornaments="top">
-      <a
-        href="/"
-        data-hero-sfx="click"
-        class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
-      >
-        &larr; Home
-      </a>
+      {/* h-6: caps the link's pb-px + underline border at one 24px line. */}
+      <div class="flex h-6 items-center">
+        <a
+          href="/"
+          data-hero-sfx="click"
+          class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm leading-6 transition-colors hover:border-solid"
+        >
+          &larr; Home
+        </a>
+      </div>
     </Panel>
   </div>
 </Layout>

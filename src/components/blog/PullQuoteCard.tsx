@@ -49,7 +49,11 @@ export default function PullQuoteCard({
 
   return (
     <figure
-      className={`group border-accent/25 bg-card relative my-8 overflow-hidden border border-dashed p-6 ${className}`}
+      // py is 24px minus the border hairline, so the card's border-box is a
+      // whole number of half-cells and the prose after it stays on the grid
+      // (a negative margin would be eaten by a neighbour's larger margin in
+      // collapse).
+      className={`group border-accent/25 bg-card relative my-8 overflow-hidden border border-dashed px-6 py-[23px] ${className}`}
     >
       <div className="absolute top-0 left-0 z-10">
         <div

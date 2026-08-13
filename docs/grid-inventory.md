@@ -68,6 +68,49 @@ spacing). Deferred to Phase 4: `Badge` `leading-tight`, toast `--leading-*`
 tokens, button interiors. `design/`/`lab/` specimens stay out of scope
 (`GridIterations`, `ApprovalCard`).
 
+### Round 2 — owner review (2026-08-13, same session)
+
+The owner held the ruler against the live site and found the misses the first
+pass ratified away. This round zeroed them; `scripts/phase3-home-probe.mjs`
+walks any page and reports every flow box whose top or height misses the 8px
+half-cell. `/`, `/blog`, `/tools`, and all five posts now measure **zero**
+flow offenders (inline links, centered ornaments, and by-design −1 border
+anchors excluded).
+
+- Hero: name `leading-8` + address/tagline `leading-6` + `gap-2` make the
+  text column 64px — the logo's own height. CTA buttons (`HeroActionLink`,
+  `CtaButton`) are 40px controls: 24px label line + `py-2`; shortcut chips
+  `px-2 py-1 leading-4` = 24px.
+- `Badge` `min-h-6` (24px, border-box, pulled forward from Phase 4).
+- `CalloutLink`: bottom border draws at `bottom:-1` so the stroke sits ON the
+  32px grid line (band gets `z-10` to stay above the next panel); the bottom
+  corner diamonds translate the same pixel.
+- `AwardsGrid` caption: `p-4`, issuer `leading-4 mb-2`, title `leading-6`,
+  footer `py-2`, caption rule `-mt-px`.
+- **Hairline-absorption patterns** (the ratified residue is now actually
+  absorbed, not just excused): bare flow rules take `-mt-px` when the element
+  above supplies the gap, or `mt-[calc(…−1px)]` when they own it (margin
+  collapse eats a plain calc next to a larger neighbour — the pixel must be
+  a true negative or come off the un-collapsed side). Bordered blocks:
+  `pre.astro-code` `margin-block:-1px` (`[data-has-header]` keeps
+  `margin-top:0` — its top hairline lives on the header row), `DiffBlock`
+  `-my-px` + run edges carry `margin:-1px`, tables `-mt-px` + cells
+  `pt-2 pb-[7px]` (row pitch 40 with the collapsed border), `PullQuoteCard`
+  `py-[23px]`, series box `-mb-px mt-[calc(2rem−1px)]`, `ApprovalCard`
+  `-my-px`.
+- Line-box inflators found by measurement: inline `code` gets
+  `line-height:1` (mono metrics pushed 32px serif lines to 33), `Cite`
+  drops `align-super` for `relative -top-[0.5em] leading-none` (super
+  stretched lines to ~37), reference/series numbers drop `mt-px` for
+  `leading-6`, flexed nav links sit in `h-6` rows (blockified `pb-px` +
+  underline made 26px rows).
+- Lab specimens: micro mono → `leading-4`; replay button `h-6`.
+  `/404` snaps internally (`leading-16`, `h-10` button) but is vertically
+  centered, so its offset from the document grid is inherent.
+- Still open for Phase 4: `ApprovalCard`/`TaskRows` interior chrome leaves
+  the last two `/lab` panels 1–3px off; `/design` keeps ~1px of deep
+  specimen residue (`GridIterations`).
+
 ## Phase 4 — furniture (grid-sized, not registered)
 
 | Owner                      | Value today                            | Note                                     |

@@ -679,6 +679,11 @@ body {
 code {
   font-family: var(--font-mono);
   font-size: 0.8125em;
+  /* line-height 1, not inherited: with the prose's 32px line-height the mono
+     font's baseline metrics stick 1px past the serif strut and every line
+     holding a chip becomes 33px — off the 8px baseline grid. A collapsed
+     box rides inside the strut instead. */
+  line-height: 1;
   padding: 0.125rem 0.375rem;
   border: 1px dashed var(--color-accent);
   border-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
@@ -861,6 +866,10 @@ pre.astro-code {
   position: relative;
   background-color: var(--color-muted) !important;
   border: 1px dashed color-mix(in srgb, var(--color-accent) 15%, transparent);
+  /* The two border hairlines overlap the neighbouring blocks' pixels instead
+     of adding height, so the prose after a code block stays on the 8px
+     baseline grid (same pattern as the blog figure mats). */
+  margin-block: -1px;
   font-family: var(--font-mono) !important;
   font-size: 0.8125rem;
   /* 24px — 13px mono on the 8px baseline grid (was 1.75 ≈ 22.75px). */
@@ -874,6 +883,8 @@ pre.astro-code[data-language] {
 }
 pre.astro-code[data-has-header] {
   border-top: none;
+  /* No top border to absorb — the header row above carries that hairline. */
+  margin-top: 0;
 }
 
 /* Language label */

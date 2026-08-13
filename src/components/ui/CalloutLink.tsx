@@ -26,7 +26,7 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
       // h-8: the band is 2 grid cells (32px) tall — PRD decision 5. A fixed
       // height instead of padding so the text's line-height can't push it off
       // the cell.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block h-8 px-12 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative z-10 block h-8 px-12 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={CSS_TRANSITIONS.border}
       {...externalProps}
     >
@@ -34,9 +34,27 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
           rather than baked into CornerDiamond, which is shared with Panels that
           are not hoverable groups. */}
       <CornerDiamond
-        position="all"
+        position="tl"
         variant="accent"
         className="group-hover:border-accent/60 transition-colors"
+      />
+      <CornerDiamond
+        position="tr"
+        variant="accent"
+        className="group-hover:border-accent/60 transition-colors"
+      />
+      {/* The bottom pair rides the band's own border, which draws at
+          bottom:-1 to sit on the grid line — translate the diamonds the same
+          pixel so they stay centred on the stroke. */}
+      <CornerDiamond
+        position="bl"
+        variant="accent"
+        className="group-hover:border-accent/60 translate-y-px transition-colors"
+      />
+      <CornerDiamond
+        position="br"
+        variant="accent"
+        className="group-hover:border-accent/60 translate-y-px transition-colors"
       />
 
       {/* Three of this band's four edges are not its own to draw: it sits flush
@@ -99,11 +117,14 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
       </div>
 
       {/* Bottom edge — the only one the band owns. Dashed by default, solid on
-          hover, and brightening with the other three. */}
+          hover, and brightening with the other three. At bottom:-1 so the 1px
+          stroke sits ON the 32px grid line ([32,33), the same convention the
+          dividers use) instead of one pixel inside the band; the band's z-10
+          keeps it visible over the next panel's background. */}
       <div
         className="border-accent/30 group-hover:border-accent/60 absolute right-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
         style={{
-          bottom: 0,
+          bottom: -1,
           zIndex: 5,
           ...CSS_TRANSITIONS.border,
         }}

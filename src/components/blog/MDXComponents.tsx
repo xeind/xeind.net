@@ -111,7 +111,10 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 
   return (
     <code
-      className="border-accent/15 bg-muted text-foreground/80 border border-dashed px-1.5 py-0.5 font-mono text-[0.8125em]"
+      // leading-none: with an inherited 32px line-height, the mono font's
+      // different baseline metrics push the line box to 33px; a collapsed
+      // box rides inside the serif strut instead.
+      className="border-accent/15 bg-muted text-foreground/80 border border-dashed px-1.5 py-0.5 font-mono text-[0.8125em] leading-none"
       {...props}
     />
   );
@@ -120,8 +123,12 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 /* ── Divider ── */
 
 function MdxHr() {
+  // -mt-px: the rule's own pixel comes out of the 24px gap above it (every
+  // MDX block carries a bottom margin for it to collapse against), so the
+  // divider contributes exactly 48px of flow and the baselines below stay
+  // on the half-cell.
   return (
-    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 my-6 h-px sm:-mx-8 md:-mx-12">
+    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 -mt-px mb-6 h-px sm:-mx-8 md:-mx-12">
       {/* Full-bleed glow strip (like main's hairlines) — the dashed line
           extends ±9999px past the card, so its glow must too. A clipped
           .edge-glow-layer would go dark the moment the cursor leaves the
@@ -311,8 +318,10 @@ function ImageGrid({
 function MdxTable(props: React.HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="my-6 overflow-x-auto">
+      {/* -mt-px absorbs the collapsed top border; the bottom one is the last
+          row's own border, already inside the 40px row pitch. */}
       <table
-        className="border-accent/20 w-full border-collapse border border-dashed font-serif text-sm leading-6"
+        className="border-accent/20 -mt-px w-full border-collapse border border-dashed font-serif text-sm leading-6"
         {...props}
       />
     </div>
@@ -322,7 +331,9 @@ function MdxTable(props: React.HTMLAttributes<HTMLTableElement>) {
 function MdxTh(props: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
-      className="border-accent/20 bg-muted text-foreground border border-dashed px-4 py-2 text-left font-mono text-xs leading-4 font-normal tracking-wide"
+      // pb is 8px minus the collapsed row border, so each row's pitch stays
+      // a whole 40px instead of 41.
+      className="border-accent/20 bg-muted text-foreground border border-dashed px-4 pt-2 pb-[7px] text-left font-mono text-xs leading-4 font-normal tracking-wide"
       {...props}
     />
   );
@@ -330,7 +341,10 @@ function MdxTh(props: React.ThHTMLAttributes<HTMLTableCellElement>) {
 
 function MdxTd(props: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td className="border-accent/20 text-foreground/80 border border-dashed px-4 py-2" {...props} />
+    <td
+      className="border-accent/20 text-foreground/80 border border-dashed px-4 pt-2 pb-[7px]"
+      {...props}
+    />
   );
 }
 
@@ -341,7 +355,10 @@ export function Cite({ n, href }: { n: number; href?: string }) {
   return (
     <a
       href={anchor}
-      className="text-accent hover:text-tertiary ml-0.5 p-1 align-super font-mono text-[0.65em] no-underline transition-colors"
+      // Raised with relative + leading-none, not align-super — super lifts
+      // the whole 32px inline box and stretches the line to ~37px, which
+      // knocks every baseline after it off the grid.
+      className="text-accent hover:text-tertiary relative -top-[0.5em] ml-0.5 p-1 font-mono text-[0.65em] leading-none no-underline transition-colors"
     >
       [{n}]
     </a>
@@ -362,7 +379,7 @@ export function Ref({
       id={`ref-${n}`}
       className="text-foreground/60 flex items-start gap-2 font-serif text-sm leading-6"
     >
-      <span className="text-accent mt-px shrink-0 font-mono text-[0.7rem]">[{n}]</span>
+      <span className="text-accent shrink-0 font-mono text-[0.7rem] leading-6">[{n}]</span>
       <span>
         {href ? (
           <a
@@ -384,7 +401,7 @@ export function Ref({
 export function References({ children }: { children: React.ReactNode }) {
   return (
     <div className="[&_p]:mb-0 [&_p]:text-sm [&_p]:leading-6">
-      <div className="border-accent/20 mb-4 border-t border-dashed" />
+      <div className="border-accent/20 -mt-px mb-4 border-t border-dashed" />
       <h3 className="text-secondary mb-4 font-mono text-xs tracking-wide">REFERENCES</h3>
       <ol className="list-none space-y-2 pl-0">{children}</ol>
     </div>

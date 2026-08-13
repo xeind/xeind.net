@@ -116,13 +116,18 @@ function HeroActionLink({
         />
       </div>
 
+      {/* 24px label line + py-2 = a 40px control, whole half-cells top to
+          bottom; the 24px shortcut chip centres inside the same line box. */}
       <div className="relative z-10 flex items-center justify-center gap-3">
-        <span className="font-serif text-sm transition-all" style={CSS_TRANSITIONS.border}>
+        <span
+          className="font-serif text-sm leading-6 transition-all"
+          style={CSS_TRANSITIONS.border}
+        >
           {children}
         </span>
         {badge && (
           <span
-            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 px-2 py-1 font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
             style={CSS_TRANSITIONS.border}
           >
             {badge}
@@ -231,9 +236,11 @@ export default function HeroSection() {
         <div className="flex min-w-0 flex-1 flex-row items-center gap-6">
           <StaticLogo size={64} className="text-foreground shrink-0" />
 
-          <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left">
+          {/* 32px name line + 8px gap + 24px address line = 64px, the logo's
+              own height, so both columns share every half-cell boundary. */}
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-2 text-left">
             <div className="flex w-full items-center justify-between gap-4">
-              <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight whitespace-nowrap">
+              <h1 className="text-foreground font-serif text-2xl leading-8 font-normal tracking-tight whitespace-nowrap">
                 {personalInfo.name}
               </h1>
 
@@ -243,7 +250,7 @@ export default function HeroSection() {
                 <HeroEmailButton email={personalInfo.email} />
               </div>
             </div>
-            <address className="text-foreground/60 flex items-center gap-1 text-sm not-italic">
+            <address className="text-foreground/60 flex items-center gap-1 text-sm leading-6 not-italic">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -265,7 +272,7 @@ export default function HeroSection() {
       </div>
 
       {/* Tagline */}
-      <p className="text-foreground/80 mb-6 max-w-xl text-center text-sm md:text-left">
+      <p className="text-foreground/80 mb-6 max-w-xl text-center text-sm leading-6 md:text-left">
         {personalInfo.tagline}
       </p>
 

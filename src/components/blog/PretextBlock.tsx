@@ -34,7 +34,10 @@ export default function PretextBlock({
     const result = layoutWithLines(prepared, width, lineHeight);
 
     setLines(result.lines);
-    setHeight(result.height);
+    // Not result.height: pretext reports a font-metric height, which is
+    // fractional. The spans sit at i × lineHeight, so the box is exactly
+    // lines × lineHeight — and stays on the 8px baseline grid.
+    setHeight(result.lines.length * lineHeight);
   }, [children, font, lineHeight]);
 
   useEffect(() => {

@@ -122,18 +122,21 @@ export default function AwardsGrid() {
                   the link row are separated by one boundary treatment rather
                   than by a tone change on one edge and a hairline on the
                   other. */}
-              <div className="border-accent/20 relative flex flex-col border-t border-dashed p-4 md:p-5">
-                <p className="text-accent mb-1 font-mono text-[0.6875rem] tracking-wide">
+              {/* -mt-px: the rule sits ON the stage's bottom edge instead of
+                  adding a pixel of height under it, so the card's total stays
+                  on the 8px grid. */}
+              <div className="border-accent/20 relative -mt-px flex flex-col border-t border-dashed p-4">
+                <p className="text-accent mb-2 font-mono text-[0.6875rem] leading-4 tracking-wide">
                   {award.issuer}
                 </p>
-                <h3 className="text-foreground font-serif text-base">{award.title}</h3>
+                <h3 className="text-foreground font-serif text-base leading-6">{award.title}</h3>
                 <p className="text-foreground/60 mt-4 text-xs leading-6 [text-wrap:pretty] lg:text-sm">
                   {award.description}
                 </p>
               </div>
 
               {award.url && (
-                <footer className="border-accent/20 relative mt-auto flex items-center justify-end border-t border-dashed px-4 py-2.5 md:px-5">
+                <footer className="border-accent/20 relative mt-auto flex items-center justify-end border-t border-dashed px-4 py-2">
                   <span
                     className="text-accent group-hover:text-tertiary shrink-0 leading-none transition-colors motion-reduce:transition-none"
                     style={tFast}

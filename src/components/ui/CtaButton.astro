@@ -85,9 +85,13 @@ const tFast = css(CSS_TRANSITIONS.fade);
     >
     </div>
   </div>
-  <span class="relative z-10 font-serif text-sm" style={t}>{label}</span>
+  {
+    /* 24px label line + py-2 = a 40px control, whole half-cells top to
+      bottom; the 24px shortcut chip centres inside the same line box. */
+  }
+  <span class="relative z-10 font-serif text-sm leading-6" style={t}>{label}</span>
   <span
-    class="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-1.5 py-0.5 font-mono text-xs text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+    class="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-2 py-1 font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
     style={t}>{shortcut}</span
   >
 </a>
