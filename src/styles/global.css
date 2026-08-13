@@ -1352,10 +1352,17 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 /* ========================================
    TOASTER — public/toaster.js
 
-   Sonner's behaviour on this site's surface: a bottom-right stack, newest at
-   the front, the ones behind lifted and scaled down, the whole stack expanding
-   on hover. Plain CSS, not Tailwind, since public/ scripts aren't scanned for
-   utility classes.
+   Sonner's behaviour on this site's surface: a top-right stack, newest at the
+   front, the ones behind dropped below it and scaled down, the whole stack
+   expanding on hover. Plain CSS, not Tailwind, since public/ scripts aren't
+   scanned for utility classes.
+
+   Top, not sonner's default bottom: the footer is fixed at 128px and puts the
+   theme-cycle button in the bottom right. A toast there lands on the only
+   persistent control on the site the moment a reader reaches the end of a
+   page. The top of the viewport is the one region with no fixed furniture —
+   and it is also where every code block keeps its copy button, so the toast
+   arrives beside the thing that sent it.
 
    The toast is a card-surfaced rectangle with one dashed hairline and nothing
    else — no corner brackets. design-system.md §7 keeps brackets for clickable
@@ -1364,14 +1371,14 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 .toaster {
   position: fixed;
+  top: 1rem;
   right: 1rem;
-  bottom: 1rem;
   /* Same rung as the lightbox: it has to clear the project-grid modal portal,
      which mounts later in <body> and out-paints anything at its own z-50. */
   z-index: 9998;
   width: 22rem;
   max-width: calc(100vw - 2rem);
-  /* Zero-height anchor. Every toast is absolutely positioned off its bottom
+  /* Zero-height anchor. Every toast is absolutely positioned off its top
      edge, so the container never covers the page it sits over. */
   height: 0;
   pointer-events: none;
@@ -1379,8 +1386,8 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 .toast {
   position: absolute;
+  top: 0;
   right: 0;
-  bottom: 0;
   width: 100%;
   padding: 0.75rem 1rem;
   background: var(--color-card);
@@ -1389,8 +1396,8 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   cursor: pointer;
   /* The stack drags on touch; without this the page scrolls instead. */
   touch-action: none;
-  /* Bottoms stay aligned as the toasts behind scale down. */
-  transform-origin: bottom center;
+  /* Tops stay aligned as the toasts behind scale down. */
+  transform-origin: top center;
   transform: translate3d(var(--swipe-x, 0px), calc(var(--y, 0px) + var(--swipe-y, 0px)), 0)
     scale(var(--scale, 1));
   opacity: var(--toast-opacity, 1);
@@ -1415,7 +1422,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 .toast[data-state="entering"],
 .toast[data-state="removed"] {
-  --y: 100%;
+  --y: -100%;
   --toast-opacity: 0;
 }
 

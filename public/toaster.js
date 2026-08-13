@@ -19,13 +19,14 @@
   const MAX = 3; /* visible at once; a fourth pushes the oldest out */
   const LIFETIME = 4000;
   const GAP = 16; /* space between toasts once the stack is expanded */
-  const LIFT = 14; /* how far each toast behind the front peeks above it */
+  const LIFT = 14; /* how far each toast behind the front peeks below it */
   const SCALE_STEP = 0.06;
   const SWIPE_DISMISS = 45; /* px of drag that counts as "throw it away" */
   const EXIT_MS = 300; /* keep in step with the transition in global.css */
   const DEDUPE_MS = 1000;
 
-  /* Newest first. Index 0 is the front toast — the one at y = 0. */
+  /* Newest first. Index 0 is the front toast — the one at y = 0, pinned to the
+     top of the container. Everything after it stacks downward. */
   var list = [];
   var expanded = false;
   var container = null;
@@ -63,7 +64,7 @@
     var offset = 0;
 
     list.forEach(function (t, i) {
-      var y = expanded ? -offset : -(i * LIFT);
+      var y = expanded ? offset : i * LIFT;
       var scale = expanded ? 1 : 1 - i * SCALE_STEP;
       offset += heights[i] + GAP;
 
@@ -97,7 +98,7 @@
     });
 
     t.el.dataset.state = "removed";
-    t.el.style.setProperty("--y", "100%");
+    t.el.style.setProperty("--y", "-100%");
     t.el.style.setProperty("--swipe-x", "0px");
     t.el.style.setProperty("--swipe-y", "0px");
     t.el.style.setProperty("--toast-opacity", "0");
@@ -131,10 +132,10 @@
 
     t.el.addEventListener("pointermove", function (e) {
       if (!dragging) return;
-      /* Down and right only: it is a bottom-right stack, so those are the
+      /* Up and right only: it is a top-right stack, so those are the
          directions that read as pushing it off the screen. */
       dx = Math.max(0, e.clientX - startX);
-      dy = Math.max(0, e.clientY - startY);
+      dy = Math.min(0, e.clientY - startY);
       t.el.style.setProperty("--swipe-x", dx + "px");
       t.el.style.setProperty("--swipe-y", dy + "px");
     });
@@ -144,7 +145,7 @@
       dragging = false;
       delete t.el.dataset.swiping;
 
-      if (dx > SWIPE_DISMISS || dy > SWIPE_DISMISS) {
+      if (dx > SWIPE_DISMISS || dy < -SWIPE_DISMISS) {
         dismiss(t);
         return;
       }
@@ -157,7 +158,7 @@
 
     t.el.addEventListener("click", function () {
       /* A throw that fell short ends in a click. Don't dismiss on that. */
-      if (dx > 4 || dy > 4) return;
+      if (dx > 4 || dy < -4) return;
       dismiss(t);
     });
   }
