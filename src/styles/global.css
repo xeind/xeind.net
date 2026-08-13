@@ -413,6 +413,18 @@ body {
       transparent 1px
     );
   background-size: var(--grid-cell-size) var(--grid-cell-size);
+  /* calc(50% + 8px), not the default 0 0: the sheet is mx-auto centered and
+     max-w-5xl is exactly 64 cells, so phasing a tile EDGE onto the element's
+     center puts a grid line on both sheet edges at any viewport width.
+     Left-anchored tiles only lined up when (viewport − 1024) / 2 happened to
+     be a multiple of 16 — and plain "center" is 8px worse than it looks: 50%
+     maps the tile's midpoint to the center, leaving every line half a cell
+     off the sheet edge. The +8px (half a tile) walks the line onto the
+     center. When the element's width is odd the phase falls on a half pixel
+     and the lines antialias slightly — accepted; rounding it away would take
+     a script for a hairline only visible beside the sheet. Vertical phase
+     starts at the document top, which is a grid line by definition. */
+  background-position: calc(50% + calc(var(--grid-cell-size) / 2)) top;
 }
 
 /* ========================================

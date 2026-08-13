@@ -23,7 +23,12 @@
       `linear-gradient(to right,${half} 1px,transparent 1px),` +
       `linear-gradient(to bottom,${half} 1px,transparent 1px);` +
       "background-size:16px 16px,16px 16px,8px 8px,8px 8px;" +
-      "background-position:center top;";
+      // Half-a-tile offsets so a tile EDGE (the drawn line) sits on the
+      // element's center — same phase rule as the Blueprint gutter grid in
+      // global.css. Plain "center" puts the tile midpoint there instead and
+      // every line lands half a cell off the sheet edges.
+      "background-position:calc(50% + 8px) top,calc(50% + 8px) top," +
+      "calc(50% + 4px) top,calc(50% + 4px) top;";
     const size = () => {
       el.style.height = document.documentElement.scrollHeight + "px";
     };

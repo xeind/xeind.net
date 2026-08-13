@@ -56,6 +56,20 @@ mono micro sizes keep `leading-none` inside snapped containers. Prose margins
 | `CtaButton` / `Badge`      | `py-0.5`, `px-1.5`                     | control heights land off-grid            |
 | `.divider-grid` texture    | `4px` cells                            | quarter-cell texture — arguably ✓ (16/4) |
 
+## Phase 1 findings (2026-08-13)
+
+- `.bg-hero-grid` is used by nothing — dead CSS. Left in place (surgical
+  rule); Phase 5 can remove it with the doc rewrite.
+- `.bg-grid-pattern` is not "the footer grid" its comment claims: it is a
+  16px tile texture inside cards (`ProjectGrid`, `AwardsGrid`, `design/`).
+  Box-anchored is correct for a tile texture — a card's internal grid should
+  register to its own frame, not the page. No change; comment fixed in
+  Phase 5.
+- Registration lesson, encoded in the `background-position` comments: CSS
+  `center` maps a tile's midpoint to the center, so a naive `center top`
+  leaves every line half a cell off the sheet edge. The phase is
+  `calc(50% + half-a-tile)`.
+
 ## Deliberately out of scope
 
 - `1px`/`2px` hairlines and dash patterns (`--divider-dash-*` 8px ✓) — line
