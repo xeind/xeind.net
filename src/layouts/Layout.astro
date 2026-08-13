@@ -212,6 +212,12 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       <Footer commit={buildCommit} buildDate={buildDate} />
     </div>
 
+    {
+      /* Phase-0 debug grid ruler (docs/prd-grid-alignment.md) — the tag only
+        renders in dev, so production pages never load it. ?grid draws the
+        16px/8px grid over the document; see public/grid-ruler.js. */
+    }
+    {import.meta.env.DEV && <script is:inline src="/grid-ruler.js" defer />}
     <script is:inline src="/hero-interactions.js" defer></script>
     <script is:inline src="/edge-glow.js" defer></script>
     <script is:inline src="/toaster.js" defer></script>
