@@ -391,6 +391,30 @@ body {
   min-height: 100dvh;
 }
 
+/* Blueprint rules its margins like drafting paper. Tertiary is the theme's
+   unexposed white, so the lines are the same ink the marks and the edge glow
+   use. 8%, not more: at 15% the gutter grid read as a second surface competing
+   with the sheet rather than as the paper the sheet sits on.
+
+   Only the gutters get this. main is max-w-5xl with bg-card over the paper, so
+   the grid shows beside the sheet and nowhere else — and below 1024px there
+   are no gutters, so it is a wide-screen detail by construction. The footer is
+   fixed with an opaque bg-accent layer, so nothing shows through there. */
+[data-theme="blueprint"] .paper-background {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-tertiary) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-tertiary) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: var(--grid-cell-size) var(--grid-cell-size);
+}
+
 /* ========================================
    UNIFIED GRID SYSTEM
    Base unit: 16px × 16px cells
