@@ -232,7 +232,7 @@ export default function HeroSection() {
           <StaticLogo size={64} className="text-foreground shrink-0" />
 
           <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left">
-            <div className="flex w-full items-center justify-between gap-3">
+            <div className="flex w-full items-center justify-between gap-4">
               <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight whitespace-nowrap">
                 {personalInfo.name}
               </h1>

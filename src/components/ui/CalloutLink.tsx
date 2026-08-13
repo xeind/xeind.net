@@ -23,7 +23,10 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
       // Primary-nav band: prefetch when it scrolls into view, because phones
       // have no hover to trigger the router's default hover prefetch.
       {...(external ? {} : { "data-astro-prefetch": "viewport" })}
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block px-12 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      // h-8: the band is 2 grid cells (32px) tall — PRD decision 5. A fixed
+      // height instead of padding so the text's line-height can't push it off
+      // the cell.
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative block h-8 px-12 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       style={CSS_TRANSITIONS.border}
       {...externalProps}
     >
@@ -83,7 +86,7 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
         />
       </div>
 
-      <div className="relative z-10 flex items-center justify-center gap-2">
+      <div className="relative z-10 flex h-full items-center justify-center gap-2">
         <span className="font-serif text-sm">{label}</span>
         {icon && (
           <span

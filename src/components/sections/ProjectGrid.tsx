@@ -414,7 +414,7 @@ export default function ProjectGrid() {
                               opacity: 0,
                               transition: { duration: 0.05 },
                             }}
-                            className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2"
+                            className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2"
                           >
                             {/* No arrow per entry: the corner already carries one
                                 for the project, and a row of them turns two
@@ -455,7 +455,7 @@ export default function ProjectGrid() {
                               opacity: 0,
                               transition: { duration: 0.05 },
                             }}
-                            className="mt-3 flex flex-wrap gap-2"
+                            className="mt-4 flex flex-wrap gap-2"
                           >
                             {activeProject.technologies.map((tech) => (
                               <Badge key={tech}>{tech}</Badge>
@@ -481,7 +481,7 @@ export default function ProjectGrid() {
                         {(activeProject.longDescription || [activeProject.description])
                           .filter((point) => point.trim().length > 0)
                           .map((point, i) => (
-                            <li key={i} className="flex items-start gap-3">
+                            <li key={i} className="flex items-start gap-4">
                               {/* h-7 is one line of leading-relaxed text at this
                                   size, so the dot centres on the first line
                                   instead of being nudged down by a margin that

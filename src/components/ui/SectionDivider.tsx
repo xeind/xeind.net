@@ -22,7 +22,7 @@ export default function SectionDivider({ variant = "dashed" }: SectionDividerPro
     return (
       <div
         className="edge-glow-shell edge-glow-shell-horizontal relative"
-        style={{ height: "20px" }}
+        style={{ height: "16px" }}
       >
         <DividerAccent />
         {/* Transparent glow strips overlapping the adjacent Panels' own
@@ -47,7 +47,7 @@ export default function SectionDivider({ variant = "dashed" }: SectionDividerPro
     return (
       <div
         className="edge-glow-shell edge-glow-shell-horizontal relative"
-        style={{ height: "20px" }}
+        style={{ height: "16px" }}
       >
         <DividerAccent />
         <div

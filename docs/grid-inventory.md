@@ -12,17 +12,25 @@ for structural boundaries (panel edges, dividers, section padding). "On the
 
 ## Phase 2 — structural (must hit the 16px major grid)
 
-| Owner                                  | Value today                            | Note                                   |
-| -------------------------------------- | -------------------------------------- | -------------------------------------- |
-| `ui/Panel` `sm`                        | `px-4 py-5 sm:px-6 md:px-8 md:py-6`    | 20/24px vertical — both off-major      |
-| `ui/Panel` `md`                        | `px-5 py-6 sm:px-8 md:px-12 md:py-8`   | py-6 = 24px off-major; md:py-8 = 32 ✓  |
-| `ui/Panel` `lg`                        | `px-6 py-7 sm:px-10 md:px-14 md:py-10` | 28/40px vertical — both off-major      |
-| `ui/SectionDivider` grid + grid-broken | `height: 20px`                         | → 16px: 1 cell (PRD decision 5)        |
-| `ui/SectionDivider` dashed             | `h-4` = 16px                           | ✓ keep — 1 cell                        |
-| `ui/CalloutLink` band                  | `py-2` + ~20px text ≈ 36px             | → 32px total: 2 cells (PRD decision 5) |
-| `--footer-height`                      | 128px                                  | ✓ keep                                 |
-| Page-level `mb-3`/`mt-3` (12px)        | `pages/*.astro`, section components    | commonest single offender (×11 files)  |
-| Section gaps `gap-3` (12px)            | 13 files                               | second commonest                       |
+Resolved 2026-08-13. The owner picked the airy candidate from rendered
+side-by-sides (baseline | tight | airy at 1440, Kozo + Blueprint).
+
+| Owner                                  | Was                                    | Now                                     |
+| -------------------------------------- | -------------------------------------- | --------------------------------------- |
+| `ui/Panel` `sm`                        | `px-4 py-5 sm:px-6 md:px-8 md:py-6`    | `px-4 py-8 sm:px-8 md:py-8` (no caller) |
+| `ui/Panel` `md`                        | `px-5 py-6 sm:px-8 md:px-12 md:py-8`   | `px-4 py-8 sm:px-8 md:px-12 md:py-8`    |
+| `ui/Panel` `lg`                        | `px-6 py-7 sm:px-10 md:px-14 md:py-10` | `px-8 py-8 sm:px-12 md:px-16 md:py-12`  |
+| `ui/SectionDivider` grid + grid-broken | `height: 20px`                         | 16px — 1 cell (PRD decision 5)          |
+| `ui/SectionDivider` dashed             | `h-4` = 16px                           | ✓ kept — 1 cell                         |
+| `ui/CalloutLink` band                  | `py-2` + ~20px text ≈ 36px             | `h-8` = 32px — 2 cells (PRD decision 5) |
+| `--footer-height`                      | 128px                                  | ✓ kept                                  |
+| Page-level `mb-3`/`mt-3` (12px)        | `pages/*.astro`, section components    | → `mb-4`/`mt-4` (16px)                  |
+| Section gaps `gap-3` (12px)            | section/hero block rows                | → `gap-4` (16px)                        |
+
+Deferred out of this phase: `gap-3` inside buttons (`CtaButton`, hero CTAs)
+goes with control heights in Phase 4; `mb-3`/`gap-3` in blog MDX and
+`PullQuoteCard` are prose margins, Phase 3; `design/`/`lab/` specimens stay
+out of scope.
 
 ## Phase 3 — type rhythm (8px baseline)
 
@@ -53,7 +61,8 @@ mono micro sizes keep `leading-none` inside snapped containers. Prose margins
 | `.toaster` width / offsets | 352px / 16px                           | ✓ 22 cells / 1 cell — keep               |
 | `ProjectGrid` modal chrome | `h-7` 28, `h-9` 36, `h-11` 44          | all three off the 8-grid                 |
 | `AwardsGrid` plate chrome  | `h-9` 36, `py-2.5` 10, 18px translates | off-grid hover geometry                  |
-| `CtaButton` / `Badge`      | `py-0.5`, `px-1.5`                     | control heights land off-grid            |
+| `CtaButton` / `Badge`      | `py-0.5`, `px-1.5`, `gap-3`            | control heights + interior gaps off-grid |
+| `lab/ApprovalCard`         | `p-4 sm:p-6` (24px)                    | specimen card interior, found in Phase 2 |
 | `.divider-grid` texture    | `4px` cells                            | quarter-cell texture — arguably ✓ (16/4) |
 
 ## Phase 1 findings (2026-08-13)
