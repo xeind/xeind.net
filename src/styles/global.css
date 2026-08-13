@@ -1348,3 +1348,102 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   background: rgb(0 0 0 / 0.5);
   padding: 2px 8px;
 }
+
+/* ========================================
+   TOASTER — public/toaster.js
+
+   Sonner's behaviour on this site's surface: a bottom-right stack, newest at
+   the front, the ones behind lifted and scaled down, the whole stack expanding
+   on hover. Plain CSS, not Tailwind, since public/ scripts aren't scanned for
+   utility classes.
+
+   The toast is a card-surfaced rectangle with one dashed hairline and nothing
+   else — no corner brackets. design-system.md §7 keeps brackets for clickable
+   cards, and a toast that dismisses on click is still not a link.
+   ======================================== */
+
+.toaster {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  /* Same rung as the lightbox: it has to clear the project-grid modal portal,
+     which mounts later in <body> and out-paints anything at its own z-50. */
+  z-index: 9998;
+  width: 22rem;
+  max-width: calc(100vw - 2rem);
+  /* Zero-height anchor. Every toast is absolutely positioned off its bottom
+     edge, so the container never covers the page it sits over. */
+  height: 0;
+  pointer-events: none;
+}
+
+.toast {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-card);
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 30%, transparent);
+  pointer-events: auto;
+  cursor: pointer;
+  /* The stack drags on touch; without this the page scrolls instead. */
+  touch-action: none;
+  /* Bottoms stay aligned as the toasts behind scale down. */
+  transform-origin: bottom center;
+  transform: translate3d(var(--swipe-x, 0px), calc(var(--y, 0px) + var(--swipe-y, 0px)), 0)
+    scale(var(--scale, 1));
+  opacity: var(--toast-opacity, 1);
+  /* 0.3s easeOutCubic — DURATION.slow, the top of the house band. A toast
+     travels its own height, which is further than a hover state moves. */
+  transition:
+    transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
+    opacity 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  will-change: transform, opacity;
+}
+
+/* Bridges the gap below each toast so crossing it while the stack is expanded
+   doesn't read as a pointerleave and collapse everything under the cursor. */
+.toast::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+.toast[data-state="entering"],
+.toast[data-state="removed"] {
+  --y: 100%;
+  --toast-opacity: 0;
+}
+
+/* Drag follows the finger with no lag; the transition comes back on release,
+   so a throw that falls short springs home on the house curve. */
+.toast[data-swiping] {
+  transition: none;
+}
+
+.toast-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-tight);
+  color: var(--color-foreground);
+}
+
+.toast-description {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  letter-spacing: 0.025em;
+  color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}
