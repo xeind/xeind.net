@@ -12,10 +12,8 @@ export const projects: Project[] = [
     ],
     technologies: ["Go", "Rust", "Lua", "Neovim"],
     imageUrl: "/projects/fallow.svg",
-    projectLinks: [
-      { label: "Terminal UI", url: "https://github.com/xeind/vallow" },
-      { label: "Neovim Plugin", url: "https://github.com/xeind/vallow.nvim" },
-    ],
+    liveUrl: "https://github.com/xeind/vallow",
+    projectLinks: [{ label: "Neovim Plugin", url: "https://github.com/xeind/vallow.nvim" }],
     featured: true,
     year: 2026,
   },
