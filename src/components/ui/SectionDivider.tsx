@@ -7,11 +7,8 @@ const HORIZONTAL_ACCENT_MASK =
 
 function DividerAccent() {
   return (
-    // top-px: the divider's first row is the boundary hairline the panel above
-    // draws, not band interior. Washing it too made the top rule read heavier
-    // than the bottom one where the mask peaks, at mid-span.
     <div
-      className="bg-accent/20 pointer-events-none absolute inset-x-0 top-px bottom-0"
+      className="bg-accent/20 pointer-events-none absolute inset-0"
       style={{
         maskImage: HORIZONTAL_ACCENT_MASK,
         WebkitMaskImage: HORIZONTAL_ACCENT_MASK,
@@ -25,16 +22,15 @@ export default function SectionDivider({ variant = "dashed" }: SectionDividerPro
     return (
       <div
         className="edge-glow-shell edge-glow-shell-horizontal relative"
-        style={{ height: "16px" }}
+        style={{ height: "20px" }}
       >
         <DividerAccent />
         {/* Transparent glow strips overlapping the adjacent Panels' own
-            full-bleed hairlines — the divider draws no lines of its own. Both
-            hairlines sit on the pixel after their boundary, so the one above
-            lands in this box's first row and the one below just outside it. */}
+            full-bleed hairlines (1px outside this box) — the divider draws
+            no lines of its own. */}
         <div
           className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
-          style={{ top: "0px" }}
+          style={{ top: "-1px" }}
           aria-hidden="true"
         />
         <div
@@ -51,12 +47,12 @@ export default function SectionDivider({ variant = "dashed" }: SectionDividerPro
     return (
       <div
         className="edge-glow-shell edge-glow-shell-horizontal relative"
-        style={{ height: "16px" }}
+        style={{ height: "20px" }}
       >
         <DividerAccent />
         <div
           className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
-          style={{ top: "0px" }}
+          style={{ top: "-1px" }}
           aria-hidden="true"
         />
         <div
@@ -79,7 +75,7 @@ export default function SectionDivider({ variant = "dashed" }: SectionDividerPro
           interior dashed lines stay static; only real enclosing edges glow. */}
       <div
         className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"
-        style={{ top: "0px" }}
+        style={{ top: "-1px" }}
         aria-hidden="true"
       />
       <div

@@ -44,26 +44,8 @@
     btn.addEventListener("click", function () {
       var pre = btn.closest(".group");
       if (!pre) return;
-      var code = pre.querySelector("pre");
-      var text = code?.textContent || "";
+      var text = pre.querySelector("pre")?.textContent || "";
       navigator.clipboard.writeText(text.trim()).then(function () {
-        /* public/toaster.js listens for this. The event costs nothing if it
-           hasn't loaded yet, so neither script waits on the other.
-
-           The description names which block. A header is the best name it
-           has; failing that, the language and the size. Never the first line
-           of the code — plenty of blocks open on a brace. */
-        var label = pre.getAttribute("data-copy-label");
-        if (!label) {
-          var lines = text.trim().split("\n").length;
-          var lang = code?.getAttribute("data-language") || "code";
-          label = lang + " · " + lines + (lines === 1 ? " line" : " lines");
-        }
-        document.dispatchEvent(
-          new CustomEvent("toast", {
-            detail: { title: "Copied code", description: label },
-          }),
-        );
         clearTimeout(timeout);
         copyWrap.style.transform = "scale(0.25)";
         copyWrap.style.opacity = "0";
@@ -112,7 +94,6 @@
 
       if (title) {
         pre.setAttribute("data-has-header", "true");
-        wrapper.setAttribute("data-copy-label", title);
         var header = document.createElement("div");
         header.className =
           "flex h-10 items-center border-b border-dashed border-accent/20 bg-muted/40 px-4 font-mono text-xs tracking-wider";

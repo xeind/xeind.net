@@ -70,7 +70,7 @@ const structuredData = {
   <div class="flex flex-col">
     <CalloutBand href="/blog" label="Visit my blog" />
 
-    <Panel edges="bottom" ornaments="bottom">
+    <Panel padding="lg" edges="bottom" ornaments="bottom">
       <HeroSection />
     </Panel>
     <SectionDivider variant="grid" />
@@ -193,12 +193,6 @@ const structuredData = {
         /* Confirm tap-tap (hero-interactions.js) — after the write resolves,
            so the sound lands with the checkmark, not the press. */
         window.dispatchEvent(new CustomEvent("hero:copy-confirm"));
-        /* public/toaster.js listens for this one. */
-        document.dispatchEvent(
-          new CustomEvent("toast", {
-            detail: { title: "Copied email", description: email },
-          }),
-        );
         clearTimeout(revertTimers.get(btn));
         mail.style.transform = "scale(0.25)";
         mail.style.opacity = "0";

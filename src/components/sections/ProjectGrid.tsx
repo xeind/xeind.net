@@ -414,7 +414,7 @@ export default function ProjectGrid() {
                               opacity: 0,
                               transition: { duration: 0.05 },
                             }}
-                            className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2"
+                            className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2"
                           >
                             {/* No arrow per entry: the corner already carries one
                                 for the project, and a row of them turns two
@@ -455,7 +455,7 @@ export default function ProjectGrid() {
                               opacity: 0,
                               transition: { duration: 0.05 },
                             }}
-                            className="mt-2 flex flex-wrap gap-2"
+                            className="mt-3 flex flex-wrap gap-2"
                           >
                             {activeProject.technologies.map((tech) => (
                               <Badge key={tech}>{tech}</Badge>
@@ -465,7 +465,7 @@ export default function ProjectGrid() {
                       </div>
 
                       {/* Dashed separator */}
-                      <div className="border-accent/20 -mt-px mb-4 border-t border-dashed" />
+                      <div className="border-accent/20 mb-4 border-t border-dashed" />
 
                       {/* Description. No `layout`: the modal is still resizing
                           as it morphs from the plate, and a layout-animated
@@ -476,20 +476,20 @@ export default function ProjectGrid() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, transition: { duration: 0.05 } }}
-                        className="text-foreground/80 mb-4 space-y-2 text-sm leading-6"
+                        className="text-foreground/80 mb-4 space-y-1 text-sm leading-relaxed"
                       >
                         {(activeProject.longDescription || [activeProject.description])
                           .filter((point) => point.trim().length > 0)
                           .map((point, i) => (
-                            <li key={i} className="flex items-start gap-4">
-                              {/* h-8 is one line of leading-8 text at this
+                            <li key={i} className="flex items-start gap-3">
+                              {/* h-7 is one line of leading-relaxed text at this
                                   size, so the dot centres on the first line
                                   instead of being nudged down by a margin that
                                   goes stale the moment the type scale moves. */}
-                              <div className="flex h-8 shrink-0 items-center">
+                              <div className="flex h-7 shrink-0 items-center">
                                 <div className="bg-foreground/50 h-1 w-1" />
                               </div>
-                              <span className="font-serif text-base leading-8 [text-wrap:pretty]">
+                              <span className="font-serif text-base leading-relaxed [text-wrap:pretty]">
                                 {withLinks(point)}
                               </span>
                             </li>

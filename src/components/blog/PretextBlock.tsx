@@ -16,7 +16,7 @@ interface PretextBlockProps {
 export default function PretextBlock({
   children,
   font = '16px "Latin Modern Roman", "Iowan Old Style", Georgia, serif',
-  lineHeight = 32, // 16px type on the 8px baseline grid — matches leading-8 prose
+  lineHeight = 28.8, // 16px * 1.8
   className = "",
 }: PretextBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,10 +34,7 @@ export default function PretextBlock({
     const result = layoutWithLines(prepared, width, lineHeight);
 
     setLines(result.lines);
-    // Not result.height: pretext reports a font-metric height, which is
-    // fractional. The spans sit at i × lineHeight, so the box is exactly
-    // lines × lineHeight — and stays on the 8px baseline grid.
-    setHeight(result.lines.length * lineHeight);
+    setHeight(result.height);
   }, [children, font, lineHeight]);
 
   useEffect(() => {

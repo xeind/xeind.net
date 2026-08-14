@@ -174,7 +174,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
   </head>
   <body class="font-sans antialiased">
     <div class="paper-background min-h-dvh overflow-x-clip" tabindex="-1">
-      <div class="sheet-centered max-w-5xl">
+      <div class="mx-auto max-w-5xl">
         {
           /* The page's outer frame is accent/30, one rung above the accent/20
             of Panel edges and SectionDividers — the boundary of the sheet
@@ -184,42 +184,9 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
             the last), or the two 20%/30% lines composite and that one edge
             comes out darker than the rails beside it. */
         }
-        {
-          /* No border-x: a real border is drawn INSIDE the box, which put the
-            right rail one pixel inside the grid line while the left rail sat
-            on it, and left the content box 1022px instead of the 64 cells the
-            sheet is supposed to be. The rails are 1px overlays instead, each
-            on the pixel after its boundary — left on the sheet's first column,
-            right just outside the last — so both land on the drawn grid and
-            the content box measures exactly 1024. */
-        }
         <main
-          class="edge-glow-shell edge-glow-shell-vertical bg-card before:bg-accent/30 after:bg-accent/30 relative isolate mb-(--footer-height) min-h-screen before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:z-10 before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-[-1px] after:left-[-9999px] after:z-10 after:h-px after:content-['']"
+          class="edge-glow-shell edge-glow-shell-vertical bg-card border-accent/30 before:bg-accent/30 after:bg-accent/30 relative isolate mb-(--footer-height) min-h-screen border-x before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:z-10 before:h-px before:content-[''] after:absolute after:right-[-9999px] after:bottom-0 after:left-[-9999px] after:z-10 after:h-px after:content-['']"
         >
-          {
-            /* Both rails: a 1px box whose whole width is the border, over the
-              card colour. The right one hangs outside the sheet, so without a
-              card backing it would composite over the paper instead and come
-              out a different tone from its twin. */
-          }
-          <div
-            class="bg-card border-accent/30 absolute top-0 bottom-0 left-0 z-10 w-px border-r"
-            aria-hidden="true"
-          >
-          </div>
-          <div
-            class="bg-card border-accent/30 absolute top-0 right-[-1px] bottom-0 z-10 w-px border-r"
-            aria-hidden="true"
-          >
-          </div>
-          {
-            /* The wash goes AFTER the rails, not before. Both are z-10, so the
-              later sibling paints on top — and the rails are opaque bg-card
-              over the exact two columns the wash is masked to, so with the
-              wash first they covered it completely and neither rail lit on
-              hover. It stays at z-10 rather than taking a new value, so the
-              glow strips and the corner diamonds at z-20 still sit above it. */
-          }
           <div class="edge-glow-layer" aria-hidden="true"></div>
           {
             /* Glow strips on main's own full-bleed top/bottom hairlines —
@@ -234,7 +201,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
           >
           </div>
           <div
-            class="edge-glow-line absolute right-[-9999px] bottom-[-1px] left-[-9999px] z-20 h-px"
+            class="edge-glow-line absolute right-[-9999px] bottom-0 left-[-9999px] z-20 h-px"
             aria-hidden="true"
           >
           </div>
@@ -245,27 +212,8 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       <Footer commit={buildCommit} buildDate={buildDate} />
     </div>
 
-    {
-      /* Phase-0 debug grid ruler (docs/prd-grid-alignment.md) — the tag only
-        renders in dev, so production pages never load it. ?grid draws the
-        16px/8px grid over the document; see public/grid-ruler.js. */
-    }
-    {import.meta.env.DEV && <script is:inline src="/grid-ruler.js" defer />}
     <script is:inline src="/hero-interactions.js" defer></script>
     <script is:inline src="/edge-glow.js" defer></script>
-    <script is:inline src="/toaster.js" defer></script>
-    {
-      /* Ahrefs Web Analytics. Async and at the end of the body rather than in
-        the head, so it never blocks the LCP paint. Its origin has to be in the
-        script-src AND connect-src lists in public/_headers — the CSP there is
-        an allowlist, so without both the browser blocks the file and then the
-        beacon, and the dashboard just stays empty. */
-    }
-    <script
-      is:inline
-      src="https://analytics.ahrefs.com/analytics.js"
-      data-key="/VKolPNt1ReY0Dbj7NptFA"
-      async></script>
     <script is:inline>
       (() => {
         const installBeacon = () => {

@@ -30,7 +30,7 @@ export default function ThinkingTrace({ className = "" }: { className?: string }
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="group text-foreground/60 hover:text-tertiary focus-visible:ring-accent flex w-full items-center gap-2 py-1 font-mono text-[0.6875rem] leading-4 tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        className="group text-foreground/60 hover:text-tertiary focus-visible:ring-accent flex w-full items-center gap-2 py-1 font-mono text-[0.6875rem] tracking-wide transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         style={CSS_TRANSITIONS.border}
       >
         {/* A rule that extends into the row on hover — the site's "this opens"
@@ -61,16 +61,16 @@ export default function ThinkingTrace({ className = "" }: { className?: string }
           >
             {TRACE_STEPS.map((step, i) => (
               <li key={step.label} className="flex items-baseline gap-3">
-                <span className="text-foreground/40 font-mono text-[0.625rem] leading-4 tabular-nums">
+                <span className="text-foreground/40 font-mono text-[0.625rem] tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="text-foreground block text-sm">{step.label}</span>
-                  <span className="text-foreground/60 block text-[0.8125rem] leading-6">
+                  <span className="text-foreground/60 block text-[0.8125rem] leading-relaxed">
                     {step.detail}
                   </span>
                 </span>
-                <span className="text-foreground/40 shrink-0 font-mono text-[0.625rem] leading-4 tabular-nums">
+                <span className="text-foreground/40 shrink-0 font-mono text-[0.625rem] tabular-nums">
                   {(step.ms / 1000).toFixed(2)}s
                 </span>
               </li>

@@ -439,7 +439,7 @@ Every page is the same sandwich, and `Layout.astro` builds the bread:
 ```
 .paper-background            muted backdrop, full viewport
   .mx-auto.max-w-5xl
-    main.edge-glow-shell     card surface, left/right rails, full-bleed
+    main.edge-glow-shell     card surface, left/right borders, full-bleed
                              top/bottom hairlines, 4 corner diamonds
                              — the outer frame, all at accent/30
       <slot />               ← your page
@@ -464,41 +464,10 @@ on the same pixel row composites `accent/20` over `accent/30` — one edge comes
 out darker than the rails beside it. Panels in the middle keep the default
 `edges="both"`.
 
-### Which pixel a hairline gets
-
-A boundary is a line with no width; a stroke is one pixel wide and has to fall
-on one side of it. On this site it always falls on the same side: **the pixel
-after the boundary.** A box that starts on a grid line draws its top rule at
-`top: 0`, and a box that ends on one draws its bottom rule at `bottom: -1px`,
-outside itself — `top: 0` and `bottom: 0` would put the two rules 1px apart on
-what is meant to be the same line, and the trailing one would read as sitting
-high against the drawn grid. The same holds across: the frame's left rail is the
-sheet's first column, its right rail the column just outside the last. That is
-why `main` has no `border-x` (a real border draws inside the box, which would
-pull the right rail one pixel in and leave the content box 1022px instead of the
-64 cells it is supposed to be), and why `CornerDiamond` offsets its trailing
-corners a pixel further than its leading ones: the diamond centres on the
-stroke, wherever the stroke is.
-
-Those offsets only work if the box edge is a whole pixel, and an auto margin
-does not guarantee one — it halves the leftover width, so any odd available
-width (a 15px scrollbar on a 1440 window will do it) puts the sheet's edges on
-`x.5`. The browser still paints the rails crisp, because it snaps a painted edge
-to a whole CSS pixel. It does not snap a rotated child, so every corner diamond
-antialiased half a pixel left of the rail it marks. The sheet therefore centres
-with `.sheet-centered`, which rounds its start margin the way the paint rounds.
-**Never put `mx-auto` back on the sheet wrapper**, and keep any new full-width
-line phased the same way the gutter grid is, with `round(50%, 1px)`.
-
 `Panel` owns section padding, the card surface, the full-bleed hairlines and the
 corner diamonds. **Never hand-roll a section wrapper.** If a section needs
-different edges, use `edges` and `ornaments`.
-
-Every section takes the same padding — 64px in, 32px down at the 1024 cap, so
-the content column is 896, or 56 cells, on every page. The `padding` prop still
-carries `sm` and `lg`, but neither has a caller and neither should get one: a
-header that indents further than the headings under it reads as a misalignment,
-not as emphasis. That is what the prop was doing before.
+different padding, use `padding="sm|md|lg"`; if it needs different edges, use
+`edges` and `ornaments`.
 
 Exceptions to the stack rule, all deliberate:
 

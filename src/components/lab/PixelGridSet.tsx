@@ -33,12 +33,10 @@ export default function PixelGridSet({ size = 3, className = "" }: PixelGridSetP
         <li key={key} className="flex items-center gap-3">
           <PixelGrid pattern={key} size={size} />
           <span>
-            <span className="text-foreground block font-mono text-[0.6875rem] leading-4 tracking-wide">
+            <span className="text-foreground block font-mono text-[0.6875rem] tracking-wide">
               {key}
             </span>
-            <span className="text-foreground/45 block font-mono text-[0.625rem] leading-4">
-              {note}
-            </span>
+            <span className="text-foreground/45 block font-mono text-[0.625rem]">{note}</span>
           </span>
         </li>
       ))}

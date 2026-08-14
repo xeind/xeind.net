@@ -9,7 +9,7 @@ export default function AboutSection() {
   return (
     <div className="space-y-4">
       <h2 className="text-foreground font-serif text-2xl">About</h2>
-      <div className="text-foreground/80 space-y-4 text-sm leading-6">
+      <div className="text-foreground/80 space-y-4 text-sm leading-relaxed">
         <p>
           I&apos;m a full-stack engineer specializing in UI craft, motion, and microinteractions.
           Currently working at{" "}

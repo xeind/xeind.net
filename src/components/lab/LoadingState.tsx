@@ -47,15 +47,12 @@ export default function LoadingState({
 
       {/* No aria-live: a timer announcing itself every 100ms makes the page
           unusable with a screen reader. The label carries the status. */}
-      <span
-        role="status"
-        className="text-foreground/70 font-mono text-[0.6875rem] leading-4 tracking-wide"
-      >
+      <span role="status" className="text-foreground/70 font-mono text-[0.6875rem] tracking-wide">
         {label}
       </span>
 
       <span
-        className="text-foreground/50 font-mono text-[0.6875rem] leading-4 tabular-nums"
+        className="text-foreground/50 font-mono text-[0.6875rem] tabular-nums"
         aria-hidden="true"
       >
         {elapsed}

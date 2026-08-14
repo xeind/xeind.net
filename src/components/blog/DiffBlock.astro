@@ -40,14 +40,6 @@ import type { ComponentProps } from "astro/types";
  * has an old number and no new one, an added line the reverse. A block with no
  * signs shows the one column, like a fenced block does.
  *
- * `wrap={null}` on each row is not cosmetic. Left at its default, <Code> writes
- * `overflow-x: auto` and `tabindex="0"` straight onto every <code> it emits —
- * and this block emits one per row, so each line became its own scroll
- * container and its own tab stop. On a machine set to show scroll bars always
- * that painted a track under every line. The <pre> around them already scrolls;
- * the rows never needed to. null is the option that drops the overflow styling
- * rather than swapping it for wrapping.
- *
  * Signal is carried three ways, none of them the code's own color:
  *   · the sign column, in the removed/added ink
  *   · a 12% wash behind the row
@@ -105,13 +97,10 @@ function rowStyle(line: DiffLine, i: number) {
   if (!changed[i]) return undefined;
   const tone = ink(line.sign);
   const edge = `1px solid color-mix(in srgb, ${tone} 55%, transparent)`;
-  // Each run edge carries a negative margin so its pixel overlaps the
-  // neighbouring row instead of adding height — the block's total stays a
-  // whole number of 8px baselines no matter how many runs it holds.
   return [
     `background-color:color-mix(in srgb, ${tone} 12%, transparent)`,
-    changed[i - 1] ? "" : `border-top:${edge};margin-top:-1px`,
-    changed[i + 1] ? "" : `border-bottom:${edge};margin-bottom:-1px`,
+    changed[i - 1] ? "" : `border-top:${edge}`,
+    changed[i + 1] ? "" : `border-bottom:${edge}`,
   ]
     .filter(Boolean)
     .join(";");
@@ -119,9 +108,9 @@ function rowStyle(line: DiffLine, i: number) {
 ---
 
 <pre
-  class={`bg-muted border-accent/20 -my-px overflow-x-auto border border-dashed p-4 font-mono text-[0.6875rem] leading-6 whitespace-normal ${className}`}>{
+  class={`bg-muted border-accent/20 overflow-x-auto border border-dashed p-3 font-mono text-[0.6875rem] leading-relaxed whitespace-normal ${className}`}>{
     lines.map((line, i) => (
-      <div class="-mx-4 flex min-h-[1lh] gap-2 px-4" style={rowStyle(line, i)}>
+      <div class="-mx-3 flex min-h-[1lh] gap-2 px-3" style={rowStyle(line, i)}>
         <span class="text-foreground/25 flex shrink-0 select-none" aria-hidden="true">
           {/* Two counts read as one gutter: no gap between them, and 1.25rem
               each rather than the 1.5rem a fenced block uses, so the pair of
@@ -134,7 +123,7 @@ function rowStyle(line: DiffLine, i: number) {
         <span class="w-2 shrink-0 select-none" style={isChange(line.sign) ? `color:${ink(line.sign)}` : undefined} aria-hidden="true">
           {isChange(line.sign) ? line.sign : ""}
         </span>
-        <Code code={line.text} lang={lang} theme="css-variables" inline wrap={null} class="whitespace-pre" />
+        <Code code={line.text} lang={lang} theme="css-variables" inline class="whitespace-pre" />
       </div>
     ))
   }</pre>

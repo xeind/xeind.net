@@ -28,15 +28,7 @@ function HeroActionLink({
       data-hero-sfx="click"
       data-hero-sfx-hover
       {...(shortcut ? { "data-hero-shortcut": shortcut } : {})}
-      // md:w-56 is what puts these on the grid, and it has to be a width, not
-      // padding. An inline-flex button is as wide as its label: 48px of padding
-      // either side plus whatever "View Resume" and its chip happen to render
-      // (118.91px), so the right edge landed at 13.43 cells and the second
-      // button inherited the fraction. 14 cells fits the longest label with
-      // room; py-3 makes the box 48px, 3 cells, instead of 40. Below md the
-      // sheet is fluid and nothing can register, so the width is intrinsic
-      // there and the buttons wrap as before.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -124,18 +116,13 @@ function HeroActionLink({
         />
       </div>
 
-      {/* 24px label line + py-2 = a 40px control, whole half-cells top to
-          bottom; the 24px shortcut chip centres inside the same line box. */}
       <div className="relative z-10 flex items-center justify-center gap-3">
-        <span
-          className="font-serif text-sm leading-6 transition-all"
-          style={CSS_TRANSITIONS.border}
-        >
+        <span className="font-serif text-sm transition-all" style={CSS_TRANSITIONS.border}>
           {children}
         </span>
         {badge && (
           <span
-            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 px-2 py-1 font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 px-1.5 py-0.5 font-mono text-xs text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
             style={CSS_TRANSITIONS.border}
           >
             {badge}
@@ -244,14 +231,9 @@ export default function HeroSection() {
         <div className="flex min-w-0 flex-1 flex-row items-center gap-6">
           <StaticLogo size={64} className="text-foreground shrink-0" />
 
-          {/* 32px name line + 24px address line + 8px below = 64px, the logo's
-              own height, so both columns share every half-cell boundary. The
-              half cell that used to sit between the two lines now sits under
-              them: the address rides directly under the name, and the column
-              still measures the logo. */}
-          <div className="flex min-w-0 flex-1 flex-col items-start pb-2 text-left">
-            <div className="flex w-full items-center justify-between gap-4">
-              <h1 className="text-foreground font-serif text-2xl leading-8 font-normal tracking-tight whitespace-nowrap">
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left">
+            <div className="flex w-full items-center justify-between gap-3">
+              <h1 className="text-foreground font-serif text-2xl font-normal tracking-tight whitespace-nowrap">
                 {personalInfo.name}
               </h1>
 
@@ -261,7 +243,7 @@ export default function HeroSection() {
                 <HeroEmailButton email={personalInfo.email} />
               </div>
             </div>
-            <address className="text-foreground/60 flex items-center gap-1 text-sm leading-6 not-italic">
+            <address className="text-foreground/60 flex items-center gap-1 text-sm not-italic">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -283,7 +265,7 @@ export default function HeroSection() {
       </div>
 
       {/* Tagline */}
-      <p className="text-foreground/80 mb-6 max-w-xl text-center text-sm leading-6 md:text-left">
+      <p className="text-foreground/80 mb-6 max-w-xl text-center text-sm md:text-left">
         {personalInfo.tagline}
       </p>
 
