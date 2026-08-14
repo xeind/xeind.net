@@ -40,6 +40,17 @@ const robots = noindex
 <link rel="canonical" href={canonical} />
 {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
 
+{
+  /* Ahrefs site ownership. Ahrefs accepts either this tag or a file at the
+    site root; public/ahrefs_<hash> carries the file, so both are live and
+    re-verification works whichever one it reaches for. Neither is a secret —
+    the tag ships in the HTML of every page by design. */
+}
+<meta
+  name="ahrefs-site-verification"
+  content="71439109fb28548d081ca0b1be0654d0a0fba4ed233bf43ddd117c64bffc3037"
+/>
+
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:locale" content={SITE.locale} />
