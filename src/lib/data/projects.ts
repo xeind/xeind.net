@@ -43,8 +43,12 @@ export const projects: Project[] = [
       "Chaotic-map encryption scheme achieving high diffusion, randomness, and strong security.",
       "Validated with Entropy 7.9982, UACI 33.46%, NPCR 99.61%, Correlation -0.0008, and 21ms runtime.",
     ],
+    // atax.dev is gone, so the liveUrl went with it and the card no longer
+    // opens: a modal that ends in a dead end is worse than a plain plate. The
+    // write-up stays here for the day the site comes back — drop `interactive`
+    // and the card works again.
+    interactive: false,
     technologies: ["TypeScript", "Python", "React", "Docker"],
-    liveUrl: "https://atax.dev",
     featured: true,
     year: 2024,
     imageUrl: "/projects/atax.svg",
