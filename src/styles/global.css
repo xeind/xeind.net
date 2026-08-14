@@ -729,6 +729,15 @@ pre code {
   background: transparent;
   font-size: 0.8125rem;
   color: var(--color-foreground);
+  /* The chip's collapsed line-height above is for a chip sitting in prose. In a
+     block it made the code ride 4px above its own line number in DiffBlock,
+     whose rows are 24px and whose gutter is drawn as sibling spans. 24px puts
+     the two back on one baseline. A utility class on the element cannot do this
+     job: the `code` rule is unlayered, so it outranks anything Tailwind writes
+     into its utilities layer no matter how specific. Fenced blocks are
+     untouched — `pre.astro-code code` collapses to 0 further down and its
+     `.line` children carry the same 24px. */
+  line-height: 1.5rem;
 }
 
 .divider-grid-broken {
