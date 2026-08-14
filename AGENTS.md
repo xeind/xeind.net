@@ -12,6 +12,9 @@ This site has a real design system. Follow it — do not invent one.
 - **`docs/design-system.md`** — tokens, color, type, shape, page architecture.
   Read it before your first visual change in a session.
 - **`docs/animation.md`** — timing, easing, reduced motion, modal expansion.
+- **`docs/prd-grid-alignment.md`** and **`docs/grid-inventory.md`** — the grid's
+  settled decisions and the per-element ledger. Read them before you change a
+  padding, a line-height, or where a hairline sits.
 - **`docs/content.md`** — how long a description, a bullet or a title may be.
   Read it before editing anything in `src/lib/data/`. Nothing on this site
   truncates, so length is layout.
@@ -22,6 +25,37 @@ This site has a real design system. Follow it — do not invent one.
 - **`README.md`** — stack, SEO, crawler files, deployment.
 
 ---
+
+## The grid
+
+Every spacing value on this site answers to one grid. Phases 0–4 shipped it. The
+decisions are settled in `docs/prd-grid-alignment.md`; the per-element ledger is
+`docs/grid-inventory.md`. Do not reopen a decision without a new call.
+
+- **8px half-cell, 16px major cell.** Line-heights, small paddings and prose
+  margins step in 8s. Structural values — panel edges, dividers, section
+  padding, band heights — must hit 16.
+- **Bands are whole cells.** `SectionDivider` is 1 cell (16px), the
+  `CalloutLink` band is 2 (32px). A new band gets its cell count decided the
+  same way, and the answer goes in the ledger.
+- **One padding for every section.** `Panel` `md` is 64px in, 32px down, so the
+  content column is 896px — 56 cells — on every page. `sm` and `lg` are fallow;
+  don't give them a caller. A header that indents further than the headings
+  under it reads as a misalignment, not as emphasis.
+- **Ink lands on the pixel after its boundary.** A box's top rule draws at
+  `top: 0`, its bottom rule at `bottom: -1px`, outside itself. `CornerDiamond`
+  offsets its trailing corners to match. `docs/design-system.md` §6 explains why.
+- **Absorb a hairline, don't excuse it.** A 1px rule that pushes a flow box off
+  the half-cell takes `-mt-px`, or `mt-[calc(…−1px)]` where it owns the gap.
+  The patterns in use are listed in `docs/grid-inventory.md`.
+- **The grid is document-anchored.** Fixed furniture (footer, toaster) is
+  grid-_sized_, never grid-_registered_ — it scrolls free of the drawn lines.
+  `background-attachment: fixed` was rejected for this.
+- **Measure, don't eyeball.** Add `?grid` to any dev URL to draw the 16/8 grid
+  over the document. `public/grid-ruler.js` loads in dev only and is not
+  cache-busted — hard-reload after editing it.
+- **A 45° stroke cannot land on the pixel grid.** Corner diamonds read softer
+  than the rules they meet. That is rasterisation. Do not chase it with offsets.
 
 ## Never
 
@@ -40,6 +74,11 @@ This site has a real design system. Follow it — do not invent one.
   `--logo-ink-*` tone ladder, never opacity; gradients run
   `--color-secondary` → `--color-tertiary`. A hex in an SVG that renders in the
   page is a bug. See `docs/design-system.md` §3.
+- **Never put `mx-auto` back on the sheet wrapper.** An auto margin halves the
+  leftover width, so an odd viewport width lands the sheet's edges on `x.5` and
+  every corner diamond antialiases half a pixel off its rail. `.sheet-centered`
+  rounds the start margin the way the paint rounds. Phase any new full-width
+  line the same way, with `round(50%, 1px)`.
 - **Never turn static content into a React island.**
 
 ## Ask first

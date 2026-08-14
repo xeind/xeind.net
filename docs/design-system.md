@@ -406,10 +406,18 @@ reader tells, at a glance, what will respond.
 
 ### The 16px grid
 
-`--grid-cell-size: 16px`. Grid backgrounds (`.bg-grid-pattern`,
-`.bg-hero-grid`) draw 16px cells; the divider grid draws 4px. Structural
-spacing lands on multiples of 16 (`--footer-height: 128px` is 8 cells).
-Everything else steps in 4s.
+`--grid-cell-size: 16px`. Structural spacing — panel edges, dividers, section
+padding, band heights — lands on multiples of 16 (`--footer-height: 128px` is 8
+cells). Everything else steps in 8s: line-heights, small paddings, prose
+margins.
+
+`.bg-grid-pattern` draws a 16px tile texture inside cards, anchored to the card's
+own frame rather than the page; the divider grid draws a 4px quarter-cell
+texture. `.bg-hero-grid` is dead — nothing reads it.
+
+The settled decisions are in `docs/prd-grid-alignment.md`, and the per-element
+ledger — including which hairline is absorbed where — is
+`docs/grid-inventory.md`.
 
 Write the Tailwind class. There is no spacing config module, and that is
 deliberate: an alias like `GAP_SPACING.xs = "gap-2"` renames a value without
@@ -426,9 +434,14 @@ One micro half-step exists for optical alignment (`gap-0.75`).
 Anything outside those needs a reason and an allowlist entry. Responsive
 prefixes are fine (`sm:gap-4`, `md:gap-8`).
 
+That set predates the grid and still carries steps the grid does not want —
+`gap-3`, `gap-5`, `space-y-1.5`, `space-y-3`. They pass `check:design` and they
+do not sit on the 8px half-cell. Reach for the 8px step instead. Tightening the
+checker to say so is Phase 5 of the grid PRD.
+
 Exception: MDX components use `mb-*`/`mt-*` directly, because MDX renders
 siblings into `<article>` with no shared flex parent. Standard paragraph margin
-there is `mb-5`.
+there is `mb-6` (24px).
 
 ---
 

@@ -171,6 +171,7 @@ says it already.
 npm run check        # Astro + TypeScript
 npm run lint         # ESLint
 npm run format:check # Prettier
+npm run check:design # closed sets, allowlist
 npm run build        # must pass
 ```
 
@@ -188,10 +189,14 @@ screen in one theme is not a result:
       Escape for anything that opens.
 - [ ] **Reduced motion.** Turn it on in the OS and confirm the change degrades
       instead of disappearing.
+- [ ] **The grid.** Add `?grid` to the dev URL. Structural edges on the 16px
+      line, line-heights and small paddings on the 8px half-cell. The rules are
+      in the root `AGENTS.md`; the ledger is `docs/grid-inventory.md`.
 
-Then read your diff against these three questions:
+Then read your diff against these four questions:
 
 1. Did I write a color, a radius, a shadow, or a duration? Remove it — use the
    owner listed in `docs/design-system.md` §0.
 2. Does it hold in all four themes?
 3. Did I rebuild something in the table at the top of this file?
+4. Does every spacing value I wrote land on 8, and every structural one on 16?
