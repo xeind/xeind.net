@@ -919,7 +919,10 @@ pre.astro-code {
   counter-reset: line;
 }
 pre.astro-code[data-language] {
-  padding-top: 2rem;
+  /* One cell, not two. The label is absolutely positioned, so it costs height
+     only through this padding — 16px holds its 10px cap with room, and the
+     first line of code starts on the next cell instead of the one after it. */
+  padding-top: 1rem;
 }
 pre.astro-code[data-has-header] {
   border-top: none;
@@ -931,7 +934,9 @@ pre.astro-code[data-has-header] {
 pre.astro-code[data-language]::before {
   content: attr(data-language);
   position: absolute;
-  top: 0.625rem;
+  /* Centred in the 16px cell the padding above reserves: 10.4px of ink leaves
+     2.8px either side, snapped to the pixel the label paints on. */
+  top: 0.1875rem;
   left: 0.875rem;
   font-family: var(--font-mono);
   font-size: 0.65rem;
