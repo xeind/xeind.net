@@ -254,18 +254,6 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     <script is:inline src="/hero-interactions.js" defer></script>
     <script is:inline src="/edge-glow.js" defer></script>
     <script is:inline src="/toaster.js" defer></script>
-    {
-      /* Ahrefs Web Analytics. Async and at the end of the body rather than in
-        the head, so it never blocks the LCP paint. Its origin has to be in the
-        script-src AND connect-src lists in public/_headers — the CSP there is
-        an allowlist, so without both the browser blocks the file and then the
-        beacon, and the dashboard just stays empty. */
-    }
-    <script
-      is:inline
-      src="https://analytics.ahrefs.com/analytics.js"
-      data-key="/VKolPNt1ReY0Dbj7NptFA"
-      async></script>
     <script is:inline>
       (() => {
         const installBeacon = () => {
