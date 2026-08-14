@@ -411,7 +411,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
             CTA Buttons · View Resume / Schedule Call
           </p>
           <div class="flex flex-wrap justify-center gap-4 md:justify-start md:gap-8">
-            <CtaButton href="#" label="Click Me" shortcut="R" />
+            <span data-easter-egg><CtaButton href="#" label="Click Me" shortcut="R" /></span>
             <CtaButton href="#" label="Schedule Call" shortcut="C" />
           </div>
         </div>
@@ -552,4 +552,53 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
       /design — instead of every page via Layout. */
   }
   <script is:inline src="/codeblock-copy.js" defer></script>
+
+  {
+    /* The Click Me CTA is the toaster's demo. It is the one affordance on the
+      site with nothing to confirm, so it says something instead. Copy lives
+      here rather than in lib/data/ — it is furniture for one specimen, not
+      content any other page reads. */
+  }
+  <script>
+    const eggs = [
+      { title: "Nothing happened", description: "that was the whole feature" },
+      { title: "You found the button", description: "there is no prize" },
+      { title: "Still a specimen", description: "nothing on this page ships" },
+      { title: "Ink is dry", description: "cyanotype · 1842" },
+      { title: "Try the theme button", description: "four of them · Kozo breaks first" },
+      { title: "hjkl", description: "you could have moved with those" },
+      { title: "Wrong button", description: "the other one schedules a call" },
+      { title: "Swipe it away", description: "up, or to the right" },
+      { title: "Read the margin", description: "Blueprint rules its gutters" },
+      { title: "Keep clicking", description: "they stack three deep" },
+    ];
+
+    let last = -1;
+
+    /* Delegated on document so it survives a ClientRouter swap, and on the
+       CAPTURE phase so it runs before ClientRouter's own click listener.
+       CtaButton is an <a>, and the demo one points at "#". Left to bubble,
+       the router treats that as a same-page navigation and scrolls the reader
+       back to the top every time they press the button. */
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (!(event.target instanceof Element)) return;
+        if (!event.target.closest("[data-easter-egg]")) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        /* Never the same one twice running — otherwise the toaster's dedupe
+           folds a repeat back into the toast already on screen, and a click
+           looks like it did nothing. */
+        let next = Math.floor(Math.random() * eggs.length);
+        if (next === last) next = (next + 1) % eggs.length;
+        last = next;
+
+        document.dispatchEvent(new CustomEvent("toast", { detail: eggs[next] }));
+      },
+      { capture: true },
+    );
+  </script>
 </Layout>
