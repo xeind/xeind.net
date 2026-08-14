@@ -244,9 +244,12 @@ export default function HeroSection() {
         <div className="flex min-w-0 flex-1 flex-row items-center gap-6">
           <StaticLogo size={64} className="text-foreground shrink-0" />
 
-          {/* 32px name line + 8px gap + 24px address line = 64px, the logo's
-              own height, so both columns share every half-cell boundary. */}
-          <div className="flex min-w-0 flex-1 flex-col items-start gap-2 text-left">
+          {/* 32px name line + 24px address line + 8px below = 64px, the logo's
+              own height, so both columns share every half-cell boundary. The
+              half cell that used to sit between the two lines now sits under
+              them: the address rides directly under the name, and the column
+              still measures the logo. */}
+          <div className="flex min-w-0 flex-1 flex-col items-start pb-2 text-left">
             <div className="flex w-full items-center justify-between gap-4">
               <h1 className="text-foreground font-serif text-2xl leading-8 font-normal tracking-tight whitespace-nowrap">
                 {personalInfo.name}
