@@ -19,7 +19,7 @@ const tFast = css(CSS_TRANSITIONS.fade);
 
 <a
   href={href}
-  class="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:px-12"
+  class="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:px-12"
   style={t}
 >
   <div
@@ -86,12 +86,16 @@ const tFast = css(CSS_TRANSITIONS.fade);
     </div>
   </div>
   {
-    /* 24px label line + py-2 = a 40px control, whole half-cells top to
-      bottom; the 24px shortcut chip centres inside the same line box. */
+    /* The control is its 24px label line and nothing else — no vertical
+      padding, so the box is the line box. The shortcut chip is 16px, one cell,
+      centred inside it. The ring is a box-shadow, so it adds nothing to either
+      height. Two things this costs, both accepted by the owner: 24px is one and
+      a half cells rather than a whole number, and it is exactly the 24px floor
+      WCAG 2.5.8 sets for a target, with nothing spare. Do not go below it. */
   }
   <span class="relative z-10 font-serif text-sm leading-6" style={t}>{label}</span>
   <span
-    class="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-2 py-1 font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+    class="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 relative z-10 px-2 font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
     style={t}>{shortcut}</span
   >
 </a>

@@ -410,7 +410,13 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
           <p class="text-foreground/50 mb-3 font-mono text-xs">
             CTA Buttons · View Resume / Schedule Call
           </p>
-          <div class="flex flex-wrap justify-center gap-4 md:justify-start md:gap-8">
+          {
+            /* items-start: without it the row stretches, and the bare button
+              matched the height of the one wrapped in a span — an inline box,
+              so it carries a pixel of descender space the button does not. At
+              40px that stayed hidden; at 24 it showed as a 24 beside a 25. */
+          }
+          <div class="flex flex-wrap items-start justify-center gap-4 md:justify-start md:gap-8">
             <span data-easter-egg><CtaButton href="#" label="Click Me" shortcut="R" /></span>
             <CtaButton href="#" label="Schedule Call" shortcut="C" />
           </div>
