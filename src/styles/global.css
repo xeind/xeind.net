@@ -1410,9 +1410,16 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
    and it is also where every code block keeps its copy button, so the toast
    arrives beside the thing that sent it.
 
-   The toast is a card-surfaced rectangle with one dashed hairline and nothing
-   else — no corner brackets. design-system.md §7 keeps brackets for clickable
-   cards, and a toast that dismisses on click is still not a link.
+   Colour comes from the footer, not from a card. The footer is the site's one
+   inverted band — bg-accent under text-background — and it is the only place
+   the site speaks in its own voice rather than showing content. A toast does
+   the same job, so it wears the same clothes: accent ground, background ink,
+   the dashed rule at background/30 that the footer's own links use. This also
+   fixes Kozo, where a card-surfaced toast was light ink on light paper.
+
+   One dashed hairline and nothing else — no corner brackets. design-system.md
+   §7 keeps brackets for clickable cards, and a toast that dismisses on click
+   is still not a link.
    ======================================== */
 
 .toaster {
@@ -1436,8 +1443,8 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   right: 0;
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--color-card);
-  border: 1px dashed color-mix(in srgb, var(--color-accent) 30%, transparent);
+  background: var(--color-accent);
+  border: 1px dashed color-mix(in srgb, var(--color-background) 30%, transparent);
   pointer-events: auto;
   cursor: pointer;
   /* The stack drags on touch; without this the page scrolls instead. */
@@ -1482,7 +1489,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: var(--leading-tight);
-  color: var(--color-foreground);
+  color: var(--color-background);
 }
 
 .toast-description {
@@ -1491,7 +1498,8 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   font-size: var(--text-xs);
   line-height: var(--leading-normal);
   letter-spacing: 0.025em;
-  color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  /* 70%, the same step the footer's own mono meta line takes. */
+  color: color-mix(in srgb, var(--color-background) 70%, transparent);
   overflow-wrap: anywhere;
 }
 
