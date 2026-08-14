@@ -32,29 +32,40 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
     >
       {/* The corner marks light with the edges they terminate. Passed through
           rather than baked into CornerDiamond, which is shared with Panels that
-          are not hoverable groups. */}
+          are not hoverable groups.
+
+          `frame`, not `accent`: the band fills the page frame's content box, so
+          all four of these sit ON the vertical rails, half over the paper and
+          half over the card. That is the frame case — paper fill, and accent/30
+          to match the rails they terminate. Only the bottom pair shows it: the
+          band is at document y=0, so the top pair's upper halves fall above the
+          origin and render as chevrons. */}
       <CornerDiamond
         position="tl"
-        variant="accent"
+        variant="frame"
         className="group-hover:border-accent/60 transition-colors"
+        style={CSS_TRANSITIONS.border}
       />
       <CornerDiamond
         position="tr"
-        variant="accent"
+        variant="frame"
         className="group-hover:border-accent/60 transition-colors"
+        style={CSS_TRANSITIONS.border}
       />
       {/* The bottom pair rides the band's own border, which draws at
           bottom:-1 to sit on the grid line — CornerDiamond's trailing offset
           now centres on that stroke, so no nudge here. */}
       <CornerDiamond
         position="bl"
-        variant="accent"
+        variant="frame"
         className="group-hover:border-accent/60 transition-colors"
+        style={CSS_TRANSITIONS.border}
       />
       <CornerDiamond
         position="br"
-        variant="accent"
+        variant="frame"
         className="group-hover:border-accent/60 transition-colors"
+        style={CSS_TRANSITIONS.border}
       />
 
       {/* Three of this band's four edges are not its own to draw: it sits flush
@@ -64,19 +75,34 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
           existing lines instead — invisible at rest, brightening the shared
           hairline on hover so the whole boundary lights at once. The band fills
           the frame's content box, so the left rail is its first column and the
-          right rail the one just outside it — which is why only the left one
-          carries the resting colour: the band's own background covers the rail
-          there, so this overlay has to stand in for it (same accent/30 over the
-          same card, so the rail reads continuous), while on the right the real
-          rail shows through and a second stroke would double it. */}
-      <div className="group-hover:border-accent/60 absolute top-0 right-0 left-0 border-t border-transparent transition-colors" />
+          right rail the one just outside it.
+
+          All three carry the resting colour and all three replace the line
+          under them rather than adding to it. The left and top are covered by
+          the band's own opaque bg-card, so the overlay simply stands in. The
+          right is not: main's rail is still painted there, so this overlay is
+          built the way Layout builds its rails — w-px with bg-card, a 1px box
+          whose whole width is the border — and covers it. Letting the real rail
+          show through instead was the earlier arrangement and it lit twice as
+          hard as its twin on hover: accent/60 composited over the rail's
+          accent/30 reads 0.72 alpha, and the right rail measured 186 -> 103
+          against the left's 186 -> 126.
+
+          main's top hairline is main::before at z-10, and this band is z-10
+          with an opaque bg-card later in paint order, so the band covered it
+          and punched a 1024px hole in the sheet's top rule — ink in the paper
+          gutters either side, none across the band. */}
       <div
-        className="border-accent/30 group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-l transition-colors"
-        style={{ left: 0 }}
+        className="border-accent/30 group-hover:border-accent/60 absolute top-0 right-0 left-0 border-t transition-colors"
+        style={CSS_TRANSITIONS.border}
       />
       <div
-        className="group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-r border-transparent transition-colors"
-        style={{ right: -1 }}
+        className="border-accent/30 group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-l transition-colors"
+        style={{ left: 0, ...CSS_TRANSITIONS.border }}
+      />
+      <div
+        className="bg-card border-accent/30 group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 w-px border-r transition-colors"
+        style={{ right: -1, ...CSS_TRANSITIONS.border }}
       />
 
       {/* Center highlight - accent color gradient (0-15-40-60-40-15-0) always visible, full on hover */}

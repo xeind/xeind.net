@@ -1235,6 +1235,9 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   inset: -1px;
   z-index: 0;
   border: 1px solid var(--edge-glow-ink);
+  /* Matches the diamond's own 1px corner, so the glow ring doesn't square off
+     against the mark it traces. */
+  border-radius: 1px;
   opacity: calc(var(--edge-node-strength) * var(--edge-glow-cap));
   pointer-events: none;
   /* Same duration as the rails and the strips — one settling time. */
