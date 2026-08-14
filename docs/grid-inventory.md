@@ -54,13 +54,19 @@ hairline strokes and collapsed table borders, ratified below.
 | MDX blockquote                              | `py-1 pl-5`                             | `py-2 pl-6`                                                                                                          |
 | MdxLi                                       | `gap-3`, bullet `mt-[0.72em]`           | `gap-4`, `mt-[0.875em]` (centres on 32px)                                                                            |
 | `PullQuoteCard`                             | `p-5 sm:p-6`, micro type off-baseline   | `p-6`; label/author/role `leading-4`; quote mark `text-[3.5rem]` (56 keeps the header row on the half-cell); `gap-4` |
-| `DiffBlock`                                 | `p-3`, `leading-relaxed` (11px ≈ 19.25) | `p-4`, `leading-4` = 16px                                                                                            |
+| `DiffBlock`                                 | `p-3`, `leading-relaxed` (11px ≈ 19.25) | `p-4`, `leading-6` = 24px (16px shipped first and read too dense — see below)                                        |
 | `pre.astro-code` (+ /design specimens)      | `line-height: 1.75` ≈ 22.75px           | `1.5rem` = 24px                                                                                                      |
 | `[slug].astro` series box                   | `p-5`, `space-y-1.5`                    | `p-6`, `space-y-2`                                                                                                   |
 | MDX table                                   | cells at browser `normal`               | `leading-6` cells, `leading-4` mono headers                                                                          |
 | Single blog figures                         | intrinsic ratio → fractional height     | aspect-ratio 566/(8k−2): snapped at the max-w-xl cap, ≤4px object-cover crop elsewhere                               |
 | `.blog-grid` collages                       | `aspect-ratio` → fractional height      | fixed heights ≥1024px (520/696/584/696), ratios keep governing below the cap                                         |
 | Mono micro (`leading-none`)                 | = font-size                             | ✓ kept inside snapped boxes                                                                                          |
+
+`DiffBlock` corrected 2026-08-14. `leading-4` put an 11px mono row on the grid
+at 16px, but a removed run and the added run replacing it then read as one
+band — the thing the row tinting exists to separate. `leading-6` = 24px is the
+next legal step and the only other one; the block measures 202px, 200 in flow,
+mod 8 clean.
 
 Ratified residue: 1px/2px hairline borders (figure mats absorb theirs via the
 8k−2 image box; tables and diff rows keep theirs — line weight is not
