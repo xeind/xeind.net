@@ -8,8 +8,10 @@ interface CornerDiamondProps {
 const variantBorders = {
   default: "border-border",
   accent: "border-accent/20",
-  // `frame` is the page's outer edge only — one rung above the accent/20 of
-  // the rules drawn inside it. See the note above <main> in Layout.astro.
+  // `frame` is any mark that sits ON the sheet's outer edge — the page frame
+  // itself, and every Panel corner, since a Panel spans the sheet. It matches
+  // the rails at accent/30 rather than the accent/20 of the rules drawn
+  // inside. See the note above the ornaments in Panel.tsx for the measurements.
   frame: "border-accent/30",
 };
 
@@ -21,63 +23,36 @@ export default function CornerDiamond({
 }: CornerDiamondProps) {
   const baseClass = `edge-glow-node absolute z-20 rotate-45 rounded-[1px] border ${variantBorders[variant]} bg-card ${className}`;
 
-  // Different offsets for visual alignment with rotated square
-  const topOffset = "-3.5px"; // Top/bottom positioning
-  const sideOffset = "-4.5px"; // Left/right positioning
+  // A diamond marks where two hairlines cross, so its centre must land on the
+  // stroke, not beside it. Every hairline on this site is the pixel AFTER its
+  // boundary — a box that ends on a grid line draws its rule at bottom:-1 /
+  // right:-1, outside itself, so the stroke sits on the line instead of one
+  // pixel inside. The two offsets encode that: an 8px square rotated 45° has
+  // its centre 4px in, so -3.5 puts the centre half a pixel past a leading
+  // edge (top/left) and -4.5 half a pixel past a trailing one (bottom/right).
+  const leadOffset = "-3.5px"; // top / left
+  const trailOffset = "-4.5px"; // bottom / right
+
+  const positions = {
+    tl: { top: leadOffset, left: leadOffset },
+    tr: { top: leadOffset, right: trailOffset },
+    bl: { bottom: trailOffset, left: leadOffset },
+    br: { bottom: trailOffset, right: trailOffset },
+  };
 
   if (position === "all") {
     return (
       <>
-        {/* Top-left */}
-        <span
-          className={baseClass}
-          style={{
-            width: size,
-            height: size,
-            top: topOffset,
-            left: sideOffset,
-          }}
-        />
-        {/* Top-right */}
-        <span
-          className={baseClass}
-          style={{
-            width: size,
-            height: size,
-            top: topOffset,
-            right: sideOffset,
-          }}
-        />
-        {/* Bottom-left */}
-        <span
-          className={baseClass}
-          style={{
-            width: size,
-            height: size,
-            bottom: topOffset,
-            left: sideOffset,
-          }}
-        />
-        {/* Bottom-right */}
-        <span
-          className={baseClass}
-          style={{
-            width: size,
-            height: size,
-            bottom: topOffset,
-            right: sideOffset,
-          }}
-        />
+        {(["tl", "tr", "bl", "br"] as const).map((corner) => (
+          <span
+            key={corner}
+            className={baseClass}
+            style={{ width: size, height: size, ...positions[corner] }}
+          />
+        ))}
       </>
     );
   }
-
-  const positions = {
-    tl: { top: topOffset, left: sideOffset },
-    tr: { top: topOffset, right: sideOffset },
-    bl: { bottom: topOffset, left: sideOffset },
-    br: { bottom: topOffset, right: sideOffset },
-  };
 
   const pos = positions[position];
 

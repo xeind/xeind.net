@@ -40,6 +40,14 @@ import type { ComponentProps } from "astro/types";
  * has an old number and no new one, an added line the reverse. A block with no
  * signs shows the one column, like a fenced block does.
  *
+ * `wrap={null}` on each row is not cosmetic. Left at its default, <Code> writes
+ * `overflow-x: auto` and `tabindex="0"` straight onto every <code> it emits —
+ * and this block emits one per row, so each line became its own scroll
+ * container and its own tab stop. On a machine set to show scroll bars always
+ * that painted a track under every line. The <pre> around them already scrolls;
+ * the rows never needed to. null is the option that drops the overflow styling
+ * rather than swapping it for wrapping.
+ *
  * Signal is carried three ways, none of them the code's own color:
  *   · the sign column, in the removed/added ink
  *   · a 12% wash behind the row
@@ -126,7 +134,7 @@ function rowStyle(line: DiffLine, i: number) {
         <span class="w-2 shrink-0 select-none" style={isChange(line.sign) ? `color:${ink(line.sign)}` : undefined} aria-hidden="true">
           {isChange(line.sign) ? line.sign : ""}
         </span>
-        <Code code={line.text} lang={lang} theme="css-variables" inline class="whitespace-pre" />
+        <Code code={line.text} lang={lang} theme="css-variables" inline wrap={null} class="whitespace-pre" />
       </div>
     ))
   }</pre>

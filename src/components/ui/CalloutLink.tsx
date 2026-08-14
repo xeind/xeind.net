@@ -44,17 +44,17 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
         className="group-hover:border-accent/60 transition-colors"
       />
       {/* The bottom pair rides the band's own border, which draws at
-          bottom:-1 to sit on the grid line — translate the diamonds the same
-          pixel so they stay centred on the stroke. */}
+          bottom:-1 to sit on the grid line — CornerDiamond's trailing offset
+          now centres on that stroke, so no nudge here. */}
       <CornerDiamond
         position="bl"
         variant="accent"
-        className="group-hover:border-accent/60 translate-y-px transition-colors"
+        className="group-hover:border-accent/60 transition-colors"
       />
       <CornerDiamond
         position="br"
         variant="accent"
-        className="group-hover:border-accent/60 translate-y-px transition-colors"
+        className="group-hover:border-accent/60 transition-colors"
       />
 
       {/* Three of this band's four edges are not its own to draw: it sits flush
@@ -62,13 +62,17 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
           top lands on the frame's own hairline. Drawing fresh borders there
           would put a second line beside each and read as 2px. These overlay the
           existing lines instead — invisible at rest, brightening the shared
-          hairline on hover so the whole boundary lights at once. The sides need
-          -1px because the band starts at the frame's padding box, one border
-          width inside the rail. */}
+          hairline on hover so the whole boundary lights at once. The band fills
+          the frame's content box, so the left rail is its first column and the
+          right rail the one just outside it — which is why only the left one
+          carries the resting colour: the band's own background covers the rail
+          there, so this overlay has to stand in for it (same accent/30 over the
+          same card, so the rail reads continuous), while on the right the real
+          rail shows through and a second stroke would double it. */}
       <div className="group-hover:border-accent/60 absolute top-0 right-0 left-0 border-t border-transparent transition-colors" />
       <div
-        className="group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-l border-transparent transition-colors"
-        style={{ left: -1 }}
+        className="border-accent/30 group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-l transition-colors"
+        style={{ left: 0 }}
       />
       <div
         className="group-hover:border-accent/60 pointer-events-none absolute top-0 bottom-0 border-r border-transparent transition-colors"

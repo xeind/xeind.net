@@ -128,7 +128,7 @@ function MdxHr() {
   // divider contributes exactly 48px of flow and the baselines below stay
   // on the half-cell.
   return (
-    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 -mt-px mb-6 h-px sm:-mx-8 md:-mx-12">
+    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 -mt-px mb-6 h-px sm:-mx-8 md:-mx-16">
       {/* Full-bleed glow strip (like main's hairlines) — the dashed line
           extends ±9999px past the card, so its glow must too. A clipped
           .edge-glow-layer would go dark the moment the cursor leaves the
@@ -138,7 +138,7 @@ function MdxHr() {
         aria-hidden="true"
       />
       <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
-      <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+      <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-3.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
       <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
     </div>
   );

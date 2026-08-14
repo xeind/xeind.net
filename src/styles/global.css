@@ -384,6 +384,26 @@ body {
   --logo-accent-35: #196099;
 }
 
+/* The sheet's own centering, in place of mx-auto. An auto margin splits the
+   leftover width in two, so whenever (available width − 1024) is odd — a 15px
+   scrollbar on a 1440 window, or any odd window — the sheet's edges land on a
+   half pixel. A browser paints a box edge on a whole CSS pixel, so the rails
+   still show up crisp; but a rotated child (every CornerDiamond) is NOT
+   snapped, it antialiases where the layout really is, and lands half a pixel
+   left of the rail it is supposed to mark. Measured at every width from 1436
+   to 1443, at 1x and 2x: exactly the odd ones were off, all by −0.50px.
+
+   round() to the nearest pixel, the same way the paint snaps and the same way
+   the gutter grid phases itself below, and the layout edge and the ink agree
+   at every width. Falls back to the auto above where round() is missing.
+
+   Clamped at 0: below the 1024 cap there is no leftover to split, and an
+   unclamped round() would go negative and pull the sheet off screen. */
+.sheet-centered {
+  margin-inline: auto;
+  margin-inline-start: max(0px, round(calc(50% - 32rem), 1px));
+}
+
 /* PAPER BACKGROUND - Outermost container */
 .paper-background {
   position: relative;
@@ -420,11 +440,22 @@ body {
      be a multiple of 16 — and plain "center" is 8px worse than it looks: 50%
      maps the tile's midpoint to the center, leaving every line half a cell
      off the sheet edge. The +8px (half a tile) walks the line onto the
-     center. When the element's width is odd the phase falls on a half pixel
-     and the lines antialias slightly — accepted; rounding it away would take
-     a script for a hairline only visible beside the sheet. Vertical phase
-     starts at the document top, which is a grid line by definition. */
+     center. Vertical phase starts at the document top, which is a grid line
+     by definition.
+
+     round() settles the odd-width case the PRD left open. A scrollbar, or an
+     odd window, makes the available width odd, so the centre lands on a half
+     pixel — and a browser paints a box edge and a background gradient
+     differently there: it snaps the sheet's painted rails to whole CSS pixels
+     (measured, at 1x AND 2x — a device pixel being smaller does not change
+     it) while it antialiases this gradient where the box really is, leaving
+     half a line showing beside the rail. Round the phase the way the snapping
+     rounds and the line goes back under the rail. Verified against the rail at
+     every width from 1436 to 1443, at 1x and 2x. The unrounded line above is
+     the fallback for browsers without round(): the grid is then half a pixel
+     soft at odd widths, as it was before. */
   background-position: calc(50% + calc(var(--grid-cell-size) / 2)) top;
+  background-position: calc(round(50%, 1px) + calc(var(--grid-cell-size) / 2)) top;
 }
 
 /* ========================================
@@ -1107,18 +1138,18 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   --edge-glow-ink: var(--color-tertiary);
 }
 
-/* The -1px on left/right is not a nudge — it is the border width. An absolutely
-   positioned child resolves its offsets against the containing block's PADDING
-   box, and this shell draws 1px left/right borders, so `left: 0` would start a
-   pixel inside the hairline the mask columns below are meant to light. Pulling
-   back by the border width puts the layer on the border box, where
-   --edge-glow-x (measured from the shell's border box) also lines up. */
+/* The -1px on the right is not a nudge — it is where the rail is. The mask
+   columns below light this layer's first and last pixel, so the layer has to
+   span the rails exactly: the left rail is the shell's first column, the right
+   rail is the column just outside it (every hairline on this site sits on the
+   pixel after its boundary), which makes the span one pixel wider than the
+   box. --edge-glow-x is measured from the shell's border box and lines up. */
 .edge-glow-layer {
   position: absolute;
   top: 0;
   right: -1px;
   bottom: 0;
-  left: -1px;
+  left: 0;
   z-index: 10;
   pointer-events: none;
   opacity: calc(var(--edge-glow-opacity) * var(--edge-glow-cap));

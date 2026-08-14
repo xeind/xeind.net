@@ -12,6 +12,7 @@
     if (document.getElementById("grid-ruler")) return;
     const major = "rgba(255,0,170,0.35)";
     const half = "rgba(255,0,170,0.12)";
+    const phase = (off) => `calc(round(50%, 1px) + ${off}px) top`;
     const el = document.createElement("div");
     el.id = "grid-ruler";
     el.setAttribute("aria-hidden", "true");
@@ -25,10 +26,12 @@
       "background-size:16px 16px,16px 16px,8px 8px,8px 8px;" +
       // Half-a-tile offsets so a tile EDGE (the drawn line) sits on the
       // element's center — same phase rule as the Blueprint gutter grid in
-      // global.css. Plain "center" puts the tile midpoint there instead and
-      // every line lands half a cell off the sheet edges.
-      "background-position:calc(50% + 8px) top,calc(50% + 8px) top," +
-      "calc(50% + 4px) top,calc(50% + 4px) top;";
+      // global.css, round() included: without it an odd available width leaves
+      // the ruler half a pixel off the rails it is meant to measure, at every
+      // devicePixelRatio. The reasoning is written out there.
+      // This file is served from public/ and is NOT cache-busted — hard-reload
+      // after editing it or you will measure against the old phase.
+      `background-position:${phase(8)},${phase(8)},${phase(4)},${phase(4)};`;
     const size = () => {
       el.style.height = document.documentElement.scrollHeight + "px";
     };
