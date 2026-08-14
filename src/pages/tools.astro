@@ -46,12 +46,14 @@ const structuredData = {
       {
         toolCategories.map((category, index) => (
           <div>
-            {index > 0 && <div class="border-accent/20 my-6 border-t border-dashed" />}
+            {index > 0 && (
+              <div class="border-accent/20 mt-[calc(1.5rem-1px)] mb-6 border-t border-dashed" />
+            )}
             <div>
-              <h2 class="text-accent mb-3 font-mono text-xs tracking-wide">{category.label}</h2>
-              <ul class="space-y-1">
+              <h2 class="text-accent mb-4 font-mono text-xs tracking-wide">{category.label}</h2>
+              <ul class="space-y-2">
                 {category.tools.map((tool) => (
-                  <li class="text-foreground/80 text-sm leading-relaxed">
+                  <li class="text-foreground/80 text-sm leading-6">
                     {tool.url ? (
                       <a
                         href={tool.url}

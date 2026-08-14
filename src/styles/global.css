@@ -384,11 +384,78 @@ body {
   --logo-accent-35: #196099;
 }
 
+/* The sheet's own centering, in place of mx-auto. An auto margin splits the
+   leftover width in two, so whenever (available width − 1024) is odd — a 15px
+   scrollbar on a 1440 window, or any odd window — the sheet's edges land on a
+   half pixel. A browser paints a box edge on a whole CSS pixel, so the rails
+   still show up crisp; but a rotated child (every CornerDiamond) is NOT
+   snapped, it antialiases where the layout really is, and lands half a pixel
+   left of the rail it is supposed to mark. Measured at every width from 1436
+   to 1443, at 1x and 2x: exactly the odd ones were off, all by −0.50px.
+
+   round() to the nearest pixel, the same way the paint snaps and the same way
+   the gutter grid phases itself below, and the layout edge and the ink agree
+   at every width. Falls back to the auto above where round() is missing.
+
+   Clamped at 0: below the 1024 cap there is no leftover to split, and an
+   unclamped round() would go negative and pull the sheet off screen. */
+.sheet-centered {
+  margin-inline: auto;
+  margin-inline-start: max(0px, round(calc(50% - 32rem), 1px));
+}
+
 /* PAPER BACKGROUND - Outermost container */
 .paper-background {
   position: relative;
   background-color: var(--color-muted);
   min-height: 100dvh;
+}
+
+/* Blueprint rules its margins like drafting paper. Tertiary is the theme's
+   unexposed white, so the lines are the same ink the marks and the edge glow
+   use. 8%, not more: at 15% the gutter grid read as a second surface competing
+   with the sheet rather than as the paper the sheet sits on.
+
+   Only the gutters get this. main is max-w-5xl with bg-card over the paper, so
+   the grid shows beside the sheet and nowhere else — and below 1024px there
+   are no gutters, so it is a wide-screen detail by construction. The footer is
+   fixed with an opaque bg-accent layer, so nothing shows through there. */
+[data-theme="blueprint"] .paper-background {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-tertiary) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-tertiary) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: var(--grid-cell-size) var(--grid-cell-size);
+  /* calc(50% + 8px), not the default 0 0: the sheet is mx-auto centered and
+     max-w-5xl is exactly 64 cells, so phasing a tile EDGE onto the element's
+     center puts a grid line on both sheet edges at any viewport width.
+     Left-anchored tiles only lined up when (viewport − 1024) / 2 happened to
+     be a multiple of 16 — and plain "center" is 8px worse than it looks: 50%
+     maps the tile's midpoint to the center, leaving every line half a cell
+     off the sheet edge. The +8px (half a tile) walks the line onto the
+     center. Vertical phase starts at the document top, which is a grid line
+     by definition.
+
+     round() settles the odd-width case the PRD left open. A scrollbar, or an
+     odd window, makes the available width odd, so the centre lands on a half
+     pixel — and a browser paints a box edge and a background gradient
+     differently there: it snaps the sheet's painted rails to whole CSS pixels
+     (measured, at 1x AND 2x — a device pixel being smaller does not change
+     it) while it antialiases this gradient where the box really is, leaving
+     half a line showing beside the rail. Round the phase the way the snapping
+     rounds and the line goes back under the rail. Verified against the rail at
+     every width from 1436 to 1443, at 1x and 2x. The unrounded line above is
+     the fallback for browsers without round(): the grid is then half a pixel
+     soft at odd widths, as it was before. */
+  background-position: calc(50% + calc(var(--grid-cell-size) / 2)) top;
+  background-position: calc(round(50%, 1px) + calc(var(--grid-cell-size) / 2)) top;
 }
 
 /* ========================================
@@ -643,6 +710,11 @@ body {
 code {
   font-family: var(--font-mono);
   font-size: 0.8125em;
+  /* line-height 1, not inherited: with the prose's 32px line-height the mono
+     font's baseline metrics stick 1px past the serif strut and every line
+     holding a chip becomes 33px — off the 8px baseline grid. A collapsed
+     box rides inside the strut instead. */
+  line-height: 1;
   padding: 0.125rem 0.375rem;
   border: 1px dashed var(--color-accent);
   border-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
@@ -825,9 +897,14 @@ pre.astro-code {
   position: relative;
   background-color: var(--color-muted) !important;
   border: 1px dashed color-mix(in srgb, var(--color-accent) 15%, transparent);
+  /* The two border hairlines overlap the neighbouring blocks' pixels instead
+     of adding height, so the prose after a code block stays on the 8px
+     baseline grid (same pattern as the blog figure mats). */
+  margin-block: -1px;
   font-family: var(--font-mono) !important;
   font-size: 0.8125rem;
-  line-height: 1.75;
+  /* 24px — 13px mono on the 8px baseline grid (was 1.75 ≈ 22.75px). */
+  line-height: 1.5rem;
   padding: 1rem;
   overflow-x: auto;
   counter-reset: line;
@@ -837,6 +914,8 @@ pre.astro-code[data-language] {
 }
 pre.astro-code[data-has-header] {
   border-top: none;
+  /* No top border to absorb — the header row above carries that hairline. */
+  margin-top: 0;
 }
 
 /* Language label */
@@ -887,7 +966,7 @@ pre.astro-code code {
 }
 pre.astro-code code > .line {
   font-size: 0.8125rem;
-  line-height: 1.75;
+  line-height: 1.5rem;
 }
 
 /* After title extraction, Shiki leaves an empty first .line.
@@ -1045,18 +1124,32 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
     color-mix(in srgb, var(--edge-glow-ink) 15.6%, transparent) 75%, transparent 100%;
 }
 
-/* The -1px on left/right is not a nudge — it is the border width. An absolutely
-   positioned child resolves its offsets against the containing block's PADDING
-   box, and this shell draws 1px left/right borders, so `left: 0` would start a
-   pixel inside the hairline the mask columns below are meant to light. Pulling
-   back by the border width puts the layer on the border box, where
-   --edge-glow-x (measured from the shell's border box) also lines up. */
+/* Blueprint lights its edges with the unexposed white rather than the derived
+   mix. The default ink is 68% accent + 32% foreground, which on this theme
+   lands near #edf6ff — near-white, but carrying the same blue cast as every
+   other token, so the rails read as one more cobalt line instead of a drawn
+   one. Tertiary is the theme's pure white and already the top of the drafting
+   ladder, so the lamp matches the CTA's hover brackets.
+
+   This has to sit at shell scope. --edge-glow-ink is declared on
+   .edge-glow-shell itself, so a [data-theme] rule on the document would never
+   reach it — the element's own declaration wins over an inherited value. */
+[data-theme="blueprint"] .edge-glow-shell {
+  --edge-glow-ink: var(--color-tertiary);
+}
+
+/* The -1px on the right is not a nudge — it is where the rail is. The mask
+   columns below light this layer's first and last pixel, so the layer has to
+   span the rails exactly: the left rail is the shell's first column, the right
+   rail is the column just outside it (every hairline on this site sits on the
+   pixel after its boundary), which makes the span one pixel wider than the
+   box. --edge-glow-x is measured from the shell's border box and lines up. */
 .edge-glow-layer {
   position: absolute;
   top: 0;
   right: -1px;
   bottom: 0;
-  left: -1px;
+  left: 0;
   z-index: 10;
   pointer-events: none;
   opacity: calc(var(--edge-glow-opacity) * var(--edge-glow-cap));
@@ -1142,6 +1235,9 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   inset: -1px;
   z-index: 0;
   border: 1px solid var(--edge-glow-ink);
+  /* Matches the diamond's own 1px corner, so the glow ring doesn't square off
+     against the mark it traces. */
+  border-radius: 1px;
   opacity: calc(var(--edge-node-strength) * var(--edge-glow-cap));
   pointer-events: none;
   /* Same duration as the rails and the strips — one settling time. */
@@ -1232,6 +1328,28 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   aspect-ratio: 16 / 9;
 }
 
+/* Above the sheet cap the article column is a constant width, so each
+   collage's aspect-driven height is a constant too — a fractional one that
+   pushes every baseline after it off the 8px half-cell. Pin the box heights
+   to the grid there (nearest 8px step to what the ratios produced) and let
+   the ratios keep governing below the cap, where there are no gutters to
+   register against. object-cover absorbs the ≤4px difference. */
+@media (min-width: 1024px) {
+  .blog-grid-2 {
+    aspect-ratio: auto;
+    height: 520px;
+  }
+  .blog-grid-3,
+  .blog-grid-5 {
+    aspect-ratio: auto;
+    height: 696px;
+  }
+  .blog-grid-4 {
+    aspect-ratio: auto;
+    height: 584px;
+  }
+}
+
 /* 3-up: big top (one full-width image, two below) */
 .blog-grid-3 {
   grid-template-columns: 1fr 1fr;
@@ -1309,4 +1427,118 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   color: var(--scrim-ink);
   background: rgb(0 0 0 / 0.5);
   padding: 2px 8px;
+}
+
+/* ========================================
+   TOASTER — public/toaster.js
+
+   Sonner's behaviour on this site's surface: a top-right stack, newest at the
+   front, the ones behind dropped below it and scaled down, the whole stack
+   expanding on hover. Plain CSS, not Tailwind, since public/ scripts aren't
+   scanned for utility classes.
+
+   Top, not sonner's default bottom: the footer is fixed at 128px and puts the
+   theme-cycle button in the bottom right. A toast there lands on the only
+   persistent control on the site the moment a reader reaches the end of a
+   page. The top of the viewport is the one region with no fixed furniture —
+   and it is also where every code block keeps its copy button, so the toast
+   arrives beside the thing that sent it.
+
+   Colour comes from the footer, not from a card. The footer is the site's one
+   inverted band — bg-accent under text-background — and it is the only place
+   the site speaks in its own voice rather than showing content. A toast does
+   the same job, so it wears the same clothes: accent ground, background ink,
+   the dashed rule at background/30 that the footer's own links use. This also
+   fixes Kozo, where a card-surfaced toast was light ink on light paper.
+
+   One dashed hairline and nothing else — no corner brackets. design-system.md
+   §7 keeps brackets for clickable cards, and a toast that dismisses on click
+   is still not a link.
+   ======================================== */
+
+.toaster {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  /* Same rung as the lightbox: it has to clear the project-grid modal portal,
+     which mounts later in <body> and out-paints anything at its own z-50. */
+  z-index: 9998;
+  width: 22rem;
+  max-width: calc(100vw - 2rem);
+  /* Zero-height anchor. Every toast is absolutely positioned off its top
+     edge, so the container never covers the page it sits over. */
+  height: 0;
+  pointer-events: none;
+}
+
+.toast {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-accent);
+  border: 1px dashed color-mix(in srgb, var(--color-background) 30%, transparent);
+  pointer-events: auto;
+  cursor: pointer;
+  /* The stack drags on touch; without this the page scrolls instead. */
+  touch-action: none;
+  /* Tops stay aligned as the toasts behind scale down. */
+  transform-origin: top center;
+  transform: translate3d(var(--swipe-x, 0px), calc(var(--y, 0px) + var(--swipe-y, 0px)), 0)
+    scale(var(--scale, 1));
+  opacity: var(--toast-opacity, 1);
+  /* 0.3s easeOutCubic — DURATION.slow, the top of the house band. A toast
+     travels its own height, which is further than a hover state moves. */
+  transition:
+    transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
+    opacity 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  will-change: transform, opacity;
+}
+
+/* Bridges the gap below each toast so crossing it while the stack is expanded
+   doesn't read as a pointerleave and collapse everything under the cursor. */
+.toast::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+.toast[data-state="entering"],
+.toast[data-state="removed"] {
+  --y: -100%;
+  --toast-opacity: 0;
+}
+
+/* Drag follows the finger with no lag; the transition comes back on release,
+   so a throw that falls short springs home on the house curve. */
+.toast[data-swiping] {
+  transition: none;
+}
+
+.toast-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-tight);
+  color: var(--color-background);
+}
+
+.toast-description {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  letter-spacing: 0.025em;
+  /* 70%, the same step the footer's own mono meta line takes. */
+  color: color-mix(in srgb, var(--color-background) 70%, transparent);
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
 }

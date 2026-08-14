@@ -41,7 +41,9 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
 <Panel
   edges="none | top | bottom | both"      // default: both — full-bleed hairlines
   ornaments="none | top | bottom | all"   // default: all  — corner diamonds
-  padding="sm | md | lg"                  // default: md
+  padding="sm | md | lg"                  // default: md — every section uses it.
+                                          // sm and lg are fallow; don't reach
+                                          // for one to make a section special.
 />
 
 <SectionDivider variant="dashed | grid | grid-broken" />   // default: dashed
@@ -49,7 +51,14 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
 <Badge variant="default | accent | muted">TypeScript</Badge>
 
 <CornerDiamond position="tl | tr | bl | br | all" size={8} variant="default | accent | frame" />
-// `frame` (accent/30) is the page's outer edge in Layout.astro — nothing else.
+// `frame` (accent/30, paper fill) is any mark sitting ON the sheet's outer
+// edge — the page frame, every Panel corner, and all four of CalloutLink's,
+// since the band fills the frame's content box and its sides land on the rails.
+// `accent` (accent/20, card fill) is for marks on a rule drawn inside the
+// sheet; only the /design specimens use it today.
+// The fill follows the surface: `frame` takes --color-muted (the paper),
+// `default` and `accent` take --color-card. It is opaque on purpose — the
+// hairlines are alpha, so an unfilled mark doubles the ink where it crosses one.
 
 <InlineLink href="…" external hintLabel="…">text</InlineLink>
 

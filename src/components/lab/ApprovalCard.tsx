@@ -55,20 +55,22 @@ export default function ApprovalCard({ children, className = "" }: ApprovalCardP
 
   return (
     <div
-      className={`border-accent/30 bg-card relative border border-dashed p-4 sm:p-6 ${className}`}
+      // -my-px: the card's two border hairlines overlap its neighbours'
+      // pixels instead of adding height, so the panel below stays on the grid.
+      className={`border-accent/30 bg-card relative -my-px border border-dashed p-4 sm:p-6 ${className}`}
     >
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <Badge variant="accent">Needs approval</Badge>
         <span className="text-foreground font-mono text-[0.8125rem]">{APPROVAL.action}</span>
       </div>
 
-      <p className="text-foreground/70 mb-4 text-sm leading-relaxed">{APPROVAL.summary}</p>
+      <p className="text-foreground/70 mb-4 text-sm leading-6">{APPROVAL.summary}</p>
 
       {/* The diff arrives as slotted children from the Astro page, rendered by
           blog/DiffBlock.astro. It is static and shiki only highlights at build
           time, so it stays server-rendered and never hydrates — the island
           wraps it without owning it. Same component the blog uses. */}
-      <div className="mb-5">{children}</div>
+      <div className="mb-4">{children}</div>
 
       {/* One wrapper across both states, with the button row's height held by
           min-h. The resolved state is a line of text and would otherwise be

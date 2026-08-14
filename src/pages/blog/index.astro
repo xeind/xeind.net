@@ -54,7 +54,7 @@ const blogStructuredData = {
     <Panel edges="bottom" ornaments="bottom" className="flex-1">
       {
         posts.length === 0 ? (
-          <p class="text-foreground/80 font-serif text-base leading-relaxed">No posts yet.</p>
+          <p class="text-foreground/80 font-serif text-base leading-8">No posts yet.</p>
         ) : (
           <div class="flex flex-col">
             {posts.map((post) => (
@@ -67,7 +67,7 @@ const blogStructuredData = {
                 >
                   <time
                     datetime={post.data.date.toISOString()}
-                    class="text-accent mb-1 block font-mono text-xs tracking-wide tabular-nums"
+                    class="text-accent mb-2 block font-mono text-xs leading-4 tracking-wide tabular-nums"
                   >
                     {post.data.date.toLocaleDateString("en-US", {
                       year: "numeric",
@@ -75,10 +75,10 @@ const blogStructuredData = {
                       day: "numeric",
                     })}
                   </time>
-                  <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg [text-wrap:balance] transition-colors">
+                  <h2 class="text-foreground group-hover:text-tertiary mb-2 font-serif text-lg leading-6 [text-wrap:balance] transition-colors">
                     {post.data.title}
                   </h2>
-                  <p class="text-foreground/60 mb-3 font-serif text-base leading-relaxed [text-wrap:pretty]">
+                  <p class="text-foreground/60 mb-4 font-serif text-base leading-8 [text-wrap:pretty]">
                     {post.data.excerpt}
                   </p>
                   {post.data.tags.length > 0 && (
@@ -94,7 +94,9 @@ const blogStructuredData = {
                     bottom edge cannot do that job here: it is `flex-1` inside
                     a min-h-screen column, so it stretches to the fold and its
                     hairline lands far below the final tag row. */}
-                <div class="edge-glow-shell edge-glow-shell-horizontal relative -mx-5 my-5 h-px sm:-mx-8 md:-mx-12">
+                {/* mt is 24px minus the rule's own pixel, so each entry
+                    contributes a whole number of half-cells to the list. */}
+                <div class="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 mt-[calc(1.5rem-1px)] mb-6 h-px sm:-mx-8 md:-mx-16">
                   {/* Full-bleed glow strip (like main's hairlines) — the
                       dashed line extends ±9999px past the card, so its
                       glow must too. */}
@@ -103,7 +105,7 @@ const blogStructuredData = {
                     aria-hidden="true"
                   />
                   <div class="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
-                  <span class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+                  <span class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-3.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
                   <span class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
                 </div>
               </div>
@@ -115,13 +117,16 @@ const blogStructuredData = {
     <SectionDivider variant="grid" />
 
     <Panel edges="top" ornaments="top">
-      <a
-        href="/"
-        data-hero-sfx="click"
-        class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm transition-colors hover:border-solid"
-      >
-        &larr; Home
-      </a>
+      {/* h-6: caps the link's pb-px + underline border at one 24px line. */}
+      <div class="flex h-6 items-center">
+        <a
+          href="/"
+          data-hero-sfx="click"
+          class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm leading-6 transition-colors hover:border-solid"
+        >
+          &larr; Home
+        </a>
+      </div>
     </Panel>
   </div>
 </Layout>

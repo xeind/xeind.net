@@ -31,9 +31,9 @@ const hydrate = { rootMargin: "300px" };
   noindex
 >
   <div class="flex flex-col">
-    <Panel padding="lg" edges="bottom" ornaments="bottom">
+    <Panel edges="bottom" ornaments="bottom">
       <h1 class="text-foreground mb-4 font-serif text-2xl">Lab</h1>
-      <p class="text-foreground/70 max-w-2xl text-sm leading-relaxed">
+      <p class="text-foreground/70 max-w-2xl text-sm leading-6">
         Interface pieces for software that thinks out loud — waiting, streaming, reasoning, asking
         permission, reporting back. Every one is drawn in this site's ink: hairlines, dashed
         borders, mono figures, sharp corners and no status colors. They share one fictional run, so
@@ -45,15 +45,15 @@ const hydrate = { rootMargin: "300px" };
 
     <Panel>
       <h2 class="text-accent mb-2 font-mono text-xs tracking-wide">WAITING</h2>
-      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
         Agent work has no known end, so a progress bar would be a lie. The grid says the work is
         alive; the timer says how long you have been waiting. Neither claims to know how much is
         left.
       </p>
       <LoadingState client:visible={hydrate} />
 
-      <div class="border-accent/20 mt-8 border-t border-dashed pt-6">
-        <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <div class="border-accent/20 mt-[calc(2rem-1px)] border-t border-dashed pt-6">
+        <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
           Nine cells, opacity only, no color and no movement — so the whole vocabulary is which cell
           is lit and when. Four patterns fit in that, and each says something different about the
           wait.
@@ -61,8 +61,8 @@ const hydrate = { rootMargin: "300px" };
         <PixelGridSet client:visible={hydrate} />
       </div>
 
-      <div class="border-accent/20 mt-8 border-t border-dashed pt-6">
-        <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <div class="border-accent/20 mt-[calc(2rem-1px)] border-t border-dashed pt-6">
+        <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
           The same four at 6×6. Every pattern is a function of the grid size, so this is one
           resolution of the same idea, not a second set of numbers — and each sweep slows in
           proportion, because there are more cells to cross.
@@ -75,7 +75,7 @@ const hydrate = { rootMargin: "300px" };
 
     <Panel>
       <h2 class="text-accent mb-2 font-mono text-xs tracking-wide">STREAMING</h2>
-      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
         A word at a time, not a character at a time. Whole words let you start reading the first
         line while the third is still arriving — chasing a character cursor is watching, not
         reading.
@@ -87,7 +87,7 @@ const hydrate = { rootMargin: "300px" };
 
     <Panel>
       <h2 class="text-accent mb-2 font-mono text-xs tracking-wide">REASONING</h2>
-      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
         The trace is evidence, not content, so it rests collapsed. The summary line carries the
         total; only a reader who doubts the answer opens the rest.
       </p>
@@ -98,7 +98,7 @@ const hydrate = { rootMargin: "300px" };
 
     <Panel>
       <h2 class="text-accent mb-2 font-mono text-xs tracking-wide">APPROVAL</h2>
-      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
         Two competing actions and one accent per theme, so they cannot be told apart by color. The
         primary action takes a solid border, the secondary a dashed one — the same grammar the rest
         of the site uses for resting against engaged.
@@ -112,7 +112,7 @@ const hydrate = { rootMargin: "300px" };
 
     <Panel edges="top" ornaments="top">
       <h2 class="text-accent mb-2 font-mono text-xs tracking-wide">STATE</h2>
-      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-relaxed">
+      <p class="text-foreground/60 mb-6 max-w-2xl text-sm leading-6">
         Status without status colors. Running, done and failed are three states, not a matched pair
         like a diff's two, so there is no palette to borrow — state rides on the marker, the rail
         and the spelled-out word instead. The word is doing the real work; the rest lets you scan

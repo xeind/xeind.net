@@ -38,9 +38,9 @@ export default function PullQuoteCard({
 
   const authorBlock = (
     <div className="min-w-0">
-      <p className="text-foreground text-[0.8125rem] leading-none font-medium">{author}</p>
+      <p className="text-foreground text-[0.8125rem] leading-4 font-medium">{author}</p>
       {role ? (
-        <p className="text-foreground/55 mt-1 font-mono text-[0.64rem] tracking-[0.18em] uppercase">
+        <p className="text-foreground/55 font-mono text-[0.64rem] leading-4 tracking-[0.18em] uppercase">
           {role}
         </p>
       ) : null}
@@ -49,7 +49,11 @@ export default function PullQuoteCard({
 
   return (
     <figure
-      className={`group border-accent/25 bg-card relative my-8 overflow-hidden border border-dashed p-5 sm:p-6 ${className}`}
+      // py is 24px minus the border hairline, so the card's border-box is a
+      // whole number of half-cells and the prose after it stays on the grid
+      // (a negative margin would be eaten by a neighbour's larger margin in
+      // collapse).
+      className={`group border-accent/25 bg-card relative my-8 overflow-hidden border border-dashed px-6 py-[23px] ${className}`}
     >
       <div className="absolute top-0 left-0 z-10">
         <div
@@ -116,7 +120,7 @@ export default function PullQuoteCard({
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             {label ? (
-              <p className="text-accent/70 mb-3 font-mono text-[0.65rem] tracking-[0.24em] uppercase">
+              <p className="text-accent/70 mb-4 font-mono text-[0.65rem] leading-4 tracking-[0.24em] uppercase">
                 {label}
               </p>
             ) : null}
@@ -126,14 +130,16 @@ export default function PullQuoteCard({
               </p>
             ) : null}
           </div>
-          <span className="text-accent/35 font-serif text-6xl leading-none">“</span>
+          {/* 56px, not text-6xl's 60 — the mark sets the header row's height,
+            and 56 keeps that row on the 8px half-cell. */}
+          <span className="text-accent/35 font-serif text-[3.5rem] leading-none">“</span>
         </div>
 
-        <blockquote className="text-foreground/90 [&_mark]:bg-accent/15 [&_mark]:text-foreground [&_mark]:selection:bg-accent/30 font-serif text-base leading-[1.9] tracking-[-0.01em] [text-wrap:pretty] [hanging-punctuation:first_last] [&_mark]:rounded-[2px] [&_mark]:px-0.5 [&_mark]:py-px [&_mark]:not-italic">
+        <blockquote className="text-foreground/90 [&_mark]:bg-accent/15 [&_mark]:text-foreground [&_mark]:selection:bg-accent/30 font-serif text-base leading-8 tracking-[-0.01em] [text-wrap:pretty] [hanging-punctuation:first_last] [&_mark]:rounded-[2px] [&_mark]:px-0.5 [&_mark]:py-px [&_mark]:not-italic">
           {children}
         </blockquote>
 
-        <figcaption className="mt-auto flex items-center gap-3">
+        <figcaption className="mt-auto flex items-center gap-4">
           <span className="border-accent/25 bg-muted relative flex size-10 shrink-0 items-center justify-center overflow-hidden border border-dashed">
             {avatarSrc ? (
               <img

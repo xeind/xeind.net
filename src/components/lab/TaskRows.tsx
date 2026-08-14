@@ -66,10 +66,12 @@ export default function TaskRows({ className = "" }: { className?: string }) {
             >
               {task.name}
             </span>
-            <span className="text-foreground/45 block font-mono text-[0.625rem]">{task.meta}</span>
+            <span className="text-foreground/45 block font-mono text-[0.625rem] leading-4">
+              {task.meta}
+            </span>
           </span>
 
-          <span className="text-foreground/50 shrink-0 font-mono text-[0.625rem] tracking-wide">
+          <span className="text-foreground/50 shrink-0 font-mono text-[0.625rem] leading-4 tracking-wide">
             {STATE_LABEL[task.state]}
           </span>
         </li>

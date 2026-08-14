@@ -42,6 +42,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# Grid-rewrite screenshot rig output (scripts/grid-shots.mjs)
+/shots/
+
 # Lighthouse reports
 lighthouse-*.json
 lighthouse-*.html

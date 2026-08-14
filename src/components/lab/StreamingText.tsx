@@ -62,7 +62,7 @@ export default function StreamingText({ text, className = "" }: StreamingTextPro
     <div className={className}>
       {/* The full text is in the DOM for assistive tech and for anyone reading
           the source — only the tail is visually hidden while it arrives. */}
-      <p className="text-foreground/80 text-sm leading-relaxed">
+      <p className="text-foreground/80 text-sm leading-6">
         <span className="sr-only">{text}</span>
         <span aria-hidden="true">
           {words.slice(0, visible).join(" ")}
@@ -83,7 +83,7 @@ export default function StreamingText({ text, className = "" }: StreamingTextPro
       <button
         type="button"
         onClick={replay}
-        className="border-accent/30 text-foreground/60 hover:border-accent/50 hover:bg-muted hover:text-tertiary focus-visible:ring-accent mt-4 border border-dashed px-2 py-1 font-mono text-[0.6875rem] transition-[background-color,border-color,color] hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        className="border-accent/30 text-foreground/60 hover:border-accent/50 hover:bg-muted hover:text-tertiary focus-visible:ring-accent mt-4 inline-flex h-6 items-center border border-dashed px-2 font-mono text-[0.6875rem] leading-4 transition-[background-color,border-color,color] hover:border-solid focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         style={CSS_TRANSITIONS.border}
       >
         Replay
