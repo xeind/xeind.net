@@ -33,10 +33,15 @@ function HeroActionLink({
       // either side plus whatever "View Resume" and its chip happen to render
       // (118.91px), so the right edge landed at 13.43 cells and the second
       // button inherited the fraction. 14 cells fits the longest label with
-      // room; py-3 makes the box 48px, 3 cells, instead of 40. Below md the
-      // sheet is fluid and nothing can register, so the width is intrinsic
-      // there and the buttons wrap as before.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
+      // room. Below md the sheet is fluid and nothing can register, so the
+      // width is intrinsic there and the buttons wrap as before.
+      //
+      // py-2 makes the box 40px: the 24px label line plus a half-cell above and
+      // below. 48px was a by-product of the width work rather than a call about
+      // how tall a button should be, and it read heavy against the 32px callout
+      // band. 32 itself was rendered and rejected — the shortcut chip is 24px,
+      // so it left 4px of air and looked jammed in its frame.
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -125,7 +130,13 @@ function HeroActionLink({
       </div>
 
       {/* 24px label line + py-2 = a 40px control, whole half-cells top to
-          bottom; the 24px shortcut chip centres inside the same line box. */}
+          bottom; the shortcut chip centres inside the same line box. The chip
+          is one cell square: h-4 w-4, its 16px line by 16px of width, with the
+          key centred in it. The width is set rather than left to the glyph —
+          padding plus a mono advance came to 15.2px, which held only while
+          every shortcut was one letter wide in the same face. It was 24px tall
+          and was the tallest thing in the button, which put the emphasis on the
+          shortcut rather than on the label. */}
       <div className="relative z-10 flex items-center justify-center gap-3">
         <span
           className="font-serif text-sm leading-6 transition-all"
@@ -135,7 +146,7 @@ function HeroActionLink({
         </span>
         {badge && (
           <span
-            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 px-2 py-1 font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 inline-flex h-4 w-4 items-center justify-center font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
             style={CSS_TRANSITIONS.border}
           >
             {badge}
