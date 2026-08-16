@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
+import CornerDiamond from "@/components/ui/CornerDiamond";
 import { SITE, absoluteUrl } from "@/lib/config/site";
 
 const posts = (await getCollection("blog"))
@@ -105,8 +106,11 @@ const blogStructuredData = {
                     aria-hidden="true"
                   />
                   <div class="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
-                  <span class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-3.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
-                  <span class="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+                  {/* The shell is -mx-16 at the cap, so these land on the
+                      sheet's rails, half over the paper. That is the frame
+                      case. */}
+                  <CornerDiamond position="tl" variant="frame" />
+                  <CornerDiamond position="tr" variant="frame" />
                 </div>
               </div>
             ))}

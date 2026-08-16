@@ -1,4 +1,5 @@
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
+import CornerDiamond from "@/components/ui/CornerDiamond";
 import PretextBlock from "./PretextBlock";
 import PullQuoteCard from "./PullQuoteCard";
 
@@ -138,8 +139,10 @@ function MdxHr() {
         aria-hidden="true"
       />
       <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
-      <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] left-[-3.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
-      <span className="edge-glow-node bg-card border-accent/20 absolute top-[-3.5px] right-[-4.5px] z-10 h-2 w-2 rotate-45 rounded-[1px] border" />
+      {/* The shell is -mx-16 at the cap, so these land on the sheet's rails,
+          half over the paper. That is the frame case. */}
+      <CornerDiamond position="tl" variant="frame" />
+      <CornerDiamond position="tr" variant="frame" />
     </div>
   );
 }
