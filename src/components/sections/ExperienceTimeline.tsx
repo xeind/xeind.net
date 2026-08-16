@@ -41,7 +41,7 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
         <div className="mb-4">
           <h3 className="text-foreground font-serif text-base leading-6">{exp.role}</h3>
           <div className="text-foreground/60 mt-2 flex flex-col gap-2 text-sm leading-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               {exp.companyUrl ? (
                 <span className="inline-block">
                   <a

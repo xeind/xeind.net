@@ -23,21 +23,41 @@ const EXTENSIONS = new Set([".tsx", ".ts", ".astro", ".css", ".mdx"]);
 const TIMING_SOURCES = new Set(["src/lib/config/animation.ts", "src/styles/global.css"]);
 const COLOR_SOURCES = new Set(["src/styles/global.css"]);
 
+// Specimens draw arbitrary geometry to show it — a figure demonstrating a 6px
+// step must be free to write one. Both directories are specimens-only
+// (src/components/AGENTS.md); nothing in them ships to a real page. The pages
+// that host them are NOT exempt: page layout answers to the grid.
+const isSpecimen = (file) =>
+  file.startsWith("src/components/design/") || file.startsWith("src/components/lab/");
+
 // THE closed sets — this block is the owner (design-system.md §0). The doc's
 // tables describe these values for humans; when they disagree, these win.
 // Extending a set is a design decision: change it here, then update the doc's
 // prose in the same commit.
 const Z_CLASSES = new Set(["-z-10", "z-0", "z-10", "z-20", "z-30", "z-40", "z-50"]);
 const TEXT_ARBITRARY = new Set(["text-[0.625rem]", "text-[0.6875rem]", "text-[0.8125rem]"]);
-const GAPS = new Set([
-  ...["0.75", "1", "1.5", "2", "3", "4", "5", "6", "8"].map((n) => `gap-${n}`),
-  "gap-x-3",
-  "gap-x-4",
-  "gap-y-1",
-  "gap-y-2",
-]);
-const STACKS = new Set(["1", "1.5", "2", "3", "4", "6", "8"].map((n) => `space-y-${n}`));
 const RADII = new Set(["rounded-[1px]", "rounded-[2px]", "rounded-none"]);
+
+// The 8/16 grid (docs/prd-grid-alignment.md). Every spacing utility steps in
+// half-cells: Tailwind's scale is 4px per step, so a legal step is even. The
+// one exception is `-1` (4px), the quarter step, for inline gaps that would
+// otherwise touch. `-px` is the hairline itself — `-mt-px` absorbs a rule.
+// Longest first: `gap-x` must win over `gap`, `px` over `p`.
+const SPACING_UTILITIES = "space-x|space-y|gap-x|gap-y|gap|px|py|pt|pr|pb|pl|p|mx|my|mt|mr|mb|ml|m";
+const isGridStep = (n) => n === 0 || n === 1 || (Number.isInteger(n) && n % 2 === 0);
+
+// An arbitrary value is legal at a whole half-cell, or one pixel either side of
+// one: a box that absorbs the hairline it meets writes 7px for 8, 23px for 24
+// ("absorb a hairline, don't excuse it", AGENTS.md). calc() and var() carry
+// their own reasoning and are read by eye, not by regex.
+function isGridArbitrary(raw) {
+  if (/calc\(|var\(|%|vh|vw|ch|em\b/.test(raw)) return true;
+  const m = raw.match(/^(-?[0-9.]+)(px|rem)?$/);
+  if (!m) return false;
+  const px = m[2] === "rem" ? Number(m[1]) * 16 : Number(m[1]);
+  const off = Math.abs(px) % 8;
+  return off === 0 || off === 1 || off === 7;
+}
 
 // Strip responsive/state prefixes: md:gap-8 → gap-8, group-hover:z-10 → z-10.
 const stripVariants = (cls) => cls.slice(cls.lastIndexOf(":") + 1);
@@ -139,16 +159,27 @@ const RULES = [
   },
   {
     id: "spacing",
-    message: "off-ladder gap/stack — the legal sets in design-system.md §5",
-    test(line) {
+    message: "off-grid spacing — 8px half-cells, or -1/4px between inline things (§5)",
+    test(line, file) {
+      if (isSpecimen(file) || file.endsWith(".css")) return [];
       const hits = [];
-      for (const m of line.matchAll(/\b(?:gap(?:-[xy])?|space-[xy])-[0-9.]+\b/g)) {
-        const cls = stripVariants(m[0]);
+      const pattern = new RegExp(
+        `(?:^|[\\s"'\`{])(-?(?:${SPACING_UTILITIES})-(\\[[^\\]]+\\]|[0-9.]+|px))`,
+        "g",
+      );
+      for (const m of line.matchAll(pattern)) {
+        const cls = stripVariants(m[1]);
         if (cls.startsWith("space-x")) {
-          hits.push(cls); // no space-x on the ladder at all
+          hits.push(cls); // no space-x anywhere — the stack is vertical
           continue;
         }
-        if (cls.startsWith("gap") ? !GAPS.has(cls) : !STACKS.has(cls)) hits.push(cls);
+        const value = m[2];
+        if (value === "px") continue; // the hairline itself
+        if (value.startsWith("[")) {
+          if (!isGridArbitrary(value.slice(1, -1))) hits.push(cls);
+          continue;
+        }
+        if (!isGridStep(Number(value))) hits.push(cls);
       }
       return hits;
     },
@@ -352,7 +383,17 @@ const FIXTURES = [
   ["text-size", 'className="text-[0.6875rem]"', "src/x.tsx", false],
   ["spacing", 'className="gap-7"', "src/x.tsx", true],
   ["spacing", 'className="md:gap-8"', "src/x.tsx", false],
-  ["spacing", 'className="space-y-12"', "src/x.tsx", true],
+  ["spacing", 'className="space-y-12"', "src/x.tsx", false],
+  ["spacing", 'className="py-5"', "src/x.tsx", true], // the PRD's exit condition
+  ["spacing", 'className="mb-3"', "src/x.tsx", true],
+  ["spacing", 'className="py-1.5"', "src/x.tsx", true],
+  ["spacing", 'className="gap-1"', "src/x.tsx", false], // the quarter step
+  ["spacing", 'className="-mt-px"', "src/x.tsx", false],
+  ["spacing", 'className="pb-[7px]"', "src/x.tsx", false], // 8px absorbing a hairline
+  ["spacing", 'className="pb-[13px]"', "src/x.tsx", true],
+  ["spacing", 'className="mt-[calc(2rem-1px)]"', "src/x.tsx", false],
+  ["spacing", 'className="space-x-2"', "src/x.tsx", true],
+  ["spacing", 'className="py-5"', "src/components/lab/X.tsx", false], // specimen
   ["timing", 'className="duration-300"', "src/x.tsx", true],
   ["timing", "transition: all 180ms cubic-bezier(0.2, 0, 0, 1);", "src/x.astro", true],
   ["timing", "cubic-bezier(0.215, 0.61, 0.355, 1)", "src/x.astro", false],

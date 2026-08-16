@@ -51,14 +51,18 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
 <Badge variant="default | accent | muted">TypeScript</Badge>
 
 <CornerDiamond position="tl | tr | bl | br | all" size={8} variant="default | accent | frame" />
-// `frame` (accent/30, paper fill) is any mark sitting ON the sheet's outer
-// edge — the page frame, every Panel corner, and all four of CalloutLink's,
-// since the band fills the frame's content box and its sides land on the rails.
+// `frame` (accent/30) is any mark sitting ON the sheet's outer edge — the page
+// frame, every Panel corner, all four of CalloutLink's, and the end marks on a
+// full-bleed divider, whose shell cancels the Panel padding exactly.
 // `accent` (accent/20, card fill) is for marks on a rule drawn inside the
 // sheet; only the /design specimens use it today.
-// The fill follows the surface: `frame` takes --color-muted (the paper),
-// `default` and `accent` take --color-card. It is opaque on purpose — the
-// hairlines are alpha, so an unfilled mark doubles the ink where it crosses one.
+// The fill is opaque on purpose — the hairlines are alpha, so an unfilled mark
+// doubles the ink where it crosses one. `default` and `accent` take the card.
+// `frame` is cut in half by the rail it stands on, so it takes both: a hard
+// gradient, paper outside, card inside. One flat colour left the inner half a
+// wedge against the card, and put that half's stroke a step under the rule it
+// terminates. Never hand-roll a diamond span — this component is the only
+// source of `.edge-glow-node`.
 
 <InlineLink href="…" external hintLabel="…">text</InlineLink>
 
@@ -200,3 +204,5 @@ Then read your diff against these four questions:
 2. Does it hold in all four themes?
 3. Did I rebuild something in the table at the top of this file?
 4. Does every spacing value I wrote land on 8, and every structural one on 16?
+   Only two values sit off that: `-1` (4px) between inline things that would
+   otherwise touch, and `-px` for a hairline.

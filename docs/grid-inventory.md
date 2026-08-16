@@ -211,22 +211,47 @@ that are one flat saturated column. So a diamond will always read a little
 softer and thicker than the lines it meets. That is rasterisation, not
 registration — do not chase it with offsets.
 
-Known residue, for Phase 5: the four `/design` specimens put `CornerDiamond`
+Known residue, still open after Phase 5: the four `/design` specimens put `CornerDiamond`
 inside a box with a real `border`. An absolutely positioned child resolves
 against the PADDING box, which excludes that border, so those diamonds now sit
 1px inside their stroke on all four sides. The component is right; the specimen
 is the odd one out — every box that ships draws its strokes as overlays. Fix it
 by giving the specimen overlay strokes, not by re-tuning the offsets.
 
+## Phase 5 — what the checker moved (2026-08-16)
+
+Tightening `check:design` to the 8/16 ladder found 39 off-grid values. 36 were
+retuned, 3 allowlisted.
+
+| Element                         | Was             | Now                             |
+| ------------------------------- | --------------- | ------------------------------- |
+| `Footer` "Shipped with" row     | `gap-1.5`       | `gap-2`                         |
+| `Footer` theme button           | `px-3 py-1.5`   | `px-4 py-2` (`min-h-8` unmoved) |
+| `MDXComponents` inline code     | `px-1.5 py-0.5` | `px-2 py-1`                     |
+| `MDXComponents` `Cite`          | `ml-0.5`        | `ml-1`                          |
+| `HeroActionLink` / `CtaButton`  | `gap-3`         | `gap-2` — label to chip         |
+| `ExperienceTimeline` meta row   | `gap-x-3`       | `gap-x-2`                       |
+| `Badge`                         | `py-0.5`        | `py-1` (`min-h-6` unmoved)      |
+| `/design` specimen captions ×12 | `mb-3`          | `mb-2`                          |
+| `/design` swatch grids          | `gap-3`         | `gap-4` grid, `gap-2` row       |
+| `/design` divider bleeds ×4     | `-mx-5`         | `-mx-4` — `Panel` is `px-4`     |
+| `/design` blockquote            | `pl-5`          | `pl-6` — matches the MDX one    |
+
+`-mx-5` was a real fault, not just an off-grid number: it bled 4px past the
+panel edge at mobile width for as long as it existed.
+
+Allowlisted, both geometry rather than spacing: `AwardsGrid`'s `-mt-1.5 -ml-1.5`
+centres a 12px square on a point, and `ProjectGrid`'s close button is `p-1.5`
+around a 10px icon inside a hairline border — a 24px control.
+
 ## Phase 1 findings (2026-08-13)
 
-- `.bg-hero-grid` is used by nothing — dead CSS. Left in place (surgical
-  rule); Phase 5 can remove it with the doc rewrite.
-- `.bg-grid-pattern` is not "the footer grid" its comment claims: it is a
+- `.bg-hero-grid` was used by nothing — dead CSS. Left in place by the surgical
+  rule, removed in Phase 5 with the doc rewrite.
+- `.bg-grid-pattern` is not "the footer grid" its comment claimed: it is a
   16px tile texture inside cards (`ProjectGrid`, `AwardsGrid`, `design/`).
   Box-anchored is correct for a tile texture — a card's internal grid should
-  register to its own frame, not the page. No change; comment fixed in
-  Phase 5.
+  register to its own frame, not the page. Comment fixed in Phase 5.
 - Registration lesson, encoded in the `background-position` comments: CSS
   `center` maps a tile's midpoint to the center, so a naive `center top`
   leaves every line half a cell off the sheet edge. The phase is

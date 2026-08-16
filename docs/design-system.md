@@ -393,9 +393,9 @@ dividers, `/30` cards and interactive elements, `/40` emphasis.
 
 Two related marks, and they carry meaning:
 
-- **Corner diamonds** (`CornerDiamond`, or the `.edge-glow-node` spans in
-  `Layout.astro`) — 8px rotated squares pinned to a surface's corners. They mark
-  a structural edge. `Panel` places them automatically.
+- **Corner diamonds** (`CornerDiamond`, the only source of `.edge-glow-node`) —
+  8px rotated squares pinned to a surface's corners. They mark a structural
+  edge. `Panel` places them automatically; nothing hand-rolls one.
 - **Corner brackets** — L-shaped 1px rules at each corner that step outward and
   recolor to `tertiary` on hover (`.ca-tl`/`.ca-tr`/`.ca-bl`/`.ca-br` in
   `global.css`, or hand-built like in `CtaButton.astro`).
@@ -404,44 +404,57 @@ Two related marks, and they carry meaning:
 that is not clickable gets the dashed border and nothing else. This is how a
 reader tells, at a glance, what will respond.
 
-### The 16px grid
+### The 8/16 grid
 
-`--grid-cell-size: 16px`. Structural spacing — panel edges, dividers, section
-padding, band heights — lands on multiples of 16 (`--footer-height: 128px` is 8
-cells). Everything else steps in 8s: line-heights, small paddings, prose
-margins.
-
-`.bg-grid-pattern` draws a 16px tile texture inside cards, anchored to the card's
-own frame rather than the page; the divider grid draws a 4px quarter-cell
-texture. `.bg-hero-grid` is dead — nothing reads it.
-
-The settled decisions are in `docs/prd-grid-alignment.md`, and the per-element
-ledger — including which hairline is absorbed where — is
-`docs/grid-inventory.md`.
+`--grid-cell-size: 16px`, and the half-cell is 8. Structural spacing — panel
+edges, dividers, section padding, band heights — lands on 16
+(`--footer-height: 128px` is 8 cells). Everything that flows steps in 8s:
+line-heights, small paddings, prose margins.
 
 Write the Tailwind class. There is no spacing config module, and that is
 deliberate: an alias like `GAP_SPACING.xs = "gap-2"` renames a value without
-constraining anything — it never stopped anyone writing `gap-7`. The scale is a
-closed set, owned by `scripts/check-design-rules.mjs` and enforced by
-`npm run check:design`; the ladder below describes it.
+constraining anything — it never stopped anyone writing `gap-7`. The constraint
+is `scripts/check-design-rules.mjs`, run by `npm run check:design`.
 
-**Legal gaps**: `gap-1` `gap-1.5` `gap-2` `gap-3` `gap-4` `gap-5` `gap-6`
-`gap-8`, plus the axis forms in use: `gap-x-3` `gap-x-4` `gap-y-1` `gap-y-2`.
-One micro half-step exists for optical alignment (`gap-0.75`).
-**Legal stacks**: `space-y-1` `space-y-1.5` `space-y-2` `space-y-3` `space-y-4`
-`space-y-6` `space-y-8`.
+**The ladder.** Tailwind steps 4px, so a legal step is an even one — `p-2` (8)
+`p-4` (16) `p-6` (24) `p-8` (32) `p-12` (48) `p-16` (64). Two values sit off it
+on purpose:
 
-Anything outside those needs a reason and an allowlist entry. Responsive
-prefixes are fine (`sm:gap-4`, `md:gap-8`).
+| Write      | When                                                                                                                              |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `-1` (4px) | Between inline things that would otherwise touch — an icon and its label, a chip and its key. The quarter step, and the only one. |
+| `-px`      | A hairline. `-mt-px` absorbs a 1px rule that would push the box off the half-cell.                                                |
 
-That set predates the grid and still carries steps the grid does not want —
-`gap-3`, `gap-5`, `space-y-1.5`, `space-y-3`. They pass `check:design` and they
-do not sit on the 8px half-cell. Reach for the 8px step instead. Tightening the
-checker to say so is Phase 5 of the grid PRD.
+Everything else fails the checker: `-0.5` `-1.5` `-3` `-5` `-7`, and `space-x-*`
+at any value — the stack is vertical. An arbitrary value passes at a half-cell
+or one pixel either side of one (`pb-[7px]` is 8 absorbing a rule); `calc()` and
+`var()` carry their own reasoning and are read by eye. Responsive prefixes are
+fine (`sm:gap-4`, `md:gap-8`).
+
+**When an odd child forces it, the box lands on the grid and the padding absorbs
+the difference.** A 10px icon in `p-1.5` inside a hairline border is a 24px
+control — right, even though 6 is not a half-cell. That earns an allowlist line
+with the arithmetic in the reason, not a rounder number.
+
+Specimens are exempt — `src/components/design/` and `src/components/lab/` only. A
+figure demonstrating a 6px step has to be able to write one. The pages that host
+them are not exempt; page layout answers to the grid like any other.
 
 Exception: MDX components use `mb-*`/`mt-*` directly, because MDX renders
 siblings into `<article>` with no shared flex parent. Standard paragraph margin
 there is `mb-6` (24px).
+
+`.bg-grid-pattern` draws a 16px tile texture inside cards, anchored to the card's
+own frame rather than the page; the divider grid draws a 4px quarter-cell
+texture.
+
+To see the grid, add `?grid` to any dev URL. `Layout.astro` renders the tag only
+under `import.meta.env.DEV`, so no production page loads it;
+`public/grid-ruler.js` is not cache-busted, so hard-reload after editing it.
+
+The settled decisions are in `docs/prd-grid-alignment.md`, and the per-element
+ledger — including which hairline is absorbed where — is
+`docs/grid-inventory.md`.
 
 ---
 

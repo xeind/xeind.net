@@ -246,7 +246,11 @@ svg {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Unified Grid System: 16px base unit */
+  /* The grid: a 16px cell, an 8px half-cell. Structure — panel edges,
+     dividers, section padding, band heights — lands on the cell; anything that
+     flows (line-heights, small paddings, prose margins) steps in half-cells.
+     The ladder and its two exceptions are in docs/design-system.md §5, and
+     npm run check:design enforces them. */
   --grid-cell-size: 16px;
 
   /* The badge's resting ink. Kozo and Nightingale sit mid-scale and have room
@@ -459,28 +463,20 @@ body {
 }
 
 /* ========================================
-   UNIFIED GRID SYSTEM
-   Base unit: 16px × 16px cells
-   All spacing must be multiples of 16px
+   GRID TEXTURES
+   Drawn tiles, not the spacing system — see the --grid-cell-size comment
+   above for that.
    ======================================== */
 
-/* Grid Pattern for Footer - 16px cells */
+/* A 16px tile texture inside a card (ProjectGrid, AwardsGrid, design/), not
+   the footer grid an older comment claimed. Box-anchored on purpose: a card's
+   internal grid registers to its own frame, not to the page. */
 .bg-grid-pattern {
   background-size: 16px 16px;
   background-image:
     linear-gradient(to right, var(--color-border) 1px, transparent 1px),
     linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
   mask-image: linear-gradient(to top, black 60%, transparent 100%);
-}
-
-/* Hero Grid Background - 16px cells, fades left to right */
-.bg-hero-grid {
-  background-size: 16px 16px;
-  background-image:
-    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
-  mask-image: linear-gradient(to right, transparent 0%, black 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
 }
 
 .divider-grid {

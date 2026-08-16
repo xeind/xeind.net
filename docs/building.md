@@ -52,7 +52,7 @@ is ask-first.
 | Surface  | `bg-card` on panels, `bg-muted` for wells/stages            |
 | Border   | `1px dashed accent/30 → hover:solid`; brackets iff it opens |
 | Type     | Voice first (serif read / sans UI / mono meta), then rank   |
-| Spacing  | The gap/stack ladder; structure on the 16px grid            |
+| Spacing  | Even Tailwind steps (8px); structure on the 16px cell       |
 | Motion   | `CSS_TRANSITIONS.border`; modals `SPRING_CONFIG.noBounce`   |
 | Icons    | `currentColor` inline, or `InlineIcon` mask from `public/`  |
 | Depth    | Hairlines and corner marks — never shadow, never blur       |

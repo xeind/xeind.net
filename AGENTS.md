@@ -35,6 +35,14 @@ decisions are settled in `docs/prd-grid-alignment.md`; the per-element ledger is
 - **8px half-cell, 16px major cell.** Line-heights, small paddings and prose
   margins step in 8s. Structural values — panel edges, dividers, section
   padding, band heights — must hit 16.
+- **The ladder is the even Tailwind steps** — `p-2` `gap-4` `mb-6` `py-8`.
+  Two values sit off it: `-1` (4px) between inline things that would otherwise
+  touch, and `-px` for a hairline. `-0.5` `-1.5` `-3` `-5` and `space-x-*` fail
+  `npm run check:design`. Specimens in `design/` and `lab/` are exempt; the
+  pages that host them are not. Full ladder: `docs/design-system.md` §5.
+- **When an odd child forces it, the box lands on the grid and the padding
+  absorbs the difference.** A 10px icon in `p-1.5` inside a hairline border is a
+  24px control. Allowlist it with the arithmetic in the reason.
 - **Bands are whole cells.** `SectionDivider` is 1 cell (16px), the
   `CalloutLink` band is 2 (32px). A new band gets its cell count decided the
   same way, and the answer goes in the ledger.
@@ -170,6 +178,10 @@ guessed in advance.
 - **Every commit to `main` is production in ~2 minutes** (Cloudflare Pages
   auto-build). Commit only green states; the pre-push gate (`.githooks/`)
   enforces it, `git push --no-verify` bypasses it knowingly.
+- **Unlayered CSS beats every Tailwind utility.** `global.css` writes bare
+  element rules (`code`, `pre code`) outside any `@layer`, and Tailwind v4 puts
+  utilities in a layer, so a class on the element loses however specific it is.
+  Fix the rule in `global.css`, not the class in the component.
 - **Visual calls need a rendered comparison before deciding.** The serif
   choice took five commits because each look was judged from description
   instead of side by side.

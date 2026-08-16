@@ -115,7 +115,7 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
       // leading-none: with an inherited 32px line-height, the mono font's
       // different baseline metrics push the line box to 33px; a collapsed
       // box rides inside the serif strut instead.
-      className="border-accent/15 bg-muted text-foreground/80 border border-dashed px-1.5 py-0.5 font-mono text-[0.8125em] leading-none"
+      className="border-accent/15 bg-muted text-foreground/80 border border-dashed px-2 py-1 font-mono text-[0.8125em] leading-none"
       {...props}
     />
   );
@@ -361,7 +361,7 @@ export function Cite({ n, href }: { n: number; href?: string }) {
       // Raised with relative + leading-none, not align-super — super lifts
       // the whole 32px inline box and stretches the line to ~37px, which
       // knocks every baseline after it off the grid.
-      className="text-accent hover:text-tertiary relative -top-[0.5em] ml-0.5 p-1 font-mono text-[0.65em] leading-none no-underline transition-colors"
+      className="text-accent hover:text-tertiary relative -top-[0.5em] ml-1 p-1 font-mono text-[0.65em] leading-none no-underline transition-colors"
     >
       [{n}]
     </a>

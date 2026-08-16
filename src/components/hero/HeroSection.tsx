@@ -41,7 +41,7 @@ function HeroActionLink({
       // how tall a button should be, and it read heavy against the 32px callout
       // band. 32 itself was rendered and rejected — the shortcut chip is 24px,
       // so it left 4px of air and looked jammed in its frame.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-3 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -137,7 +137,7 @@ function HeroActionLink({
           every shortcut was one letter wide in the same face. It was 24px tall
           and was the tallest thing in the button, which put the emphasis on the
           shortcut rather than on the label. */}
-      <div className="relative z-10 flex items-center justify-center gap-3">
+      <div className="relative z-10 flex items-center justify-center gap-2">
         <span
           className="font-serif text-sm leading-6 transition-all"
           style={CSS_TRANSITIONS.border}

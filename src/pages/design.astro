@@ -135,7 +135,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <button
           type="button"
           data-theme-cycle
-          class="border-accent/30 bg-card text-foreground hover:bg-muted hover:border-accent/50 focus-visible:ring-accent relative inline-flex min-h-8 items-center gap-2 border border-dashed px-3 py-1.5 font-mono text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          class="border-accent/30 bg-card text-foreground hover:bg-muted hover:border-accent/50 focus-visible:ring-accent relative inline-flex min-h-8 items-center gap-2 border border-dashed px-4 py-1.5 font-mono text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <span class="sr-only">Theme:</span>
           {
@@ -188,7 +188,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
       <div class="border-accent/20 -mt-px mb-6 border-t border-dashed"></div>
 
       <p class="text-foreground/50 mb-4 font-mono text-xs">Nine shared tokens</p>
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {
           [
             { name: "background", cls: "bg-background" },
@@ -200,7 +200,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
             { name: "secondary", cls: "bg-secondary" },
             { name: "border", cls: "bg-border" },
           ].map((c) => (
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
               <div class={`border-accent/20 h-8 w-8 shrink-0 border border-dashed ${c.cls}`} />
               <span class="text-foreground/60 font-mono text-xs">{c.name}</span>
             </div>
@@ -217,7 +217,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         Code block token colors per theme — switch themes to see each palette
       </p>
 
-      <div class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {
           [
             { name: "keyword", css: "var(--astro-code-token-keyword)" },
@@ -229,7 +229,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
             { name: "punctuation", css: "var(--astro-code-token-punctuation)" },
             { name: "foreground", css: "var(--astro-code-foreground)" },
           ].map((c) => (
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
               <div
                 class="border-accent/20 h-8 w-8 shrink-0 border border-dashed"
                 style={`background-color: ${c.css}`}
@@ -242,7 +242,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
 
       <div class="border-accent/20 -mt-px mb-4 border-t border-dashed"></div>
 
-      <p class="text-foreground/50 mb-3 font-mono text-xs">Sample</p>
+      <p class="text-foreground/50 mb-2 font-mono text-xs">Sample</p>
       <pre
         class="border-accent/15 bg-muted overflow-x-auto border border-dashed p-4 font-mono text-[0.8125rem] leading-6"><code><span style="color: var(--astro-code-token-keyword)">interface</span> <span style="color: var(--astro-code-token-constant)">Theme</span> <span style="color: var(--astro-code-token-punctuation)">{"{"}</span>
   <span style="color: var(--astro-code-token-parameter)">name</span><span style="color: var(--astro-code-token-punctuation)">:</span> <span style="color: var(--astro-code-token-constant)">string</span><span style="color: var(--astro-code-token-punctuation)">;</span>
@@ -269,9 +269,9 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
 
       <div class="space-y-6">
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Dashed borders · hover → solid</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Dashed borders · hover → solid</p>
           <div
-            class="group border-accent/30 relative inline-block cursor-pointer border border-dashed px-6 py-3 transition-all hover:border-solid"
+            class="group border-accent/30 relative inline-block cursor-pointer border border-dashed px-6 py-2 transition-all hover:border-solid"
           >
             <span class="text-foreground font-serif text-sm">Hover me</span>
           </div>
@@ -280,7 +280,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Corner diamonds</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Corner diamonds</p>
           <div class="border-accent/20 relative border border-dashed px-6 py-4">
             <CornerDiamond position="all" variant="accent" />
             <span class="text-foreground/80 font-serif text-sm">Panel with corner ornaments</span>
@@ -290,7 +290,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Corner brackets · expand on hover</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Corner brackets · expand on hover</p>
           <div class="group relative inline-block px-6 py-4">
             <div class="ca-tl"></div>
             <div class="ca-tr"></div>
@@ -303,11 +303,11 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">
+          <p class="text-foreground/50 mb-2 font-mono text-xs">
             Section divider — full-bleed hairlines stand in for the adjacent panel edges the glow
             overlays
           </p>
-          <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-16">
+          <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
             <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
             <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px"></div>
             <CornerDiamond position="all" variant="accent" />
@@ -318,11 +318,11 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Section divider variants</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Section divider variants</p>
           <div class="space-y-4">
             <div>
               <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">dashed</p>
-              <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-16">
+              <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
                 <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
                 <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px">
                 </div>
@@ -332,7 +332,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
             </div>
             <div>
               <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">grid</p>
-              <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-16">
+              <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
                 <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
                 <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px">
                 </div>
@@ -342,7 +342,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
             </div>
             <div>
               <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">grid-broken</p>
-              <div class="relative -mx-5 py-px sm:-mx-8 md:-mx-16">
+              <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
                 <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
                 <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px">
                 </div>
@@ -362,7 +362,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
 
       <div class="space-y-6">
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Badge variants</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Badge variants</p>
           <div class="flex flex-wrap gap-2">
             <Badge>default</Badge>
             <Badge variant="accent">accent</Badge>
@@ -376,7 +376,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">InlineLink</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">InlineLink</p>
           <p class="text-foreground/80 font-serif text-base">
             A link to <InlineLink href="https://github.com" external>GitHub</InlineLink> and an
             <InlineLink href="/blog"> internal link</InlineLink>.
@@ -386,7 +386,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Inline code</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Inline code</p>
           <p class="text-foreground/80 font-serif text-base">
             Use <code>npm install</code> to install, then run <code>astro dev</code>.
           </p>
@@ -395,7 +395,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Code block</p>
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Code block</p>
           <pre
             class="border-accent/20 bg-muted overflow-x-auto border border-dashed p-4 font-mono text-[0.8125rem] leading-6"><code>{`interface Config {
   site: string;
@@ -407,7 +407,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">
+          <p class="text-foreground/50 mb-2 font-mono text-xs">
             CTA Buttons · View Resume / Schedule Call
           </p>
           {
@@ -425,8 +425,8 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
         <div class="border-accent/20 border-t border-dashed"></div>
 
         <div>
-          <p class="text-foreground/50 mb-3 font-mono text-xs">Blockquote</p>
-          <blockquote class="border-accent/30 my-2 border-l border-dashed py-1 pl-5">
+          <p class="text-foreground/50 mb-2 font-mono text-xs">Blockquote</p>
+          <blockquote class="border-accent/30 my-2 border-l border-dashed py-1 pl-6">
             <p class="text-foreground/60 font-serif text-base leading-8 italic">
               Design is not just what it looks like and feels like. Design is how it works.
             </p>
@@ -462,7 +462,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
     <Panel>
       <h2 class="text-accent mb-6 font-mono text-xs tracking-wide">ANIMATION</h2>
 
-      <div class="space-y-3">
+      <div class="space-y-2">
         {
           durationRows.map((d) => (
             <div class="flex items-center gap-4">

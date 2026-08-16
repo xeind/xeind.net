@@ -6,9 +6,9 @@ steps. Floating furniture (the toaster) is grid-_sized_ — its box is a whole
 number of cells — but not grid-_registered_, since it is viewport-fixed and the
 grid scrolls with the document.
 
-`global.css` already claims this ("Unified Grid System … all spacing must be
-multiples of 16px", `src/styles/global.css:418`) and does not honour it. This
-PRD makes the claim true.
+`global.css` used to claim this ("Unified Grid System … all spacing must be
+multiples of 16px") without honouring it. This PRD made the claim true, and
+Phase 5 rewrote the comment to describe what the code now does.
 
 ## Decisions (settled — do not reopen without a new call)
 
@@ -140,17 +140,26 @@ half-cells top to bottom, and section boundaries still hit full cells.
 **Exit:** every floating box measures a whole number of cells with the ruler
 held against it, even though it floats free of the drawn grid.
 
-## Phase 5 — Enforcement and docs (make it stay true)
+## Phase 5 — Enforcement and docs (make it stay true) — **shipped 2026-08-16**
 
-- `check:design` grows a rule: spacing utilities and raw px values in
-  components must come from the 8/16 set (with a written allowlist for the
-  ratified exceptions, same pattern as the existing closed sets).
-- Rewrite the spacing guidance in `docs/design-system.md` and the stale
-  "Unified Grid System" comment in `global.css` to describe the system that
-  now actually exists.
-- Remove or ship-gate the debug ruler; document how to re-enable it.
+- `check:design`'s `spacing` rule now reads every spacing utility, not just
+  `gap`/`space-y`: a legal step is an even Tailwind one, plus `-1` (4px)
+  between inline things and `-px` for a hairline. Arbitrary values pass at a
+  half-cell or one pixel either side of one. `design/` and `lab/` specimen
+  components are exempt; their host pages are not.
+- The old `GAPS`/`STACKS` sets are gone — they passed `gap-3`, `gap-5`,
+  `space-y-1.5` and `space-y-3`, none of which sit on the half-cell.
+- 36 off-grid values were retuned rather than grandfathered. Two earned
+  allowlist lines instead, both geometry: a square centred on a point needs
+  half its own size back, and a 10px icon in `p-1.5` inside a border is a 24px
+  control.
+- The spacing guidance in `docs/design-system.md` §5 and the `global.css`
+  comments were rewritten; dead `.bg-hero-grid` removed.
+- The ruler stays, already ship-gated behind `import.meta.env.DEV` in
+  `Layout.astro`. `?grid` and its cache-busting trap are documented in §5.
 
-**Exit:** a deliberately off-grid `py-5` in a component fails `check:design`.
+**Exit:** met — a `py-5` in a component fails `check:design`, and the fixture
+proving it is in the checker's self-test.
 
 ---
 
