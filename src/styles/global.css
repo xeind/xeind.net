@@ -2,6 +2,17 @@
 
 @import "tailwindcss";
 
+/* A group carrying KEYBOARD focus — the group itself, or anything inside it.
+   Use this, never group-focus-within, for anything a card reveals on hover.
+   :focus-within is also true after a mouse click, and a card's arrow opens in
+   a new tab: the link keeps DOM focus, so coming back to the page found the
+   plate still lit — solid borders, brackets recoloured, arrow showing — with
+   the pointer nowhere near it. :focus-visible is the browser's own answer to
+   "should this focus be drawn", and for a click it says no. Measured
+   2026-08-18: after clicking, :focus-within was true and :has(:focus-visible)
+   was false, which is exactly the distinction wanted. */
+@custom-variant group-keyboard (&:is(:where(.group):is(:focus-visible, :has(:focus-visible)) *));
+
 html {
   scrollbar-gutter: stable;
 }

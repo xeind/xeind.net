@@ -18,19 +18,19 @@ export function DashedBorders() {
   return (
     <>
       <div
-        className="border-accent/30 absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
+        className="border-accent/30 group-keyboard:border-solid absolute top-0 right-0 left-0 z-10 border-t border-dashed transition-all group-hover:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
+        className="border-accent/30 group-keyboard:border-solid absolute top-0 right-0 bottom-0 z-10 border-r border-dashed transition-all group-hover:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
+        className="border-accent/30 group-keyboard:border-solid absolute right-0 bottom-0 left-0 z-10 border-b border-dashed transition-all group-hover:border-solid"
         style={t}
       />
       <div
-        className="border-accent/30 absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-focus-within:border-solid group-hover:border-solid"
+        className="border-accent/30 group-keyboard:border-solid absolute top-0 bottom-0 left-0 z-10 border-l border-dashed transition-all group-hover:border-solid"
         style={t}
       />
     </>
@@ -44,44 +44,44 @@ export function CornerBrackets() {
       {/* Top-Left */}
       <div className="absolute top-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary h-px w-2 transition-all"
           style={t}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary h-2 w-px transition-all"
           style={t}
         />
       </div>
       {/* Top-Right */}
       <div className="absolute top-0 right-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary ml-auto h-px w-2 transition-all"
           style={t}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary ml-auto h-2 w-px transition-all"
           style={t}
         />
       </div>
       {/* Bottom-Left */}
       <div className="absolute bottom-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary h-2 w-px transition-all"
           style={t}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary h-px w-2 transition-all"
           style={t}
         />
       </div>
       {/* Bottom-Right */}
       <div className="absolute right-0 bottom-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary ml-auto h-2 w-px transition-all"
           style={t}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary group-focus-within:bg-tertiary ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary group-keyboard:bg-tertiary ml-auto h-px w-2 transition-all"
           style={t}
         />
       </div>

@@ -104,8 +104,11 @@ Three patterns already avoid React entirely and are worth copying:
 - **An inline `<script>` in the page** — the theme-aware logo swapping in
   `index.astro`. Remember `ClientRouter` de-dupes inline scripts across
   navigations, so re-run work on `astro:after-swap`.
-- **CSS-only state** — `group-hover:`, `group-focus-within:`, the `.ca-*` corner
-  classes.
+- **CSS-only state** — `group-hover:`, `group-keyboard:`, the `.ca-*` corner
+  classes. `group-keyboard:` is the house variant for anything a card reveals
+  on hover (defined at the top of `global.css`). Never `group-focus-within:`:
+  it is also true after a mouse click, so a card whose link opens a new tab
+  stayed lit — borders solid, arrow showing — when you came back to the page.
 
 ---
 

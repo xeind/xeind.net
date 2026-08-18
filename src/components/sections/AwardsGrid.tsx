@@ -38,16 +38,16 @@ function StageFigure() {
   return (
     <div className="relative h-12 w-12" aria-hidden="true">
       <span
-        className={`${square} -translate-x-2 -translate-y-2 group-focus-within:-translate-x-[18px] group-focus-within:-translate-y-[18px] group-hover:-translate-x-[18px] group-hover:-translate-y-[18px]`}
+        className={`${square} group-keyboard:-translate-x-[18px] group-keyboard:-translate-y-[18px] -translate-x-2 -translate-y-2 group-hover:-translate-x-[18px] group-hover:-translate-y-[18px]`}
       />
       <span
-        className={`${square} translate-x-2 -translate-y-2 delay-[40ms] group-focus-within:-translate-x-1.5 group-focus-within:-translate-y-1.5 group-hover:-translate-x-1.5 group-hover:-translate-y-1.5`}
+        className={`${square} group-keyboard:-translate-x-1.5 group-keyboard:-translate-y-1.5 translate-x-2 -translate-y-2 delay-[40ms] group-hover:-translate-x-1.5 group-hover:-translate-y-1.5`}
       />
       <span
-        className={`${square} -translate-x-2 translate-y-2 delay-[80ms] group-focus-within:translate-x-1.5 group-focus-within:translate-y-1.5 group-hover:translate-x-1.5 group-hover:translate-y-1.5`}
+        className={`${square} group-keyboard:translate-x-1.5 group-keyboard:translate-y-1.5 -translate-x-2 translate-y-2 delay-[80ms] group-hover:translate-x-1.5 group-hover:translate-y-1.5`}
       />
       <span
-        className={`${square} translate-x-2 translate-y-2 delay-[120ms] group-focus-within:translate-x-[18px] group-focus-within:translate-y-[18px] group-hover:translate-x-[18px] group-hover:translate-y-[18px]`}
+        className={`${square} group-keyboard:translate-x-[18px] group-keyboard:translate-y-[18px] translate-x-2 translate-y-2 delay-[120ms] group-hover:translate-x-[18px] group-hover:translate-y-[18px]`}
       />
     </div>
   );
@@ -87,7 +87,12 @@ export default function AwardsGrid() {
                 setActivation((n) => n + 1);
               }}
               onPointerLeave={() => setHoveredId(null)}
-              onFocus={() => setHoveredId(award.id)}
+              // Keyboard focus only, for the same reason the reveal uses
+              // group-keyboard: a click leaves the card focused, and without
+              // this test the Claude mark kept spinning after its tab opened.
+              onFocus={(e) => {
+                if (e.currentTarget.matches(":focus-visible")) setHoveredId(award.id);
+              }}
               onBlur={() => setHoveredId(null)}
               className="group bg-card focus-visible:ring-accent focus-visible:ring-offset-background relative flex flex-col overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
             >
@@ -144,7 +149,7 @@ export default function AwardsGrid() {
                   hence aria-hidden and no tab stop of its own. */}
               {award.url && (
                 <div
-                  className="absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                  className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none"
                   style={t}
                   aria-hidden="true"
                 >

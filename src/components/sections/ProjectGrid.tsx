@@ -601,7 +601,7 @@ export default function ProjectGrid() {
                     middle, where the eye aims to open the card. */}
                 {primaryUrl && (
                   <div
-                    className="absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                    className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none"
                     style={t}
                   >
                     {/* The modal's arrow shares this layoutId and is the same

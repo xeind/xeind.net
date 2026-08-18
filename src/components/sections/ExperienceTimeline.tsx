@@ -22,8 +22,8 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
             marginLeft: "calc(var(--divider-thickness) / -2)",
           }}
         >
-          <div className="border-foreground/30 t-border absolute inset-y-0 left-0 h-full border-l border-dashed opacity-100 transition-opacity group-focus-within:opacity-0 group-hover:opacity-0" />
-          <div className="border-foreground/30 t-border absolute inset-y-0 left-0 h-full border-l border-solid opacity-0 group-focus-within:opacity-100 group-hover:opacity-100" />
+          <div className="border-foreground/30 t-border group-keyboard:opacity-0 absolute inset-y-0 left-0 h-full border-l border-dashed opacity-100 transition-opacity group-hover:opacity-0" />
+          <div className="border-foreground/30 t-border group-keyboard:opacity-100 absolute inset-y-0 left-0 h-full border-l border-solid opacity-0 group-hover:opacity-100" />
         </div>
       )}
 
