@@ -508,7 +508,16 @@ export default function ProjectGrid() {
       <div className="space-y-4">
         <h2 className="text-foreground font-serif text-2xl">Projects</h2>
 
-        <div className="grid w-full grid-cols-1 gap-4 min-[368px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {/* Three across at the cap, not four. The content column is 896 (56
+            cells), so four columns with a 16px gap leave 848/4 = 212 per
+            plate — 13 cells and a 4px remainder, which the plate's own 16px
+            texture ends on as a sliver. Worse, each plate then starts 4px
+            further out of phase than the last, so no two plates' grids line
+            up with each other or with the page. Three columns divide it
+            exactly: 3 × 288 + 2 × 16 = 896, 18 cells each, one shared phase.
+            The only four-column width that works is 176 with a 64px gap, and
+            four whole cells of air read as a different section. */}
+        <div className="grid w-full grid-cols-1 gap-4 min-[368px]:grid-cols-2 md:grid-cols-3">
           {projects.map((project) => {
             const primaryUrl = getPrimaryProjectUrl(project);
             // Nothing to open: no link, and no copy for a modal to show.
