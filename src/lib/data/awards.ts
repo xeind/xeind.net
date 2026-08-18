@@ -18,6 +18,7 @@ export const awards: Award[] = [
       { key: "year", value: "2026" },
     ],
     year: 2026,
+    url: "https://claude.com/contact-sales/claude-for-oss",
   },
   {
     id: "dep-builder",
@@ -32,5 +33,6 @@ export const awards: Award[] = [
       { key: "year", value: "2026" },
     ],
     year: 2026,
+    url: "https://dataengineeringpilipinas.github.io/dep-data-engineering-open-track/",
   },
 ];

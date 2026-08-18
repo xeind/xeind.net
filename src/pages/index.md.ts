@@ -47,7 +47,8 @@ export const GET: APIRoute = async () => {
   const awardLines = awards
     .map((award) => {
       const year = award.year ? ` (${award.year})` : "";
-      return `- **${award.title}** — ${award.issuer}, ${award.type}${year}. ${award.description}`;
+      const link = award.url ? ` · ${award.url}` : "";
+      return `- **${award.title}** — ${award.issuer}, ${award.type}${year}. ${award.description}${link}`;
     })
     .join("\n");
 

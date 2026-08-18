@@ -15,6 +15,7 @@ function resolveImageUrl(imageUrl: Award["imageUrl"]) {
   return { url: imageUrl.src, width: imageUrl.width, height: imageUrl.height };
 }
 
+const t = CSS_TRANSITIONS.border;
 const tFast = CSS_TRANSITIONS.fade;
 
 const ICON_SIZES = {
@@ -135,16 +136,25 @@ export default function AwardsGrid() {
                 </p>
               </div>
 
+              {/* Same affordance as a project plate: the mark waits in its own
+                  corner, clear of the stage figure and of the caption, and
+                  arrives on hover or focus. There the arrow is a sibling link
+                  because the card itself opens a modal; here the whole card is
+                  the anchor, so this one only has to say "leaves the site" —
+                  hence aria-hidden and no tab stop of its own. */}
               {award.url && (
-                <footer className="border-accent/20 relative mt-auto flex items-center justify-end border-t border-dashed px-4 py-2">
+                <div
+                  className="absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+                  style={t}
+                  aria-hidden="true"
+                >
                   <span
-                    className="text-accent group-hover:text-tertiary shrink-0 leading-none transition-colors motion-reduce:transition-none"
+                    className="text-accent group-hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
                     style={tFast}
-                    aria-hidden="true"
                   >
-                    <ArrowUpRight size={ICON_CONFIG.sizes.sm} />
+                    <ArrowUpRight size={ICON_CONFIG.sizes.md} />
                   </span>
-                </footer>
+                </div>
               )}
             </Card>
           );
