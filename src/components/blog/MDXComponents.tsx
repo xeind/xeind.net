@@ -124,12 +124,16 @@ function MdxCode(props: React.HTMLAttributes<HTMLElement>) {
 /* ── Divider ── */
 
 function MdxHr() {
-  // -mt-px: the rule's own pixel comes out of the 24px gap above it (every
-  // MDX block carries a bottom margin for it to collapse against), so the
-  // divider contributes exactly 48px of flow and the baselines below stay
-  // on the half-cell.
+  // -mt-px keeps the flow at exactly 48px (23 above, the rule, 24 below), and
+  // translate-y-px puts the ink on the grid line without spending any of it.
+  // Margin math alone cannot do both here, which is what separates this from
+  // the blog index: whatever follows an <hr> in MDX is usually a heading
+  // carrying mt-8, and 32 wins the collapse, so a -1px bottom margin is
+  // discarded silently and the divider grows a pixel. The transform moves the
+  // rule, the glow strip and both diamonds together, and costs no layout.
+  // Measured 2026-08-18.
   return (
-    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 -mt-px mb-6 h-px sm:-mx-8 md:-mx-16">
+    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 -mt-px mb-6 h-px translate-y-px sm:-mx-8 md:-mx-16">
       {/* Full-bleed glow strip (like main's hairlines) — the dashed line
           extends ±9999px past the card, so its glow must too. A clipped
           .edge-glow-layer would go dark the moment the cursor leaves the
@@ -404,7 +408,7 @@ export function Ref({
 export function References({ children }: { children: React.ReactNode }) {
   return (
     <div className="[&_p]:mb-0 [&_p]:text-sm [&_p]:leading-6">
-      <div className="border-accent/20 -mt-px mb-4 border-t border-dashed" />
+      <div className="border-accent/20 mb-[calc(1rem-1px)] border-t border-dashed" />
       <h3 className="text-secondary mb-4 font-mono text-xs tracking-wide">REFERENCES</h3>
       <ol className="list-none space-y-2 pl-0">{children}</ol>
     </div>

@@ -95,9 +95,13 @@ const blogStructuredData = {
                     bottom edge cannot do that job here: it is `flex-1` inside
                     a min-h-screen column, so it stretches to the fold and its
                     hairline lands far below the final tag row. */}
-                {/* mt is 24px minus the rule's own pixel, so each entry
-                    contributes a whole number of half-cells to the list. */}
-                <div class="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 mt-[calc(1.5rem-1px)] mb-6 h-px sm:-mx-8 md:-mx-16">
+                {/* The gap above is a whole 24, so the rule draws ON the grid
+                    line the way a SectionDivider does; its own pixel comes out
+                    of the gap below instead. Either way an entry starts 48px
+                    after the one above — the only difference is which side of
+                    the line the ink lands on. (h-0 would collapse the two
+                    margins into one and halve the list's rhythm.) */}
+                <div class="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 mt-6 mb-[calc(1.5rem-1px)] h-px sm:-mx-8 md:-mx-16">
                   {/* Full-bleed glow strip (like main's hairlines) — the
                       dashed line extends ±9999px past the card, so its
                       glow must too. */}
