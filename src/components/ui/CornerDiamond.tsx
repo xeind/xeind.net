@@ -27,33 +27,19 @@ const variantBorders = {
 //
 // Each variant takes the surface it sits on. `default` and `accent` are drawn
 // inside the sheet, so they take the card. `frame` straddles the sheet's outer
-// edge, half over paper and half over card, so it takes both — see FRAME_FILL.
+// edge, half over paper and half over card, and no single colour is right on
+// both sides — it takes the paper (--color-muted, what .paper-background uses,
+// not --color-background, which nothing near a diamond ever shows).
+//
+// One flat colour, and the mark stays one shape. A split gradient matching both
+// halves was built twice and rejected twice: it measures exact on both sides,
+// and that is the problem — the inner half dissolves into the card and the mark
+// reads as a wedge instead of a diamond. Owner's call, 2026-08-18. The fill's
+// job is to stop the hairlines doubling, not to disappear.
 const variantFills = {
   default: "bg-card",
   accent: "bg-card",
-  frame: "",
-};
-
-// A frame mark is cut in half by the rail it sits on: paper outside the sheet,
-// card inside. One flat colour is wrong on one half by the distance between the
-// two tokens — 16 levels in Nightingale, 20 in Kozo — and it drags the border
-// with it, because background paints to the border box. Measured in
-// Nightingale: the rail is accent/30 over card at (74,84,61), while the same
-// border over a muted-filled mark composited to (63,73,50). The mark's stroke
-// read 11 levels below the rail it terminates.
-//
-// The span is rotate-45, so a gradient in its own box comes out 45° clockwise
-// on screen. 45deg local is therefore 90deg painted — a vertical seam down the
-// mark's centre, first stop on the left. Which side is paper depends only on
-// which rail the corner belongs to: tl/bl sit on the left rail, tr/br the
-// right.
-const PAPER = "var(--color-muted)"; // what .paper-background uses
-const CARD = "var(--color-card)";
-const FRAME_FILL = {
-  tl: `linear-gradient(45deg, ${PAPER} 50%, ${CARD} 50%)`,
-  bl: `linear-gradient(45deg, ${PAPER} 50%, ${CARD} 50%)`,
-  tr: `linear-gradient(45deg, ${CARD} 50%, ${PAPER} 50%)`,
-  br: `linear-gradient(45deg, ${CARD} 50%, ${PAPER} 50%)`,
+  frame: "bg-muted",
 };
 
 export default function CornerDiamond({
@@ -82,9 +68,6 @@ export default function CornerDiamond({
     br: { bottom: trailOffset, right: trailOffset },
   };
 
-  const fill = (corner: "tl" | "tr" | "bl" | "br") =>
-    variant === "frame" ? { background: FRAME_FILL[corner] } : {};
-
   if (position === "all") {
     return (
       <>
@@ -92,29 +75,14 @@ export default function CornerDiamond({
           <span
             key={corner}
             className={baseClass}
-            style={{
-              width: size,
-              height: size,
-              ...fill(corner),
-              ...positions[corner],
-              ...style,
-            }}
+            style={{ width: size, height: size, ...positions[corner], ...style }}
           />
         ))}
       </>
     );
   }
 
-  return (
-    <span
-      className={baseClass}
-      style={{
-        width: size,
-        height: size,
-        ...fill(position),
-        ...positions[position],
-        ...style,
-      }}
-    />
-  );
+  const pos = positions[position];
+
+  return <span className={baseClass} style={{ width: size, height: size, ...pos, ...style }} />;
 }
