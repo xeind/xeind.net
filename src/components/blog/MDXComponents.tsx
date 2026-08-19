@@ -1,5 +1,5 @@
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
-import CornerDiamond from "@/components/ui/CornerDiamond";
+import FullBleedRule from "./FullBleedRule";
 import PretextBlock from "./PretextBlock";
 import PullQuoteCard from "./PullQuoteCard";
 
@@ -132,23 +132,7 @@ function MdxHr() {
   // discarded silently and the divider grows a pixel. The transform moves the
   // rule, the glow strip and both diamonds together, and costs no layout.
   // Measured 2026-08-18.
-  return (
-    <div className="edge-glow-shell edge-glow-shell-horizontal relative -mx-4 -mt-px mb-6 h-px translate-y-px sm:-mx-8 md:-mx-16">
-      {/* Full-bleed glow strip (like main's hairlines) — the dashed line
-          extends ±9999px past the card, so its glow must too. A clipped
-          .edge-glow-layer would go dark the moment the cursor leaves the
-          card column. */}
-      <div
-        className="edge-glow-line absolute top-0 right-[-9999px] left-[-9999px] z-10 h-px"
-        aria-hidden="true"
-      />
-      <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
-      {/* The shell is -mx-16 at the cap, so these land on the sheet's rails,
-          half over the paper. That is the frame case. */}
-      <CornerDiamond position="tl" variant="frame" />
-      <CornerDiamond position="tr" variant="frame" />
-    </div>
-  );
+  return <FullBleedRule className="-mt-px mb-6 translate-y-px" />;
 }
 
 /* ── Lists ── */

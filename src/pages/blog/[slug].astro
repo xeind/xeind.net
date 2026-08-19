@@ -5,6 +5,7 @@ import Panel from "@/components/ui/Panel";
 import SectionDivider from "@/components/ui/SectionDivider";
 import Badge from "@/components/ui/Badge";
 import { mdxComponents } from "@/components/blog/MDXComponents";
+import FullBleedRule from "@/components/blog/FullBleedRule";
 import MdxImage from "@/components/blog/MdxImage.astro";
 import { SITE, absoluteUrl } from "@/lib/config/site";
 
@@ -118,11 +119,18 @@ const articleStructuredData = {
         }
       </div>
 
-      {/* Dashed separator */}
-      <div class="border-accent/20 mb-[calc(1.5rem-1px)] border-t border-dashed"></div>
+      {
+        /* Same rule the body's <hr> draws — a post used to show a
+        content-width separator here and full-bleed ones below it. */
+      }
+      <FullBleedRule className="mb-[calc(1.5rem-1px)]" />
 
-      {/* Post content */}
-      <article>
+      {
+        /* The last block's own mb-6 has nothing to collapse against inside the
+          panel's padding, so a post closed on 56px of air where it opened on
+          32. */
+      }
+      <article class="[&>*:last-child]:mb-0">
         <Content components={{ ...mdxComponents, img: MdxImage }} />
       </article>
       <script is:inline src="/blog-lightbox.js" defer></script>
