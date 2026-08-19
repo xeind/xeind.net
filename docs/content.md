@@ -73,6 +73,32 @@ within about 30 characters of each other and the row reads as a set.
 
 ---
 
+## Blog posts — `src/content/blog/<slug>/index.mdx`
+
+Frontmatter, not `src/lib/data/`, but the same rule bites harder. `/blog` draws
+every post in a 432 × 240 card — a fixed height with `overflow-hidden`, so
+anything that does not fit is cut off with nothing on the page to say so.
+
+| Field     | Rule                                | Observed |
+| --------- | ----------------------------------- | -------- |
+| `title`   | ≤ 80 chars. Serif, up to two lines. | max 41   |
+| `excerpt` | ≤ 165 chars. Up to three lines.     | 79–155   |
+
+Measured at 432px: a line holds 54 characters, so a title fits two lines to 93
+and an excerpt three lines to 171. The caps leave a word of margin, because a
+line of long words wraps sooner than a line of short ones.
+
+Both maxima at once fill the card: 16 pad + 24 date + 48 title + 16 + 72
+excerpt + 16 + 24 tags + 16 pad = 232, in a 240 box. A fourth excerpt line or a
+third title line adds 24 and pushes the tag row out of sight.
+
+There is no lower bound. The tags are pinned to the card's bottom edge, so a
+short excerpt leaves white space in its own card and does not stretch its
+neighbour the way an award description does. Two or three lines (roughly
+110–160 characters) still reads best across a row.
+
+---
+
 ## Voice
 
 - **Plain and specific.** `Static analysis inside Neovim` beats

@@ -298,12 +298,36 @@ function checkAwards(push) {
   }
 }
 
+// Blog frontmatter, not src/lib/data — but the same rule applies, and more
+// sharply: /blog draws every post in a 432 × 240 card with a fixed height and
+// overflow-hidden. Measured at that width, a title fits two lines to 93 chars
+// and an excerpt three lines to 171. Past either, the tag row is clipped and
+// nothing on the page says so. The caps below keep a word's worth of margin.
+function checkBlog(push) {
+  const dir = join(ROOT, "src/content/blog");
+  for (const slug of readdirSync(dir)) {
+    const file = `src/content/blog/${slug}/index.mdx`;
+    const path = join(ROOT, file);
+    if (!statSync(path, { throwIfNoEntry: false })?.isFile()) continue;
+    const matter = readFileSync(path, "utf8").split(/^---$/m)[1] ?? "";
+    const line = 1;
+    const title = field(matter, "title") ?? "";
+    const excerpt = field(matter, "excerpt") ?? "";
+    if (title.length > 80) push(file, line, slug, `title ${title.length} chars (max 80)`);
+    if (excerpt.length > 165)
+      push(file, line, slug, `excerpt ${excerpt.length} chars (max 165 — a 4th line clips)`);
+    const bad = excerpt.match(BANNED_VOICE);
+    if (bad) push(file, line, slug, `marketing register: "${bad[0]}"`);
+  }
+}
+
 function checkContent() {
   const out = [];
   const push = (file, line, match, message) =>
     out.push({ file, line, rule: "content", match, message });
   checkProjects(push);
   checkAwards(push);
+  checkBlog(push);
   return out;
 }
 
