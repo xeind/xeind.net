@@ -293,7 +293,10 @@ function ImageGrid({
   const visible = Math.min(count, 5);
 
   return (
-    <figure className="my-6">
+    /* blog-grid-shell is a query container and nothing else. Below the sheet
+       cap the collage's height comes from its own width, and only a container
+       query can name that width in CSS — see the .blog-grid rules. */
+    <figure className="blog-grid-shell my-6">
       <div
         data-image-grid=""
         className={`blog-grid blog-grid-${visible} border-accent/30 bg-card border border-dashed p-1`}

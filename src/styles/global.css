@@ -1430,6 +1430,12 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   gap: 4px;
 }
 
+/* The collage's own figure. Its only job is to be a query container, so the
+   grid below the cap can size its height from its own width. */
+.blog-grid-shell {
+  container-type: inline-size;
+}
+
 .blog-grid-cell {
   display: block;
   width: 100%;
@@ -1500,6 +1506,35 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 .blog-grid-5 > :nth-child(n + 3) {
   grid-column: span 2;
+}
+
+/* Below the cap the article column is fluid, so a ratio resolves to a
+   fractional height and every baseline under the collage inherits the
+   fraction — the case the note above the 1024 block left open.
+
+   Round the ratio's own answer rather than pinning a constant: the figure is
+   a query container, so 100cqw is the collage's own border-box width at
+   whatever the viewport happens to be, and round() lands the height on the
+   8px half-cell at every one of them. object-cover absorbs the ≤4px, the
+   same trade the fixed heights above the cap already make.
+
+   aspect-ratio is deliberately left in place rather than set to auto. A
+   definite height wins over it, so these govern where round() is supported,
+   and where it is not the declaration drops and the ratio still draws the
+   collage instead of collapsing it to nothing. */
+@media (max-width: 1023.98px) {
+  .blog-grid-2 {
+    height: round(calc(100cqw * 9 / 16), 8px);
+  }
+
+  .blog-grid-3,
+  .blog-grid-5 {
+    height: round(calc(100cqw * 3 / 4), 8px);
+  }
+
+  .blog-grid-4 {
+    height: round(calc(100cqw * 5 / 8), 8px);
+  }
 }
 
 /* Lightbox gallery controls (injected by blog-lightbox.js — plain CSS, not
