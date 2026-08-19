@@ -473,6 +473,83 @@ body {
   background-position: calc(round(50%, 1px) + calc(var(--grid-cell-size) / 2)) top;
 }
 
+/* The lit copy of that ruling. Inert everywhere: only blueprint gives it a
+   background, and only the lamp gives it opacity, so every other theme pays
+   one empty positioned div.
+
+   It brightens the LINE, not the area. The layer draws the same two gradients
+   as the rule above and is then masked to a circle on the cursor, so the ink
+   that comes up is the ruling itself — a wash over the top would light the
+   paper between the lines and read as a torch on a wall.
+
+   The size and phase below are copied from the rule above rather than shared
+   through a custom property: --grid-cell-size can go through a var, but the
+   round() fallback cannot. It relies on the second declaration failing to
+   parse where round() is missing, and a custom property swallows an unknown
+   function at parse time instead of failing, which would take the fallback
+   with it. So they are duplicated on purpose — change one, change both. If
+   they ever drift, the lit line lands beside the drawn one instead of on it,
+   which is the whole effect wrong. */
+.blueprint-grid-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+[data-theme="blueprint"] .blueprint-grid-glow {
+  /* --blueprint-grid-lit is the peak ink, before the lamp's own cap scales it.
+     8% is the resting ruling; this is what a line reaches directly under the
+     cursor. */
+  --blueprint-grid-lit: 45%;
+  opacity: calc(var(--edge-glow-opacity) * var(--edge-glow-cap));
+  transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-tertiary) var(--blueprint-grid-lit), transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-tertiary) var(--blueprint-grid-lit), transparent) 1px,
+      transparent 1px
+    );
+  background-size: var(--grid-cell-size) var(--grid-cell-size);
+  background-position: calc(50% + calc(var(--grid-cell-size) / 2)) top;
+  background-position: calc(round(50%, 1px) + calc(var(--grid-cell-size) / 2)) top;
+  /* The lamp, as a mask. Same smoothstep the rails paint and the script
+     scores — sampled at 0/25/50/75/100% (1, .844, .5, .156, 0) — so a line
+     here and a rail there fall off together. Circular, not the rails'
+     ellipse: a rail is unbounded along one axis and needs stretching to read
+     as an edge coming up, but this surface is unbounded both ways, so a
+     circle is the honest shape. */
+  -webkit-mask-image: radial-gradient(
+    var(--edge-glow-radius) var(--edge-glow-radius) at var(--edge-glow-x) var(--edge-glow-y),
+    #000 0%,
+    rgb(0 0 0 / 0.844) 25%,
+    rgb(0 0 0 / 0.5) 50%,
+    rgb(0 0 0 / 0.156) 75%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    var(--edge-glow-radius) var(--edge-glow-radius) at var(--edge-glow-x) var(--edge-glow-y),
+    #000 0%,
+    rgb(0 0 0 / 0.844) 25%,
+    rgb(0 0 0 / 0.5) 50%,
+    rgb(0 0 0 / 0.156) 75%,
+    transparent 100%
+  );
+}
+
+/* The lamp is a pointer affordance and this is the largest surface it lights,
+   so it is the one most worth holding still. */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="blueprint"] .blueprint-grid-glow {
+    display: none;
+  }
+}
+
 /* ========================================
    GRID TEXTURES
    Drawn tiles, not the spacing system — see the --grid-cell-size comment

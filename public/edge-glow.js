@@ -85,6 +85,10 @@
         (line) => line.closest(selector) === shell,
       ),
       isHorizontal: shell.classList.contains("edge-glow-shell-horizontal"),
+      // A surface shell lights its whole area rather than an edge of it —
+      // blueprint's gutter ruling. It needs the same hotspot a wash layer
+      // needs, but not the rail-distance gate below: it has no rails.
+      isSurface: shell.classList.contains("edge-glow-shell-surface"),
       // Only a shell that owns a wash layer needs a hotspot Y or a gate
       // opacity written — divider shells carry strips and nothing else.
       hasLayer: Boolean(shell.querySelector(".edge-glow-layer")),
@@ -94,7 +98,7 @@
   }
 
   function updateEntry(entry) {
-    const { shell, nodes, lines, isHorizontal, hasLayer, cache } = entry;
+    const { shell, nodes, lines, isHorizontal, isSurface, hasLayer, cache } = entry;
 
     const rect = shell.getBoundingClientRect();
 
@@ -127,7 +131,7 @@
     // Hotspot position only matters while something is visible.
     if (inside) {
       write(shell, cache, "x", "--edge-glow-x", `${relX}px`);
-      if (hasLayer) {
+      if (hasLayer || isSurface) {
         write(shell, cache, "y", "--edge-glow-y", `${relY}px`);
       }
     }
@@ -142,6 +146,11 @@
       const toNearerRail = Math.min(Math.abs(relX), Math.abs(relX - rect.width));
       const washLit = inside && toNearerRail <= GLOW_RADIUS;
       write(shell, cache, "wash", "--edge-glow-opacity", washLit ? "1" : "0");
+    } else if (isSurface) {
+      // No rail to measure to — the lamp is lit wherever the cursor is over
+      // the surface, and the mask does the rest. Gating on rail distance here
+      // would light the far gutters and leave the near ones dark.
+      write(shell, cache, "wash", "--edge-glow-opacity", inside ? "1" : "0");
     }
 
     // Diamonds are points, so the distance is scored here rather than painted.

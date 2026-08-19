@@ -173,7 +173,22 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     <ClientRouter />
   </head>
   <body class="font-sans antialiased">
-    <div class="paper-background min-h-dvh overflow-x-clip" tabindex="-1">
+    <div
+      class="paper-background edge-glow-shell edge-glow-shell-surface min-h-dvh overflow-x-clip"
+      tabindex="-1"
+    >
+      {
+        /* Blueprint's gutter ruling, lit by the same lamp that lights the
+          rails and the divider strips. It is a second copy of the grid in
+          brighter ink, masked to a circle on the cursor — so what brightens
+          is the drawn line itself, never a wash floating over it.
+
+          First child, and positioned: it and `main` both take auto z-index,
+          so DOM order alone keeps the sheet painting over it. That avoids
+          spending a new z-index value on decoration. Every other theme
+          leaves this element with no background at all. */
+      }
+      <div class="blueprint-grid-glow" aria-hidden="true"></div>
       <div class="sheet-centered max-w-5xl">
         {
           /* The page's outer frame is accent/30, one rung above the accent/20
