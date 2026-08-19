@@ -28,20 +28,25 @@ function HeroActionLink({
       data-hero-sfx="click"
       data-hero-sfx-hover
       {...(shortcut ? { "data-hero-shortcut": shortcut } : {})}
-      // md:w-56 is what puts these on the grid, and it has to be a width, not
-      // padding. An inline-flex button is as wide as its label: 48px of padding
-      // either side plus whatever "View Resume" and its chip happen to render
-      // (118.91px), so the right edge landed at 13.43 cells and the second
-      // button inherited the fraction. 14 cells fits the longest label with
-      // room. Below md the sheet is fluid and nothing can register, so the
-      // width is intrinsic there and the buttons wrap as before.
+      // Both widths are set for the same reason: an inline-flex button is as
+      // wide as its label, and a label is never a whole number of pixels. At md
+      // the intrinsic box came to 118.91px of content, so the right edge landed
+      // at 13.43 cells and the second button inherited the fraction; w-56 is 14
+      // cells and fits the longest label with room.
+      //
+      // w-36 does the same job on a phone. Measured at 375: both buttons
+      // rendered 139.5px, so button 1's right edge and both of button 2's sat
+      // on x.5 and the dashed frame antialiased across two device pixels. 144
+      // is 9 cells and clears the widest label (83.5px + 8 gap + 16 chip) by
+      // 4.5. The row stays centred there; .hero-cta-row rounds the leading gap
+      // so a fixed width in a fluid column still starts on a whole pixel.
       //
       // py-2 makes the box 40px: the 24px label line plus a half-cell above and
       // below. 48px was a by-product of the width work rather than a call about
       // how tall a button should be, and it read heavy against the 32px callout
       // band. 32 itself was rendered and rejected — the shortcut chip is 24px,
       // so it left 4px of air and looked jammed in its frame.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-36 items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -299,7 +304,11 @@ export default function HeroSection() {
       </p>
 
       {/* CTAs */}
-      <div className="flex flex-wrap justify-center gap-4 md:justify-start md:gap-8">
+      {/* Centred by .hero-cta-row, not by the parent's items-center: an auto
+          margin halves the leftover, and the content column below md is the
+          viewport minus 32 — odd on a 375 or a 393. Same fault and same
+          round() fix as .sheet-centered. */}
+      <div className="hero-cta-row flex w-fit flex-wrap gap-4 md:gap-8">
         <HeroActionLink href={personalInfo.cvUrl} badge="R" shortcut="r">
           View Resume
         </HeroActionLink>

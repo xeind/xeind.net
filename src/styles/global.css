@@ -419,6 +419,28 @@ body {
   margin-inline-start: max(0px, round(calc(50% - 32rem), 1px));
 }
 
+/* The hero's CTA row, centred below md. Same fault as the sheet above, at a
+   smaller scale: an auto margin halves the leftover, and the content column on
+   a phone is the viewport minus 32 — odd on a 375 and on a 393 — so the row's
+   edges land on x.5 and all eight dashed frame edges in it antialias. The row
+   is a known width, two 144px buttons and a 16px gap, so round the leading gap
+   the way the paint rounds. 9.5rem is half of that 304.
+
+   Clamped at 0 for the narrow widths where the two no longer fit side by side:
+   the row wraps there and there is no leftover to split. Falls back to the
+   auto above where round() is missing. Left-aligned from md, where the row is
+   480 in a fixed 896 column and nothing needs rounding. */
+.hero-cta-row {
+  margin-inline: auto;
+  margin-inline-start: max(0px, round(calc(50% - 9.5rem), 1px));
+}
+
+@media (min-width: 768px) {
+  .hero-cta-row {
+    margin-inline: 0;
+  }
+}
+
 /* PAPER BACKGROUND - Outermost container */
 .paper-background {
   position: relative;
