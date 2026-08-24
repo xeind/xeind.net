@@ -71,34 +71,17 @@ export default function AwardsGrid() {
         {awards.map((award) => {
           // `stats` and `year` are defined on every award but rendered nowhere
           // yet — reserved for the shared project/award modal (plan step 4).
-          // The `a` branch is likewise dormant until an award carries a url.
-          const Card = award.url ? "a" : "article";
           const logo = resolveImageUrl(award.imageUrl);
 
           return (
-            <Card
+            <article
               key={award.id}
-              {...(award.url
-                ? {
-                    href: award.url,
-                    target: "_blank",
-                    rel: "noopener noreferrer",
-                    "aria-label": `View credential for ${award.title}`,
-                  }
-                : {})}
               onPointerEnter={() => {
                 setHoveredId(award.id);
                 setActivation((n) => n + 1);
               }}
               onPointerLeave={() => setHoveredId(null)}
-              // Keyboard focus only, for the same reason the reveal uses
-              // group-keyboard: a click leaves the card focused, and without
-              // this test the Claude mark kept spinning after its tab opened.
-              onFocus={(e) => {
-                if (e.currentTarget.matches(":focus-visible")) setHoveredId(award.id);
-              }}
-              onBlur={() => setHoveredId(null)}
-              className="group bg-card focus-visible:ring-accent focus-visible:ring-offset-background relative flex flex-col overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+              className="group bg-card relative flex flex-col overflow-hidden text-left transition-colors motion-reduce:transition-none"
             >
               {/* Dashed border only. Corner brackets are reserved for things
                   that open the centre modal, and nothing here does. */}
@@ -145,27 +128,38 @@ export default function AwardsGrid() {
                 </p>
               </div>
 
-              {/* Same affordance as a project plate: the mark waits in its own
-                  corner, clear of the stage figure and of the caption, and
-                  arrives on hover or focus. There the arrow is a sibling link
-                  because the card itself opens a modal; here the whole card is
-                  the anchor, so this one only has to say "leaves the site" —
-                  hence aria-hidden and no tab stop of its own. */}
+              {/* Same affordance as a project plate: the arrow waits in its own
+                  corner and arrives on hover or focus. It is the only link —
+                  the card itself is inert, so a tap on the stage or the caption
+                  never leaves the site. pointer-coarse keeps it visible where
+                  hover cannot reveal it: Tailwind gates hover: behind
+                  @media (hover: hover), so on touch the reveal never fires. */}
               {award.url && (
                 <div
-                  className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none"
+                  className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none pointer-coarse:opacity-100"
                   style={t}
-                  aria-hidden="true"
                 >
-                  <span
-                    className="text-accent group-hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
+                  <a
+                    href={award.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`View credential for ${award.title} (opens in new tab)`}
+                    // Keyboard focus only, for the same reason the reveal uses
+                    // group-keyboard: a click leaves the arrow focused, and
+                    // without this test the Claude mark kept spinning after
+                    // its tab opened.
+                    onFocus={(e) => {
+                      if (e.currentTarget.matches(":focus-visible")) setHoveredId(award.id);
+                    }}
+                    onBlur={() => setHoveredId(null)}
+                    className="text-accent hover:text-tertiary focus-visible:ring-accent focus-visible:ring-offset-background flex items-center leading-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                     style={tFast}
                   >
                     <ArrowUpRight size={ICON_CONFIG.sizes.md} />
-                  </span>
+                  </a>
                 </div>
               )}
-            </Card>
+            </article>
           );
         })}
       </div>
