@@ -131,6 +131,21 @@ export function playClickSharp() {
   });
 }
 
+/** Dead plate — a press on something that does not open. Low, damped, no
+ * ring: the same burst dropped two octaves under the clicks, with a longer
+ * tail so it reads as a thud against a solid rather than a tap on a key. */
+export function playThump() {
+  playTap({
+    lengthS: 0.05,
+    decay: 700,
+    freq: 180,
+    freqJitter: 30,
+    q: 1.5,
+    gain: 0.4,
+    gainJitter: 0.06,
+  });
+}
+
 /** Soft tactile brush — very quiet, wide-band, ultra-short */
 export function playBrush() {
   playTap({

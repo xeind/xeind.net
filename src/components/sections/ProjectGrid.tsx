@@ -13,7 +13,13 @@ import { SPRING_CONFIG, CSS_TRANSITIONS } from "@/lib/config/animation";
 import { useScrollbarCompensation } from "@/lib/hooks/useScrollbarCompensation";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
-import { useAudioUnlock, playBrush, playClickLow, playClickSharp } from "@/lib/hooks/useClickSound";
+import {
+  useAudioUnlock,
+  playBrush,
+  playClickLow,
+  playClickSharp,
+  playThump,
+} from "@/lib/hooks/useClickSound";
 
 type ResolvedTheme = "light" | "dark" | "nightingale" | "blueprint";
 
@@ -149,6 +155,10 @@ export default function ProjectGrid() {
   const clickSharp = useCallback(() => {
     if (prefersReducedMotion) return;
     playClickSharp();
+  }, [prefersReducedMotion]);
+  const thump = useCallback(() => {
+    if (prefersReducedMotion) return;
+    playThump();
   }, [prefersReducedMotion]);
   const activeProjectUrl = activeProject ? getPrimaryProjectUrl(activeProject) : undefined;
 
@@ -531,13 +541,22 @@ export default function ProjectGrid() {
                  button, layered above it — an <a> inside a <button> is invalid
                  interactive nesting, unreliable for keyboards and readers. As
                  siblings each is its own tab stop and clicks never cross. */
-              <div key={project.id} className="group relative h-32 sm:h-36">
+              /* A dead plate still answers a press — with a thump, not a click,
+                 so the sound says "solid" where the click says "opens". The
+                 handler sits on the wrapper because browsers drop pointer
+                 events on a disabled button (Firefox drops them outright), so
+                 the button lets them through to the wrapper instead. */
+              <div
+                key={project.id}
+                className="group relative h-32 sm:h-36"
+                {...(openable ? {} : { onPointerDown: thump })}
+              >
                 <motion.button
                   layoutId={`card-${project.id}`}
                   {...(openable
                     ? { onMouseEnter: brush, onClick: () => handleProjectClick(project) }
                     : { disabled: true })}
-                  className={`bg-muted focus-visible:ring-accent focus-visible:ring-offset-background absolute inset-0 overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none ${openable ? "cursor-pointer" : "cursor-default"}`}
+                  className={`bg-muted focus-visible:ring-accent focus-visible:ring-offset-background absolute inset-0 overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none ${openable ? "cursor-pointer" : "pointer-events-none"}`}
                   style={{ borderRadius: 0 }}
                   transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
                 >
