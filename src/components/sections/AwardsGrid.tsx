@@ -63,7 +63,11 @@ export default function AwardsGrid() {
     <div className="space-y-4">
       <h2 className="text-foreground font-serif text-2xl">Recognitions</h2>
 
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* 480, not sm: at 640 a single card is a full-width slab. The caption
+          is the constraint — at 480 each card still gets 216px, enough for
+          the description at text-xs. Same arbitrary-breakpoint pattern as
+          ProjectGrid's min-[368px]. */}
+      <div className="grid w-full grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-3">
         {awards.map((award) => {
           // `stats` and `year` are defined on every award but rendered nowhere
           // yet — reserved for the shared project/award modal (plan step 4).
