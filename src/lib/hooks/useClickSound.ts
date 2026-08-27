@@ -131,19 +131,37 @@ export function playClickSharp() {
   });
 }
 
-/** Dead plate — a press on something that does not open. Low, damped, no
- * ring: the same burst dropped two octaves under the clicks, with a longer
- * tail so it reads as a thud against a solid rather than a tap on a key. */
+/** Dead plate — a press on something that does not open. Not the noise
+ * burst: filtered noise at thump pitch is a rumble, not a thump. This is a
+ * sine that drops an octave while it fades, the kick-drum shape —
+ * the pitch fall is the "thud", the fast fade keeps it from ringing. */
 export function playThump() {
-  playTap({
-    lengthS: 0.05,
-    decay: 700,
-    freq: 180,
-    freqJitter: 30,
-    q: 1.5,
-    gain: 0.4,
-    gainJitter: 0.06,
-  });
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  const t0 = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  // Soft, not solid: the pitch falls one octave rather than two, and the
+  // gain ramps in over 12ms instead of starting hot — the instant onset is
+  // what reads as a hard hit.
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(110 + Math.random() * 10, t0);
+  osc.frequency.exponentialRampToValueAtTime(55, t0 + 0.1);
+
+  gain.gain.setValueAtTime(0.001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.18, t0 + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.11);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + 0.11);
 }
 
 /** Soft tactile brush — very quiet, wide-band, ultra-short */
