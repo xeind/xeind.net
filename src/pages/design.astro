@@ -321,7 +321,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
           <p class="text-foreground/50 mb-2 font-mono text-xs">Section divider variants</p>
           <div class="space-y-4">
             <div>
-              <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">dashed</p>
+              <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem] leading-4">dashed</p>
               <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
                 <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
                 <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px">
@@ -331,7 +331,7 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
               </div>
             </div>
             <div>
-              <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">grid</p>
+              <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem] leading-4">grid</p>
               <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
                 <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
                 <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px">
@@ -341,7 +341,9 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
               </div>
             </div>
             <div>
-              <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem]">grid-broken</p>
+              <p class="text-foreground/40 mb-2 font-mono text-[0.6875rem] leading-4">
+                grid-broken
+              </p>
               <div class="relative -mx-4 py-px sm:-mx-8 md:-mx-16">
                 <div class="bg-accent/20 absolute top-0 right-[-9999px] left-[-9999px] h-px"></div>
                 <div class="bg-accent/20 absolute right-[-9999px] bottom-0 left-[-9999px] h-px">
@@ -411,13 +413,18 @@ const modalSpring = `duration ${SPRING_CONFIG.noBounce.duration}s, bounce ${SPRI
             CTA Buttons · View Resume / Schedule Call
           </p>
           {
-            /* items-start: without it the row stretches, and the bare button
-              matched the height of the one wrapped in a span — an inline box,
-              so it carries a pixel of descender space the button does not. At
-              40px that stayed hidden; at 24 it showed as a 24 beside a 25. */
+            /* The easter-egg wrapper is a JS hook, not a box: display:contents
+              takes it out of the box tree so the button is the flex item
+              itself. As a span it generated a line box, and the button — an
+              inline-flex 24px tall — sat on that line's baseline, one pixel
+              below its bare neighbour in a 25px wrapper. items-start hid the
+              height difference but not the offset. closest() walks the DOM,
+              so the hook still fires. */
           }
           <div class="flex flex-wrap items-start justify-center gap-4 md:justify-start md:gap-8">
-            <span data-easter-egg><CtaButton href="#" label="Click Me" shortcut="R" /></span>
+            <span class="contents" data-easter-egg
+              ><CtaButton href="#" label="Click Me" shortcut="R" /></span
+            >
             <CtaButton href="#" label="Schedule Call" shortcut="C" />
           </div>
         </div>
