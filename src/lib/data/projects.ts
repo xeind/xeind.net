@@ -71,6 +71,41 @@ export const projects: Project[] = [
   },
 
   {
+    id: "chozi",
+    title: "Chozi",
+    type: "Client",
+    description: "SEO pass on a Next.js property marketplace",
+    longDescription: [
+      "Server-rendered browse pages for every province, canton and zone on a [Next.js](https://nextjs.org) property marketplace, each in its own sitemap.",
+      "One linked JSON-LD graph, templated meta descriptions, one route-owned H1 per page, and a listing map that loads only near the viewport.",
+    ],
+    technologies: ["Next.js", "React", "TypeScript"],
+    liveUrl: "https://chozi.com",
+    featured: true,
+    year: 2026,
+    // The mark is inline in ProjectLogo.tsx; this path is the flag the grid
+    // reads to render a mark at all, same as pioneer and yield.
+    imageUrl: "/projects/chozi.svg",
+    iconSize: "compact",
+  },
+
+  {
+    id: "matchguarantee",
+    title: "Match Guarantee",
+    type: "Client",
+    description: "Lead-capture funnels on Astro and Cloudflare",
+    longDescription: [
+      "Replaced a WordPress booking page with [Astro](https://astro.build) funnels on Cloudflare: every step saves to D1 and syncs to GoHighLevel.",
+      "A/B-tested consultation funnels, an assessment engine and three calculators, with UTM and first-touch attribution on every lead.",
+    ],
+    technologies: ["Astro", "Cloudflare", "D1", "TypeScript"],
+    liveUrl: "https://matchguarantee.com",
+    featured: true,
+    year: 2026,
+    imageUrl: "/projects/matchguarantee.svg",
+  },
+
+  {
     id: "yield",
     title: "Yield",
     type: "Client",
