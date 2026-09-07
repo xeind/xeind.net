@@ -62,3 +62,18 @@ src/content/blog/CLAUDE.md
 
 .github/*
 !.github/workflows/
+
+# Kept locally, out of the repo. Unreferenced OpenGraph images — only
+# public/opengraph.jpg is wired up, in src/lib/config/site.ts.
+/public/ograph.jpg
+/public/opengraph-img.jpg
+/public/site-ograph.jpg
+
+# Kept locally, out of the repo. One-off measuring rig from the grid
+# rewrite; phases 0-4 have shipped. docs/grid-inventory.md still cites
+# these as the way to reproduce its numbers.
+/scripts/grid-inventory.mjs
+/scripts/grid-shots.mjs
+/scripts/phase3-home-probe.mjs
+/scripts/phase3-measure.mjs
+/scripts/phase4-diamond-probe.mjs

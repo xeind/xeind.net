@@ -47,13 +47,7 @@
   Cache-Control: public, max-age=604800
 /map-pin.svg
   Cache-Control: public, max-age=604800
-/ograph.jpg
-  Cache-Control: public, max-age=604800
-/opengraph-img.jpg
-  Cache-Control: public, max-age=604800
 /opengraph.jpg
-  Cache-Control: public, max-age=604800
-/site-ograph.jpg
   Cache-Control: public, max-age=604800
 /xd-32x32-dark.png
   Cache-Control: public, max-age=604800

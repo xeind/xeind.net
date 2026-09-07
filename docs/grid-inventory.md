@@ -1,10 +1,18 @@
 # Grid inventory — Phase 0 survey
 
 The work queue for Phases 2–4 of `docs/prd-grid-alignment.md`. Snapshot taken
-2026-08-13 on branch `grid-alignment`. Re-run the raw tally any time with
-`node scripts/grid-inventory.mjs` — it lists every Tailwind spacing utility in
-`src/` whose pixel value is off the 8px half-cell grid, with the files using
-it. At snapshot time: **65 distinct off-grid values**.
+2026-08-13 on branch `grid-alignment`.
+
+> The measuring rig this document cites — `scripts/grid-inventory.mjs`,
+> `grid-shots.mjs`, `phase3-home-probe.mjs`, `phase3-measure.mjs` and
+> `phase4-diamond-probe.mjs` — is kept out of the repo now that Phases 0–4
+> have shipped. The commands below are recorded so the numbers can be
+> traced, not because a clone can run them.
+
+`node scripts/grid-inventory.mjs` re-runs the raw tally: it lists every
+Tailwind spacing utility in `src/` whose pixel value is off the 8px half-cell
+grid, with the files using it. At snapshot time: **65 distinct off-grid
+values**.
 
 The grid: 8px half-cell for line-heights and small paddings; 16px major cell
 for structural boundaries (panel edges, dividers, section padding). "On the
