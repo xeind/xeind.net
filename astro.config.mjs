@@ -5,6 +5,7 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 
 export default defineConfig({
   site: "https://xeind.net",
@@ -16,7 +17,11 @@ export default defineConfig({
     inlineStylesheets: "always",
   },
   markdown: {
-    rehypePlugins: [rehypeImageGrid],
+    // Astro 7 made Satteri the default processor. rehype-image-grid is a hast
+    // plugin, so the blog stays on unified until (if ever) it is ported.
+    processor: unified({
+      rehypePlugins: [rehypeImageGrid],
+    }),
     shikiConfig: {
       theme: "css-variables",
     },
