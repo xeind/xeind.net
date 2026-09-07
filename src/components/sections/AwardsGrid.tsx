@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { awards } from "@/lib/data/awards";
+import { useAudioUnlock, playBrush } from "@/lib/hooks/useClickSound";
+import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 import ClaudeSpinner from "@/components/ui/ClaudeSpinner";
 import { DashedBorders, GradientBackground } from "@/components/ui/frame";
 import ArrowUpRight from "@/components/ui/ArrowUpRight";
@@ -58,6 +60,8 @@ export default function AwardsGrid() {
   // Claude mark restarts its frame set rather than resuming mid-orbit.
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [activation, setActivation] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+  useAudioUnlock();
 
   return (
     <div className="space-y-4">
@@ -79,6 +83,10 @@ export default function AwardsGrid() {
               onPointerEnter={() => {
                 setHoveredId(award.id);
                 setActivation((n) => n + 1);
+                // The brush only — a plate here reacts but never opens, so it
+                // gets the hover sound and none of the click layer ProjectGrid
+                // adds on top.
+                if (!prefersReducedMotion) playBrush();
               }}
               onPointerLeave={() => setHoveredId(null)}
               className="group bg-card relative flex flex-col overflow-hidden text-left transition-colors motion-reduce:transition-none"
