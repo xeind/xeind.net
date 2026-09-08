@@ -602,7 +602,15 @@ body {
       transparent 1px
     );
   background-size: 4px 4px;
-  background-position: center;
+  /* Phased off the band's own top-left, not centred. 4px divides the 16px
+     cell, and the band spans exactly the sheet — whose edges ARE grid lines —
+     so a left-anchored tile puts every fourth hatch line under a gutter line
+     and the band reads as a subdivision of the page grid. Centred, the tile
+     landed on an arbitrary phase: measured 2px off at 1470, the worst it can
+     be, so no hatch line ever met the ruling beside it. The -1px takes back
+     the hairline the band insets by (top: 1px), which would otherwise push
+     every line one pixel off the document's 4s. */
+  background-position: 0 -1px;
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(
     to right,
@@ -849,7 +857,8 @@ pre code {
 .divider-grid-broken {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Cpath d='M0.5 0v4M0 0.5h4' fill='none' stroke='%23888' stroke-width='0.5' stroke-dasharray='1.5 1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
   background-size: 4px 4px;
-  background-position: center;
+  /* Same phase as .divider-grid above, and for the same reason. */
+  background-position: 0 -1px;
   opacity: 0.25;
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(
