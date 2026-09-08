@@ -51,9 +51,10 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
 <Badge variant="default | accent | muted">TypeScript</Badge>
 
 <CornerDiamond position="tl | tr | bl | br | all" size={8} variant="default | accent | frame" />
-// `frame` (accent/30) is any mark sitting ON the sheet's outer edge — the page
-// frame, every Panel corner, all four of CalloutLink's, and the end marks on a
-// full-bleed divider, whose shell cancels the Panel padding exactly.
+// `frame` (accent/30, same as the rails and the Panel rules it crosses) is any
+// mark sitting ON the sheet's outer edge — the page frame, every Panel corner,
+// all four of CalloutLink's, and the end marks on a full-bleed divider, whose
+// shell cancels the Panel padding exactly.
 // `accent` (accent/20, card fill) is for marks on a rule drawn inside the
 // sheet; only the /design specimens use it today.
 // The fill is opaque on purpose — the hairlines are alpha, so an unfilled mark

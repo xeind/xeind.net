@@ -191,13 +191,13 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       <div class="blueprint-grid-glow" aria-hidden="true"></div>
       <div class="sheet-centered max-w-5xl">
         {
-          /* The page's outer frame is accent/30, one rung above the accent/20
-            of Panel edges and SectionDividers — the boundary of the sheet
-            should read stronger than the rules drawn inside it. This only
-            holds if it is painted once: a Panel that sits flush against main
-            must yield the shared edge (edges="bottom" on the first, "top" on
-            the last), or the two 20%/30% lines composite and that one edge
-            comes out darker than the rails beside it. */
+          /* The page's outer frame is accent/30, the same ink as every Panel
+            edge and corner diamond — rails, rules and marks read as one
+            drawn line. That only holds if each line is painted once: a Panel
+            that sits flush against main must yield the shared edge
+            (edges="bottom" on the first, "top" on the last), or two alpha
+            lines composite and that one edge comes out darker than the
+            rails beside it. */
         }
         {
           /* No border-x: a real border is drawn INSIDE the box, which put the

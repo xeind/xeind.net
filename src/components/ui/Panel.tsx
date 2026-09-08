@@ -35,7 +35,7 @@ export default function Panel({
     <div
       className={`bg-card relative ${paddingClasses[padding]} ${
         edges === "top" || edges === "both"
-          ? "before:bg-accent/20 before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-['']"
+          ? "before:bg-accent/30 before:absolute before:top-0 before:right-[-9999px] before:left-[-9999px] before:h-px before:content-['']"
           : ""
       } ${
         edges === "bottom" || edges === "both"
@@ -45,19 +45,19 @@ export default function Panel({
             // the background of whatever follows (a divider's bg-card), the
             // same trick CalloutLink's owned bottom edge uses; the corner
             // diamonds stay above it at z-20.
-            "after:bg-accent/20 after:absolute after:right-[-9999px] after:bottom-[-1px] after:left-[-9999px] after:z-10 after:h-px after:content-['']"
+            "after:bg-accent/30 after:absolute after:right-[-9999px] after:bottom-[-1px] after:left-[-9999px] after:z-10 after:h-px after:content-['']"
           : ""
       } ${className}`}
     >
-      {/* frame, not accent: a Panel spans the sheet, so all four of its corner
-          marks land on the frame rails, and the rails are accent/30. At
-          accent/20 the diamond was the faintest thing at the crossing — a
-          1px stroke at 45° spreads over 2-3 pixels, so it loses weight the
-          flat rules do not. Measured as ink over the card: rail 40.9, rule
-          35.9, diamond 22.1 in Kozo, where it read as a gap in the rail
-          rather than a mark on it. At accent/30 it measures 42.1 and sits
-          with the rail. The 20/30 hierarchy is unchanged — the Panel's own
-          hairline stays at accent/20; only the mark on the frame moves. */}
+      {/* Rails, rules and diamonds are one ink: accent/30 everywhere they
+          meet. The rules above were accent/20 for a while, one rung under
+          the rails, and the crossing read as three tones — rail 40.9, rule
+          35.9, diamond 22.1 measured over the card in Kozo, with the mark
+          reading as a gap in the rail rather than a mark on it. The diamond
+          went to accent/30 first (2026-08); the rules followed (2026-09-09)
+          so the frame reads as one drawn line. A 1px stroke at 45° still
+          spreads over 2-3 pixels and reads a touch softer; that is
+          rasterisation, not a tone to chase. */}
       {ornaments === "all" ? (
         <CornerDiamond position="all" variant="frame" />
       ) : ornaments === "bottom" ? (

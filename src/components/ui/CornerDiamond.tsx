@@ -13,8 +13,8 @@ const variantBorders = {
   accent: "border-accent/20",
   // `frame` is any mark that sits ON the sheet's outer edge — the page frame
   // itself, and every Panel corner, since a Panel spans the sheet. It matches
-  // the rails at accent/30 rather than the accent/20 of the rules drawn
-  // inside. See the note above the ornaments in Panel.tsx for the measurements.
+  // the rails and the Panel rules, all accent/30, so the crossing is one ink.
+  // See the note above the ornaments in Panel.tsx for the measurements.
   frame: "border-accent/30",
 };
 

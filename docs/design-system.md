@@ -486,9 +486,10 @@ Inside the slot, a page is an alternating stack — nothing else:
 
 The first and last Panel yield the edge they share with `main`. `main` already
 paints that hairline and those two corner diamonds, and a Panel drawing its own
-on the same pixel row composites `accent/20` over `accent/30` — one edge comes
-out darker than the rails beside it. Panels in the middle keep the default
-`edges="both"`.
+on the same pixel row composites two `accent/30` lines — one edge comes out
+darker than the rails beside it. Panels in the middle keep the default
+`edges="both"`. Rails, Panel rules and corner diamonds are all `accent/30`:
+the frame is one ink, at rest and under the cursor.
 
 ### Which pixel a hairline gets
 

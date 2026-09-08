@@ -1361,7 +1361,12 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 .edge-glow-node::after {
   content: "";
   position: absolute;
-  inset: -1px;
+  /* inset: 0, not -1px. A rail lights by the wash painting lit ink OVER its
+     resting stroke on the same pixel; the ring here does the same, sitting
+     on the diamond's own border rather than one pixel outside it. Outside,
+     the mark thickened to a 2px stroke on hover while the rails stayed 1px,
+     and the two no longer read as one line. */
+  inset: 0;
   z-index: 0;
   border: 1px solid var(--edge-glow-ink);
   /* Matches the diamond's own 1px corner, so the glow ring doesn't square off

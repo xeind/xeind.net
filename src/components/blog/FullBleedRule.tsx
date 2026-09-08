@@ -29,7 +29,7 @@ export default function FullBleedRule({ className = "" }: FullBleedRuleProps) {
         className="edge-glow-line absolute top-0 right-[-9999px] left-[-9999px] z-10 h-px"
         aria-hidden="true"
       />
-      <div className="border-accent/20 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
+      <div className="border-accent/30 absolute top-0 right-[-9999px] left-[-9999px] border-t border-dashed" />
       <CornerDiamond position="tl" variant="frame" />
       <CornerDiamond position="tr" variant="frame" />
     </div>
