@@ -60,6 +60,10 @@
 
 # ── Fixed-URL documents & scripts: revalidate so edits ship on next load
 #    instead of being cached for hours ──
+# The markdown and llms twins carry X-Robots-Tag: noindex. They repeat the
+# HTML pages word for word, and a static endpoint cannot send a canonical, so
+# without the header Search Console files them as duplicates of the pages
+# they mirror. They stay fetchable; only the index entry is refused.
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 /*.pdf
@@ -68,8 +72,10 @@
   Cache-Control: public, max-age=0, must-revalidate
 /llms.txt
   Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
 /llms-full.txt
   Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
 # One rule per markdown twin, none overlapping. A single /*.md would be
 # shorter, but Cloudflare's docs are ambiguous about whether a splat crosses a
 # /, so it would either miss the posts or double up with the rule below.
@@ -77,12 +83,16 @@
 # text/markdown; charset=utf-8 from the extension.
 /index.md
   Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
 /tools.md
   Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
 /blog.md
   Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
 /blog/*.md
   Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex
 /sitemap*.xml
   Cache-Control: public, max-age=0, must-revalidate
 /site.webmanifest
