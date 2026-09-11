@@ -58,8 +58,8 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
 // `accent` (accent/20, card fill) is for marks on a rule drawn inside the
 // sheet; only the /design specimens use it today.
 // The fill is opaque on purpose — the hairlines are alpha, so an unfilled mark
-// doubles the ink where it crosses one. `default` and `accent` take the card,
-// `frame` takes the paper (--color-muted). One flat colour per mark: a split
+// doubles the ink where it crosses one. Every variant takes the card, the same
+// surface the rails sit on, so stroke and rail read as one tone. One flat colour per mark: a split
 // gradient matching both of a frame mark's surfaces measures exact and reads
 // wrong, because the inner half then dissolves into the card and the mark
 // becomes a wedge. Rejected twice; do not build it a third time.

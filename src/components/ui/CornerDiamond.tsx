@@ -25,21 +25,24 @@ const variantBorders = {
 // the border too — and the arms blend over the fill instead of over the lines.
 // Nothing doubles.
 //
-// Each variant takes the surface it sits on. `default` and `accent` are drawn
-// inside the sheet, so they take the card. `frame` straddles the sheet's outer
-// edge, half over paper and half over card, and no single colour is right on
-// both sides — it takes the paper (--color-muted, what .paper-background uses,
-// not --color-background, which nothing near a diamond ever shows).
+// Every variant takes the card. The stroke is alpha, so the fill under it sets
+// its tone: the rails are accent/30 over bg-card (each rail is a card-coloured
+// 1px box), and a frame mark on the same rail has to sit on the same surface
+// or the same ink reads as two colours. `frame` took the paper (--color-muted)
+// from 2026-08-18 to 2026-09-12 because it straddles the sheet's edge; in
+// Blueprint that put accent/30 over #0d3b78 next to a rail over #12498f, and
+// the mark read darker than the line it sits on. The rails already made the
+// call for the card; the mark follows.
 //
 // One flat colour, and the mark stays one shape. A split gradient matching both
 // halves was built twice and rejected twice: it measures exact on both sides,
 // and that is the problem — the inner half dissolves into the card and the mark
-// reads as a wedge instead of a diamond. Owner's call, 2026-08-18. The fill's
-// job is to stop the hairlines doubling, not to disappear.
+// reads as a wedge instead of a diamond. The fill's job is to stop the
+// hairlines doubling, not to disappear.
 const variantFills = {
   default: "bg-card",
   accent: "bg-card",
-  frame: "bg-muted",
+  frame: "bg-card",
 };
 
 export default function CornerDiamond({
