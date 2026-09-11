@@ -284,6 +284,16 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
           );
           script.crossOrigin = "anonymous";
           document.head.append(script);
+
+          // Ahrefs web analytics, on the same post-load schedule so neither
+          // tag competes with the page. The key is public by design, like the
+          // site-verification tag in Seo.astro. _headers already allows the
+          // host under script-src and connect-src.
+          const ahrefs = document.createElement("script");
+          ahrefs.src = "https://analytics.ahrefs.com/analytics.js";
+          ahrefs.async = true;
+          ahrefs.setAttribute("data-key", "/VKolPNt1ReY0Dbj7NptFA");
+          document.head.append(ahrefs);
         };
 
         const scheduleBeacon = () => window.setTimeout(installBeacon, 0);
