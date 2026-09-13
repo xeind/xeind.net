@@ -516,7 +516,7 @@ export default function ProjectGrid() {
 
       {/* Project Grid */}
       <div className="space-y-4">
-        <h2 className="text-foreground font-serif text-2xl">Projects</h2>
+        <h2 className="text-foreground font-serif text-2xl leading-8">Projects</h2>
 
         {/* Three across at the cap, not four. The content column is 896 (56
             cells), so four columns with a 16px gap leave 848/4 = 212 per

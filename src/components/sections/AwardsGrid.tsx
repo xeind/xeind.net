@@ -65,7 +65,7 @@ export default function AwardsGrid() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-foreground font-serif text-2xl">Recognitions</h2>
+      <h2 className="text-foreground font-serif text-2xl leading-8">Recognitions</h2>
 
       {/* 480, not sm: at 640 a single card is a full-width slab. The caption
           is the constraint — at 480 each card still gets 216px, enough for
