@@ -235,10 +235,12 @@ function PioneerLogo({
           <>
             <defs>
               <mask id="pioneer-sparkle-mask">
+                {/* eslint-disable-next-line shadcn/no-raw-colors -- mask luminance, never painted */}
                 <rect width="100%" height="100%" fill="white" />
                 <path
                   ref={sparkleRef}
                   d={PIONEER_SPARKLE}
+                  // eslint-disable-next-line shadcn/no-raw-colors -- mask luminance, never painted
                   fill="black"
                   className="pioneer-sparkle-cutout"
                 />
