@@ -1537,12 +1537,17 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   translate: 0 0;
 }
 
+/* Parked one track plus the clip margin away, not one track. At exactly 100%
+   the idle face's edge lands on the track's, and the 2px margin then paints
+   the first 2px of it below the button's text line — on the chip, whose cells
+   fill the box edge to edge, that is a visible fourth row of colour. Text hid
+   the same leak behind its ascender gap. */
 .theme-roll > [data-roll-out] {
-  translate: 0 100%;
+  translate: 0 calc(100% + 2px);
 }
 
 .theme-roll.is-entering > [data-roll-in] {
-  translate: 0 -100%;
+  translate: 0 calc(-100% - 2px);
 }
 
 .theme-roll.is-entering > [data-roll-out] {
