@@ -66,7 +66,10 @@ not `transition-all`. `will-change` only on `transform`, `opacity`, `clipPath`,
 **Blur is expensive.** Never animate a blur over 20px, and only on small
 elements. A large blurred layer plus animation crashes mobile Safari.
 
-**Press feedback** is `active:scale-[0.96]`. Never below 0.95.
+**Press feedback** is `active:scale-[0.96]`. Never below 0.95. Name `scale` in
+the transition, not `transform`: Tailwind v4's `scale-*` utilities set the
+standalone `scale` property, so a `transition-[…,transform]` leaves the press
+snapping with no easing and nothing in DevTools looks wrong.
 
 **Origin.** A thing that opens from a trigger animates from that trigger —
 set `transform-origin` to match.
