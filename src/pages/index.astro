@@ -151,7 +151,7 @@ const structuredData = {
       };
 
       const onIntent = (event) => {
-        if (event.target instanceof Element && event.target.closest("[data-theme-cycle]")) {
+        if (event.target instanceof Element && event.target.closest("[data-theme-select]")) {
           preloadAlternateLogos();
         }
       };

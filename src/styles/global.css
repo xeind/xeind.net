@@ -627,6 +627,43 @@ body {
    Used by borders, corners, hover effects
    ======================================== */
 
+/* A spring, sampled. Motion's springs need an island and this is a static
+   button, so the curve is generated from the underdamped solution and written
+   out: Apple-style duration 0.3s (DURATION.slow) and bounce 0.32, which is
+   damping ratio 0.68. Bounce is above the 0.1-0.3 most UI wants on purpose —
+   the roll only travels one 16px track, and at bounce 0.2 the overshoot is
+   0.23px, which nobody can see. At 0.32 it is 0.86px: one pixel of settle.
+   Regenerate rather than hand-tune; the parameters above are the source. */
+:root {
+  --ease-spring-roll: linear(
+    0,
+    0.0268,
+    0.0955,
+    0.1907,
+    0.3001,
+    0.414,
+    0.5254,
+    0.6294,
+    0.7227,
+    0.8037,
+    0.8717,
+    0.9269,
+    0.9702,
+    1.0028,
+    1.0259,
+    1.0412,
+    1.0501,
+    1.0539,
+    1.0539,
+    1.0511,
+    1.0466,
+    1.0409,
+    1.0348,
+    1.0286,
+    1
+  );
+}
+
 .t-border {
   transition-duration: 0.2s;
   transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
@@ -876,7 +913,9 @@ pre code {
    ======================================== */
 
 /* Kozo — warm ink on paper */
-:root {
+:root,
+.scheme-light {
+  --scheme-paper: hsl(42 20% 88%);
   --shiki-color-text: hsl(34 14% 18%);
   --shiki-color-background: transparent;
   --shiki-foreground: hsl(34 14% 18%);
@@ -913,7 +952,9 @@ pre code {
 }
 
 /* Manila — night traffic, sodium glow */
-[data-theme="dark"] {
+[data-theme="dark"],
+.scheme-dark {
+  --scheme-paper: hsl(220 6% 9%);
   --shiki-color-text: hsl(40 6% 82%);
   --shiki-color-background: transparent;
   --shiki-foreground: hsl(40 6% 82%);
@@ -946,7 +987,9 @@ pre code {
 }
 
 /* Nightingale mode — warm color palette */
-[data-theme="nightingale"] {
+[data-theme="nightingale"],
+.scheme-nightingale {
+  --scheme-paper: #181818;
   --shiki-color-text: hsl(42 27% 80%);
   --shiki-color-background: transparent;
   --shiki-foreground: hsl(42 27% 80%);
@@ -982,7 +1025,9 @@ pre code {
 /* Blueprint — ink on a cobalt sheet. The paper is already a saturated blue,
    so every token here is lighter than its bed; a mid-tone that works on the
    other two dark themes disappears into this one. */
-[data-theme="blueprint"] {
+[data-theme="blueprint"],
+.scheme-blueprint {
+  --scheme-paper: #0d3b78;
   --shiki-color-text: hsl(205 55% 90%);
   --shiki-color-background: transparent;
   --shiki-foreground: hsl(205 55% 90%);
@@ -1387,6 +1432,180 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   }
 }
 
+/* Colour-scheme chip — nine cells of one theme's syntax palette
+   (ui/ColorSchemePreview.astro). 4px cell, 2px gutter, 16px square: the same
+   footprint PixelGrid's metrics(3) gives the lab loader, so the two marks read
+   as one family at a glance.
+
+   The cells are the code-block token colours the /design specimen lists, in
+   reading order, on the paper the code sits on (--color-muted). They are the
+   only per-theme values that are genuinely colours rather than ink tones — a
+   chip built from the logo ladder made Manila and Kozo four greys apiece,
+   which is most of what a reader is choosing between.
+
+   A `.scheme-*` class is the second selector on each theme's syntax block, so
+   a chip can paint a theme the document is not in and no value is written
+   twice. --scheme-paper is the one exception: it is that theme's
+   --color-muted, written out because the chip cannot read a foreign theme's
+   token. Move the two together. */
+.scheme-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 4px);
+  gap: 2px;
+  background: var(--scheme-paper);
+}
+
+.scheme-preview > span {
+  width: 4px;
+  height: 4px;
+}
+
+.scheme-preview > :nth-child(1) {
+  background: var(--astro-code-token-keyword);
+}
+
+.scheme-preview > :nth-child(2) {
+  background: var(--astro-code-token-function);
+}
+
+.scheme-preview > :nth-child(3) {
+  background: var(--astro-code-token-string);
+}
+
+.scheme-preview > :nth-child(4) {
+  background: var(--astro-code-token-constant);
+}
+
+.scheme-preview > :nth-child(5) {
+  background: var(--astro-code-token-parameter);
+}
+
+.scheme-preview > :nth-child(6) {
+  background: var(--astro-code-token-comment);
+}
+
+.scheme-preview > :nth-child(7) {
+  background: var(--astro-code-token-punctuation);
+}
+
+.scheme-preview > :nth-child(8) {
+  background: var(--astro-code-token-link);
+}
+
+.scheme-preview > :nth-child(9) {
+  background: var(--astro-code-foreground);
+}
+
+/* The trigger's value, on a roll — the same figure as ui/ArrowUpRight: twin
+   faces on one clipped track, the resting one leaving as its twin arrives.
+   Each masked box is one cell tall, the chip has a box and the name has a box,
+   and both are toggled in the same frame, so the button's value changes as one
+   thing rather than as a name that slides beside a chip that blinks.
+
+   No opacity, deliberately. The arrow does not fade either: a face that only
+   ever travels reads as departing, where one that dissolves on the way out
+   reads as a crossfade and loses the direction. The clip is the whole effect.
+
+   Both faces travel exactly one track, and neither overshoots. Overshooting
+   was tried and reverted: the house curve is front-loaded, so a face with
+   140% to cover clears the track in roughly 68ms of the 200ms roll and the
+   departure is over before it can be read. At one track the leaving face is
+   still moving at the final frame, which is what makes the change read as the
+   old value going down rather than the new one simply appearing.
+
+   The track clips 2px outside itself rather than on the line box. Cutting a
+   glyph the instant it crosses is what makes the change read as text being
+   guillotined at the button's text line; 2px of grace lets the stroke finish.
+   ui/ArrowUpRight sets the same margin for the same reason, and Tailwind has
+   no utility for the property.
+
+   `translate`, not `transform`: the property is independent, so nothing here
+   can collide with a transform a utility might set. Settled state is the rule
+   below; `.is-entering` is the start the script holds for one frame, and
+   `.is-instant` is how it gets there without animating. Reduced motion
+   collapses the duration globally, which lands both faces at once. */
+.theme-roll {
+  overflow-clip-margin: 2px;
+}
+
+.theme-roll > [data-roll-in],
+.theme-roll > [data-roll-out] {
+  transition: translate 0.3s var(--ease-spring-roll);
+}
+
+.theme-roll > [data-roll-in] {
+  translate: 0 0;
+}
+
+.theme-roll > [data-roll-out] {
+  translate: 0 100%;
+}
+
+.theme-roll.is-entering > [data-roll-in] {
+  translate: 0 -100%;
+}
+
+.theme-roll.is-entering > [data-roll-out] {
+  translate: 0 0;
+}
+
+.theme-roll.is-instant > [data-roll-in],
+.theme-roll.is-instant > [data-roll-out] {
+  transition: none;
+}
+
+/* The current theme, marked on its own chip. An outline costs no layout, so
+   the menu keeps no column for a tick and stays as narrow as its longest
+   label. The ring is the document's ink, not the chip's — it has to read
+   against the menu it sits in, not against the theme it is showing. */
+.theme-menu [aria-checked="true"] .scheme-preview {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* Theme menu — the picker's four rows (ui/ThemeSelector.astro).
+   The popover attribute puts it in the top layer, which is the only way out
+   of the footer's -z-10 stacking context; nothing here touches the z ladder.
+   The UA sheet gives a popover its own border, padding and inset, so all
+   three are cleared and the component's utilities draw the panel instead.
+   Coordinates come from the script, which measures the trigger. */
+.theme-menu {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  opacity: 0;
+  /* Never scale(0) — nothing arrives from nothing. 0.97 is enough to read as
+     growth without the text visibly resampling. transform-origin is set by the
+     script to the trigger's corner. */
+  transform: scale(0.97);
+  /* The exit, at DURATION.fast. The enter overrides it below: a menu should
+     leave faster than it arrives. Both numbers are the house pair from
+     lib/config/animation.ts — .fade and .border. The two discrete properties
+     keep the animation alive while the popover leaves the top layer; without
+     them the close is a cut. The global reduced-motion rule collapses all of
+     it to 0.01ms. */
+  transition:
+    opacity 0.15s cubic-bezier(0.215, 0.61, 0.355, 1),
+    transform 0.15s cubic-bezier(0.215, 0.61, 0.355, 1),
+    overlay 0.15s allow-discrete,
+    display 0.15s allow-discrete;
+}
+
+.theme-menu:popover-open {
+  opacity: 1;
+  transform: scale(1);
+  transition-duration: 0.2s;
+}
+
+@starting-style {
+  .theme-menu:popover-open {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
 /* Blog image zoom lightbox — vanilla FLIP morph (public/blog-lightbox.js).
    Matches the project grid modal feel: thumbnail flies to a centered,
    enlarged view over a dimmed backdrop. */
@@ -1608,7 +1827,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
    scanned for utility classes.
 
    Top, not sonner's default bottom: the footer is fixed at 128px and puts the
-   theme-cycle button in the bottom right. A toast there lands on the only
+   theme picker in the bottom right. A toast there lands on the only
    persistent control on the site the moment a reader reaches the end of a
    page. The top of the viewport is the one region with no fixed furniture —
    and it is also where every code block keeps its copy button, so the toast

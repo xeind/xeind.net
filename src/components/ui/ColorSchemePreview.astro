@@ -1,0 +1,29 @@
+---
+/* Nine cells of a theme's ink ladder — what "Kozo" or "Blueprint" actually
+   looks like, before you pick it. Pure CSS, no island, no animation: the
+   geometry and the tones live in `.scheme-preview` in global.css.
+
+   Pass `theme` to pin the chip to one scheme. Omit it and the chip inherits
+   the document's, which is what the picker's trigger wants — it repaints
+   itself when the reader switches, with no script. */
+const schemeClasses = {
+  light: "scheme-light",
+  dark: "scheme-dark",
+  nightingale: "scheme-nightingale",
+  blueprint: "scheme-blueprint",
+} as const;
+
+interface Props {
+  theme?: keyof typeof schemeClasses;
+  class?: string;
+}
+
+const { theme, class: className = "" } = Astro.props;
+const scheme = theme ? schemeClasses[theme] : "";
+---
+
+<span class:list={["scheme-preview shrink-0", scheme, className]} aria-hidden="true">
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
+</span>

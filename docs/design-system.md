@@ -380,7 +380,7 @@ Two ratified variants brighten as well as solidify:
   activates as one piece, so its border brightens with it. Also used by the
   modal's list rows.
 - **The button pattern** — `hover:border-accent/50` on standalone buttons
-  (Footer theme cycler, 404 back-link, /design theme button), and
+  (the theme picker's trigger, 404 back-link), and
   `hover:border-tertiary/50` on the modal close button, where the border joins
   the icon's tertiary hover.
 
@@ -553,6 +553,12 @@ footer sits behind at `-z-10`. Don't change that without reading `Footer.astro`.
 | 9998/9999 | Blog image lightbox (`global.css`) and the link-hint tooltip (`hero-interactions.js`) — cursor-transients that must clear the modal portal, which mounts later in `<body>` and out-paints anything at its own z-50 |
 
 Stay on this ladder. A new value means a new layer, and there is no room for one.
+
+The theme menu (`ui/ThemeSelector.astro`) is the one thing that sits above all
+of it and takes no rung. It opens with the `popover` attribute, which puts it in
+the browser's top layer — the only way out of the footer's `-z-10` stacking
+context, and the reason the picker did not cost the ladder a value. Anything
+else that must clear the whole page should open the same way.
 
 ### Edge glow
 

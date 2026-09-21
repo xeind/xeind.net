@@ -364,13 +364,13 @@ export default function ProjectLogo({ projectId, theme, className, alt }: Projec
   const externalLogoSrc = getExternalLogoSrc(projectId, theme);
 
   // Preload the other themes' variants only when the visitor shows intent
-  // to switch (hover/focus on the theme cycle button) — most sessions never
+  // to switch (hover/focus on the theme picker) — most sessions never
   // touch it, so eager preloading wasted six downloads per visit.
   useEffect(() => {
     if (!externalLogoSrc) return;
 
     const onIntent = (event: Event) => {
-      if (event.target instanceof Element && event.target.closest("[data-theme-cycle]")) {
+      if (event.target instanceof Element && event.target.closest("[data-theme-select]")) {
         void preloadAlternateLogos(theme);
       }
     };

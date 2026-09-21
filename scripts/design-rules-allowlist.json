@@ -48,16 +48,10 @@
     "reason": "theme-color meta tags and the no-JS fallback background render before any CSS variable exists"
   },
   {
-    "file": "src/components/Footer.astro",
+    "file": "src/components/ui/ThemeSelector.astro",
     "rule": "spacing",
     "match": "py-1.5",
-    "reason": "Theme cycler: 16px label + 6 + 6 + 2 borders = 30, which min-h-8 clamps to a 32px control. py-2 measured 34 and left the grid"
-  },
-  {
-    "file": "src/pages/design.astro",
-    "rule": "spacing",
-    "match": "py-1.5",
-    "reason": "The same theme cycler, rendered as a specimen — must match Footer.astro exactly"
+    "reason": "Theme picker trigger: 16px label + 6 + 6 + 2 borders = 30, which min-h-8 clamps to a 32px control. py-2 measured 34 and left the grid"
   },
   {
     "file": "src/components/sections/AwardsGrid.tsx",

@@ -105,8 +105,8 @@ state, badges' demo page) are precedents only for _those_ jobs.
 
 Don't invent one — the set is closed by reuse: `CtaButton` (primary + shortcut),
 `CalloutLink` (full-width band), `InlineLink` (in a sentence), the quiet
-button pattern (`hover:bg-muted hover:border-accent/50` — Footer's theme
-cycler). New sound? The synth in `public/hero-interactions.js` owns audio;
+button pattern (`hover:bg-muted hover:border-accent/50` — `ui/ThemeSelector`'s
+trigger). New sound? The synth in `public/hero-interactions.js` owns audio;
 percussive noise-taps only, gated on user gesture, silent under
 reduced-motion conventions there.
 
