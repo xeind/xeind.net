@@ -627,42 +627,6 @@ body {
    Used by borders, corners, hover effects
    ======================================== */
 
-/* SPRING_CONFIG.noBounce, sampled. Motion's springs need an island and this is
-   a static button, so the curve is generated from the critically damped
-   solution — duration 0.3s, bounce 0, the house default — and written out.
-   Bounce is for drag (docs/animation.md §4); an interface control that
-   overshoots looks cheap, and a theme name is not a gesture. Regenerate from
-   those two parameters rather than hand-tuning the stops. */
-:root {
-  --ease-spring-roll: linear(
-    0,
-    0.0249,
-    0.0852,
-    0.1645,
-    0.252,
-    0.3404,
-    0.4253,
-    0.5042,
-    0.5756,
-    0.6393,
-    0.6952,
-    0.7437,
-    0.7854,
-    0.821,
-    0.8513,
-    0.8767,
-    0.8982,
-    0.916,
-    0.9309,
-    0.9433,
-    0.9536,
-    0.962,
-    0.969,
-    0.9747,
-    1
-  );
-}
-
 .t-border {
   transition-duration: 0.2s;
   transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
@@ -1512,6 +1476,13 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
    still moving at the final frame, which is what makes the change read as the
    old value going down rather than the new one simply appearing.
 
+   EASING.easeOutExpo, which is how this codebase already spells "a spring
+   with no bounce" — the logo's break-apart uses it for the same reason, and
+   its comment says so. A spring sampled from the physics was tried instead
+   and reverted: critically damped means zero starting velocity, so it covered
+   3.5% of the distance in the first twentieth of its duration against this
+   curve's 25.6%, and a value that hangs before it moves reads as lag.
+
    The track clips 2px outside itself rather than on the line box. Cutting a
    glyph the instant it crosses is what makes the change read as text being
    guillotined at the button's text line; 2px of grace lets the stroke finish.
@@ -1529,7 +1500,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 .theme-roll > [data-roll-in],
 .theme-roll > [data-roll-out] {
-  transition: translate 0.3s var(--ease-spring-roll);
+  transition: translate 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .theme-roll > [data-roll-in] {
