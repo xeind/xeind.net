@@ -23,7 +23,7 @@
   const SCALE_STEP = 0.06;
   const SWIPE_DISMISS = 45; /* px of drag that counts as "throw it away" */
   const EXIT_MS = 300; /* keep in step with the transition in global.css */
-  const DEDUPE_MS = 1000;
+  const DEDUPE_MS = LIFETIME; /* a repeat re-arms the toast still on screen */
 
   /* Newest first. Index 0 is the front toast — the one at y = 0, pinned to the
      top of the container. Everything after it stacks downward. */
@@ -168,15 +168,21 @@
     var description = (options && options.description) || "";
 
     /* Two clicks on the same copy button should re-arm one toast, not build a
-       stack of identical ones. */
+       stack of identical ones. The window runs from the last repeat, not from
+       when the toast was first made: measured from creation, a toast that had
+       been re-armed three times still fell outside the window while it was
+       plainly still on screen, and the next click stacked a duplicate behind
+       it. One lifetime from the last repeat means anything arriving while you
+       can still read the last one is treated as the same event. */
     var front = list[0];
     if (
       front &&
       front.title === title &&
       front.description === description &&
-      Date.now() - front.createdAt < DEDUPE_MS
+      Date.now() - front.touchedAt < DEDUPE_MS
     ) {
       front.remaining = LIFETIME;
+      front.touchedAt = Date.now();
       if (!expanded) startTimer(front);
       return;
     }
@@ -206,6 +212,7 @@
       title: title,
       description: description,
       createdAt: Date.now(),
+      touchedAt: Date.now(),
       remaining: LIFETIME,
       startedAt: Date.now(),
       timer: 0,
