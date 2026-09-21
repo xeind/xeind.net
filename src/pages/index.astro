@@ -189,38 +189,52 @@ const structuredData = {
       const check = btn.querySelector<HTMLElement>('[data-email-icon="check"]');
       if (!email || !mail || !check) return;
 
-      navigator.clipboard.writeText(email).then(() => {
-        /* Confirm tap-tap (hero-interactions.js) — after the write resolves,
+      navigator.clipboard
+        .writeText(email)
+        .then(() => {
+          /* Confirm tap-tap (hero-interactions.js) — after the write resolves,
            so the sound lands with the checkmark, not the press. */
-        window.dispatchEvent(new CustomEvent("hero:copy-confirm"));
-        /* public/toaster.js listens for this one. */
-        document.dispatchEvent(
-          new CustomEvent("toast", {
-            detail: { title: "Copied email", description: email },
-          }),
-        );
-        clearTimeout(revertTimers.get(btn));
-        mail.style.transform = "scale(0.25)";
-        mail.style.opacity = "0";
-        mail.style.filter = "blur(4px)";
-        check.style.transform = "scale(1)";
-        check.style.opacity = "1";
-        check.style.filter = "blur(0)";
-        btn.setAttribute("aria-label", "Copied");
+          window.dispatchEvent(new CustomEvent("hero:copy-confirm"));
+          /* public/toaster.js listens for this one. */
+          document.dispatchEvent(
+            new CustomEvent("toast", {
+              detail: { title: "Copied email", description: email },
+            }),
+          );
+          clearTimeout(revertTimers.get(btn));
+          mail.style.transform = "scale(0.25)";
+          mail.style.opacity = "0";
+          mail.style.filter = "blur(4px)";
+          check.style.transform = "scale(1)";
+          check.style.opacity = "1";
+          check.style.filter = "blur(0)";
+          btn.setAttribute("aria-label", "Copied");
 
-        revertTimers.set(
-          btn,
-          setTimeout(() => {
-            mail.style.transform = "scale(1)";
-            mail.style.opacity = "1";
-            mail.style.filter = "blur(0)";
-            check.style.transform = "scale(0.25)";
-            check.style.opacity = "0";
-            check.style.filter = "blur(4px)";
-            btn.setAttribute("aria-label", "Copy email address");
-          }, 2000),
-        );
-      });
+          revertTimers.set(
+            btn,
+            setTimeout(() => {
+              mail.style.transform = "scale(1)";
+              mail.style.opacity = "1";
+              mail.style.filter = "blur(0)";
+              check.style.transform = "scale(0.25)";
+              check.style.opacity = "0";
+              check.style.filter = "blur(4px)";
+              btn.setAttribute("aria-label", "Copy email address");
+            }, 2000),
+          );
+        })
+        .catch(() => {
+          /* The write can be refused outright — an insecure origin, a browser
+           where the reader has blocked clipboard access, some in-app
+           webviews. Without this the button did nothing at all: no toast, no
+           checkmark, no message, just a click that went nowhere. Hand the
+           address over in the toast so it can still be selected by hand. */
+          document.dispatchEvent(
+            new CustomEvent("toast", {
+              detail: { title: "Couldn't copy — here it is", description: email },
+            }),
+          );
+        });
     });
   </script>
 </Layout>
