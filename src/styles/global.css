@@ -627,39 +627,38 @@ body {
    Used by borders, corners, hover effects
    ======================================== */
 
-/* A spring, sampled. Motion's springs need an island and this is a static
-   button, so the curve is generated from the underdamped solution and written
-   out: Apple-style duration 0.3s (DURATION.slow) and bounce 0.32, which is
-   damping ratio 0.68. Bounce is above the 0.1-0.3 most UI wants on purpose —
-   the roll only travels one 16px track, and at bounce 0.2 the overshoot is
-   0.23px, which nobody can see. At 0.32 it is 0.86px: one pixel of settle.
-   Regenerate rather than hand-tune; the parameters above are the source. */
+/* SPRING_CONFIG.noBounce, sampled. Motion's springs need an island and this is
+   a static button, so the curve is generated from the critically damped
+   solution — duration 0.3s, bounce 0, the house default — and written out.
+   Bounce is for drag (docs/animation.md §4); an interface control that
+   overshoots looks cheap, and a theme name is not a gesture. Regenerate from
+   those two parameters rather than hand-tuning the stops. */
 :root {
   --ease-spring-roll: linear(
     0,
-    0.0268,
-    0.0955,
-    0.1907,
-    0.3001,
-    0.414,
-    0.5254,
-    0.6294,
-    0.7227,
-    0.8037,
-    0.8717,
-    0.9269,
-    0.9702,
-    1.0028,
-    1.0259,
-    1.0412,
-    1.0501,
-    1.0539,
-    1.0539,
-    1.0511,
-    1.0466,
-    1.0409,
-    1.0348,
-    1.0286,
+    0.0249,
+    0.0852,
+    0.1645,
+    0.252,
+    0.3404,
+    0.4253,
+    0.5042,
+    0.5756,
+    0.6393,
+    0.6952,
+    0.7437,
+    0.7854,
+    0.821,
+    0.8513,
+    0.8767,
+    0.8982,
+    0.916,
+    0.9309,
+    0.9433,
+    0.9536,
+    0.962,
+    0.969,
+    0.9747,
     1
   );
 }
