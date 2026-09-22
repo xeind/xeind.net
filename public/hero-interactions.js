@@ -10,8 +10,10 @@
     return ctx;
   };
 
-  /* Ambient pad — the one sustained sound on the site, off by default and
-     switched by the footer's speaker button (ui/AmbientToggle.astro).
+  /* Ambient pad — the one sustained sound on the site, off on every load and
+     switched by the footer's speaker button (ui/AmbientToggle.astro). The
+     choice is not stored: it lasts the visit, across ClientRouter swaps, and
+     a new load starts silent. Nothing on the site plays without a press.
      Modelled on shreygups.com's 432 Hz loop, which is not a drone but a slow
      vamp: B-flat, C, B-flat, C, with an E-flat turn, each chord a fixed
      voicing held seven to nine seconds, every note shimmering on its own
@@ -22,7 +24,6 @@
      because the button has to work on a phone. /tmp/pad_432.py renders the
      same tables for auditioning; the exception to docs/building.md's
      "nothing ambient" is written there. */
-  const AMBIENT_KEY = "ambient";
   const AMBIENT_GAIN = 0.022;
   const AMBIENT_FADE_IN = 2;
   const AMBIENT_FADE_OUT = 1.5;
@@ -66,7 +67,8 @@
   const AMBIENT_BED_GAIN = 0.5;
   let pad = null;
 
-  const ambientWanted = () => localStorage.getItem(AMBIENT_KEY) === "on";
+  let ambientOn = false;
+  const ambientWanted = () => ambientOn;
 
   const syncAmbient = () => {
     const pressed = String(ambientWanted());
@@ -209,43 +211,17 @@
     window.setTimeout(() => master.disconnect(), (AMBIENT_FADE_OUT + 0.2) * 1000);
   };
 
-  /* A saved "on" cannot start on load: the context needs a gesture. Wait for
-     the first one anywhere on the page — unless it is on the switch itself,
-     which is about to turn the sound off. A reader who asked for less data
-     gets the saved choice dropped, not the button. */
-  const resumeAmbient = () => {
-    if (!ambientWanted()) return;
-    const saveData =
-      (navigator.connection && navigator.connection.saveData) ||
-      window.matchMedia("(prefers-reduced-data: reduce)").matches;
-    if (saveData) {
-      localStorage.setItem(AMBIENT_KEY, "off");
-      syncAmbient();
-      return;
-    }
-    const onGesture = (event) => {
-      if (event.target instanceof Element && event.target.closest("[data-ambient-toggle]")) return;
-      window.removeEventListener("pointerdown", onGesture, true);
-      window.removeEventListener("keydown", onGesture, true);
-      void startPad();
-    };
-    window.addEventListener("pointerdown", onGesture, true);
-    window.addEventListener("keydown", onGesture, true);
-  };
-
   document.addEventListener("click", (event) => {
     const target =
       event.target instanceof Element ? event.target.closest("[data-ambient-toggle]") : null;
     if (!target) return;
-    const on = !ambientWanted();
-    localStorage.setItem(AMBIENT_KEY, on ? "on" : "off");
+    ambientOn = !ambientOn;
     syncAmbient();
-    if (on) void startPad();
+    if (ambientOn) void startPad();
     else stopPad();
   });
 
   syncAmbient();
-  resumeAmbient();
   document.addEventListener("astro:after-swap", syncAmbient);
 
   if (!window.matchMedia("(pointer: fine)").matches) return;

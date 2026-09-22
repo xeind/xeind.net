@@ -134,8 +134,8 @@ Reflexes to suppress, beyond the Never table:
   reader is reading. The reject holds everywhere else — a specimen does not
   earn its way onto a content page by existing. **The second exception is
   sound: the ambient pad** in `public/hero-interactions.js`, switched by the
-  footer's speaker. It is off by default, starts only on a press, persists the
-  reader's choice, and is synthesised — no file, no bytes. It is one pad; a
+  footer's speaker. It is off on every load, starts only on a press, forgets
+  the choice on the next load, and is synthesised — no file, no bytes. It is one pad; a
   second ambient sound, or one that starts on its own, is still the reject.
 - A new hue. The themes own hue; components own none.
 - Centering a section's prose. Text sits left; only marks and stages centre.
