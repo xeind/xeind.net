@@ -10,28 +10,61 @@
     return ctx;
   };
 
-  /* Ambient drone — the one sustained sound on the site, off by default and
-     switched by the footer's speaker button (ui/AmbientToggle.astro). A=432
-     with every interval exact, so nothing beats; free-running LFOs, so nothing
-     loops. Built from oscillators — no file, no fetch, no bytes — and torn
-     down after the fade-out so a silent page costs no CPU. Sits above the
-     pointer guard because the button has to work on a phone. The exception to
-     docs/building.md's "nothing ambient" is written there. */
+  /* Ambient pad — the one sustained sound on the site, off by default and
+     switched by the footer's speaker button (ui/AmbientToggle.astro).
+     Modelled on shreygups.com's 432 Hz loop, which is not a drone but a slow
+     vamp: B-flat, C, B-flat, C, with an E-flat turn, each chord a fixed
+     voicing held seven to nine seconds, every note shimmering on its own
+     wobble, and a flat 432 Hz sine laid over the top. Tuned to A=432 so the
+     tone is the chord's own A and nothing beats. Chords are drawn at random
+     so nothing loops. Synthesised — no file, no bytes — and torn down after
+     the fade-out so a silent page costs no CPU. Sits above the pointer guard
+     because the button has to work on a phone. /tmp/pad_432.py renders the
+     same tables for auditioning; the exception to docs/building.md's
+     "nothing ambient" is written there. */
   const AMBIENT_KEY = "ambient";
-  const AMBIENT_GAIN = 0.04;
+  const AMBIENT_GAIN = 0.022;
   const AMBIENT_FADE_IN = 2;
   const AMBIENT_FADE_OUT = 1.5;
-  /* hz, gain, pan, lfo hz, fixed detune in cents, triangle wave */
-  const AMBIENT_VOICES = [
-    [108, 1.0, 0, 0.031, 0, true],
-    [162, 0.55, -0.35, 0.047, 2.5, false],
-    [216, 0.42, 0.3, 0.059, -2, false],
-    [324, 0.26, -0.22, 0.073, 1.5, false],
-    [432, 0.3, 0.18, 0.109, -1, false],
-  ];
-  /* ±0.15% of pitch, in cents: 1200 · log2(1.0015). */
-  const AMBIENT_DRIFT_CENTS = 2.6;
-  let drone = null;
+  const AMBIENT_A4 = 432;
+  const AMBIENT_NOTES = {
+    Bb1: 34,
+    C2: 36,
+    Eb2: 39,
+    Bb2: 46,
+    C3: 48,
+    D3: 50,
+    Eb3: 51,
+    E3: 52,
+    F3: 53,
+    G3: 55,
+    Bb3: 58,
+    C4: 60,
+    D4: 62,
+    E4: 64,
+    F4: 65,
+    G4: 67,
+  };
+  /* Voicings in dB under the loudest note, read off the reference's STFT. */
+  const AMBIENT_CHORDS = {
+    Bb: { Bb1: -10, Bb2: 0, D3: -6, F3: -4, Bb3: -12, C4: -8, D4: -7, F4: -18, G4: -12 },
+    C: { C2: -14, C3: 0, E3: -10, G3: -6, C4: -6, D4: -14, E4: -12, G4: -10 },
+    Eb: { Eb2: -4, Eb3: -2, F3: -2, G3: -10, Bb2: -5, Bb3: -12, C4: -10, G4: -14 },
+  };
+  const AMBIENT_NEXT = { Bb: ["C", "C", "C", "Eb"], C: ["Bb"], Eb: ["Bb"] };
+  const AMBIENT_CHORD_SECONDS = [7, 9];
+  const AMBIENT_CROSSFADE_TAU = 0.8;
+  const AMBIENT_PARTIALS = [1, 0.35, 0.12];
+  const AMBIENT_WOBBLE_HZ = [0.08, 0.35];
+  const AMBIENT_WOBBLE_DEPTH = 0.45;
+  const AMBIENT_DRIFT_CENTS = 3;
+  const AMBIENT_DRIFT_HZ = [0.03, 0.11];
+  const AMBIENT_TONE_DB = -8;
+  const AMBIENT_LOWPASS_HZ = 700;
+  const AMBIENT_LOWPASS_SWEEP = 150;
+  const AMBIENT_LOWPASS_SWEEP_HZ = 0.02;
+  const AMBIENT_BED_GAIN = 0.5;
+  let pad = null;
 
   const ambientWanted = () => localStorage.getItem(AMBIENT_KEY) === "on";
 
@@ -41,6 +74,10 @@
       button.setAttribute("aria-pressed", pressed);
     });
   };
+
+  const between = ([lo, hi]) => lo + Math.random() * (hi - lo);
+  const noteHz = (midi) => AMBIENT_A4 * 2 ** ((midi - 69) / 12);
+  const dbToGain = (db) => 10 ** (db / 20);
 
   /* A slow sine into an AudioParam: `depth` is the swing either side of the
      param's own value, which stays as the centre. */
@@ -55,11 +92,11 @@
     return osc;
   };
 
-  const startDrone = async () => {
-    if (drone) return;
+  const startPad = async () => {
+    if (pad) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
-    if (drone || !ambientWanted()) return;
+    if (pad || !ambientWanted()) return;
 
     const now = audio.currentTime;
     const sources = [];
@@ -68,47 +105,56 @@
     master.gain.linearRampToValueAtTime(AMBIENT_GAIN, now + AMBIENT_FADE_IN);
     master.connect(audio.destination);
 
-    /* One lowpass over the whole stack, its cutoff breathing 610–950 Hz.
-       Q is linear here, and 0.5 is critically damped — the nearest a biquad
-       gets to the one-pole in the render. Q near 0 splits the poles and
-       pulls the real cutoff down to a few hertz, which left only the root. */
+    /* One lowpass over the whole pad, its cutoff breathing 550–850 Hz — the
+       reference falls away fast above a kilohertz. Q is linear here and 0.5
+       is critically damped, the nearest a biquad gets to the one-pole in the
+       render. Q near 0 splits the poles and pulls the real cutoff down to a
+       few hertz, which once left only the lowest note. */
     const lowpass = audio.createBiquadFilter();
     lowpass.type = "lowpass";
-    lowpass.frequency.value = 780;
+    lowpass.frequency.value = AMBIENT_LOWPASS_HZ;
     lowpass.Q.value = 0.5;
     lowpass.connect(master);
-    sources.push(modulate(audio, 0.023, 170, lowpass.frequency));
+    sources.push(
+      modulate(audio, AMBIENT_LOWPASS_SWEEP_HZ, AMBIENT_LOWPASS_SWEEP, lowpass.frequency),
+    );
 
-    /* Band-limited triangle for the root: odd harmonics to the 13th, 1/n²,
-       alternating sign. The built-in triangle runs to Nyquist and is harsher. */
-    const real = new Float32Array(14);
-    const imag = new Float32Array(14);
-    for (let n = 1, sign = 1; n <= 13; n += 2, sign = -sign) imag[n] = sign / (n * n);
-    const triangle = audio.createPeriodicWave(real, imag, { disableNormalization: true });
+    /* Every note in the pool runs the whole time; the chords only move the
+       levels. A note's timbre is a fundamental with a soft octave and twelfth. */
+    const real = new Float32Array(AMBIENT_PARTIALS.length + 1);
+    const imag = new Float32Array(AMBIENT_PARTIALS.length + 1);
+    AMBIENT_PARTIALS.forEach((gain, i) => (imag[i + 1] = gain));
+    const timbre = audio.createPeriodicWave(real, imag, { disableNormalization: true });
 
-    for (const [hz, gain, pan, lfoHz, cents, isTriangle] of AMBIENT_VOICES) {
+    const levels = {};
+    for (const [name, midi] of Object.entries(AMBIENT_NOTES)) {
       const osc = audio.createOscillator();
-      if (isTriangle) osc.setPeriodicWave(triangle);
-      else osc.type = "sine";
-      osc.frequency.value = hz;
-      osc.detune.value = cents;
-      /* Pitch and level drift on the same LFO, so each voice swells as it
-         sharpens — the breathing. Gain sits at 0.88 and swings ±0.12. */
+      osc.setPeriodicWave(timbre);
+      osc.frequency.value = noteHz(midi);
+      sources.push(modulate(audio, between(AMBIENT_DRIFT_HZ), AMBIENT_DRIFT_CENTS, osc.detune));
+      /* The shimmer: level × (1 + depth · sin), each note on its own rate. */
+      const wobble = audio.createGain();
+      wobble.gain.value = 1;
+      sources.push(modulate(audio, between(AMBIENT_WOBBLE_HZ), AMBIENT_WOBBLE_DEPTH, wobble.gain));
       const level = audio.createGain();
-      level.gain.value = gain * 0.88;
-      const drift = modulate(audio, lfoHz, AMBIENT_DRIFT_CENTS, osc.detune);
-      const swell = audio.createGain();
-      swell.gain.value = gain * 0.12;
-      drift.connect(swell);
-      swell.connect(level.gain);
-      const panner = audio.createStereoPanner();
-      panner.pan.value = pan;
-      osc.connect(level);
-      level.connect(panner);
-      panner.connect(lowpass);
+      level.gain.value = 0;
+      osc.connect(wobble);
+      wobble.connect(level);
+      level.connect(lowpass);
       osc.start();
-      sources.push(osc, drift);
+      sources.push(osc);
+      levels[name] = level.gain;
     }
+
+    /* The tone itself: a flat 432 Hz sine, under the chord, never moving. */
+    const tone = audio.createOscillator();
+    tone.frequency.value = AMBIENT_A4;
+    const toneLevel = audio.createGain();
+    toneLevel.gain.value = dbToGain(AMBIENT_TONE_DB);
+    tone.connect(toneLevel);
+    toneLevel.connect(lowpass);
+    tone.start();
+    sources.push(tone);
 
     /* The bed: filtered noise, the same vocabulary as the site's clicks. Two
        seconds of white noise on a loop, rolled off at 70 Hz to a soft rumble. */
@@ -123,20 +169,37 @@
     rumble.frequency.value = 70;
     rumble.Q.value = 0.5;
     const bed = audio.createGain();
-    bed.gain.value = 0.9;
+    bed.gain.value = AMBIENT_BED_GAIN;
     noise.connect(rumble);
     rumble.connect(bed);
     bed.connect(lowpass);
     noise.start();
     sources.push(noise);
 
-    drone = { master, sources };
+    /* The vamp. Each chord sets every note's target and the levels glide
+       there on one time constant, so notes shared by both chords hold and
+       the rest cross-fade. The next chord is drawn, not stepped. */
+    const state = { master, sources, timer: 0, chord: "Bb" };
+    const step = () => {
+      const voicing = AMBIENT_CHORDS[state.chord];
+      const at = audio.currentTime;
+      for (const [name, param] of Object.entries(levels)) {
+        const db = voicing[name];
+        param.setTargetAtTime(db === undefined ? 0 : dbToGain(db), at, AMBIENT_CROSSFADE_TAU);
+      }
+      const options = AMBIENT_NEXT[state.chord];
+      state.chord = options[Math.floor(Math.random() * options.length)];
+      state.timer = window.setTimeout(step, between(AMBIENT_CHORD_SECONDS) * 1000);
+    };
+    step();
+    pad = state;
   };
 
-  const stopDrone = () => {
-    if (!drone) return;
-    const { master, sources } = drone;
-    drone = null;
+  const stopPad = () => {
+    if (!pad) return;
+    const { master, sources, timer } = pad;
+    pad = null;
+    window.clearTimeout(timer);
     const audio = getCtx();
     const now = audio.currentTime;
     master.gain.cancelScheduledValues(now);
@@ -164,7 +227,7 @@
       if (event.target instanceof Element && event.target.closest("[data-ambient-toggle]")) return;
       window.removeEventListener("pointerdown", onGesture, true);
       window.removeEventListener("keydown", onGesture, true);
-      void startDrone();
+      void startPad();
     };
     window.addEventListener("pointerdown", onGesture, true);
     window.addEventListener("keydown", onGesture, true);
@@ -177,8 +240,8 @@
     const on = !ambientWanted();
     localStorage.setItem(AMBIENT_KEY, on ? "on" : "off");
     syncAmbient();
-    if (on) void startDrone();
-    else stopDrone();
+    if (on) void startPad();
+    else stopPad();
   });
 
   syncAmbient();
@@ -244,7 +307,7 @@
 
   /* Copy-confirm: two taps, the second brighter and a touch louder — the
      sound of something seating. Same noise-burst language as the clicks; a
-     tonal "ding" would be the only struck note on the site — the drone above
+     tonal "ding" would be the only struck note on the site — the pad above
      is sustained and opt-in, which is a different thing. Fired by the
      email button via the hero:copy-confirm event once the clipboard write
      has actually resolved, so the sound lands with the checkmark swap. */

@@ -109,7 +109,7 @@ button pattern (`hover:bg-muted hover:border-accent/50` — `ui/ThemeSelector`'s
 trigger, `ui/AmbientToggle`'s speaker). New sound? The synth in
 `public/hero-interactions.js` owns audio; percussive noise-taps only, gated on
 user gesture, silent under reduced-motion conventions there. The one sustained
-sound is the ambient drone, and it is a closed set of one — see Hard rejects.
+sound is the ambient pad, and it is a closed set of one — see Hard rejects.
 
 ### New content (a project, award, job, post)
 
@@ -133,10 +133,10 @@ Reflexes to suppress, beyond the Never table:
   stream's caret are the subject on display, not motion laid over something a
   reader is reading. The reject holds everywhere else — a specimen does not
   earn its way onto a content page by existing. **The second exception is
-  sound: the ambient drone** in `public/hero-interactions.js`, switched by the
+  sound: the ambient pad** in `public/hero-interactions.js`, switched by the
   footer's speaker. It is off by default, starts only on a press, persists the
-  reader's choice, and is synthesised — no file, no bytes. It is one drone;
-  a second ambient sound, or one that starts on its own, is still the reject.
+  reader's choice, and is synthesised — no file, no bytes. It is one pad; a
+  second ambient sound, or one that starts on its own, is still the reject.
 - A new hue. The themes own hue; components own none.
 - Centering a section's prose. Text sits left; only marks and stages centre.
 - "While I'm here" refactors of neighbouring code.
