@@ -2,8 +2,6 @@
   if (window.__hero_interactions_loaded) return;
   window.__hero_interactions_loaded = true;
 
-  if (!window.matchMedia("(pointer: fine)").matches) return;
-
   let ctx = null;
   let primed = false;
 
@@ -11,6 +9,180 @@
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
     return ctx;
   };
+
+  /* Ambient drone — the one sustained sound on the site, off by default and
+     switched by the footer's speaker button (ui/AmbientToggle.astro). A=432
+     with every interval exact, so nothing beats; free-running LFOs, so nothing
+     loops. Built from oscillators — no file, no fetch, no bytes — and torn
+     down after the fade-out so a silent page costs no CPU. Sits above the
+     pointer guard because the button has to work on a phone. The exception to
+     docs/building.md's "nothing ambient" is written there. */
+  const AMBIENT_KEY = "ambient";
+  const AMBIENT_GAIN = 0.04;
+  const AMBIENT_FADE_IN = 2;
+  const AMBIENT_FADE_OUT = 1.5;
+  /* hz, gain, pan, lfo hz, fixed detune in cents, triangle wave */
+  const AMBIENT_VOICES = [
+    [108, 1.0, 0, 0.031, 0, true],
+    [162, 0.55, -0.35, 0.047, 2.5, false],
+    [216, 0.42, 0.3, 0.059, -2, false],
+    [324, 0.26, -0.22, 0.073, 1.5, false],
+    [432, 0.3, 0.18, 0.109, -1, false],
+  ];
+  /* ±0.15% of pitch, in cents: 1200 · log2(1.0015). */
+  const AMBIENT_DRIFT_CENTS = 2.6;
+  let drone = null;
+
+  const ambientWanted = () => localStorage.getItem(AMBIENT_KEY) === "on";
+
+  const syncAmbient = () => {
+    const pressed = String(ambientWanted());
+    document.querySelectorAll("[data-ambient-toggle]").forEach((button) => {
+      button.setAttribute("aria-pressed", pressed);
+    });
+  };
+
+  /* A slow sine into an AudioParam: `depth` is the swing either side of the
+     param's own value, which stays as the centre. */
+  const modulate = (audio, hz, depth, param) => {
+    const osc = audio.createOscillator();
+    osc.frequency.value = hz;
+    const scale = audio.createGain();
+    scale.gain.value = depth;
+    osc.connect(scale);
+    scale.connect(param);
+    osc.start();
+    return osc;
+  };
+
+  const startDrone = async () => {
+    if (drone) return;
+    const audio = getCtx();
+    if (audio.state === "suspended") await audio.resume();
+    if (drone || !ambientWanted()) return;
+
+    const now = audio.currentTime;
+    const sources = [];
+    const master = audio.createGain();
+    master.gain.setValueAtTime(0, now);
+    master.gain.linearRampToValueAtTime(AMBIENT_GAIN, now + AMBIENT_FADE_IN);
+    master.connect(audio.destination);
+
+    /* One lowpass over the whole stack, its cutoff breathing 610–950 Hz. */
+    const lowpass = audio.createBiquadFilter();
+    lowpass.type = "lowpass";
+    lowpass.frequency.value = 780;
+    lowpass.Q.value = 0;
+    lowpass.connect(master);
+    sources.push(modulate(audio, 0.023, 170, lowpass.frequency));
+
+    /* Band-limited triangle for the root: odd harmonics to the 13th, 1/n²,
+       alternating sign. The built-in triangle runs to Nyquist and is harsher. */
+    const real = new Float32Array(14);
+    const imag = new Float32Array(14);
+    for (let n = 1, sign = 1; n <= 13; n += 2, sign = -sign) imag[n] = sign / (n * n);
+    const triangle = audio.createPeriodicWave(real, imag, { disableNormalization: true });
+
+    for (const [hz, gain, pan, lfoHz, cents, isTriangle] of AMBIENT_VOICES) {
+      const osc = audio.createOscillator();
+      if (isTriangle) osc.setPeriodicWave(triangle);
+      else osc.type = "sine";
+      osc.frequency.value = hz;
+      osc.detune.value = cents;
+      /* Pitch and level drift on the same LFO, so each voice swells as it
+         sharpens — the breathing. Gain sits at 0.88 and swings ±0.12. */
+      const level = audio.createGain();
+      level.gain.value = gain * 0.88;
+      const drift = modulate(audio, lfoHz, AMBIENT_DRIFT_CENTS, osc.detune);
+      const swell = audio.createGain();
+      swell.gain.value = gain * 0.12;
+      drift.connect(swell);
+      swell.connect(level.gain);
+      const panner = audio.createStereoPanner();
+      panner.pan.value = pan;
+      osc.connect(level);
+      level.connect(panner);
+      panner.connect(lowpass);
+      osc.start();
+      sources.push(osc, drift);
+    }
+
+    /* The bed: filtered noise, the same vocabulary as the site's clicks. Two
+       seconds of white noise on a loop, rolled off at 70 Hz to a soft rumble. */
+    const noise = audio.createBufferSource();
+    const buffer = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    noise.buffer = buffer;
+    noise.loop = true;
+    const rumble = audio.createBiquadFilter();
+    rumble.type = "lowpass";
+    rumble.frequency.value = 70;
+    rumble.Q.value = 0;
+    const bed = audio.createGain();
+    bed.gain.value = 0.9;
+    noise.connect(rumble);
+    rumble.connect(bed);
+    bed.connect(lowpass);
+    noise.start();
+    sources.push(noise);
+
+    drone = { master, sources };
+  };
+
+  const stopDrone = () => {
+    if (!drone) return;
+    const { master, sources } = drone;
+    drone = null;
+    const audio = getCtx();
+    const now = audio.currentTime;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(master.gain.value, now);
+    master.gain.linearRampToValueAtTime(0, now + AMBIENT_FADE_OUT);
+    sources.forEach((source) => source.stop(now + AMBIENT_FADE_OUT + 0.1));
+    window.setTimeout(() => master.disconnect(), (AMBIENT_FADE_OUT + 0.2) * 1000);
+  };
+
+  /* A saved "on" cannot start on load: the context needs a gesture. Wait for
+     the first one anywhere on the page — unless it is on the switch itself,
+     which is about to turn the sound off. A reader who asked for less data
+     gets the saved choice dropped, not the button. */
+  const resumeAmbient = () => {
+    if (!ambientWanted()) return;
+    const saveData =
+      (navigator.connection && navigator.connection.saveData) ||
+      window.matchMedia("(prefers-reduced-data: reduce)").matches;
+    if (saveData) {
+      localStorage.setItem(AMBIENT_KEY, "off");
+      syncAmbient();
+      return;
+    }
+    const onGesture = (event) => {
+      if (event.target instanceof Element && event.target.closest("[data-ambient-toggle]")) return;
+      window.removeEventListener("pointerdown", onGesture, true);
+      window.removeEventListener("keydown", onGesture, true);
+      void startDrone();
+    };
+    window.addEventListener("pointerdown", onGesture, true);
+    window.addEventListener("keydown", onGesture, true);
+  };
+
+  document.addEventListener("click", (event) => {
+    const target =
+      event.target instanceof Element ? event.target.closest("[data-ambient-toggle]") : null;
+    if (!target) return;
+    const on = !ambientWanted();
+    localStorage.setItem(AMBIENT_KEY, on ? "on" : "off");
+    syncAmbient();
+    if (on) void startDrone();
+    else stopDrone();
+  });
+
+  syncAmbient();
+  resumeAmbient();
+  document.addEventListener("astro:after-swap", syncAmbient);
+
+  if (!window.matchMedia("(pointer: fine)").matches) return;
 
   const prime = async () => {
     if (primed) return;
@@ -69,7 +241,8 @@
 
   /* Copy-confirm: two taps, the second brighter and a touch louder — the
      sound of something seating. Same noise-burst language as the clicks; a
-     tonal "ding" would be the only musical note on the site. Fired by the
+     tonal "ding" would be the only struck note on the site — the drone above
+     is sustained and opt-in, which is a different thing. Fired by the
      email button via the hero:copy-confirm event once the clipboard write
      has actually resolved, so the sound lands with the checkmark swap. */
   const playConfirm = async () => {

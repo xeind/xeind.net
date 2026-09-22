@@ -1,0 +1,54 @@
+---
+import { CSS_TRANSITIONS } from "@/lib/config/animation";
+
+/* The ambient sound switch: a speaker that shows waves while the drone plays
+   and a cross while it is silent. Same quiet-button pattern as the theme
+   picker's trigger, squared to one 32px control so the two sit level in the
+   footer. The state lives in `aria-pressed`; public/hero-interactions.js owns
+   the sound, the persistence and the attribute — this file only draws.
+
+   The hero-sfx hooks give it the site's click and hover fidget, and the hint
+   is the visible name for an icon-only control. */
+const houseTransition = `transition-duration:${CSS_TRANSITIONS.border.transitionDuration};transition-timing-function:${CSS_TRANSITIONS.border.transitionTimingFunction}`;
+const faceTransition = `transition-duration:${CSS_TRANSITIONS.fade.transitionDuration};transition-timing-function:${CSS_TRANSITIONS.fade.transitionTimingFunction}`;
+---
+
+<button
+  type="button"
+  data-ambient-toggle
+  data-hero-sfx="click"
+  data-hero-sfx-hover
+  data-link-hint="Ambient sound"
+  aria-pressed="false"
+  class="group border-accent/30 bg-card text-foreground hover:bg-muted hover:border-accent/50 focus-visible:ring-accent inline-flex h-8 w-8 shrink-0 items-center justify-center border border-dashed transition-colors select-none focus-visible:ring-2 focus-visible:outline-none"
+  style={houseTransition}
+>
+  <span class="sr-only">Ambient sound</span>
+  {
+    /* Hairline strokes on half-pixel coordinates so the body's verticals and
+      horizontals land crisp at 1x. The arcs and the cross are diagonal or
+      curved and cannot; that is rasterisation, not an offset to chase. */
+  }
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1"
+    stroke-linejoin="miter"
+    stroke-linecap="butt"
+    class="block"
+    aria-hidden="true"
+  >
+    <path d="M2.5 6.5h3l4-3v9l-4-3h-3z"></path>
+    <g class="opacity-0 transition-opacity group-aria-pressed:opacity-100" style={faceTransition}>
+      <path d="M11.5 6a2.8 2.8 0 0 1 0 4"></path>
+      <path d="M13.5 4a5.6 5.6 0 0 1 0 8"></path>
+    </g>
+    <g class="transition-opacity group-aria-pressed:opacity-0" style={faceTransition}>
+      <path d="m11.5 6.5 4 3m0-3-4 3"></path>
+    </g>
+  </svg>
+</button>

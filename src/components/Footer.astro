@@ -1,5 +1,6 @@
 ---
 import globalCss from "../styles/global.css?raw";
+import AmbientToggle from "./ui/AmbientToggle.astro";
 import ThemeSelector from "./ui/ThemeSelector.astro";
 
 interface Props {
@@ -99,7 +100,10 @@ const compactDate = Number.isNaN(date.getTime())
           </p>
         </div>
 
-        <ThemeSelector />
+        <div class="flex items-center gap-2">
+          <AmbientToggle />
+          <ThemeSelector />
+        </div>
       </div>
     </div>
   </div>

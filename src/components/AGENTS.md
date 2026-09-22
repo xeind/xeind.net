@@ -23,6 +23,7 @@ Most requests are already solved. Reach for the existing primitive.
 | A quote block in a post          | `blog/PullQuoteCard`                                                 | A styled `<blockquote>`     |
 | A card that opens a modal        | Copy `sections/ProjectGrid`                                          | A new modal implementation  |
 | The theme picker                 | `ui/ThemeSelector.astro`                                             | A second copy of the button |
+| The ambient sound switch         | `ui/AmbientToggle.astro`                                             | A second copy of the button |
 
 There is no icon library. `lucide-react` is not installed and must not be added.
 
