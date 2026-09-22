@@ -68,11 +68,14 @@
     master.gain.linearRampToValueAtTime(AMBIENT_GAIN, now + AMBIENT_FADE_IN);
     master.connect(audio.destination);
 
-    /* One lowpass over the whole stack, its cutoff breathing 610–950 Hz. */
+    /* One lowpass over the whole stack, its cutoff breathing 610–950 Hz.
+       Q is linear here, and 0.5 is critically damped — the nearest a biquad
+       gets to the one-pole in the render. Q near 0 splits the poles and
+       pulls the real cutoff down to a few hertz, which left only the root. */
     const lowpass = audio.createBiquadFilter();
     lowpass.type = "lowpass";
     lowpass.frequency.value = 780;
-    lowpass.Q.value = 0;
+    lowpass.Q.value = 0.5;
     lowpass.connect(master);
     sources.push(modulate(audio, 0.023, 170, lowpass.frequency));
 
@@ -118,7 +121,7 @@
     const rumble = audio.createBiquadFilter();
     rumble.type = "lowpass";
     rumble.frequency.value = 70;
-    rumble.Q.value = 0;
+    rumble.Q.value = 0.5;
     const bed = audio.createGain();
     bed.gain.value = 0.9;
     noise.connect(rumble);
