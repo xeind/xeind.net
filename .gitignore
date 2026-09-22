@@ -52,6 +52,13 @@ lighthouse-*.html
 # tool caches
 .ruff_cache/
 .claude/
+# Vendored agent skills, 1.8MB fetched from the cloudflare/skills repo.
+# skills-lock.json IS committed: it pins every skill by source repo, path and
+# content hash, so a diff there is the only signal that upstream prose changed
+# under us. The payload itself is recoverable from those three fields by hand,
+# which is why it does not need to live in the history. .claude/skills holds
+# nothing but symlinks into this directory.
+.agents/
 .fallow/
 .open-code/
 .codex/
