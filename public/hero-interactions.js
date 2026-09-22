@@ -10,8 +10,9 @@
     return ctx;
   };
 
-  /* Ambient track — the one piece of music on the site, off on every load
-     and switched by the footer's speaker button (ui/AmbientToggle.astro).
+  /* Ambient track — the one piece of music on the site, one song per
+     colour theme, off on every load and switched by the footer's speaker
+     button (ui/AmbientToggle.astro).
      The choice is not stored: it lasts the visit, across ClientRouter swaps,
      and a new load starts silent. Nothing here plays without a press.
 
@@ -26,63 +27,445 @@
      guard because the button has to work on a phone. /tmp/cipher_like.py
      renders the same tables for auditioning; the exception to
      docs/building.md's "nothing ambient" is written there. */
-  const AMBIENT_GAIN = 0.12;
   const AMBIENT_FADE_IN = 2;
   const AMBIENT_FADE_OUT = 1.5;
-  const AMBIENT_BPM = 77;
-  const AMBIENT_BEAT = 60 / AMBIENT_BPM;
-  const AMBIENT_BAR = 4 * AMBIENT_BEAT;
   const AMBIENT_LOOKAHEAD = 0.25;
   const AMBIENT_TICK_MS = 100;
-  const AMBIENT_NOTES = {
-    A1: 33,
-    C2: 36,
-    D2: 38,
-    A2: 45,
-    C3: 48,
-    D3: 50,
-    E3: 52,
-    G3: 55,
-    A3: 57,
-    C4: 60,
-    D4: 62,
-    E4: 64,
-    G4: 67,
-    A4: 69,
-    B4: 71,
-    C5: 72,
-    D5: 74,
+
+  /* One song per colour theme, keyed by the data-theme value (Kozo has none
+     and is "light"). The shape is the song spec in /tmp/songs/README.md;
+     render_song.py there plays the same fields, so a JSON auditioned with
+     afplay is pasted here unchanged. Every field is read; none is optional. */
+  const AMBIENT_SONGS = {
+    dark: {
+      name: "manila",
+      bpm: 77,
+      a4: 440,
+      gain: 0.12,
+      renderDb: -20,
+      seed: 11,
+      notes: {
+        F1: 29,
+        G1: 31,
+        A1: 33,
+        C2: 36,
+        D2: 38,
+        E2: 40,
+        D3: 50,
+        E3: 52,
+        F3: 53,
+        G3: 55,
+        "G#3": 56,
+        A3: 57,
+        B3: 59,
+        C4: 60,
+        D4: 62,
+        E4: 64,
+        F4: 65,
+        G4: 67,
+        "G#4": 68,
+        A4: 69,
+        B4: 71,
+        C5: 72,
+        D5: 74,
+        E5: 76,
+      },
+      chords: [
+        ["A1", ["E3", "A3", "C4", "E4"]],
+        ["F1", ["F3", "A3", "C4", "F4"]],
+        ["C2", ["E3", "G3", "C4", "E4"]],
+        ["G1", ["D3", "G3", "B3", "D4"]],
+        ["A1", ["E3", "A3", "C4", "E4"]],
+        ["F1", ["F3", "A3", "C4", "F4"]],
+        ["D2", ["F3", "A3", "D4", "F4"]],
+        ["E2", ["E3", "G#3", "B3", "E4"]],
+      ],
+      motif: [
+        ["E5", null, null, "C5", null, "A4", null, "B4"],
+        ["C5", null, null, "A4", null, "F4", null, null],
+        ["E5", null, null, "C5", null, "G4", null, "C5"],
+        ["D5", null, null, "B4", null, "G4", null, null],
+        ["E5", null, null, "C5", null, "A4", null, "B4"],
+        ["C5", null, null, "A4", null, "F4", null, "G4"],
+        ["A4", null, "F4", null, "D4", null, null, "E4"],
+        ["E4", null, null, "G#4", null, "B4", null, null],
+      ],
+      introBars: 2,
+      breakEvery: 16,
+      breakBars: 2,
+      drums: true,
+      levels: {
+        pad: -21,
+        padIntro: -25,
+        sub: -9,
+        subIntro: -15,
+        pluck: -16,
+        kick: -11,
+        hat: -36,
+        hatAccent: -31,
+        tick: -30,
+      },
+      pad: {
+        lowpass: 500,
+        partials: [1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.125],
+        detune: 4,
+        attack: 0.5,
+        release: 1.0,
+      },
+      pluck: {
+        partials: [1, 0.616, 0.463, 0.379, 0.324, 0.285],
+        decayTau: 0.24,
+        brightHz: 2900,
+        closedHz: 300,
+        closeTau: 0.111,
+        length: 1.6,
+      },
+      sub: {
+        fromBar: 1,
+        beats: [0, 2],
+        dropRatio: 1.6,
+        dropTau: 0.055,
+        decayTau: 0.83,
+        length: 2.2,
+      },
+      kick: {
+        beats: [0, 1.75, 2],
+        startHz: 192,
+        endHz: 48,
+        dropTau: 0.025,
+        decayTau: 0.1,
+        length: 0.4,
+      },
+      hat: {
+        highpass: 4000,
+        accent: [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, -1, 0, 1, 0, 1, 0],
+        accentTau: 0.011,
+        beatTau: 0.025,
+        tickBeats: [1, 3],
+        tickTau: 0.04,
+      },
+      echo: {
+        beats: 0.75,
+        feedback: 0.4,
+        lowpass: 1800,
+      },
+      bus: {
+        lowpass: 5000,
+      },
+    },
+    light: {
+      name: "kozo",
+      bpm: 68,
+      a4: 440,
+      gain: 0.12,
+      renderDb: -20,
+      seed: 7,
+      notes: {
+        A1: 33,
+        D2: 38,
+        G2: 43,
+        E3: 52,
+        G3: 55,
+        A3: 57,
+        B3: 59,
+        D3: 50,
+        D4: 62,
+        E4: 64,
+        "F#4": 66,
+        G4: 67,
+        A4: 69,
+        B4: 71,
+        "C#5": 73,
+        D5: 74,
+      },
+      chords: [
+        ["D2", ["D3", "A3", "D4", "F#4", "A4"]],
+        ["D2", ["D3", "A3", "D4", "F#4", "A4"]],
+        ["G2", ["G3", "D4", "G4", "A4", "B4"]],
+        ["A1", ["E3", "A3", "B3", "E4", "A4"]],
+      ],
+      motif: [
+        ["F#4", null, "A4", null, "D5", null, "B4", "A4"],
+        ["A4", null, "F#4", null, "E4", "D4", "E4", null],
+      ],
+      introBars: 4,
+      breakEvery: 16,
+      breakBars: 4,
+      drums: false,
+      levels: {
+        pad: -21,
+        padIntro: -25,
+        sub: -14,
+        subIntro: -19,
+        pluck: -17,
+        kick: -12,
+        hat: -36,
+        hatAccent: -31,
+        tick: -30,
+      },
+      pad: {
+        lowpass: 760,
+        partials: [1, 0.5, 0.25, 0.167, 0.125, 0.1],
+        detune: 3,
+        attack: 1.2,
+        release: 1.6,
+      },
+      pluck: {
+        partials: [1, 0.4, 0.28, 0.14, 0.09, 0.05],
+        decayTau: 0.42,
+        brightHz: 4200,
+        closedHz: 450,
+        closeTau: 0.16,
+        length: 2.4,
+      },
+      sub: {
+        fromBar: 2,
+        beats: [0, 2],
+        dropRatio: 1.15,
+        dropTau: 0.08,
+        decayTau: 0.78,
+        length: 2.6,
+      },
+      kick: {
+        beats: [0, 1.75, 2],
+        startHz: 192,
+        endHz: 48,
+        dropTau: 0.025,
+        decayTau: 0.083,
+        length: 0.4,
+      },
+      hat: {
+        highpass: 4000,
+        accent: [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0],
+        accentTau: 0.011,
+        beatTau: 0.025,
+        tickBeats: [2],
+        tickTau: 0.04,
+      },
+      echo: {
+        beats: 0.75,
+        feedback: 0.34,
+        lowpass: 2600,
+      },
+      bus: {
+        lowpass: 6500,
+      },
+    },
+    nightingale: {
+      name: "nightingale",
+      bpm: 68,
+      a4: 440,
+      gain: 0.12,
+      renderDb: -20,
+      seed: 23,
+      notes: {
+        Bb1: 34,
+        C2: 36,
+        D2: 38,
+        F2: 41,
+        Bb2: 46,
+        C3: 48,
+        D3: 50,
+        F3: 53,
+        G3: 55,
+        A3: 57,
+        Bb3: 58,
+        C4: 60,
+        D4: 62,
+        E4: 64,
+        F4: 65,
+        G4: 67,
+        A4: 69,
+        C5: 72,
+        D5: 74,
+      },
+      chords: [
+        ["D2", ["D3", "A3", "C4", "E4", "A4"]],
+        ["Bb1", ["Bb2", "F3", "Bb3", "D4", "A4"]],
+        ["F2", ["F3", "C4", "E4", "G4", "C5"]],
+        ["C2", ["C3", "G3", "C4", "E4", "G4"]],
+      ],
+      motif: [
+        ["A4", null, "D5", "C5", null, "A4", null, null],
+        ["F4", null, "A4", null, "D5", "C5", "A4", null],
+        ["C5", null, "A4", null, "G4", null, "E4", "F4"],
+        ["G4", null, "E4", "G4", null, "C5", null, "D5"],
+      ],
+      introBars: 4,
+      breakEvery: 16,
+      breakBars: 4,
+      drums: true,
+      levels: {
+        pad: -21,
+        padIntro: -25,
+        sub: -9,
+        subIntro: -15,
+        pluck: -17,
+        kick: -13,
+        hat: -38,
+        hatAccent: -33,
+        tick: -32,
+      },
+      pad: {
+        lowpass: 380,
+        partials: [1, 0.5, 0.25, 0.15, 0.1, 0.06],
+        detune: 5,
+        attack: 1.2,
+        release: 1.6,
+      },
+      pluck: {
+        partials: [1, 0.55, 0.36, 0.24, 0.16],
+        decayTau: 0.32,
+        brightHz: 2300,
+        closedHz: 260,
+        closeTau: 0.16,
+        length: 2.2,
+      },
+      sub: {
+        fromBar: 2,
+        beats: [0, 2.5],
+        dropRatio: 1.5,
+        dropTau: 0.06,
+        decayTau: 0.7,
+        length: 1.9,
+      },
+      kick: {
+        beats: [0, 2.5],
+        startHz: 150,
+        endHz: 44,
+        dropTau: 0.03,
+        decayTau: 0.1,
+        length: 0.45,
+      },
+      hat: {
+        highpass: 3400,
+        accent: [0, -1, 0, -1, 1, -1, 0, -1, 0, -1, 0, -1, 1, -1, 0, 0],
+        accentTau: 0.012,
+        beatTau: 0.026,
+        tickBeats: [3.5],
+        tickTau: 0.045,
+      },
+      echo: {
+        beats: 0.75,
+        feedback: 0.3,
+        lowpass: 1400,
+      },
+      bus: {
+        lowpass: 4200,
+      },
+    },
+    blueprint: {
+      name: "blueprint",
+      bpm: 84,
+      a4: 440,
+      gain: 0.12,
+      renderDb: -20,
+      seed: 7,
+      notes: {
+        D2: 38,
+        E2: 40,
+        "F#2": 42,
+        A2: 45,
+        B2: 46,
+        "C#3": 49,
+        D3: 50,
+        E3: 52,
+        "F#3": 54,
+        "G#3": 56,
+        A3: 57,
+        B3: 59,
+        "C#4": 61,
+        D4: 62,
+        E4: 64,
+        "F#4": 66,
+        "G#4": 68,
+        A4: 69,
+        B4: 71,
+        "C#5": 73,
+        D5: 74,
+        E5: 76,
+        "F#5": 78,
+        "G#5": 80,
+        A5: 81,
+      },
+      chords: [
+        ["F#2", ["F#2", "C#3", "F#3", "A3", "C#4"]],
+        ["D2", ["D3", "A3", "D4", "E4", "F#4"]],
+        ["A2", ["A2", "E3", "A3", "C#4", "E4"]],
+        ["E2", ["E3", "B3", "D4", "E4", "G#4"]],
+      ],
+      motif: [
+        ["F#4", "A4", "C#5", "F#5", "C#5", "A4", "C#5", "A4"],
+        ["D5", "A4", "F#4", "A4", "D5", "F#5", "D5", "A4"],
+        ["A4", "C#5", "E5", "A5", "E5", "C#5", "A4", "C#5"],
+        ["E5", "B4", "G#4", "B4", "E5", "G#5", "E5", "B4"],
+      ],
+      introBars: 4,
+      breakEvery: 16,
+      breakBars: 4,
+      drums: true,
+      levels: {
+        pad: -22,
+        padIntro: -26,
+        sub: -9,
+        subIntro: -15,
+        pluck: -19,
+        kick: -13,
+        hat: -38,
+        hatAccent: -32,
+        tick: -31,
+      },
+      pad: {
+        lowpass: 700,
+        partials: [1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.125],
+        detune: 3,
+        attack: 0.9,
+        release: 1.1,
+      },
+      pluck: {
+        partials: [1, 0.55, 0.38, 0.27, 0.19, 0.13],
+        decayTau: 0.16,
+        brightHz: 3600,
+        closedHz: 520,
+        closeTau: 0.1,
+        length: 1.2,
+      },
+      sub: {
+        fromBar: 2,
+        beats: [0, 2],
+        dropRatio: 1.3,
+        dropTau: 0.04,
+        decayTau: 0.75,
+        length: 2.0,
+      },
+      kick: {
+        beats: [0, 2],
+        startHz: 180,
+        endHz: 50,
+        dropTau: 0.022,
+        decayTau: 0.078,
+        length: 0.4,
+      },
+      hat: {
+        highpass: 6000,
+        accent: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+        accentTau: 0.009,
+        beatTau: 0.02,
+        tickBeats: [1, 3],
+        tickTau: 0.035,
+      },
+      echo: {
+        beats: 1.0,
+        feedback: 0.28,
+        lowpass: 2800,
+      },
+      bus: {
+        lowpass: 7500,
+      },
+    },
   };
-  /* [root for the sub, pad voicing] per bar of the four-bar loop. */
-  const AMBIENT_CHORDS = [
-    ["A1", ["A2", "E3", "A3", "C4", "E4"]],
-    ["A1", ["A2", "E3", "A3", "C4", "E4"]],
-    ["C2", ["C3", "G3", "C4", "E4", "G4"]],
-    ["D2", ["D3", "A3", "D4", "E4", "A4"]],
-  ];
-  /* Two bars of eighths; null is a rest. */
-  const AMBIENT_MOTIF = [
-    ["A4", null, "G4", null, "E4", null, "D5", "C5"],
-    ["A4", null, "G4", null, "E4", "B4", "A4", null],
-  ];
-  const AMBIENT_INTRO_BARS = 4;
-  const AMBIENT_BREAK_EVERY = 16;
-  const AMBIENT_BREAK_BARS = 4;
-  const AMBIENT_KICK_BEATS = [0, 1.75, 2];
-  /* Sixteenth slots: 1 accented, 0 plain, -1 silent — from the onset histogram. */
-  const AMBIENT_HAT_ACCENT = [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0];
-  const AMBIENT_LEVELS = {
-    pad: -22,
-    padIntro: -26,
-    sub: -9,
-    subIntro: -15,
-    pluck: -18,
-    kick: -12,
-    hat: -36,
-    hatAccent: -31,
-    tick: -30,
-  };
-  const AMBIENT_ECHO = { seconds: (3 * AMBIENT_BEAT) / 4, feedback: 0.38, lowpass: 1800 };
+
+  const currentTheme = () => document.documentElement.dataset.theme || "light";
   let ambient = null;
 
   let ambientOn = false;
@@ -95,7 +478,6 @@
     });
   };
 
-  const noteHz = (midi) => 440 * 2 ** ((midi - 69) / 12);
   const dbToGain = (db) => 10 ** (db / 20);
 
   /* A gain that opens at `at`, decays on an exponential with time constant
@@ -118,33 +500,40 @@
     if (audio.state === "suspended") await audio.resume();
     if (ambient || !ambientWanted()) return;
 
+    const theme = currentTheme();
+    const song = AMBIENT_SONGS[theme] || AMBIENT_SONGS.dark;
+    const BEAT = 60 / song.bpm;
+    const BAR = 4 * BEAT;
+    const L = song.levels;
+    const noteHz = (name) => song.a4 * 2 ** ((song.notes[name] - 69) / 12);
+
     const now = audio.currentTime;
     const master = audio.createGain();
     master.gain.setValueAtTime(0, now);
-    master.gain.linearRampToValueAtTime(AMBIENT_GAIN, now + AMBIENT_FADE_IN);
+    master.gain.linearRampToValueAtTime(song.gain, now + AMBIENT_FADE_IN);
     master.connect(audio.destination);
 
     /* Q is linear on a lowpass; 0.5 is critically damped. Q near 0 splits the
        poles and pulls the real cutoff down to a few hertz. */
-    const lowpass = (hz, into) => {
-      const filter = audio.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.frequency.value = hz;
-      filter.Q.value = 0.5;
-      filter.connect(into);
-      return filter;
+    const filter = (type, hz, into) => {
+      const node = audio.createBiquadFilter();
+      node.type = type;
+      node.frequency.value = hz;
+      node.Q.value = 0.5;
+      node.connect(into);
+      return node;
     };
-    const bus = lowpass(5000, master);
-    const padBus = lowpass(500, bus);
+    const bus = filter("lowpass", song.bus.lowpass, master);
+    const padBus = filter("lowpass", song.pad.lowpass, bus);
 
-    /* The pluck's echo: a dotted eighth, three audible repeats, darkening. */
+    /* The pluck's echo: a delay in beats, feeding back, darkening. */
     const pluckBus = audio.createGain();
     pluckBus.connect(bus);
-    const delay = audio.createDelay(2);
-    delay.delayTime.value = AMBIENT_ECHO.seconds;
+    const delay = audio.createDelay(4);
+    delay.delayTime.value = song.echo.beats * BEAT;
     const feedback = audio.createGain();
-    feedback.gain.value = AMBIENT_ECHO.feedback;
-    const echoTone = lowpass(AMBIENT_ECHO.lowpass, bus);
+    feedback.gain.value = song.echo.feedback;
+    const echoTone = filter("lowpass", song.echo.lowpass, bus);
     pluckBus.connect(delay);
     delay.connect(feedback);
     feedback.connect(delay);
@@ -156,65 +545,63 @@
       partials.forEach((g, i) => (imag[i + 1] = g));
       return audio.createPeriodicWave(real, imag, { disableNormalization: true });
     };
-    const saw = wave([1, 1 / 2, 1 / 3, 1 / 4, 1 / 5, 1 / 6, 1 / 7, 1 / 8]);
-    const string = wave([1, 2, 3, 4, 5, 6].map((k) => k ** -0.7));
+    const padWave = wave(song.pad.partials);
+    const pluckWave = wave(song.pluck.partials);
 
     const noise = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
     const data = noise.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
 
-    /* Sub: sine on the root, pitch falling from 1.6× to 1× in the first
-       tenth of a second, a tail long enough to meet the next hit. */
-    const sub = (at, midi, level) => {
+    /* Sub: sine on the chord's root, pitch falling from dropRatio× to 1×. */
+    const sub = (at, name, level) => {
+      const S = song.sub;
       const osc = audio.createOscillator();
-      const hz = noteHz(midi);
-      osc.frequency.setValueAtTime(hz * 1.6, at);
-      osc.frequency.setTargetAtTime(hz, at, 1 / 18);
-      envelope(audio, osc, at, dbToGain(level), 1 / 1.2, bus, 2.2);
+      const hz = noteHz(name);
+      osc.frequency.setValueAtTime(hz * S.dropRatio, at);
+      osc.frequency.setTargetAtTime(hz, at, S.dropTau);
+      envelope(audio, osc, at, dbToGain(level), S.decayTau, bus, S.length);
     };
 
-    /* Pad: each note twice, ±4 cents apart, saw partials to the 8th, into a
-       500 Hz lowpass. One bar long with a slow rise and fall. */
+    /* Pad: each note twice, ±detune cents, one bar long with a rise and fall. */
     const pad = (at, names, level) => {
+      const P = song.pad;
       const gain = audio.createGain();
       gain.gain.setValueAtTime(0, at);
-      gain.gain.linearRampToValueAtTime(dbToGain(level), at + 0.8);
-      gain.gain.setValueAtTime(dbToGain(level), at + AMBIENT_BAR - 0.8);
-      gain.gain.linearRampToValueAtTime(0, at + AMBIENT_BAR + 0.4);
+      gain.gain.linearRampToValueAtTime(dbToGain(level), at + P.attack);
+      gain.gain.setValueAtTime(dbToGain(level), at + BAR);
+      gain.gain.linearRampToValueAtTime(0, at + BAR + P.release);
       gain.connect(padBus);
       for (const name of names) {
-        for (const cents of [-4, 4]) {
+        for (const cents of [-P.detune, P.detune]) {
           const osc = audio.createOscillator();
-          osc.setPeriodicWave(saw);
-          osc.frequency.value = noteHz(AMBIENT_NOTES[name]);
+          osc.setPeriodicWave(padWave);
+          osc.frequency.value = noteHz(name);
           osc.detune.value = cents;
           osc.connect(gain);
           osc.start(at);
-          osc.stop(at + AMBIENT_BAR + 0.5);
+          osc.stop(at + BAR + P.release + 0.1);
         }
       }
     };
 
-    /* Pluck: bright at the strike, its own lowpass closing in a tenth of a
-       second, the body gone in under half. Into the echo bus. */
-    const pluck = (at, midi, level) => {
+    /* Pluck: bright at the strike, its own lowpass closing. Into the echo. */
+    const pluck = (at, name, level) => {
+      const P = song.pluck;
       const osc = audio.createOscillator();
-      osc.setPeriodicWave(string);
-      osc.frequency.value = noteHz(midi);
-      const tone = audio.createBiquadFilter();
-      tone.type = "lowpass";
-      tone.Q.value = 0.5;
-      tone.frequency.setValueAtTime(2900, at);
-      tone.frequency.setTargetAtTime(300, at, 1 / 9);
-      tone.connect(pluckBus);
-      envelope(audio, osc, at, dbToGain(level), 1 / 4.5, tone, 1.6);
+      osc.setPeriodicWave(pluckWave);
+      osc.frequency.value = noteHz(name);
+      const tone = filter("lowpass", P.brightHz, pluckBus);
+      tone.frequency.setValueAtTime(P.brightHz, at);
+      tone.frequency.setTargetAtTime(P.closedHz, at, P.closeTau);
+      envelope(audio, osc, at, dbToGain(level), P.decayTau, tone, P.length);
     };
 
     const kick = (at, level) => {
+      const K = song.kick;
       const osc = audio.createOscillator();
-      osc.frequency.setValueAtTime(192, at);
-      osc.frequency.setTargetAtTime(48, at, 1 / 40);
-      envelope(audio, osc, at, dbToGain(level), 1 / 12, bus, 0.4);
+      osc.frequency.setValueAtTime(K.startHz, at);
+      osc.frequency.setTargetAtTime(K.endHz, at, K.dropTau);
+      envelope(audio, osc, at, dbToGain(level), K.decayTau, bus, K.length);
     };
 
     /* Hat and tick: the same noise through a highpass, only the decay differs. */
@@ -222,52 +609,44 @@
       const source = audio.createBufferSource();
       source.buffer = noise;
       source.loop = true;
-      const top = audio.createBiquadFilter();
-      top.type = "highpass";
-      top.frequency.value = 4000;
-      top.Q.value = 0.5;
-      top.connect(bus);
+      const top = filter("highpass", song.hat.highpass, bus);
       envelope(audio, source, at, dbToGain(level), tau, top, 0.1);
     };
 
     /* The arrangement, one bar at a time, scheduled a quarter second ahead
        on a timer — a timer alone drifts, audio time does not. */
     const scheduleBar = (bar, at) => {
-      const [root, voicing] = AMBIENT_CHORDS[bar % AMBIENT_CHORDS.length];
-      const inBreak = bar % AMBIENT_BREAK_EVERY >= AMBIENT_BREAK_EVERY - AMBIENT_BREAK_BARS;
-      const full = bar >= AMBIENT_INTRO_BARS && !inBreak;
-      pad(at, voicing, full ? AMBIENT_LEVELS.pad : AMBIENT_LEVELS.padIntro);
-      if (bar >= 2) {
-        for (const half of [0, 2])
-          sub(
-            at + half * AMBIENT_BEAT,
-            AMBIENT_NOTES[root],
-            full ? AMBIENT_LEVELS.sub : AMBIENT_LEVELS.subIntro,
-          );
+      const [root, voicing] = song.chords[bar % song.chords.length];
+      const inBreak =
+        song.breakEvery > 0 && bar % song.breakEvery >= song.breakEvery - song.breakBars;
+      const full = bar >= song.introBars && !inBreak;
+      pad(at, voicing, full ? L.pad : L.padIntro);
+      if (root && bar >= song.sub.fromBar) {
+        for (const beat of song.sub.beats) sub(at + beat * BEAT, root, full ? L.sub : L.subIntro);
       }
-      AMBIENT_MOTIF[bar % 2].forEach((name, i) => {
-        if (name && !(inBreak && i % 2))
-          pluck(at + (i * AMBIENT_BEAT) / 2, AMBIENT_NOTES[name], AMBIENT_LEVELS.pluck);
+      song.motif[bar % song.motif.length].forEach((name, i) => {
+        if (name && !(inBreak && i % 2)) pluck(at + (i * BEAT) / 2, name, L.pluck);
       });
-      if (!full) return;
-      for (const beat of AMBIENT_KICK_BEATS) kick(at + beat * AMBIENT_BEAT, AMBIENT_LEVELS.kick);
-      AMBIENT_HAT_ACCENT.forEach((accent, slot) => {
+      if (!song.drums || !full) return;
+      for (const beat of song.kick.beats) kick(at + beat * BEAT, L.kick);
+      const H = song.hat;
+      H.accent.forEach((accent, slot) => {
         if (accent < 0) return;
         hat(
-          at + (slot * AMBIENT_BEAT) / 4,
-          accent ? AMBIENT_LEVELS.hatAccent : AMBIENT_LEVELS.hat,
-          slot % 4 ? 1 / 90 : 1 / 40,
+          at + (slot * BEAT) / 4,
+          accent ? L.hatAccent : L.hat,
+          slot % 4 ? H.accentTau : H.beatTau,
         );
       });
-      hat(at + 2 * AMBIENT_BEAT, AMBIENT_LEVELS.tick, 1 / 25);
+      for (const beat of H.tickBeats) hat(at + beat * BEAT, L.tick, H.tickTau);
     };
 
-    const state = { master, timer: 0, bar: 0, nextBar: now + 0.1 };
+    const state = { master, theme, timer: 0, bar: 0, nextBar: now + 0.1 };
     const tick = () => {
       while (state.nextBar < audio.currentTime + AMBIENT_LOOKAHEAD) {
         scheduleBar(state.bar, state.nextBar);
         state.bar += 1;
-        state.nextBar += AMBIENT_BAR;
+        state.nextBar += BAR;
       }
     };
     tick();
@@ -289,6 +668,14 @@
        off after the fade is what silences the bar in flight. */
     window.setTimeout(() => master.disconnect(), (AMBIENT_FADE_OUT + 0.2) * 1000);
   };
+
+  /* Each theme has its own song: when the reader changes theme while the
+     sound is on, the old song fades out and the new one fades in over it. */
+  new MutationObserver(() => {
+    if (!ambient || ambient.theme === currentTheme()) return;
+    stopAmbient();
+    void startAmbient();
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   document.addEventListener("click", (event) => {
     const target =

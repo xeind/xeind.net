@@ -135,8 +135,9 @@ Reflexes to suppress, beyond the Never table:
   earn its way onto a content page by existing. **The second exception is
   sound: the ambient track** in `public/hero-interactions.js`, switched by the
   footer's speaker. It is off on every load, starts only on a press, forgets
-  the choice on the next load, and is synthesised — no file, no bytes. It is one track; a
-  second ambient sound, or one that starts on its own, is still the reject.
+  the choice on the next load, and is synthesised — no file, no bytes. It is one track per
+  theme; a second ambient sound, or one that starts on its own, is still the
+  reject.
 - A new hue. The themes own hue; components own none.
 - Centering a section's prose. Text sits left; only marks and stages centre.
 - "While I'm here" refactors of neighbouring code.
