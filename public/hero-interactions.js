@@ -10,62 +10,80 @@
     return ctx;
   };
 
-  /* Ambient pad — the one sustained sound on the site, off on every load and
-     switched by the footer's speaker button (ui/AmbientToggle.astro). The
-     choice is not stored: it lasts the visit, across ClientRouter swaps, and
-     a new load starts silent. Nothing on the site plays without a press.
-     Modelled on shreygups.com's 432 Hz loop, which is not a drone but a slow
-     vamp: B-flat, C, B-flat, C, with an E-flat turn, each chord a fixed
-     voicing held seven to nine seconds, every note shimmering on its own
-     wobble, and a flat 432 Hz sine laid over the top. Tuned to A=432 so the
-     tone is the chord's own A and nothing beats. Chords are drawn at random
-     so nothing loops. Synthesised — no file, no bytes — and torn down after
-     the fade-out so a silent page costs no CPU. Sits above the pointer guard
-     because the button has to work on a phone. /tmp/pad_432.py renders the
-     same tables for auditioning; the exception to docs/building.md's
-     "nothing ambient" is written there. */
-  const AMBIENT_GAIN = 0.022;
+  /* Ambient track — the one piece of music on the site, off on every load
+     and switched by the footer's speaker button (ui/AmbientToggle.astro).
+     The choice is not stored: it lasts the visit, across ClientRouter swaps,
+     and a new load starts silent. Nothing here plays without a press.
+
+     In the language of LEMMiNO's "Cipher (BGM)", measured from the track:
+     A minor at 77 BPM, a sub on A1 in half notes with an 808 pitch drop, a
+     dark saw pad on | Am | Am | C | D |, a plucked two-bar motif with a
+     dotted-eighth echo, sixteenth hats accented on the off sixteenths, a
+     syncopated kick. Four bars of intro before the beat, a four-bar
+     breakdown every sixteen. Everything is oscillators and noise — no file,
+     no bytes — scheduled a quarter second ahead on a timer, and torn down
+     after the fade-out so a silent page costs no CPU. Sits above the pointer
+     guard because the button has to work on a phone. /tmp/cipher_like.py
+     renders the same tables for auditioning; the exception to
+     docs/building.md's "nothing ambient" is written there. */
+  const AMBIENT_GAIN = 0.12;
   const AMBIENT_FADE_IN = 2;
   const AMBIENT_FADE_OUT = 1.5;
-  const AMBIENT_A4 = 432;
+  const AMBIENT_BPM = 77;
+  const AMBIENT_BEAT = 60 / AMBIENT_BPM;
+  const AMBIENT_BAR = 4 * AMBIENT_BEAT;
+  const AMBIENT_LOOKAHEAD = 0.25;
+  const AMBIENT_TICK_MS = 100;
   const AMBIENT_NOTES = {
-    Bb1: 34,
+    A1: 33,
     C2: 36,
-    Eb2: 39,
-    Bb2: 46,
+    D2: 38,
+    A2: 45,
     C3: 48,
     D3: 50,
-    Eb3: 51,
     E3: 52,
-    F3: 53,
     G3: 55,
-    Bb3: 58,
+    A3: 57,
     C4: 60,
     D4: 62,
     E4: 64,
-    F4: 65,
     G4: 67,
+    A4: 69,
+    B4: 71,
+    C5: 72,
+    D5: 74,
   };
-  /* Voicings in dB under the loudest note, read off the reference's STFT. */
-  const AMBIENT_CHORDS = {
-    Bb: { Bb1: -10, Bb2: 0, D3: -6, F3: -4, Bb3: -12, C4: -8, D4: -7, F4: -18, G4: -12 },
-    C: { C2: -14, C3: 0, E3: -10, G3: -6, C4: -6, D4: -14, E4: -12, G4: -10 },
-    Eb: { Eb2: -4, Eb3: -2, F3: -2, G3: -10, Bb2: -5, Bb3: -12, C4: -10, G4: -14 },
+  /* [root for the sub, pad voicing] per bar of the four-bar loop. */
+  const AMBIENT_CHORDS = [
+    ["A1", ["A2", "E3", "A3", "C4", "E4"]],
+    ["A1", ["A2", "E3", "A3", "C4", "E4"]],
+    ["C2", ["C3", "G3", "C4", "E4", "G4"]],
+    ["D2", ["D3", "A3", "D4", "E4", "A4"]],
+  ];
+  /* Two bars of eighths; null is a rest. */
+  const AMBIENT_MOTIF = [
+    ["A4", null, "G4", null, "E4", null, "D5", "C5"],
+    ["A4", null, "G4", null, "E4", "B4", "A4", null],
+  ];
+  const AMBIENT_INTRO_BARS = 4;
+  const AMBIENT_BREAK_EVERY = 16;
+  const AMBIENT_BREAK_BARS = 4;
+  const AMBIENT_KICK_BEATS = [0, 1.75, 2];
+  /* Sixteenth slots: 1 accented, 0 plain, -1 silent — from the onset histogram. */
+  const AMBIENT_HAT_ACCENT = [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0];
+  const AMBIENT_LEVELS = {
+    pad: -22,
+    padIntro: -26,
+    sub: -9,
+    subIntro: -15,
+    pluck: -18,
+    kick: -12,
+    hat: -36,
+    hatAccent: -31,
+    tick: -30,
   };
-  const AMBIENT_NEXT = { Bb: ["C", "C", "C", "Eb"], C: ["Bb"], Eb: ["Bb"] };
-  const AMBIENT_CHORD_SECONDS = [7, 9];
-  const AMBIENT_CROSSFADE_TAU = 0.8;
-  const AMBIENT_PARTIALS = [1, 0.35, 0.12];
-  const AMBIENT_WOBBLE_HZ = [0.08, 0.35];
-  const AMBIENT_WOBBLE_DEPTH = 0.45;
-  const AMBIENT_DRIFT_CENTS = 3;
-  const AMBIENT_DRIFT_HZ = [0.03, 0.11];
-  const AMBIENT_TONE_DB = -8;
-  const AMBIENT_LOWPASS_HZ = 700;
-  const AMBIENT_LOWPASS_SWEEP = 150;
-  const AMBIENT_LOWPASS_SWEEP_HZ = 0.02;
-  const AMBIENT_BED_GAIN = 0.5;
-  let pad = null;
+  const AMBIENT_ECHO = { seconds: (3 * AMBIENT_BEAT) / 4, feedback: 0.38, lowpass: 1800 };
+  let ambient = null;
 
   let ambientOn = false;
   const ambientWanted = () => ambientOn;
@@ -77,137 +95,198 @@
     });
   };
 
-  const between = ([lo, hi]) => lo + Math.random() * (hi - lo);
-  const noteHz = (midi) => AMBIENT_A4 * 2 ** ((midi - 69) / 12);
+  const noteHz = (midi) => 440 * 2 ** ((midi - 69) / 12);
   const dbToGain = (db) => 10 ** (db / 20);
 
-  /* A slow sine into an AudioParam: `depth` is the swing either side of the
-     param's own value, which stays as the centre. */
-  const modulate = (audio, hz, depth, param) => {
-    const osc = audio.createOscillator();
-    osc.frequency.value = hz;
-    const scale = audio.createGain();
-    scale.gain.value = depth;
-    osc.connect(scale);
-    scale.connect(param);
-    osc.start();
-    return osc;
+  /* A gain that opens at `at`, decays on an exponential with time constant
+     `tau`, and stops its source once the tail is gone. Every hit uses it. */
+  const envelope = (audio, source, at, level, tau, into, length) => {
+    const gain = audio.createGain();
+    gain.gain.setValueAtTime(0, at);
+    gain.gain.linearRampToValueAtTime(level, at + 0.004);
+    gain.gain.setTargetAtTime(0, at + 0.004, tau);
+    source.connect(gain);
+    gain.connect(into);
+    source.start(at);
+    source.stop(at + length);
+    return gain;
   };
 
-  const startPad = async () => {
-    if (pad) return;
+  const startAmbient = async () => {
+    if (ambient) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
-    if (pad || !ambientWanted()) return;
+    if (ambient || !ambientWanted()) return;
 
     const now = audio.currentTime;
-    const sources = [];
     const master = audio.createGain();
     master.gain.setValueAtTime(0, now);
     master.gain.linearRampToValueAtTime(AMBIENT_GAIN, now + AMBIENT_FADE_IN);
     master.connect(audio.destination);
 
-    /* One lowpass over the whole pad, its cutoff breathing 550–850 Hz — the
-       reference falls away fast above a kilohertz. Q is linear here and 0.5
-       is critically damped, the nearest a biquad gets to the one-pole in the
-       render. Q near 0 splits the poles and pulls the real cutoff down to a
-       few hertz, which once left only the lowest note. */
-    const lowpass = audio.createBiquadFilter();
-    lowpass.type = "lowpass";
-    lowpass.frequency.value = AMBIENT_LOWPASS_HZ;
-    lowpass.Q.value = 0.5;
-    lowpass.connect(master);
-    sources.push(
-      modulate(audio, AMBIENT_LOWPASS_SWEEP_HZ, AMBIENT_LOWPASS_SWEEP, lowpass.frequency),
-    );
-
-    /* Every note in the pool runs the whole time; the chords only move the
-       levels. A note's timbre is a fundamental with a soft octave and twelfth. */
-    const real = new Float32Array(AMBIENT_PARTIALS.length + 1);
-    const imag = new Float32Array(AMBIENT_PARTIALS.length + 1);
-    AMBIENT_PARTIALS.forEach((gain, i) => (imag[i + 1] = gain));
-    const timbre = audio.createPeriodicWave(real, imag, { disableNormalization: true });
-
-    const levels = {};
-    for (const [name, midi] of Object.entries(AMBIENT_NOTES)) {
-      const osc = audio.createOscillator();
-      osc.setPeriodicWave(timbre);
-      osc.frequency.value = noteHz(midi);
-      sources.push(modulate(audio, between(AMBIENT_DRIFT_HZ), AMBIENT_DRIFT_CENTS, osc.detune));
-      /* The shimmer: level × (1 + depth · sin), each note on its own rate. */
-      const wobble = audio.createGain();
-      wobble.gain.value = 1;
-      sources.push(modulate(audio, between(AMBIENT_WOBBLE_HZ), AMBIENT_WOBBLE_DEPTH, wobble.gain));
-      const level = audio.createGain();
-      level.gain.value = 0;
-      osc.connect(wobble);
-      wobble.connect(level);
-      level.connect(lowpass);
-      osc.start();
-      sources.push(osc);
-      levels[name] = level.gain;
-    }
-
-    /* The tone itself: a flat 432 Hz sine, under the chord, never moving. */
-    const tone = audio.createOscillator();
-    tone.frequency.value = AMBIENT_A4;
-    const toneLevel = audio.createGain();
-    toneLevel.gain.value = dbToGain(AMBIENT_TONE_DB);
-    tone.connect(toneLevel);
-    toneLevel.connect(lowpass);
-    tone.start();
-    sources.push(tone);
-
-    /* The bed: filtered noise, the same vocabulary as the site's clicks. Two
-       seconds of white noise on a loop, rolled off at 70 Hz to a soft rumble. */
-    const noise = audio.createBufferSource();
-    const buffer = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-    noise.buffer = buffer;
-    noise.loop = true;
-    const rumble = audio.createBiquadFilter();
-    rumble.type = "lowpass";
-    rumble.frequency.value = 70;
-    rumble.Q.value = 0.5;
-    const bed = audio.createGain();
-    bed.gain.value = AMBIENT_BED_GAIN;
-    noise.connect(rumble);
-    rumble.connect(bed);
-    bed.connect(lowpass);
-    noise.start();
-    sources.push(noise);
-
-    /* The vamp. Each chord sets every note's target and the levels glide
-       there on one time constant, so notes shared by both chords hold and
-       the rest cross-fade. The next chord is drawn, not stepped. */
-    const state = { master, sources, timer: 0, chord: "Bb" };
-    const step = () => {
-      const voicing = AMBIENT_CHORDS[state.chord];
-      const at = audio.currentTime;
-      for (const [name, param] of Object.entries(levels)) {
-        const db = voicing[name];
-        param.setTargetAtTime(db === undefined ? 0 : dbToGain(db), at, AMBIENT_CROSSFADE_TAU);
-      }
-      const options = AMBIENT_NEXT[state.chord];
-      state.chord = options[Math.floor(Math.random() * options.length)];
-      state.timer = window.setTimeout(step, between(AMBIENT_CHORD_SECONDS) * 1000);
+    /* Q is linear on a lowpass; 0.5 is critically damped. Q near 0 splits the
+       poles and pulls the real cutoff down to a few hertz. */
+    const lowpass = (hz, into) => {
+      const filter = audio.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = hz;
+      filter.Q.value = 0.5;
+      filter.connect(into);
+      return filter;
     };
-    step();
-    pad = state;
+    const bus = lowpass(5000, master);
+    const padBus = lowpass(500, bus);
+
+    /* The pluck's echo: a dotted eighth, three audible repeats, darkening. */
+    const pluckBus = audio.createGain();
+    pluckBus.connect(bus);
+    const delay = audio.createDelay(2);
+    delay.delayTime.value = AMBIENT_ECHO.seconds;
+    const feedback = audio.createGain();
+    feedback.gain.value = AMBIENT_ECHO.feedback;
+    const echoTone = lowpass(AMBIENT_ECHO.lowpass, bus);
+    pluckBus.connect(delay);
+    delay.connect(feedback);
+    feedback.connect(delay);
+    delay.connect(echoTone);
+
+    const wave = (partials) => {
+      const real = new Float32Array(partials.length + 1);
+      const imag = new Float32Array(partials.length + 1);
+      partials.forEach((g, i) => (imag[i + 1] = g));
+      return audio.createPeriodicWave(real, imag, { disableNormalization: true });
+    };
+    const saw = wave([1, 1 / 2, 1 / 3, 1 / 4, 1 / 5, 1 / 6, 1 / 7, 1 / 8]);
+    const string = wave([1, 2, 3, 4, 5, 6].map((k) => k ** -0.7));
+
+    const noise = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
+    const data = noise.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+    /* Sub: sine on the root, pitch falling from 1.6× to 1× in the first
+       tenth of a second, a tail long enough to meet the next hit. */
+    const sub = (at, midi, level) => {
+      const osc = audio.createOscillator();
+      const hz = noteHz(midi);
+      osc.frequency.setValueAtTime(hz * 1.6, at);
+      osc.frequency.setTargetAtTime(hz, at, 1 / 18);
+      envelope(audio, osc, at, dbToGain(level), 1 / 1.2, bus, 2.2);
+    };
+
+    /* Pad: each note twice, ±4 cents apart, saw partials to the 8th, into a
+       500 Hz lowpass. One bar long with a slow rise and fall. */
+    const pad = (at, names, level) => {
+      const gain = audio.createGain();
+      gain.gain.setValueAtTime(0, at);
+      gain.gain.linearRampToValueAtTime(dbToGain(level), at + 0.8);
+      gain.gain.setValueAtTime(dbToGain(level), at + AMBIENT_BAR - 0.8);
+      gain.gain.linearRampToValueAtTime(0, at + AMBIENT_BAR + 0.4);
+      gain.connect(padBus);
+      for (const name of names) {
+        for (const cents of [-4, 4]) {
+          const osc = audio.createOscillator();
+          osc.setPeriodicWave(saw);
+          osc.frequency.value = noteHz(AMBIENT_NOTES[name]);
+          osc.detune.value = cents;
+          osc.connect(gain);
+          osc.start(at);
+          osc.stop(at + AMBIENT_BAR + 0.5);
+        }
+      }
+    };
+
+    /* Pluck: bright at the strike, its own lowpass closing in a tenth of a
+       second, the body gone in under half. Into the echo bus. */
+    const pluck = (at, midi, level) => {
+      const osc = audio.createOscillator();
+      osc.setPeriodicWave(string);
+      osc.frequency.value = noteHz(midi);
+      const tone = audio.createBiquadFilter();
+      tone.type = "lowpass";
+      tone.Q.value = 0.5;
+      tone.frequency.setValueAtTime(2900, at);
+      tone.frequency.setTargetAtTime(300, at, 1 / 9);
+      tone.connect(pluckBus);
+      envelope(audio, osc, at, dbToGain(level), 1 / 4.5, tone, 1.6);
+    };
+
+    const kick = (at, level) => {
+      const osc = audio.createOscillator();
+      osc.frequency.setValueAtTime(192, at);
+      osc.frequency.setTargetAtTime(48, at, 1 / 40);
+      envelope(audio, osc, at, dbToGain(level), 1 / 12, bus, 0.4);
+    };
+
+    /* Hat and tick: the same noise through a highpass, only the decay differs. */
+    const hat = (at, level, tau) => {
+      const source = audio.createBufferSource();
+      source.buffer = noise;
+      source.loop = true;
+      const top = audio.createBiquadFilter();
+      top.type = "highpass";
+      top.frequency.value = 4000;
+      top.Q.value = 0.5;
+      top.connect(bus);
+      envelope(audio, source, at, dbToGain(level), tau, top, 0.1);
+    };
+
+    /* The arrangement, one bar at a time, scheduled a quarter second ahead
+       on a timer — a timer alone drifts, audio time does not. */
+    const scheduleBar = (bar, at) => {
+      const [root, voicing] = AMBIENT_CHORDS[bar % AMBIENT_CHORDS.length];
+      const inBreak = bar % AMBIENT_BREAK_EVERY >= AMBIENT_BREAK_EVERY - AMBIENT_BREAK_BARS;
+      const full = bar >= AMBIENT_INTRO_BARS && !inBreak;
+      pad(at, voicing, full ? AMBIENT_LEVELS.pad : AMBIENT_LEVELS.padIntro);
+      if (bar >= 2) {
+        for (const half of [0, 2])
+          sub(
+            at + half * AMBIENT_BEAT,
+            AMBIENT_NOTES[root],
+            full ? AMBIENT_LEVELS.sub : AMBIENT_LEVELS.subIntro,
+          );
+      }
+      AMBIENT_MOTIF[bar % 2].forEach((name, i) => {
+        if (name && !(inBreak && i % 2))
+          pluck(at + (i * AMBIENT_BEAT) / 2, AMBIENT_NOTES[name], AMBIENT_LEVELS.pluck);
+      });
+      if (!full) return;
+      for (const beat of AMBIENT_KICK_BEATS) kick(at + beat * AMBIENT_BEAT, AMBIENT_LEVELS.kick);
+      AMBIENT_HAT_ACCENT.forEach((accent, slot) => {
+        if (accent < 0) return;
+        hat(
+          at + (slot * AMBIENT_BEAT) / 4,
+          accent ? AMBIENT_LEVELS.hatAccent : AMBIENT_LEVELS.hat,
+          slot % 4 ? 1 / 90 : 1 / 40,
+        );
+      });
+      hat(at + 2 * AMBIENT_BEAT, AMBIENT_LEVELS.tick, 1 / 25);
+    };
+
+    const state = { master, timer: 0, bar: 0, nextBar: now + 0.1 };
+    const tick = () => {
+      while (state.nextBar < audio.currentTime + AMBIENT_LOOKAHEAD) {
+        scheduleBar(state.bar, state.nextBar);
+        state.bar += 1;
+        state.nextBar += AMBIENT_BAR;
+      }
+    };
+    tick();
+    state.timer = window.setInterval(tick, AMBIENT_TICK_MS);
+    ambient = state;
   };
 
-  const stopPad = () => {
-    if (!pad) return;
-    const { master, sources, timer } = pad;
-    pad = null;
-    window.clearTimeout(timer);
+  const stopAmbient = () => {
+    if (!ambient) return;
+    const { master, timer } = ambient;
+    ambient = null;
+    window.clearInterval(timer);
     const audio = getCtx();
     const now = audio.currentTime;
     master.gain.cancelScheduledValues(now);
     master.gain.setValueAtTime(master.gain.value, now);
     master.gain.linearRampToValueAtTime(0, now + AMBIENT_FADE_OUT);
-    sources.forEach((source) => source.stop(now + AMBIENT_FADE_OUT + 0.1));
+    /* Everything already scheduled has its own stop time; cutting the master
+       off after the fade is what silences the bar in flight. */
     window.setTimeout(() => master.disconnect(), (AMBIENT_FADE_OUT + 0.2) * 1000);
   };
 
@@ -217,8 +296,8 @@
     if (!target) return;
     ambientOn = !ambientOn;
     syncAmbient();
-    if (ambientOn) void startPad();
-    else stopPad();
+    if (ambientOn) void startAmbient();
+    else stopAmbient();
   });
 
   syncAmbient();
@@ -283,8 +362,8 @@
 
   /* Copy-confirm: two taps, the second brighter and a touch louder — the
      sound of something seating. Same noise-burst language as the clicks; a
-     tonal "ding" would be the only struck note on the site — the pad above
-     is sustained and opt-in, which is a different thing. Fired by the
+     tonal "ding" would be the only struck note on the site outside the
+     ambient track, which is opt-in and a different thing. Fired by the
      email button via the hero:copy-confirm event once the clipboard write
      has actually resolved, so the sound lands with the checkmark swap. */
   const playConfirm = async () => {
