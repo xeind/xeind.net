@@ -22,6 +22,9 @@
   const LIFT = 14; /* how far each toast behind the front peeks below it */
   const SCALE_STEP = 0.06;
   const SWIPE_DISMISS = 45; /* px of drag that counts as "throw it away" */
+  const FLICK = 0.11; /* px/ms at release that counts as a throw, any distance */
+  const VELOCITY_WINDOW = 100; /* ms of pointer history the release velocity reads */
+  const RUBBER = 0.55; /* resistance past the stack's edge; 1 is no resistance */
   const EXIT_MS = 300; /* keep in step with the transition in global.css */
   const DEDUPE_MS = LIFETIME; /* a repeat re-arms the toast still on screen */
 
@@ -116,6 +119,15 @@
     var dx = 0;
     var dy = 0;
     var dragging = false;
+    /* The last few pointer samples, so the release can read a velocity. */
+    var samples = [];
+
+    /* Past the stack's natural edge (left, down) the toast follows less the
+       further it goes, the way a real thing slows before it stops. A hard
+       clamp at zero read as frozen. */
+    function rubberband(over, dimension) {
+      return (over * dimension * RUBBER) / (dimension + RUBBER * Math.abs(over));
+    }
 
     t.el.addEventListener("pointerdown", function (e) {
       /* Only the front toast is draggable — the ones behind are scaled and
@@ -126,26 +138,48 @@
       dy = 0;
       startX = e.clientX;
       startY = e.clientY;
+      samples = [{ x: 0, y: 0, at: e.timeStamp }];
       t.el.dataset.swiping = "";
       t.el.setPointerCapture(e.pointerId);
     });
 
     t.el.addEventListener("pointermove", function (e) {
       if (!dragging) return;
-      /* Up and right only: it is a top-right stack, so those are the
+      /* Up and right dismiss: it is a top-right stack, so those are the
          directions that read as pushing it off the screen. */
-      dx = Math.max(0, e.clientX - startX);
-      dy = Math.min(0, e.clientY - startY);
+      var rawX = e.clientX - startX;
+      var rawY = e.clientY - startY;
+      dx = rawX < 0 ? rubberband(rawX, t.el.offsetWidth) : rawX;
+      dy = rawY > 0 ? rubberband(rawY, t.el.offsetHeight) : rawY;
+      samples.push({ x: rawX, y: rawY, at: e.timeStamp });
+      if (samples.length > 6) samples.shift();
       t.el.style.setProperty("--swipe-x", dx + "px");
       t.el.style.setProperty("--swipe-y", dy + "px");
     });
 
-    function endDrag() {
+    function endDrag(e) {
       if (!dragging) return;
       dragging = false;
       delete t.el.dataset.swiping;
 
-      if (dx > SWIPE_DISMISS || dy < -SWIPE_DISMISS) {
+      /* Velocity over the last ~100ms of the gesture, in px/ms. A quick
+         flick that covered less than SWIPE_DISMISS still throws the toast;
+         a slow drag past it that was already coming back does not. */
+      var last = samples[samples.length - 1];
+      var first = last;
+      for (var i = samples.length - 1; i >= 0; i--) {
+        if (last.at - samples[i].at > VELOCITY_WINDOW) break;
+        first = samples[i];
+      }
+      var elapsed = Math.max(1, e.timeStamp - first.at);
+      var vx = (last.x - first.x) / elapsed;
+      var vy = (last.y - first.y) / elapsed;
+
+      var thrown = vx > FLICK || vy < -FLICK;
+      var pulledBack = vx < -FLICK || vy > FLICK;
+      var farEnough = dx > SWIPE_DISMISS || dy < -SWIPE_DISMISS;
+
+      if (thrown || (farEnough && !pulledBack)) {
         dismiss(t);
         return;
       }
@@ -158,7 +192,7 @@
 
     t.el.addEventListener("click", function () {
       /* A throw that fell short ends in a click. Don't dismiss on that. */
-      if (dx > 4 || dy < -4) return;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) return;
       dismiss(t);
     });
   }
@@ -245,5 +279,13 @@
 
   document.addEventListener("astro:after-swap", function () {
     if (list.length) ensureContainer();
+  });
+
+  /* A toast that expires in a background tab was never read. Hold it until
+     the tab is looked at again; the hover pause already owns the timers while
+     the stack is expanded. */
+  document.addEventListener("visibilitychange", function () {
+    if (expanded) return;
+    list.forEach(document.hidden ? pauseTimer : startTimer);
   });
 })();
