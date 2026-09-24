@@ -34,16 +34,19 @@ function HeroActionLink({
       // 13.43 cells and the second button inherited the fraction; w-56 is 14
       // cells and fits the longest label with room.
       //
-      // Below sm the buttons stack and fill their column: the content column,
-      // capped at 384 by the row. Both are whole numbers, so the dashed frame
-      // starts and ends on a whole pixel with no rounding.
+      // Below sm w-36 does the same job. Full-width stacked buttons read as
+      // dragged across a phone, and two halves of the row land on x.5 at 375.
+      // 144 is 9 cells and clears the widest label (107.5 with its chip) plus
+      // px-4 by 4.5. The content column is the viewport minus 47 (328 at 375,
+      // 313 at 360), so two of them and the 16 gap, 304, sit side by side on
+      // any phone of 351 or wider and wrap below that.
       //
       // py-2 makes the box 40px: the 24px label line plus a half-cell above and
       // below. 48px was a by-product of the width work rather than a call about
       // how tall a button should be, and it read heavy against the 32px callout
       // band. 32 itself was rendered and rejected — the shortcut chip is 24px,
       // so it left 4px of air and looked jammed in its frame.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-full items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:w-56 sm:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-36 items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:w-56 sm:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -255,9 +258,9 @@ export default function HeroSection() {
     // below it, where order-last drops them under the CTAs. One copy in the
     // DOM either way, so the tab order and the copy button stay single. The
     // switch is at sm, not md: from 640 the column is 576, and the desktop
-    // row needs 480 (two 224 buttons and a 32 gap). Below it the stacked
-    // CTAs and socials stop at max-w-sm, 24 cells, so on a wide phone they
-    // stay one column with the text instead of stretching to the far edge.
+    // row needs 480 (two 224 buttons and a 32 gap). Below it the socials
+    // centre under the 304 button pair, not under the whole column, so on a
+    // wide phone they stay with the buttons instead of drifting right.
     <div className="flex w-full flex-col sm:grid sm:grid-cols-[1fr_auto] sm:gap-x-4">
       {/* Logo, Name and Location */}
       <div className="mb-6 flex w-full items-start gap-6">
@@ -299,7 +302,7 @@ export default function HeroSection() {
           hit areas, and -mb-2 hands 8 of the 10px under each 20px glyph back
           to the Panel. The ink then ends 34px above the divider against the
           logo's 32 at the top; the last 2px would take an off-ladder -mb. */}
-      <div className="order-last mt-4 -mb-2 flex w-full max-w-sm items-center justify-center gap-1 sm:order-none sm:-mt-1 sm:mb-0 sm:w-auto sm:max-w-none sm:self-start">
+      <div className="order-last mt-4 -mb-2 flex w-full max-w-76 items-center justify-center gap-1 sm:order-none sm:-mt-1 sm:mb-0 sm:w-auto sm:max-w-none sm:self-start">
         <HeroSocialLink href={personalInfo.githubUrl} label="GitHub" icon="github" />
         <HeroSocialLink href={personalInfo.linkedinUrl} label="LinkedIn" icon="linkedin" />
         <HeroEmailButton email={personalInfo.email} />
@@ -315,7 +318,7 @@ export default function HeroSection() {
       </p>
 
       {/* CTAs */}
-      <div className="flex w-full max-w-sm flex-col gap-4 sm:col-span-2 sm:max-w-none sm:flex-row sm:gap-8">
+      <div className="flex flex-wrap gap-4 sm:col-span-2 sm:gap-8">
         <HeroActionLink href={personalInfo.cvUrl} badge="R" shortcut="r">
           View Resume
         </HeroActionLink>
