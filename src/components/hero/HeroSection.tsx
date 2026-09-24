@@ -28,25 +28,20 @@ function HeroActionLink({
       data-hero-sfx="click"
       data-hero-sfx-hover
       {...(shortcut ? { "data-hero-shortcut": shortcut } : {})}
-      // sm:w-56 is set because an inline-flex button is as wide as its label,
-      // and a label is never a whole number of pixels. At md the
-      // intrinsic box came to 118.91px of content, so the right edge landed at
-      // 13.43 cells and the second button inherited the fraction; w-56 is 14
-      // cells and fits the longest label with room.
-      //
-      // Below sm w-36 does the same job. Full-width stacked buttons read as
-      // dragged across a phone, and two halves of the row land on x.5 at 375.
-      // 144 is 9 cells and clears the widest label (107.5 with its chip) plus
-      // px-4 by 4.5. The content column is the viewport minus 47 (328 at 375,
-      // 313 at 360), so two of them and the 16 gap, 304, sit side by side on
-      // any phone of 351 or wider and wrap below that.
+      // w-56 is set because an inline-flex button is as wide as its label, and
+      // a label is never a whole number of pixels. At md the intrinsic box
+      // came to 118.91px of content, so the right edge landed at 13.43 cells
+      // and the second button inherited the fraction; w-56 is 14 cells and
+      // fits the longest label with room. Phones take the same width, stacked
+      // in two rows: full-width buttons read as dragged across the screen,
+      // and a 144 pair side by side read cramped.
       //
       // py-2 makes the box 40px: the 24px label line plus a half-cell above and
       // below. 48px was a by-product of the width work rather than a call about
       // how tall a button should be, and it read heavy against the 32px callout
       // band. 32 itself was rendered and rejected — the shortcut chip is 24px,
       // so it left 4px of air and looked jammed in its frame.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-36 items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:w-56 sm:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-56 items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -319,7 +314,7 @@ export default function HeroSection() {
 
       {/* CTAs. Centred by .hero-cta-row, not by justify-center: an auto split
           halves the leftover, and an odd content column puts the pair on x.5. */}
-      <div className="hero-cta-row flex w-fit flex-wrap gap-4 sm:col-span-2 sm:gap-8">
+      <div className="hero-cta-row flex w-fit flex-col gap-4 sm:col-span-2 sm:flex-row sm:gap-8">
         <HeroActionLink href={personalInfo.cvUrl} badge="R" shortcut="r">
           View Resume
         </HeroActionLink>

@@ -422,17 +422,15 @@ body {
 /* The hero's CTA row, centred below sm. Same fault as the sheet above, at a
    smaller scale: an auto margin halves the leftover, and the content column on
    a phone is the viewport minus 47, odd on a 390, so the row's edges land on
-   x.5 and all eight dashed frame edges in it antialias. The row is a known
-   width, two 144px buttons and a 16px gap, so round the leading gap the way
-   the paint rounds. 9.5rem is half of that 304.
+   x.5 and all eight dashed frame edges in it antialias. The column is a known
+   width, the 224px of a stacked button, so round the leading gap the way the
+   paint rounds. 7rem is half of that 224.
 
-   Clamped at 0 for the narrow widths where the two no longer fit side by side:
-   the row wraps there and there is no leftover to split. Falls back to the
-   auto above where round() is missing. Left-aligned from sm, where the hero
-   switches to the desktop layout. */
+   Falls back to the auto above where round() is missing. Left-aligned from sm,
+   where the hero switches to the desktop layout. */
 .hero-cta-row {
   margin-inline: auto;
-  margin-inline-start: max(0px, round(calc(50% - 9.5rem), 1px));
+  margin-inline-start: round(calc(50% - 7rem), 1px);
 }
 
 @media (min-width: 640px) {
