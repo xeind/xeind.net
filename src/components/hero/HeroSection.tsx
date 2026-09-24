@@ -258,13 +258,13 @@ export default function HeroSection() {
     // below it, where order-last drops them under the CTAs. One copy in the
     // DOM either way, so the tab order and the copy button stay single. The
     // switch is at sm, not md: from 640 the column is 576, and the desktop
-    // row needs 480 (two 224 buttons and a 32 gap). Below it the socials
-    // centre under the 304 button pair, not under the whole column, so on a
-    // wide phone they stay with the buttons instead of drifting right.
+    // row needs 480 (two 224 buttons and a 32 gap). Below it everything
+    // centres: the logo and name as one group, the tagline, the button pair
+    // and the socials, so a phone reads as one axis down the middle.
     <div className="flex w-full flex-col sm:grid sm:grid-cols-[1fr_auto] sm:gap-x-4">
       {/* Logo, Name and Location */}
       <div className="mb-6 flex w-full items-start gap-6">
-        <div className="flex min-w-0 flex-1 flex-row items-center gap-6">
+        <div className="flex min-w-0 flex-1 flex-row items-center justify-center gap-6 sm:justify-start">
           <StaticLogo size={64} className="text-foreground shrink-0" />
 
           {/* 32px name line + 24px address line + 8px below = 64px, the logo's
@@ -272,7 +272,7 @@ export default function HeroSection() {
               half cell that used to sit between the two lines now sits under
               them: the address rides directly under the name, and the column
               still measures the logo. */}
-          <div className="flex min-w-0 flex-1 flex-col items-start pb-2 text-left">
+          <div className="flex min-w-0 flex-col items-start pb-2 text-left sm:flex-1">
             <h1 className="text-foreground font-serif text-2xl leading-8 font-normal tracking-tight whitespace-nowrap">
               {personalInfo.name}
             </h1>
@@ -302,7 +302,7 @@ export default function HeroSection() {
           hit areas, and -mb-2 hands 8 of the 10px under each 20px glyph back
           to the Panel. The ink then ends 34px above the divider against the
           logo's 32 at the top; the last 2px would take an off-ladder -mb. */}
-      <div className="order-last mt-4 -mb-2 flex w-full max-w-76 items-center justify-center gap-1 sm:order-none sm:-mt-1 sm:mb-0 sm:w-auto sm:max-w-none sm:self-start">
+      <div className="order-last mt-4 -mb-2 flex w-full items-center justify-center gap-1 sm:order-none sm:-mt-1 sm:mb-0 sm:w-auto sm:self-start">
         <HeroSocialLink href={personalInfo.githubUrl} label="GitHub" icon="github" />
         <HeroSocialLink href={personalInfo.linkedinUrl} label="LinkedIn" icon="linkedin" />
         <HeroEmailButton email={personalInfo.email} />
@@ -313,12 +313,13 @@ export default function HeroSection() {
           Serif rather than a larger sans because sans owns no size above
           text-sm, and serif text-base is already the reading size. The 24px
           line is unchanged, so nothing below moves. */}
-      <p className="text-foreground mb-6 max-w-xl font-serif text-base leading-6 sm:col-span-2">
+      <p className="text-foreground mb-6 max-w-xl text-center font-serif text-base leading-6 sm:col-span-2 sm:text-left">
         {personalInfo.tagline}
       </p>
 
-      {/* CTAs */}
-      <div className="flex flex-wrap gap-4 sm:col-span-2 sm:gap-8">
+      {/* CTAs. Centred by .hero-cta-row, not by justify-center: an auto split
+          halves the leftover, and an odd content column puts the pair on x.5. */}
+      <div className="hero-cta-row flex w-fit flex-wrap gap-4 sm:col-span-2 sm:gap-8">
         <HeroActionLink href={personalInfo.cvUrl} badge="R" shortcut="r">
           View Resume
         </HeroActionLink>
