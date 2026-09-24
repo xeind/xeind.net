@@ -32,8 +32,13 @@ const compactDate = Number.isNaN(date.getTime())
   style="height:var(--footer-height)"
 >
   <div class="bg-accent absolute inset-0"></div>
-  <div class="relative mx-auto h-full w-full max-w-5xl">
-    <div class="relative z-10 flex h-full items-center p-6 px-6 sm:px-8 md:p-8 md:px-12">
+  {
+    /* Same column as every Panel above it: the sheet's pixel-snapped centring and
+      Panel md's inset (px-4 sm:px-8 md:px-16), so the footer's text starts on
+      the cards' left edge and the picker ends on their right. */
+  }
+  <div class="sheet-centered relative h-full w-full max-w-5xl">
+    <div class="relative z-10 flex h-full items-center px-4 py-6 sm:px-8 md:px-16 md:py-8">
       <div class="grid w-full grid-cols-[1fr_auto] items-center gap-4 sm:gap-6 md:gap-8">
         <div class="flex flex-col gap-1">
           <p class="text-background flex items-center gap-2 font-mono text-xs">
