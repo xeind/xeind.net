@@ -28,25 +28,22 @@ function HeroActionLink({
       data-hero-sfx="click"
       data-hero-sfx-hover
       {...(shortcut ? { "data-hero-shortcut": shortcut } : {})}
-      // Both widths are set for the same reason: an inline-flex button is as
-      // wide as its label, and a label is never a whole number of pixels. At md
-      // the intrinsic box came to 118.91px of content, so the right edge landed
-      // at 13.43 cells and the second button inherited the fraction; w-56 is 14
+      // md:w-56 is set because an inline-flex button is as wide as its label,
+      // and a label is never a whole number of pixels. At md the
+      // intrinsic box came to 118.91px of content, so the right edge landed at
+      // 13.43 cells and the second button inherited the fraction; w-56 is 14
       // cells and fits the longest label with room.
       //
-      // w-36 does the same job on a phone. Measured at 375: both buttons
-      // rendered 139.5px, so button 1's right edge and both of button 2's sat
-      // on x.5 and the dashed frame antialiased across two device pixels. 144
-      // is 9 cells and clears the widest label (83.5px + 8 gap + 16 chip) by
-      // 4.5. The row stays centred there; .hero-cta-row rounds the leading gap
-      // so a fixed width in a fluid column still starts on a whole pixel.
+      // Below md the buttons stack and take the full content column. That
+      // column is the viewport minus 32, a whole number, so the dashed frame
+      // starts and ends on a whole pixel with no rounding.
       //
       // py-2 makes the box 40px: the 24px label line plus a half-cell above and
       // below. 48px was a by-product of the width work rather than a call about
       // how tall a button should be, and it read heavy against the 32px callout
       // band. 32 itself was rendered and rejected — the shortcut chip is 24px,
       // so it left 4px of air and looked jammed in its frame.
-      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-36 items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
+      className="bg-card group focus-visible:ring-accent focus-visible:ring-offset-background relative inline-flex w-full items-center justify-center gap-2 px-4 py-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none md:w-56 md:px-12"
       style={CSS_TRANSITIONS.border}
     >
       <div
@@ -254,7 +251,10 @@ function HeroEmailButton({ email }: { email: string }) {
 
 export default function HeroSection() {
   return (
-    <div className="flex w-full flex-col items-center md:items-start">
+    // A grid from md so the socials sit top-right beside the name; a column
+    // below it, where order-last drops them under the CTAs. One copy in the
+    // DOM either way, so the tab order and the copy button stay single.
+    <div className="flex w-full flex-col md:grid md:grid-cols-[1fr_auto] md:gap-x-4">
       {/* Logo, Name and Location */}
       <div className="mb-6 flex w-full items-start gap-6">
         <div className="flex min-w-0 flex-1 flex-row items-center gap-6">
@@ -266,17 +266,9 @@ export default function HeroSection() {
               them: the address rides directly under the name, and the column
               still measures the logo. */}
           <div className="flex min-w-0 flex-1 flex-col items-start pb-2 text-left">
-            <div className="flex w-full items-center justify-between gap-4">
-              <h1 className="text-foreground font-serif text-2xl leading-8 font-normal tracking-tight whitespace-nowrap">
-                {personalInfo.name}
-              </h1>
-
-              <div className="-my-1 flex shrink-0 items-center gap-1">
-                <HeroSocialLink href={personalInfo.githubUrl} label="GitHub" icon="github" />
-                <HeroSocialLink href={personalInfo.linkedinUrl} label="LinkedIn" icon="linkedin" />
-                <HeroEmailButton email={personalInfo.email} />
-              </div>
-            </div>
+            <h1 className="text-foreground font-serif text-2xl leading-8 font-normal tracking-tight whitespace-nowrap">
+              {personalInfo.name}
+            </h1>
             <address className="text-foreground/60 flex items-center gap-1 text-sm leading-6 not-italic">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -298,17 +290,24 @@ export default function HeroSection() {
         </div>
       </div>
 
+      {/* Socials. From md, -mt-1 centres the 40px controls on the 32px name
+          line. Below md, mt-4 puts a cell between the last CTA and the icons'
+          hit areas, and -mb-2 hands 8 of the 10px under each 20px glyph back
+          to the Panel. The ink then ends 34px above the divider against the
+          logo's 32 at the top; the last 2px would take an off-ladder -mb. */}
+      <div className="order-last mt-4 -mb-2 flex items-center justify-center gap-1 md:order-none md:-mt-1 md:mb-0 md:self-start">
+        <HeroSocialLink href={personalInfo.githubUrl} label="GitHub" icon="github" />
+        <HeroSocialLink href={personalInfo.linkedinUrl} label="LinkedIn" icon="linkedin" />
+        <HeroEmailButton email={personalInfo.email} />
+      </div>
+
       {/* Tagline */}
-      <p className="text-foreground/80 mb-6 max-w-xl text-center text-sm leading-6 md:text-left">
+      <p className="text-foreground/80 mb-6 max-w-xl text-sm leading-6 md:col-span-2">
         {personalInfo.tagline}
       </p>
 
       {/* CTAs */}
-      {/* Centred by .hero-cta-row, not by the parent's items-center: an auto
-          margin halves the leftover, and the content column below md is the
-          viewport minus 32 — odd on a 375 or a 393. Same fault and same
-          round() fix as .sheet-centered. */}
-      <div className="hero-cta-row flex w-fit flex-wrap gap-4 md:gap-8">
+      <div className="flex flex-col gap-4 md:col-span-2 md:flex-row md:gap-8">
         <HeroActionLink href={personalInfo.cvUrl} badge="R" shortcut="r">
           View Resume
         </HeroActionLink>
