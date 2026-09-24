@@ -301,8 +301,12 @@ export default function HeroSection() {
         <HeroEmailButton email={personalInfo.email} />
       </div>
 
-      {/* Tagline */}
-      <p className="text-foreground/80 mb-6 max-w-xl text-sm leading-6 md:col-span-2">
+      {/* Tagline. Serif text-base in full ink: at sans text-sm /80 it matched
+          the About paragraph under it and read as the first line of body copy.
+          Serif rather than a larger sans because sans owns no size above
+          text-sm, and serif text-base is already the reading size. The 24px
+          line is unchanged, so nothing below moves. */}
+      <p className="text-foreground mb-6 max-w-xl font-serif text-base leading-6 md:col-span-2">
         {personalInfo.tagline}
       </p>
 
