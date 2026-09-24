@@ -3,7 +3,7 @@ import Badge from "@/components/ui/Badge";
 import type { Experience } from "@/lib/types";
 
 const inlineLinkClass =
-  "inline border-b border-dashed border-accent/30 pb-px text-accent transition-all hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline border-b border-dashed border-accent/30 pb-px text-accent transition-colors hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 interface ExperienceItemProps {
   exp: Experience;

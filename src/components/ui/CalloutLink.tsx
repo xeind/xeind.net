@@ -138,7 +138,7 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
         <span className="font-serif text-sm">{label}</span>
         {icon && (
           <span
-            className="text-accent group-hover:text-tertiary flex items-center transition-all will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+            className="text-accent group-hover:text-tertiary flex items-center transition-[color,translate] will-change-transform group-hover:translate-x-1 group-hover:-translate-y-1"
             style={CSS_TRANSITIONS.border}
           >
             {icon}
@@ -152,7 +152,7 @@ export default function CalloutLink({ href, label, icon, external = false }: Cal
           dividers use) instead of one pixel inside the band; the band's z-10
           keeps it visible over the next panel's background. */}
       <div
-        className="border-accent/30 group-hover:border-accent/60 absolute right-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
+        className="border-accent/30 group-hover:border-accent/60 absolute right-0 left-0 border-b border-dashed transition-colors group-hover:border-solid"
         style={{
           bottom: -1,
           zIndex: 5,

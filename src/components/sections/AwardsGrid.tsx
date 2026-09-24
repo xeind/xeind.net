@@ -144,7 +144,7 @@ export default function AwardsGrid() {
                   @media (hover: hover), so on touch the reveal never fires. */}
               {award.url && (
                 <div
-                  className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none pointer-coarse:opacity-100"
+                  className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none pointer-coarse:opacity-100"
                   style={t}
                 >
                   <a

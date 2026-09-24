@@ -45,59 +45,59 @@ function HeroActionLink({
       style={CSS_TRANSITIONS.border}
     >
       <div
-        className="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-all group-hover:border-solid"
+        className="border-accent/30 absolute top-0 right-0 left-0 border-t border-dashed transition-colors group-hover:border-solid"
         style={CSS_TRANSITIONS.border}
       />
       <div
-        className="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-all group-hover:border-solid"
+        className="border-accent/30 absolute top-0 right-0 bottom-0 border-r border-dashed transition-colors group-hover:border-solid"
         style={CSS_TRANSITIONS.border}
       />
       <div
-        className="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-all group-hover:border-solid"
+        className="border-accent/30 absolute right-0 bottom-0 left-0 border-b border-dashed transition-colors group-hover:border-solid"
         style={CSS_TRANSITIONS.border}
       />
       <div
-        className="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-all group-hover:border-solid"
+        className="border-accent/30 absolute top-0 bottom-0 left-0 border-l border-dashed transition-colors group-hover:border-solid"
         style={CSS_TRANSITIONS.border}
       />
 
       <div className="absolute top-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
       <div className="absolute top-0 right-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
       <div className="absolute bottom-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
       <div className="absolute right-0 bottom-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
@@ -139,14 +139,14 @@ function HeroActionLink({
           shortcut rather than on the label. */}
       <div className="relative z-10 flex items-center justify-center gap-2">
         <span
-          className="font-serif text-sm leading-6 transition-all"
+          className="font-serif text-sm leading-6 transition-colors"
           style={CSS_TRANSITIONS.border}
         >
           {children}
         </span>
         {badge && (
           <span
-            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 inline-flex h-4 w-4 items-center justify-center font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-all group-hover:text-(--badge-hover-ink)"
+            className="bg-accent/10 group-hover:ring-tertiary/30 ring-accent/30 inline-flex h-4 w-4 items-center justify-center font-mono text-xs leading-4 text-(--badge-ink) ring-1 transition-[color,box-shadow] group-hover:text-(--badge-hover-ink)"
             style={CSS_TRANSITIONS.border}
           >
             {badge}

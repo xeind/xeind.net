@@ -57,41 +57,41 @@ export default function PullQuoteCard({
     >
       <div className="absolute top-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
       <div className="absolute top-0 right-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
       <div className="absolute bottom-0 left-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>
       <div className="absolute right-0 bottom-0 z-10">
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-2 w-px transition-colors"
           style={CSS_TRANSITIONS.border}
         />
         <div
-          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-all"
+          className="bg-accent group-hover:bg-tertiary ml-auto h-px w-2 transition-colors"
           style={CSS_TRANSITIONS.border}
         />
       </div>

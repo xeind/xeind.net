@@ -392,10 +392,10 @@ export default function ProjectGrid() {
                                 rel="noopener noreferrer"
                                 onMouseEnter={brush}
                                 onClick={clickLow}
-                                className="group hover:text-tertiary transition-all motion-reduce:transition-none"
+                                className="group hover:text-tertiary transition-colors motion-reduce:transition-none"
                                 style={t}
                               >
-                                <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
+                                <span className="border-accent/30 border-b border-dashed pb-px transition-colors group-hover:border-solid">
                                   {activeProject.title}
                                 </span>
                               </a>
@@ -444,10 +444,10 @@ export default function ProjectGrid() {
                                   rel="noopener noreferrer"
                                   onMouseEnter={brush}
                                   onClick={clickLow}
-                                  className="group text-accent hover:text-tertiary inline-flex items-center text-sm transition-all motion-reduce:transition-none"
+                                  className="group text-accent hover:text-tertiary inline-flex items-center text-sm transition-colors motion-reduce:transition-none"
                                   style={t}
                                 >
-                                  <span className="border-accent/30 border-b border-dashed pb-px transition-all group-hover:border-solid">
+                                  <span className="border-accent/30 border-b border-dashed pb-px transition-colors group-hover:border-solid">
                                     {link.label}
                                   </span>
                                 </a>
@@ -629,7 +629,7 @@ export default function ProjectGrid() {
                     middle, where the eye aims to open the card. */}
                 {primaryUrl && (
                   <div
-                    className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-all group-hover:opacity-100 motion-reduce:transition-none"
+                    className="group-keyboard:opacity-100 absolute top-3 right-3 z-10 leading-none opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none"
                     style={t}
                   >
                     {/* The modal's arrow shares this layoutId and is the same
