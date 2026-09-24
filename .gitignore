@@ -84,3 +84,6 @@ src/content/blog/CLAUDE.md
 /scripts/phase3-home-probe.mjs
 /scripts/phase3-measure.mjs
 /scripts/phase4-diamond-probe.mjs
+
+# Licensed audio never enters git; it lives in the R2 bucket behind media.xeind.net
+public/ambient/
