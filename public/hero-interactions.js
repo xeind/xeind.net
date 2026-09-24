@@ -55,72 +55,82 @@
     return `${AMBIENT_BASE}/${name}.${opus ? "opus" : "m4a"}`;
   };
 
-  const startAmbient = async () => {
-    if (ambient) return;
-    const audio = getCtx();
-    if (audio.state === "suspended") await audio.resume();
-    if (ambient || !ambientWanted()) return;
+  /* One track per theme, made on first need and kept for the visit. A
+     theme switch only moves the gains: the track leaving fades to nothing
+     but keeps running, so coming back picks it up where it got to instead
+     of from the top. Off pauses every track in place; on resumes the
+     current theme's from there. A muted, looping element costs nothing
+     worth measuring, and at most four exist. */
+  const tracks = new Map();
 
-    const theme = currentTheme();
+  const rampTo = (track, level, seconds) => {
+    const audio = getCtx();
+    const now = audio.currentTime;
+    track.gain.gain.cancelScheduledValues(now);
+    track.gain.gain.setValueAtTime(track.gain.gain.value, now);
+    track.gain.gain.linearRampToValueAtTime(level, now + seconds);
+  };
+
+  const trackFor = (theme) => {
+    const key = AMBIENT_FILES[theme] ? theme : "dark";
+    if (tracks.has(key)) return tracks.get(key);
+    const audio = getCtx();
     const element = new Audio();
     element.crossOrigin = "anonymous";
     element.loop = true;
     element.preload = "none";
-    element.src = ambientSrc(AMBIENT_FILES[theme] || AMBIENT_FILES.dark);
+    element.src = ambientSrc(AMBIENT_FILES[key]);
+    const gain = audio.createGain();
+    gain.gain.value = 0;
+    gain.connect(audio.destination);
+    audio.createMediaElementSource(element).connect(gain);
+    const track = { element, gain };
+    tracks.set(key, track);
+    return track;
+  };
 
-    const master = audio.createGain();
-    master.gain.value = 0;
-    master.connect(audio.destination);
-    const source = audio.createMediaElementSource(element);
-    source.connect(master);
-
-    const state = { theme, element, master, source };
-    ambient = state;
+  const startAmbient = async () => {
+    const audio = getCtx();
+    if (audio.state === "suspended") await audio.resume();
+    if (!ambientWanted()) return;
+    const theme = currentTheme();
+    const track = trackFor(theme);
+    ambient = { theme };
+    for (const other of tracks.values()) {
+      if (other !== track && other.gain.gain.value > 0) rampTo(other, 0, AMBIENT_FADE_OUT);
+    }
     try {
-      await element.play();
+      if (track.element.paused) await track.element.play();
     } catch {
       /* Refused (no gesture, or the file is missing): leave the switch
          honest and let the next press try again. */
-      if (ambient === state) {
+      if (ambient && ambient.theme === theme) {
         ambient = null;
         ambientOn = false;
         syncAmbient();
-        master.disconnect();
       }
       return;
     }
-    if (ambient !== state) return;
-    const now = audio.currentTime;
-    master.gain.setValueAtTime(0, now);
-    master.gain.linearRampToValueAtTime(AMBIENT_GAIN, now + AMBIENT_FADE_IN);
+    if (ambient && ambient.theme === theme) rampTo(track, AMBIENT_GAIN, AMBIENT_FADE_IN);
   };
 
   const stopAmbient = () => {
     if (!ambient) return;
-    const { element, master, source } = ambient;
     ambient = null;
-    const audio = getCtx();
-    const now = audio.currentTime;
-    master.gain.cancelScheduledValues(now);
-    master.gain.setValueAtTime(master.gain.value, now);
-    master.gain.linearRampToValueAtTime(0, now + AMBIENT_FADE_OUT);
+    for (const track of tracks.values()) rampTo(track, 0, AMBIENT_FADE_OUT);
     window.setTimeout(
       () => {
-        element.pause();
-        element.removeAttribute("src");
-        element.load();
-        source.disconnect();
-        master.disconnect();
+        if (ambient) return;
+        for (const track of tracks.values()) track.element.pause();
       },
       (AMBIENT_FADE_OUT + 0.2) * 1000,
     );
   };
 
   /* Each theme has its own track: when the reader changes theme while the
-     sound is on, the old track fades out and the new one fades in over it. */
+     sound is on, the gains cross — nothing restarts. */
   new MutationObserver(() => {
     if (!ambient || ambient.theme === currentTheme()) return;
-    stopAmbient();
     void startAmbient();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
