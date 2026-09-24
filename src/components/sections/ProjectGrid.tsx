@@ -139,7 +139,6 @@ function ModalCornerBrackets() {
 export default function ProjectGrid() {
   const [activeProject, setActiveProject] = useState<(typeof projects)[0] | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  const isAnimatingRef = useRef(false);
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(getResolvedTheme);
   const mounted = useMounted();
   const prefersReducedMotion = useReducedMotion();
@@ -162,56 +161,39 @@ export default function ProjectGrid() {
   }, [prefersReducedMotion]);
   const activeProjectUrl = activeProject ? getPrimaryProjectUrl(activeProject) : undefined;
 
+  /* The open morph runs on the modal's transition; the close morph runs on
+     the card's, because the card is the element left holding the layoutId.
+     Exit about a fifth faster than enter: the reader asked for the close and
+     is already looking past it. Every card-side layoutId child takes the same
+     spring so title, plate and arrow land together. */
+  const openTransition = prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce;
+  const closeTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : { ...SPRING_CONFIG.noBounce, duration: 0.24 };
+
   // Apply scrollbar compensation when modal is open
   useScrollbarCompensation(!!activeProject);
 
   // Trap focus within modal when open
   useFocusTrap(modalRef, !!activeProject);
 
-  // Handle close with animation guard
+  /* No animation guard on either handler. The morph is a spring, and Motion
+     retargets it from wherever it is, so a click that lands mid-flight
+     reverses the motion instead of being dropped. The old 400ms lockout made
+     a fast close-then-reopen feel dead, and had to track the spring's length
+     by hand. Switching projects while open is handled by the `key` on the
+     modal: the old one morphs home while the new one expands. */
   const handleClose = useCallback(() => {
-    if (isAnimatingRef.current) return;
-
     clickSharp();
-    isAnimatingRef.current = true;
     setActiveProject(null);
-
-    setTimeout(() => {
-      isAnimatingRef.current = false;
-    }, 400);
   }, [clickSharp]);
 
-  // Handle project click with animation guard
   const handleProjectClick = useCallback(
     (project: (typeof projects)[0]) => {
-      // Prevent clicks during animation
-      if (isAnimatingRef.current) return;
-
       clickLow();
-
-      // If modal is currently open, close it first, then open new one
-      if (activeProject) {
-        isAnimatingRef.current = true;
-        setActiveProject(null);
-
-        // Wait for exit animation to complete, then open new card
-        setTimeout(() => {
-          setActiveProject(project);
-          setTimeout(() => {
-            isAnimatingRef.current = false;
-          }, 400);
-        }, 200); // Exit animation duration (150ms overlay + 50ms buffer)
-      } else {
-        // No modal open, directly open the new one
-        isAnimatingRef.current = true;
-        setActiveProject(project);
-
-        setTimeout(() => {
-          isAnimatingRef.current = false;
-        }, 300);
-      }
+      setActiveProject(project);
     },
-    [activeProject, clickLow],
+    [clickLow],
   );
 
   // Handle Escape key
@@ -275,7 +257,7 @@ export default function ProjectGrid() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                  transition={openTransition}
                   className="fixed inset-0 z-40 bg-black/30"
                 />
               )}
@@ -283,13 +265,16 @@ export default function ProjectGrid() {
 
             <AnimatePresence initial={false}>
               {activeProject && (
-                <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div
+                  key={activeProject.id}
+                  className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4"
+                >
                   <motion.div
                     layoutId={`card-${activeProject.id}`}
                     className="bg-card pointer-events-auto relative flex max-h-[70vh] w-full max-w-xl flex-col overflow-hidden"
                     style={{ borderRadius: 0 }}
                     ref={modalRef}
-                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                    transition={openTransition}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="modal-title"
@@ -333,7 +318,7 @@ export default function ProjectGrid() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                        transition={openTransition}
                         className="text-accent hover:text-tertiary absolute top-4 right-4 z-30 flex items-center leading-none transition-colors motion-reduce:transition-none"
                         style={tFast}
                       >
@@ -345,7 +330,7 @@ export default function ProjectGrid() {
                     <motion.div
                       layoutId={`image-${activeProject.id}`}
                       className="bg-muted border-accent/30 relative flex h-[20vh] shrink-0 items-center justify-center border-b border-dashed"
-                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                      transition={openTransition}
                     >
                       <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 opacity-20" />
                       {activeProject.imageUrl ? (
@@ -369,7 +354,7 @@ export default function ProjectGrid() {
                         morph, via title- and type-. */}
                     <motion.div
                       className="scrollbar-hide relative flex flex-col overflow-y-auto px-8 py-6"
-                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                      transition={openTransition}
                     >
                       {/* Header — the plate's arrangement kept: name on the left,
                           kind opposite it on the right, rather than stacked. The
@@ -381,9 +366,7 @@ export default function ProjectGrid() {
                             id="modal-title"
                             layoutId={`title-${activeProject.id}`}
                             className="text-foreground font-serif text-xl"
-                            transition={
-                              prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
-                            }
+                            transition={openTransition}
                           >
                             {activeProjectUrl ? (
                               <a
@@ -406,9 +389,7 @@ export default function ProjectGrid() {
                           <motion.div
                             layoutId={`type-${activeProject.id}`}
                             className="flex shrink-0 items-center gap-1 font-mono text-[0.6875rem] tracking-wide"
-                            transition={
-                              prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce
-                            }
+                            transition={openTransition}
                           >
                             <span className="text-accent">{activeProject.type}</span>
                             <span className="text-foreground/60">·</span>
@@ -558,7 +539,7 @@ export default function ProjectGrid() {
                     : { disabled: true })}
                   className={`bg-muted focus-visible:ring-accent focus-visible:ring-offset-background absolute inset-0 overflow-hidden text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none ${openable ? "cursor-pointer" : "pointer-events-none"}`}
                   style={{ borderRadius: 0 }}
-                  transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                  transition={closeTransition}
                 >
                   {openable && <span className="sr-only">View details for</span>}
                   <DashedBorders />
@@ -579,7 +560,7 @@ export default function ProjectGrid() {
                      suggests. Measured on a 144px plate: ink lands 40 from the
                      top and 32 clear of the text. */
                     className="@container absolute inset-0 flex items-center justify-center pb-4"
-                    transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                    transition={closeTransition}
                   >
                     <div className="bg-grid-pattern pointer-events-none absolute inset-0 z-0 [mask-image:linear-gradient(to_top,black_50%,transparent_100%)] opacity-30" />
                     {project.imageUrl ? (
@@ -603,7 +584,7 @@ export default function ProjectGrid() {
                     <motion.h3
                       layoutId={`title-${project.id}`}
                       className="text-accent absolute bottom-3 left-3 z-10 font-serif text-base leading-none"
-                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                      transition={closeTransition}
                     >
                       {project.title}
                     </motion.h3>
@@ -616,7 +597,7 @@ export default function ProjectGrid() {
                          visibility keeps the measurable box at the plate
                          corner — same look (it's absolute), real origin. */
                       className="text-foreground/40 absolute right-3 bottom-3 z-10 font-mono text-[0.625rem] tracking-wide @max-[11rem]:invisible"
-                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                      transition={closeTransition}
                     >
                       {project.type}
                     </motion.p>
@@ -642,7 +623,7 @@ export default function ProjectGrid() {
                       rel="noopener noreferrer"
                       className="text-accent hover:text-tertiary flex items-center leading-none transition-colors motion-reduce:transition-none"
                       style={tFast}
-                      transition={prefersReducedMotion ? { duration: 0 } : SPRING_CONFIG.noBounce}
+                      transition={closeTransition}
                       aria-label={`Open ${project.title} in new tab`}
                     >
                       <ArrowUpRight size={ICON_CONFIG.sizes.md} />
