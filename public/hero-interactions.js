@@ -127,6 +127,28 @@
     );
   };
 
+  /* iOS lets a media element start only if play() was first called on it
+     inside a tap. The theme observer below starts the new theme's element
+     with no tap behind it, so on a phone a theme switch with the sound on
+     went quiet and the button fell back to off. Make every theme's element
+     on the press and start each one there, synchronously, while the tap
+     still counts; the ones not wanted pause as soon as they start. Their
+     gain is 0, so nothing is heard, and a paused element stops buffering. */
+  const blessTracks = () => {
+    for (const theme of Object.keys(AMBIENT_FILES)) {
+      const track = trackFor(theme);
+      if (track.blessed) continue;
+      track.blessed = true;
+      const started = track.element.play();
+      if (!started) continue;
+      started
+        .then(() => {
+          if (!ambient || ambient.theme !== theme) track.element.pause();
+        })
+        .catch(() => {});
+    }
+  };
+
   /* Each theme has its own track: when the reader changes theme while the
      sound is on, the gains cross — nothing restarts. */
   new MutationObserver(() => {
@@ -140,8 +162,10 @@
     if (!target) return;
     ambientOn = !ambientOn;
     syncAmbient();
-    if (ambientOn) void startAmbient();
-    else stopAmbient();
+    if (ambientOn) {
+      blessTracks();
+      void startAmbient();
+    } else stopAmbient();
   });
 
   syncAmbient();
