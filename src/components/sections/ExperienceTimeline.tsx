@@ -40,7 +40,7 @@ function TimelineSpine() {
 
 function TimelineMarker() {
   return (
-    <div className="timeline-marker relative mt-1 h-4 w-4 shrink-0">
+    <div className="relative mt-1 h-4 w-4 shrink-0">
       <div className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="bg-accent h-1 w-1" />
       </div>
@@ -57,16 +57,20 @@ interface ExperienceItemProps {
   hasNext: boolean;
   // Set on earlier roles: when their description starts streaming.
   streamStartMs?: number;
+  // The first earlier role: the open toggle sits where its marker would be,
+  // so it keeps only the marker's space. A second marker under the toggle
+  // read as a smaller square inside it.
+  markerless?: boolean;
 }
 
-function ExperienceItem({ exp, hasNext, streamStartMs }: ExperienceItemProps) {
+function ExperienceItem({ exp, hasNext, streamStartMs, markerless = false }: ExperienceItemProps) {
   const words = exp.description.split(" ");
   const streams = streamStartMs !== undefined;
   return (
     <article className="group relative mb-8 flex gap-6 last:mb-0">
       {hasNext && <TimelineSpine />}
 
-      <TimelineMarker />
+      {markerless ? <div className="mt-1 h-4 w-4 shrink-0" /> : <TimelineMarker />}
 
       <div className="flex-1">
         <div className="mb-4">
@@ -155,11 +159,11 @@ export default function ExperienceTimeline() {
       {archivedExperiences.length > 0 && (
         <details className="group/earlier relative">
           {/* The marker alone is the toggle. Open, it lifts out of the flow
-              and sits exactly on the first earlier role's marker, whose own
-              mark hides, so the same square stays under the cursor and closes
-              the section again. Swapping in the role's marker instead
-              replayed its hover spread from rest. The pseudo-element widens
-              the 16px mark to a 32 × 40 hit area. */}
+              and sits exactly where the first earlier role's marker would be
+              (that role renders none), so the same square stays under the
+              cursor and closes the section again. Swapping in the role's
+              marker instead replayed its hover spread from rest. The
+              pseudo-element widens the 16px mark to a 32 × 40 hit area. */}
           <summary
             data-hero-sfx="click"
             className="ca-trigger focus-visible:ring-accent focus-visible:ring-offset-background relative z-20 flex h-6 w-4 cursor-pointer list-none group-open/earlier:absolute group-open/earlier:top-0 group-open/earlier:left-0 before:absolute before:-inset-2 before:content-[''] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden"
@@ -172,13 +176,14 @@ export default function ExperienceTimeline() {
             <TimelineMarker />
           </summary>
 
-          <div className="timeline-earlier">
+          <div>
             {archivedExperiences.map((exp, index) => (
               <ExperienceItem
                 key={exp.id}
                 exp={exp}
                 hasNext={index < archivedExperiences.length - 1}
                 streamStartMs={index * STREAM_ROLE_OFFSET_MS}
+                markerless={index === 0}
               />
             ))}
           </div>

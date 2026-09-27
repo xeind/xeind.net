@@ -790,8 +790,6 @@ body {
 }
 
 /* Earlier roles in ExperienceTimeline.
-   - Open, the toggle sits on the first earlier role's marker (see the
-     component), so that role's own mark hides and the toggle stands in.
    - Description words stream in like StreamingText in /lab: each appears
      whole at its --word-delay, with no fade, and a block caret rides just
      after the newest word. The caret is one ::after per word, lit only for
@@ -802,10 +800,6 @@ body {
    - Reduced motion shows everything at once with no caret. The global clamp
      above would shorten each animation but keep its delay, so words would
      still arrive late; `animation: none` drops both. */
-details[open] > .timeline-earlier > article:first-child > .timeline-marker {
-  visibility: hidden;
-}
-
 details[open] .timeline-word {
   position: relative;
   animation: timeline-word-in 1ms step-end var(--word-delay) backwards;
