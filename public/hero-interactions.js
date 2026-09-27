@@ -17,13 +17,20 @@
 
      The files are licensed loops (Epidemic Sound), so they never enter git:
      they live in the R2 bucket `xeind-media` behind media.xeind.net, and
-     public/ambient/ is ignored. Each file is 56–80 s, seamless, loudness-matched
-     to -20 LUFS, Opus with an AAC twin for Safari, about 500 KB. The element
-     is created on the press with preload none, so nothing loads before it
-     and Lighthouse never sees it. It plays through the same AudioContext as
-     the clicks, which is what gives the fades — and on iOS the only way to
-     fade at all, since a media element's volume is read-only there. Sits
-     above the pointer guard because the button has to work on a phone. */
+     public/ambient/ is ignored. Each file is 56–80 s, mono, seamless,
+     loudness-matched to -20 LUFS, Opus with an AAC twin for Safari, about
+     500 KB.
+
+     A press has to sound at once. A media element fetched on the press took
+     about 3 s to start, and iOS ignores preload. So the current theme's file
+     is fetched and decoded once the page has loaded, and again after each
+     theme change; the press only resumes the AudioContext and starts a
+     buffer. Decoded, a track is 11–15 MB of PCM, and at most four are held.
+     The decode runs on an OfflineAudioContext, since an AudioContext made
+     before a gesture warns in the console and a buffer plays in any
+     context. With Save-Data on, nothing preloads and the press fetches. The
+     fades run on the same AudioContext as the clicks. Sits above the pointer
+     guard because the button has to work on a phone. */
   const AMBIENT_BASE = "https://media.xeind.net/ambient";
   const AMBIENT_FILES = {
     dark: "manila",
@@ -32,7 +39,9 @@
     blueprint: "blueprint",
   };
   const AMBIENT_GAIN = 0.5;
-  const AMBIENT_FADE_IN = 2;
+  /* Short: gain reads on a log scale, so a long linear ramp from silence
+     sounds like a delay before the first note. */
+  const AMBIENT_FADE_IN = 0.4;
   const AMBIENT_FADE_OUT = 1.5;
 
   const currentTheme = () => document.documentElement.dataset.theme || "light";
@@ -55,12 +64,39 @@
     return `${AMBIENT_BASE}/${name}.${opus ? "opus" : "m4a"}`;
   };
 
+  const trackKey = (theme) => (AMBIENT_FILES[theme] ? theme : "dark");
+
+  /* One decode per theme, kept for the visit. A failed one is forgotten so
+     the next press tries again. */
+  const buffers = new Map();
+
+  const bufferFor = (key) => {
+    if (buffers.has(key)) return buffers.get(key);
+    const decoder = new OfflineAudioContext(1, 1, 48000);
+    const pending = fetch(ambientSrc(AMBIENT_FILES[key]))
+      .then((response) => {
+        if (!response.ok) throw new Error(`ambient ${response.status}`);
+        return response.arrayBuffer();
+      })
+      .then((data) => decoder.decodeAudioData(data));
+    pending.catch(() => buffers.delete(key));
+    buffers.set(key, pending);
+    return pending;
+  };
+
+  const preloadAmbient = () => {
+    if (navigator.connection && navigator.connection.saveData) return;
+    bufferFor(trackKey(currentTheme())).catch(() => {});
+  };
+
+  if (document.readyState === "complete") preloadAmbient();
+  else window.addEventListener("load", preloadAmbient, { once: true });
+
   /* One track per theme, made on first need and kept for the visit. A
      theme switch only moves the gains: the track leaving fades to nothing
      but keeps running, so coming back picks it up where it got to instead
-     of from the top. Off pauses every track in place; on resumes the
-     current theme's from there. A muted, looping element costs nothing
-     worth measuring, and at most four exist. */
+     of from the top. Off stops every source and keeps its place; on starts
+     the current theme's from there. */
   const tracks = new Map();
 
   const rampTo = (track, level, seconds) => {
@@ -71,39 +107,59 @@
     track.gain.gain.linearRampToValueAtTime(level, now + seconds);
   };
 
-  const trackFor = (theme) => {
-    const key = AMBIENT_FILES[theme] ? theme : "dark";
+  const trackFor = (key) => {
     if (tracks.has(key)) return tracks.get(key);
     const audio = getCtx();
-    const element = new Audio();
-    element.crossOrigin = "anonymous";
-    element.loop = true;
-    element.preload = "none";
-    element.src = ambientSrc(AMBIENT_FILES[key]);
     const gain = audio.createGain();
     gain.gain.value = 0;
     gain.connect(audio.destination);
-    audio.createMediaElementSource(element).connect(gain);
-    const track = { element, gain };
+    const track = { gain, source: null, offset: 0, startedAt: 0 };
     tracks.set(key, track);
     return track;
   };
 
+  const playTrack = (track, buffer) => {
+    if (track.source) return;
+    const audio = getCtx();
+    const source = audio.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    source.connect(track.gain);
+    source.start(0, track.offset);
+    track.source = source;
+    track.startedAt = audio.currentTime - track.offset;
+  };
+
+  const pauseTrack = (track) => {
+    if (!track.source) return;
+    track.offset = (getCtx().currentTime - track.startedAt) % track.source.buffer.duration;
+    track.source.stop();
+    track.source.disconnect();
+    track.source = null;
+  };
+
+  /* iOS routes Web Audio through the ringer switch, where the media
+     element it replaced played through silent mode. "playback" keeps the
+     track audible while it is on; "auto" hands the clicks back to the
+     switch once it stops. Safari 17+ only; elsewhere the object is absent. */
+  const setAudioSession = (type) => {
+    if (navigator.audioSession) navigator.audioSession.type = type;
+  };
+
   const startAmbient = async () => {
     const audio = getCtx();
+    setAudioSession("playback");
     if (audio.state === "suspended") await audio.resume();
     if (!ambientWanted()) return;
     const theme = currentTheme();
-    const track = trackFor(theme);
+    const key = trackKey(theme);
     ambient = { theme };
-    for (const other of tracks.values()) {
-      if (other !== track && other.gain.gain.value > 0) rampTo(other, 0, AMBIENT_FADE_OUT);
-    }
+    let buffer;
     try {
-      if (track.element.paused) await track.element.play();
+      buffer = await bufferFor(key);
     } catch {
-      /* Refused (no gesture, or the file is missing): leave the switch
-         honest and let the next press try again. */
+      /* The file is missing or would not decode: leave the switch honest
+         and let the next press try again. */
       if (ambient && ambient.theme === theme) {
         ambient = null;
         ambientOn = false;
@@ -111,7 +167,13 @@
       }
       return;
     }
-    if (ambient && ambient.theme === theme) rampTo(track, AMBIENT_GAIN, AMBIENT_FADE_IN);
+    if (!ambient || ambient.theme !== theme) return;
+    const track = trackFor(key);
+    for (const other of tracks.values()) {
+      if (other !== track) rampTo(other, 0, AMBIENT_FADE_OUT);
+    }
+    playTrack(track, buffer);
+    rampTo(track, AMBIENT_GAIN, AMBIENT_FADE_IN);
   };
 
   const stopAmbient = () => {
@@ -121,40 +183,32 @@
     window.setTimeout(
       () => {
         if (ambient) return;
-        for (const track of tracks.values()) track.element.pause();
+        for (const track of tracks.values()) pauseTrack(track);
+        setAudioSession("auto");
       },
       (AMBIENT_FADE_OUT + 0.2) * 1000,
     );
   };
 
-  /* iOS lets a media element start only if play() was first called on it
-     inside a tap. The theme observer below starts the new theme's element
-     with no tap behind it, so on a phone a theme switch with the sound on
-     went quiet and the button fell back to off. Make every theme's element
-     on the press and start each one there, synchronously, while the tap
-     still counts; the ones not wanted pause as soon as they start. Their
-     gain is 0, so nothing is heard, and a paused element stops buffering. */
-  const blessTracks = () => {
-    for (const theme of Object.keys(AMBIENT_FILES)) {
-      const track = trackFor(theme);
-      if (track.blessed) continue;
-      track.blessed = true;
-      const started = track.element.play();
-      if (!started) continue;
-      started
-        .then(() => {
-          if (!ambient || ambient.theme !== theme) track.element.pause();
-        })
-        .catch(() => {});
-    }
-  };
-
   /* Each theme has its own track: when the reader changes theme while the
-     sound is on, the gains cross — nothing restarts. */
+     sound is on, the gains cross — nothing restarts. While it is off, the
+     new theme's track preloads so the next press is as quick as the first. */
   new MutationObserver(() => {
-    if (!ambient || ambient.theme === currentTheme()) return;
-    void startAmbient();
+    if (!ambient) preloadAmbient();
+    else if (ambient.theme !== currentTheme()) void startAmbient();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* Opening the audio device blocks for about 150 ms the first time. Start
+     it on pointerdown, so it overlaps the press instead of following it. */
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.target instanceof Element && event.target.closest("[data-ambient-toggle]")) {
+        getCtx();
+      }
+    },
+    { passive: true },
+  );
 
   document.addEventListener("click", (event) => {
     const target =
@@ -162,10 +216,8 @@
     if (!target) return;
     ambientOn = !ambientOn;
     syncAmbient();
-    if (ambientOn) {
-      blessTracks();
-      void startAmbient();
-    } else stopAmbient();
+    if (ambientOn) void startAmbient();
+    else stopAmbient();
   });
 
   syncAmbient();
