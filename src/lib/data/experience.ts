@@ -43,6 +43,7 @@ export const experiences: Experience[] = [
     description:
       "Trained in advanced Gen AI prompting techniques including chain-of-thought and multi-agent systems, and explored Azure AI services for model deployment",
     technologies: ["Ruby on Rails", "Vue.js", "GraphQL"],
+    archived: true,
   },
   {
     id: "exp-1",
@@ -57,5 +58,6 @@ export const experiences: Experience[] = [
     description:
       "Worked as an Intern, developing and maintaining finance modules in Microsoft Dynamics 365 using X++, resolving bugs and optimizing workflows",
     technologies: ["Microsoft Dynamics 365", "X++"],
+    archived: true,
   },
 ];

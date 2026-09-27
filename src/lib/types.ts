@@ -72,6 +72,9 @@ export interface Experience {
   };
   description: string;
   technologies?: string[];
+  // Collapsed under the timeline's "earlier roles" toggle on the home page.
+  // Still rendered in the HTML and listed in index.md.
+  archived?: boolean;
 }
 
 // Tools

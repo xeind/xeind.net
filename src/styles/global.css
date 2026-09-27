@@ -87,6 +87,14 @@ html {
   box-sizing: inherit;
 }
 
+/* Chrome wraps <details> content in a ::details-content box that the rule
+   above never matches, so it falls back to content-box and passes that down:
+   every Badge inside grew from 24px to 34px. A rule of its own, because a
+   browser without the pseudo-element would drop the whole list above. */
+details::details-content {
+  box-sizing: inherit;
+}
+
 body {
   min-height: 100vh;
 }
@@ -749,6 +757,103 @@ body {
 .group:focus-within .ca-br::before {
   height: 0.5rem;
   background-color: var(--color-tertiary);
+}
+
+/* Trigger variant: the same expansion on hover and keyboard focus only.
+   A <summary> keeps focus after a mouse click, so `.group:focus-within`
+   would leave its corners open until the reader clicks elsewhere. Gated to
+   fine pointers: a tap on a touch screen leaves :hover stuck on the toggle,
+   which stays on screen after it opens. */
+@media (hover: hover) and (pointer: fine) {
+  .ca-trigger:is(:hover, :focus-visible) .ca-tl {
+    transform: translate(-0.25rem, -0.25rem);
+  }
+  .ca-trigger:is(:hover, :focus-visible) .ca-tr {
+    transform: translate(0.25rem, -0.25rem);
+  }
+  .ca-trigger:is(:hover, :focus-visible) .ca-bl {
+    transform: translate(-0.25rem, 0.25rem);
+  }
+  .ca-trigger:is(:hover, :focus-visible) .ca-br {
+    transform: translate(0.25rem, 0.25rem);
+  }
+  .ca-trigger:is(:hover, :focus-visible) :is(.ca-tl, .ca-tr)::before,
+  .ca-trigger:is(:hover, :focus-visible) :is(.ca-bl, .ca-br)::after {
+    width: 0.5rem;
+    background-color: var(--color-tertiary);
+  }
+  .ca-trigger:is(:hover, :focus-visible) :is(.ca-tl, .ca-tr)::after,
+  .ca-trigger:is(:hover, :focus-visible) :is(.ca-bl, .ca-br)::before {
+    height: 0.5rem;
+    background-color: var(--color-tertiary);
+  }
+}
+
+/* Earlier roles in ExperienceTimeline.
+   - Open, the toggle sits on the first earlier role's marker (see the
+     component), so that role's own mark hides and the toggle stands in.
+   - Description words stream in like StreamingText in /lab: each appears
+     whole at its --word-delay, with no fade, and a block caret rides just
+     after the newest word. The caret is one ::after per word, lit only for
+     that word's --caret-ms slot, so the lit block steps along the line and
+     the last one goes dark when the text is done. It is absolute, so it
+     never moves the text, and it animates opacity only.
+   - The badges fade in once their description has arrived.
+   - Reduced motion shows everything at once with no caret. The global clamp
+     above would shorten each animation but keep its delay, so words would
+     still arrive late; `animation: none` drops both. */
+details[open] > .timeline-earlier > article:first-child > .timeline-marker {
+  visibility: hidden;
+}
+
+details[open] .timeline-word {
+  position: relative;
+  animation: timeline-word-in 1ms step-end var(--word-delay) backwards;
+}
+
+/* Sized like the lab caret: a character cell centred on the line. */
+.timeline-word::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 0.55em;
+  height: 1.05em;
+  margin-top: -0.525em;
+  background-color: var(--color-accent);
+  opacity: 0;
+}
+/* Every other word carries its trailing space inside the span. */
+.timeline-word:last-child::after {
+  margin-left: 0.25em;
+}
+details[open] .timeline-word::after {
+  animation: timeline-caret var(--caret-ms) step-end var(--word-delay);
+}
+
+details[open] .timeline-badges {
+  animation: timeline-word-in 0.12s cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+@keyframes timeline-word-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes timeline-caret {
+  from,
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  details[open] .timeline-word,
+  details[open] .timeline-word::after,
+  details[open] .timeline-badges {
+    animation: none;
+  }
 }
 
 /* S-Tier Compositor-Only Animations */

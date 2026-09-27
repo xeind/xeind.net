@@ -1,41 +1,72 @@
 import { experiences } from "@/lib/data/experience";
 import Badge from "@/components/ui/Badge";
+import type { CSSProperties } from "react";
 import type { Experience } from "@/lib/types";
 
 const inlineLinkClass =
   "inline border-b border-dashed border-accent/30 pb-px text-accent transition-colors hover:border-solid hover:text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-interface ExperienceItemProps {
-  exp: Experience;
+const currentExperiences = experiences.filter((exp) => !exp.archived);
+const archivedExperiences = experiences.filter((exp) => exp.archived);
+
+// Earlier roles stream in word by word when the toggle opens, like
+// StreamingText in /lab but in CSS alone: every word is a server-rendered
+// span with its own animation delay, so the section stays static markup
+// with no island. The rate matches StreamingText's WORD_MS: ~18 words a
+// second, close to a fast model's output.
+const STREAM_WORD_MS = 55;
+// The second role starts a beat after the first, not after it finishes.
+const STREAM_ROLE_OFFSET_MS = 80;
+
+const spineOffsetStyle = {
+  left: "0.52rem",
+  width: 0,
+  marginLeft: "calc(var(--divider-thickness) / -2)",
+};
+
+// The dashed line from one marker down to the next.
+function TimelineSpine() {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute top-3 bottom-0 z-0 translate-y-5"
+      style={spineOffsetStyle}
+    >
+      <div className="border-foreground/30 t-border group-keyboard:opacity-0 absolute inset-y-0 left-0 h-full border-l border-dashed opacity-100 transition-opacity group-hover:opacity-0" />
+      <div className="border-foreground/30 t-border group-keyboard:opacity-100 absolute inset-y-0 left-0 h-full border-l border-solid opacity-0 group-hover:opacity-100" />
+    </div>
+  );
 }
 
-function ExperienceItem({ exp }: ExperienceItemProps) {
+function TimelineMarker() {
+  return (
+    <div className="timeline-marker relative mt-1 h-4 w-4 shrink-0">
+      <div className="absolute inset-0 z-10 flex items-center justify-center">
+        <div className="bg-accent h-1 w-1" />
+      </div>
+      <div className="ca-tl" />
+      <div className="ca-tr" />
+      <div className="ca-bl" />
+      <div className="ca-br" />
+    </div>
+  );
+}
+
+interface ExperienceItemProps {
+  exp: Experience;
+  hasNext: boolean;
+  // Set on earlier roles: when their description starts streaming.
+  streamStartMs?: number;
+}
+
+function ExperienceItem({ exp, hasNext, streamStartMs }: ExperienceItemProps) {
+  const words = exp.description.split(" ");
+  const streams = streamStartMs !== undefined;
   return (
     <article className="group relative mb-8 flex gap-6 last:mb-0">
-      {exp.id !== experiences[experiences.length - 1].id && (
-        <div
-          aria-hidden="true"
-          className="absolute top-3 bottom-0 z-0 translate-y-5"
-          style={{
-            left: "0.52rem",
-            width: 0,
-            marginLeft: "calc(var(--divider-thickness) / -2)",
-          }}
-        >
-          <div className="border-foreground/30 t-border group-keyboard:opacity-0 absolute inset-y-0 left-0 h-full border-l border-dashed opacity-100 transition-opacity group-hover:opacity-0" />
-          <div className="border-foreground/30 t-border group-keyboard:opacity-100 absolute inset-y-0 left-0 h-full border-l border-solid opacity-0 group-hover:opacity-100" />
-        </div>
-      )}
+      {hasNext && <TimelineSpine />}
 
-      <div className="relative mt-1 h-4 w-4 shrink-0">
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
-          <div className="bg-accent h-1 w-1" />
-        </div>
-        <div className="ca-tl" />
-        <div className="ca-tr" />
-        <div className="ca-bl" />
-        <div className="ca-br" />
-      </div>
+      <TimelineMarker />
 
       <div className="flex-1">
         <div className="mb-4">
@@ -68,10 +99,36 @@ function ExperienceItem({ exp }: ExperienceItemProps) {
           </div>
         </div>
 
-        <p className="text-foreground/80 text-sm leading-6">{exp.description}</p>
+        <p
+          className="text-foreground/80 text-sm leading-6"
+          style={streams ? ({ "--caret-ms": `${STREAM_WORD_MS}ms` } as CSSProperties) : undefined}
+        >
+          {streams
+            ? words.map((word, index) => (
+                <span
+                  key={index}
+                  className="timeline-word"
+                  style={
+                    {
+                      "--word-delay": `${streamStartMs + index * STREAM_WORD_MS}ms`,
+                    } as CSSProperties
+                  }
+                >
+                  {index < words.length - 1 ? `${word} ` : word}
+                </span>
+              ))
+            : exp.description}
+        </p>
 
         {exp.technologies && exp.technologies.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div
+            className={`mt-4 flex flex-wrap gap-2 ${streams ? "timeline-badges" : ""}`}
+            style={
+              streams
+                ? { animationDelay: `${streamStartMs + words.length * STREAM_WORD_MS}ms` }
+                : undefined
+            }
+          >
             {exp.technologies.map((tech: string) => (
               <Badge key={tech}>{tech}</Badge>
             ))}
@@ -87,9 +144,46 @@ export default function ExperienceTimeline() {
     <div className="space-y-4">
       <h2 className="text-foreground font-serif text-2xl leading-8">Experience</h2>
 
-      {experiences.map((exp) => (
-        <ExperienceItem key={exp.id} exp={exp} />
+      {currentExperiences.map((exp, index) => (
+        <ExperienceItem
+          key={exp.id}
+          exp={exp}
+          hasNext={index < currentExperiences.length - 1 || archivedExperiences.length > 0}
+        />
       ))}
+
+      {archivedExperiences.length > 0 && (
+        <details className="group/earlier relative">
+          {/* The marker alone is the toggle. Open, it lifts out of the flow
+              and sits exactly on the first earlier role's marker, whose own
+              mark hides, so the same square stays under the cursor and closes
+              the section again. Swapping in the role's marker instead
+              replayed its hover spread from rest. The pseudo-element widens
+              the 16px mark to a 32 × 40 hit area. */}
+          <summary
+            data-hero-sfx="click"
+            className="ca-trigger focus-visible:ring-accent focus-visible:ring-offset-background relative z-20 flex h-6 w-4 cursor-pointer list-none group-open/earlier:absolute group-open/earlier:top-0 group-open/earlier:left-0 before:absolute before:-inset-2 before:content-[''] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden"
+          >
+            <span className="sr-only">
+              <span className="group-open/earlier:hidden">Show</span>
+              <span className="hidden group-open/earlier:inline">Hide</span> earlier roles (
+              {archivedExperiences.length})
+            </span>
+            <TimelineMarker />
+          </summary>
+
+          <div className="timeline-earlier">
+            {archivedExperiences.map((exp, index) => (
+              <ExperienceItem
+                key={exp.id}
+                exp={exp}
+                hasNext={index < archivedExperiences.length - 1}
+                streamStartMs={index * STREAM_ROLE_OFFSET_MS}
+              />
+            ))}
+          </div>
+        </details>
+      )}
     </div>
   );
 }
