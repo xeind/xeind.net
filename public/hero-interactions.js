@@ -146,11 +146,43 @@
     if (navigator.audioSession) navigator.audioSession.type = type;
   };
 
+  /* A call, an alarm or Siri suspends the context under the track
+     ("interrupted" on iOS). The switch would then read on over silence, so
+     it turns off and the next press starts it again. A hidden page is
+     handled below. */
+  let watchingState = false;
+
+  const watchState = (audio) => {
+    if (watchingState) return;
+    watchingState = true;
+    audio.addEventListener("statechange", () => {
+      if (!ambient || document.hidden || audio.state === "running") return;
+      stopAmbient();
+      ambientOn = false;
+      syncAmbient();
+    });
+  };
+
   const startAmbient = async () => {
     const audio = getCtx();
     setAudioSession("playback");
-    if (audio.state === "suspended") await audio.resume();
+    if (audio.state !== "running") {
+      try {
+        await audio.resume();
+      } catch {
+        /* Checked below. */
+      }
+    }
     if (!ambientWanted()) return;
+    if (audio.state !== "running") {
+      /* Refused without a tap, as iOS may on return from the background:
+         leave the switch honest. */
+      ambientOn = false;
+      syncAmbient();
+      setAudioSession("auto");
+      return;
+    }
+    watchState(audio);
     const theme = currentTheme();
     const key = trackKey(theme);
     ambient = { theme };
@@ -218,6 +250,15 @@
     syncAmbient();
     if (ambientOn) void startAmbient();
     else stopAmbient();
+  });
+
+  /* Leaving the page fades the track out and keeps the switch on; coming
+     back fades it in where it stopped. Nobody wants a loop playing from a
+     locked phone or a tab they cannot see. */
+  document.addEventListener("visibilitychange", () => {
+    if (!ambientOn) return;
+    if (document.hidden) stopAmbient();
+    else void startAmbient();
   });
 
   syncAmbient();
