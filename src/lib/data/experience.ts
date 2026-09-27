@@ -3,6 +3,20 @@ import type { Experience } from "../types";
 
 export const experiences: Experience[] = [
   {
+    id: "exp-4",
+    company: "Chozi",
+    companyUrl: "https://chozi.com",
+    role: "Technical SEO Engineer",
+    location: "Costa Rica",
+    period: {
+      start: "Sep 2026",
+      end: "Now",
+    },
+    description:
+      "Owning technical SEO for a Spanish-first real-estate platform, and building the server-rendered, bilingual Next.js pages that search engines index",
+    technologies: ["Google Search Console", "Screaming Frog", "Ahrefs"],
+  },
+  {
     id: "exp-3",
     company: "Pioneer Dev AI",
     companyUrl: "https://www.pioneerdev.ai/",
