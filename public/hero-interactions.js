@@ -39,9 +39,11 @@
     blueprint: "blueprint",
   };
   const AMBIENT_GAIN = 0.5;
-  /* Short: gain reads on a log scale, so a long linear ramp from silence
-     sounds like a delay before the first note. */
-  const AMBIENT_FADE_IN = 0.4;
+  /* The fade-in is a time constant, not a length: the gain rises fastest
+     at the start, so the first note sounds at once, and settles within 5%
+     of full after three constants, about 2 s. A linear ramp that long sat
+     near silence for its first half second and sounded like a delay. */
+  const AMBIENT_FADE_IN = 0.6;
   const AMBIENT_FADE_OUT = 1.5;
 
   const currentTheme = () => document.documentElement.dataset.theme || "light";
@@ -105,6 +107,14 @@
     track.gain.gain.cancelScheduledValues(now);
     track.gain.gain.setValueAtTime(track.gain.gain.value, now);
     track.gain.gain.linearRampToValueAtTime(level, now + seconds);
+  };
+
+  const swellTo = (track, level, timeConstant) => {
+    const audio = getCtx();
+    const now = audio.currentTime;
+    track.gain.gain.cancelScheduledValues(now);
+    track.gain.gain.setValueAtTime(track.gain.gain.value, now);
+    track.gain.gain.setTargetAtTime(level, now, timeConstant);
   };
 
   const trackFor = (key) => {
@@ -205,7 +215,7 @@
       if (other !== track) rampTo(other, 0, AMBIENT_FADE_OUT);
     }
     playTrack(track, buffer);
-    rampTo(track, AMBIENT_GAIN, AMBIENT_FADE_IN);
+    swellTo(track, AMBIENT_GAIN, AMBIENT_FADE_IN);
   };
 
   const stopAmbient = () => {
