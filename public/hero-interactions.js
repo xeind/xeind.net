@@ -95,10 +95,9 @@
   else window.addEventListener("load", preloadAmbient, { once: true });
 
   /* One track per theme, made on first need and kept for the visit. A
-     theme switch only moves the gains: the track leaving fades to nothing
-     but keeps running, so coming back picks it up where it got to instead
-     of from the top. Off stops every source and keeps its place; on starts
-     the current theme's from there. */
+     theme switch crosses the gains, then stops the track that left and
+     rewinds it, so no track runs unheard. A press on starts from the top;
+     a hidden tab only pauses, and coming back picks up where it stopped. */
   const tracks = new Map();
 
   const rampTo = (track, level, seconds) => {
@@ -211,8 +210,17 @@
     }
     if (!ambient || ambient.theme !== theme) return;
     const track = trackFor(key);
-    for (const other of tracks.values()) {
-      if (other !== track) rampTo(other, 0, AMBIENT_FADE_OUT);
+    for (const [otherKey, other] of tracks) {
+      if (other === track) continue;
+      rampTo(other, 0, AMBIENT_FADE_OUT);
+      window.setTimeout(
+        () => {
+          if (ambient && trackKey(ambient.theme) === otherKey) return;
+          pauseTrack(other);
+          other.offset = 0;
+        },
+        (AMBIENT_FADE_OUT + 0.2) * 1000,
+      );
     }
     playTrack(track, buffer);
     swellTo(track, AMBIENT_GAIN, AMBIENT_FADE_IN);
@@ -258,8 +266,10 @@
     if (!target) return;
     ambientOn = !ambientOn;
     syncAmbient();
-    if (ambientOn) void startAmbient();
-    else stopAmbient();
+    if (ambientOn) {
+      for (const track of tracks.values()) if (!track.source) track.offset = 0;
+      void startAmbient();
+    } else stopAmbient();
   });
 
   /* Leaving the page fades the track out and keeps the switch on; coming
