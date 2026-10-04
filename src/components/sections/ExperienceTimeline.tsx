@@ -163,10 +163,15 @@ export default function ExperienceTimeline() {
               (that role renders none), so the same square stays under the
               cursor and closes the section again. Swapping in the role's
               marker instead replayed its hover spread from rest. The
-              pseudo-element widens the 16px mark to a 32 × 40 hit area. */}
+              pseudo-element widens the 16px mark to a 32 × 40 hit area.
+
+              mb-2: closed, this is the panel's last row, and a bare 24px
+              left the panel half a cell long, so every divider below it sat
+              8px off the grid. 24 + 8 is 2 cells. Open, the summary is out
+              of flow and the margin does nothing. */}
           <summary
             data-hero-sfx="click"
-            className="ca-trigger focus-visible:ring-accent focus-visible:ring-offset-background relative z-20 flex h-6 w-4 cursor-pointer list-none group-open/earlier:absolute group-open/earlier:top-0 group-open/earlier:left-0 before:absolute before:-inset-2 before:content-[''] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden"
+            className="ca-trigger focus-visible:ring-accent focus-visible:ring-offset-background relative z-20 mb-2 flex h-6 w-4 cursor-pointer list-none group-open/earlier:absolute group-open/earlier:top-0 group-open/earlier:left-0 before:absolute before:-inset-2 before:content-[''] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden"
           >
             <span className="sr-only">
               <span className="group-open/earlier:hidden">Show</span>
