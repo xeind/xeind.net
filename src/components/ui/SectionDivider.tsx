@@ -23,10 +23,7 @@ function DividerAccent() {
 export default function SectionDivider({ variant = "dashed" }: SectionDividerProps) {
   if (variant === "grid") {
     return (
-      <div
-        className="edge-glow-shell edge-glow-shell-horizontal relative"
-        style={{ height: "16px" }}
-      >
+      <div className="edge-glow-shell edge-glow-shell-horizontal relative h-4">
         <DividerAccent />
         {/* Transparent glow strips overlapping the adjacent Panels' own
             full-bleed hairlines — the divider draws no lines of its own. Both
@@ -49,10 +46,7 @@ export default function SectionDivider({ variant = "dashed" }: SectionDividerPro
 
   if (variant === "grid-broken") {
     return (
-      <div
-        className="edge-glow-shell edge-glow-shell-horizontal relative"
-        style={{ height: "16px" }}
-      >
+      <div className="edge-glow-shell edge-glow-shell-horizontal relative h-4">
         <DividerAccent />
         <div
           className="edge-glow-line absolute right-[-9999px] left-[-9999px] z-10 h-px"

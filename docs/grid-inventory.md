@@ -282,3 +282,31 @@ around a 10px icon inside a hairline border — a 24px control.
 Headless Chrome's classic scrollbar makes the layout viewport ~15px narrower
 than the nominal width — the ruler and the real grid share the same layout
 width, so alignment comparisons stay valid.
+
+## Follow-up — the cell follows the reader's font size (2026-10-05)
+
+Owner report, from Firefox: in Blueprint the gutter lines ran beside the
+divider rules instead of under them, 1px off at the first divider and 12px
+at the second. The browser font size was 17px. Every Tailwind step is rem,
+so the callout band came out 34px, the hero 255 and About 187 — all 17/16 of
+their 32/240/176 — while the gutter tile stayed 16px. Reproduced to the
+pixel in Chromium with `html { font-size: 17px }`.
+
+| Owner                          | Was                      | Now                                   |
+| ------------------------------ | ------------------------ | ------------------------------------- |
+| `--grid-cell-size`             | `16px`                   | `1rem`                                |
+| Gutter grid + glow phase       | `round(50%) + half tile` | `round(50% + half tile)` — 8.5px half |
+| `SectionDivider` grid variants | `height: 16px`           | `h-4`                                 |
+| `.blog-grid-*` above the cap   | 520 / 696 / 584px        | 32.5 / 43.5 / 36.5rem                 |
+| `.blog-grid-*` below the cap   | `round(…, 8px)`          | `round(…, 0.5rem)`                    |
+| `?grid` ruler                  | 16/8px tiles             | 1rem/0.5rem, same phase as the gutter |
+
+At 16px nothing moved: full-page shots of 8 pages × 2 themes × 1440/1437 in
+Chromium and WebKit match the old build except two animated regions. At 17
+and 18px the home page now registers in both engines — every rule under a
+gutter line, the last gutter column one cell from the rail.
+
+Found in the same sweep, already off at 16px and still open: `/blog`'s sheet
+ends at 1016 (63.5 cells), `/lab`'s second panel ends at 744 (46.5),
+`/blog/claude-for-open-source`'s article panel ends at 3496 (218.5), and the
+full-bleed prose rules in posts sit on the half-cell.

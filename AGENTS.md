@@ -34,7 +34,9 @@ decisions are settled in `docs/prd-grid-alignment.md`; the per-element ledger is
 
 - **8px half-cell, 16px major cell.** Line-heights, small paddings and prose
   margins step in 8s. Structural values — panel edges, dividers, section
-  padding, band heights — must hit 16.
+  padding, band heights — must hit 16. The cell is `1rem`, 16px only at the
+  default font size, so size structure in Tailwind steps or rem — a px height
+  drifts off the gutter grid for a reader with a larger font.
 - **The ladder is the even Tailwind steps** — `p-2` `gap-4` `mb-6` `py-8`.
   Two values sit off it: `-1` (4px) between inline things that would otherwise
   touch, and `-px` for a hairline. `-0.5` `-1.5` `-3` `-5` and `space-x-*` fail

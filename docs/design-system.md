@@ -406,10 +406,14 @@ reader tells, at a glance, what will respond.
 
 ### The 8/16 grid
 
-`--grid-cell-size: 16px`, and the half-cell is 8. Structural spacing — panel
-edges, dividers, section padding, band heights — lands on 16
-(`--footer-height: 128px` is 8 cells). Everything that flows steps in 8s:
-line-heights, small paddings, prose margins.
+`--grid-cell-size: 1rem` — 16px at the default font size — and the half-cell
+is 8. Structural spacing — panel edges, dividers, section padding, band
+heights — lands on 16 (`--footer-height: 128px` is 8 cells). Everything that
+flows steps in 8s: line-heights, small paddings, prose margins.
+
+The cell is rem because every box it measures is: a reader who sets a 17px
+font grows the panels by 17/16, and a px cell would stay behind. So a
+structural size is a Tailwind step or a rem value, never a px literal.
 
 Write the Tailwind class. There is no spacing config module, and that is
 deliberate: an alias like `GAP_SPACING.xs = "gap-2"` renames a value without

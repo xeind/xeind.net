@@ -269,8 +269,14 @@ svg {
      dividers, section padding, band heights — lands on the cell; anything that
      flows (line-heights, small paddings, prose margins) steps in half-cells.
      The ladder and its two exceptions are in docs/design-system.md §5, and
-     npm run check:design enforces them. */
-  --grid-cell-size: 16px;
+     npm run check:design enforces them.
+
+     1rem, not 16px, though it is 16px at the default font size. Every box the
+     grid measures is rem (Tailwind's spacing is 0.25rem), so a reader who sets
+     their browser font to 17px grows every panel by 17/16 — and a px tile
+     stayed behind: the gutter lines drifted off the divider rules by one more
+     pixel per section. In rem the tile grows with the boxes. */
+  --grid-cell-size: 1rem;
 
   /* The badge's resting ink. Kozo and Nightingale sit mid-scale and have room
      to move on hover; Manila's accent-hover is hsl(220 6% 98%), which is
@@ -496,9 +502,14 @@ body {
      rounds and the line goes back under the rail. Verified against the rail at
      every width from 1436 to 1443, at 1x and 2x. The unrounded line above is
      the fallback for browsers without round(): the grid is then half a pixel
-     soft at odd widths, as it was before. */
+     soft at odd widths, as it was before.
+
+     round() wraps the whole sum, not just the 50%: with a rem cell the half
+     tile is a half pixel whenever the reader's font size is odd (8.5px at
+     17px), and rounding before adding it put every line back on x.5. At 16px
+     the two forms give the same pixel at every width. */
   background-position: calc(50% + calc(var(--grid-cell-size) / 2)) top;
-  background-position: calc(round(50%, 1px) + calc(var(--grid-cell-size) / 2)) top;
+  background-position: round(calc(50% + var(--grid-cell-size) / 2), 1px) top;
 }
 
 /* The lit copy of that ruling. Inert everywhere: only blueprint gives it a
@@ -545,7 +556,7 @@ body {
     );
   background-size: var(--grid-cell-size) var(--grid-cell-size);
   background-position: calc(50% + calc(var(--grid-cell-size) / 2)) top;
-  background-position: calc(round(50%, 1px) + calc(var(--grid-cell-size) / 2)) top;
+  background-position: round(calc(50% + var(--grid-cell-size) / 2), 1px) top;
   /* The lamp, as a mask. Same smoothstep the rails paint and the script
      scores — sampled at 0/25/50/75/100% (1, .844, .5, .156, 0) — so a line
      here and a rail there fall off together. Circular, not the rails'
@@ -1765,20 +1776,23 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
    pushes every baseline after it off the 8px half-cell. Pin the box heights
    to the grid there (nearest 8px step to what the ratios produced) and let
    the ratios keep governing below the cap, where there are no gutters to
-   register against. object-cover absorbs the ≤4px difference. */
+   register against. object-cover absorbs the ≤4px difference. Written in
+   rem (520, 696 and 584px at the default font size) for the reason
+   --grid-cell-size is: the cell follows the reader's font size, so a pinned
+   height has to as well. */
 @media (min-width: 1024px) {
   .blog-grid-2 {
     aspect-ratio: auto;
-    height: 520px;
+    height: 32.5rem;
   }
   .blog-grid-3,
   .blog-grid-5 {
     aspect-ratio: auto;
-    height: 696px;
+    height: 43.5rem;
   }
   .blog-grid-4 {
     aspect-ratio: auto;
-    height: 584px;
+    height: 36.5rem;
   }
 }
 
@@ -1830,16 +1844,16 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
    collage instead of collapsing it to nothing. */
 @media (max-width: 1023.98px) {
   .blog-grid-2 {
-    height: round(calc(100cqw * 9 / 16), 8px);
+    height: round(calc(100cqw * 9 / 16), 0.5rem);
   }
 
   .blog-grid-3,
   .blog-grid-5 {
-    height: round(calc(100cqw * 3 / 4), 8px);
+    height: round(calc(100cqw * 3 / 4), 0.5rem);
   }
 
   .blog-grid-4 {
-    height: round(calc(100cqw * 5 / 8), 8px);
+    height: round(calc(100cqw * 5 / 8), 0.5rem);
   }
 }
 
