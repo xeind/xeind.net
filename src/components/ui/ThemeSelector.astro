@@ -229,6 +229,13 @@ const themes = [
       if (menu.dataset.themeBound) return;
       menu.dataset.themeBound = "true";
       const reposition = () => place(menu);
+      /* `beforetoggle`, not `toggle`: toggle events coalesce, so a close
+         followed by a reopen in the same task never reports the close. */
+      menu.addEventListener("beforetoggle", (event) => {
+        if ((event as ToggleEvent).newState === "closed") {
+          menu.dataset.closedAt = String(event.timeStamp);
+        }
+      });
       menu.addEventListener("toggle", (event) => {
         const open = (event as ToggleEvent).newState === "open";
         triggerOf(menu)?.setAttribute("aria-expanded", String(open));
@@ -258,6 +265,18 @@ const themes = [
     bindMenus();
   });
 
+  /* A press on the trigger sits outside the popover, so light dismiss
+     closes the menu before the click lands, and the click then reopened it.
+     A menu that closed after the press began counts as open to that click. */
+  let pressedAt = Infinity;
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      pressedAt = event.timeStamp;
+    },
+    { capture: true, passive: true },
+  );
+
   /* Event delegation — survives ClientRouter DOM swaps */
   document.addEventListener("click", (event) => {
     const target = event.target;
@@ -276,7 +295,9 @@ const themes = [
     if (!trigger) return;
     const menu = menuOf(trigger);
     if (!menu) return;
-    if (menu.matches(":popover-open")) menu.hidePopover();
+    const wasOpen = menu.matches(":popover-open") || Number(menu.dataset.closedAt) >= pressedAt;
+    pressedAt = Infinity;
+    if (wasOpen) closeAll();
     else openMenu(menu);
   });
 
