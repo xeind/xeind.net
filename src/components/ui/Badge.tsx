@@ -4,6 +4,9 @@ interface BadgeProps {
   children: React.ReactNode;
   variant?: "default" | "accent" | "muted";
   className?: string;
+  // Merged after the transition constants, for a caller that times the
+  // badge itself: the streamed timeline sets each one's arrival delay.
+  style?: React.CSSProperties;
 }
 
 /**
@@ -24,7 +27,12 @@ interface BadgeProps {
  *   <Badge>TypeScript</Badge>
  *   <Badge variant="accent">Featured</Badge>
  */
-export default function Badge({ children, variant = "default", className = "" }: BadgeProps) {
+export default function Badge({
+  children,
+  variant = "default",
+  className = "",
+  style,
+}: BadgeProps) {
   const variantStyles = {
     default: "border-accent/30 text-foreground/70",
     accent: "border-accent/40 text-accent",
@@ -37,6 +45,7 @@ export default function Badge({ children, variant = "default", className = "" }:
       style={{
         transitionDuration: `${DURATION.normal}s`,
         transitionTimingFunction: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+        ...style,
       }}
     >
       {children}

@@ -807,7 +807,11 @@ body {
      that word's --caret-ms slot, so the lit block steps along the line and
      the last one goes dark when the text is done. It is absolute, so it
      never moves the text, and it animates opacity only.
-   - The badges fade in once their description has arrived.
+   - The title, the meta row (.timeline-step) and each badge
+     (.timeline-badges > *) fade and rise half a cell on the same clock,
+     one step apart, while the description streams. Arriving whole like the words read as no animation:
+     probed, each went from 0 to 1 opacity in one frame. 0.3s is the top
+     of the house band, slow enough to see under a 55ms stagger.
    - Reduced motion shows everything at once with no caret. The global clamp
      above would shorten each animation but keep its delay, so words would
      still arrive late; `animation: none` drops both. */
@@ -836,8 +840,16 @@ details[open] .timeline-word::after {
   animation: timeline-caret var(--caret-ms) step-end var(--word-delay);
 }
 
-details[open] .timeline-badges {
-  animation: timeline-word-in 0.12s cubic-bezier(0.23, 1, 0.32, 1) backwards;
+details[open] .timeline-step,
+details[open] .timeline-badges > * {
+  animation: timeline-rise 0.3s cubic-bezier(0.33, 1, 0.68, 1) var(--word-delay) backwards;
+}
+
+@keyframes timeline-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
 }
 
 @keyframes timeline-word-in {
@@ -856,7 +868,8 @@ details[open] .timeline-badges {
 @media (prefers-reduced-motion: reduce) {
   details[open] .timeline-word,
   details[open] .timeline-word::after,
-  details[open] .timeline-badges {
+  details[open] .timeline-step,
+  details[open] .timeline-badges > * {
     animation: none;
   }
 }
