@@ -1106,36 +1106,40 @@ pre code {
   --diff-del-ink: hsl(0 60% 52%);
 }
 
-/* Blueprint — ink on a cobalt sheet. The paper is already a saturated blue,
-   so every token here is lighter than its bed; a mid-tone that works on the
-   other two dark themes disappears into this one. */
+/* Blueprint — ink on a cobalt sheet, after Omarchy's blueprint-night. Every
+   token is a blue, so roles part by lightness instead of hue: string is the
+   brightest ink, then text, parameter, function, keyword, constant,
+   punctuation, and comment the faintest. Contrast on the #0d3b78 bed runs
+   10.4 down to 3.2. The paper is already a saturated blue, so every token is
+   lighter than its bed; a mid-tone that works on the other two dark themes
+   disappears into this one. */
 [data-theme="blueprint"],
 .scheme-blueprint {
   --scheme-paper: #0d3b78;
-  --shiki-color-text: hsl(205 55% 90%);
+  --shiki-color-text: hsl(209 70% 94%);
   --shiki-color-background: transparent;
-  --shiki-foreground: hsl(205 55% 90%);
+  --shiki-foreground: hsl(209 70% 94%);
   --shiki-background: transparent;
-  --astro-code-foreground: hsl(205 55% 90%);
+  --astro-code-foreground: hsl(209 70% 94%);
   --astro-code-background: transparent;
-  --astro-code-token-keyword: hsl(199 70% 66%);
-  --astro-code-token-function: hsl(46 62% 76%);
-  --astro-code-token-constant: hsl(14 70% 74%);
-  --astro-code-token-string: hsl(160 40% 68%);
-  --astro-code-token-comment: hsl(210 25% 58%);
-  --astro-code-token-parameter: hsl(205 40% 84%);
-  --astro-code-token-string-expression: hsl(160 40% 68%);
-  --astro-code-token-punctuation: hsl(207 30% 64%);
-  --astro-code-token-link: hsl(199 70% 66%);
-  --shiki-token-constant: hsl(14 70% 74%);
-  --shiki-token-string: hsl(160 40% 68%);
-  --shiki-token-comment: hsl(210 25% 58%);
-  --shiki-token-keyword: hsl(199 70% 66%);
-  --shiki-token-parameter: hsl(205 40% 84%);
-  --shiki-token-function: hsl(46 62% 76%);
-  --shiki-token-string-expression: hsl(160 40% 68%);
-  --shiki-token-punctuation: hsl(207 30% 64%);
-  --shiki-token-link: hsl(199 70% 66%);
+  --astro-code-token-keyword: hsl(218 83% 79%);
+  --astro-code-token-function: hsl(205 76% 76%);
+  --astro-code-token-constant: hsl(231 45% 75%);
+  --astro-code-token-string: hsl(213 100% 98%);
+  --astro-code-token-comment: hsl(217 26% 57%);
+  --astro-code-token-parameter: hsl(212 63% 82%);
+  --astro-code-token-string-expression: hsl(213 100% 98%);
+  --astro-code-token-punctuation: hsl(214 40% 67%);
+  --astro-code-token-link: hsl(218 83% 79%);
+  --shiki-token-constant: hsl(231 45% 75%);
+  --shiki-token-string: hsl(213 100% 98%);
+  --shiki-token-comment: hsl(217 26% 57%);
+  --shiki-token-keyword: hsl(218 83% 79%);
+  --shiki-token-parameter: hsl(212 63% 82%);
+  --shiki-token-function: hsl(205 76% 76%);
+  --shiki-token-string-expression: hsl(213 100% 98%);
+  --shiki-token-punctuation: hsl(214 40% 67%);
+  --shiki-token-link: hsl(218 83% 79%);
 
   /* Diff — see the Kozo block. Steel gray for del was tried here, on the
      argument that a blueprint has no red ink; it vanished into the cobalt at

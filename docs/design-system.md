@@ -330,7 +330,7 @@ Shiki with the `css-variables` theme — token colors are CSS variables
 
 Rules: **never add a syntax-highlighting theme or library** — new languages
 need nothing, Shiki handles them and the variables color them. New token
-colors are a theme decision: edit the three `--astro-code-*` blocks in
+colors are a theme decision: edit the four `--astro-code-*` blocks in
 `global.css` together, same as any token. Don't style code blocks per-page.
 
 ### Text opacity
