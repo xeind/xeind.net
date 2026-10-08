@@ -1584,11 +1584,11 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   background: var(--astro-code-foreground);
 }
 
-/* The trigger's value, on a roll — the same figure as ui/ArrowUpRight: twin
+/* The trigger's name, on a roll — the same figure as ui/ArrowUpRight: twin
    faces on one clipped track, the resting one leaving as its twin arrives.
-   Each masked box is one cell tall, the chip has a box and the name has a box,
-   and both are toggled in the same frame, so the button's value changes as one
-   thing rather than as a name that slides beside a chip that blinks.
+   Each letter of the name has its own one-cell box, all toggled in the same
+   frame and started 25ms apart (see `.theme-letter`). The chip beside it
+   turns over cell by cell instead (see `.theme-chip`).
 
    No opacity, deliberately. The arrow does not fade either: a face that only
    ever travels reads as departing, where one that dissolves on the way out
@@ -1634,9 +1634,9 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 /* Parked one track plus the clip margin away, not one track. At exactly 100%
    the idle face's edge lands on the track's, and the 2px margin then paints
-   the first 2px of it below the button's text line — on the chip, whose cells
-   fill the box edge to edge, that is a visible fourth row of colour. Text hid
-   the same leak behind its ascender gap. */
+   the first 2px of it below the button's text line. Found on the chip when it
+   still rolled, whose cells filled the box edge to edge and showed a fourth
+   row of colour; text hides the same leak behind its ascender gap. */
 .theme-roll > [data-roll-out] {
   translate: 0 calc(100% + 2px);
 }
@@ -1652,6 +1652,96 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 .theme-roll.is-instant > [data-roll-in],
 .theme-roll.is-instant > [data-roll-out] {
   transition: none;
+}
+
+/* One letter of the trigger's name while it turns over — ui/ThemeSelector.astro
+   writes these for the length of the turn. Each is the arrow's roll at the
+   size of a glyph: both faces stack in one cell and `.theme-roll` moves them. The
+   font is mono, so every slot is one advance wide and the word keeps its
+   spacing mid-turn. One cell tall and top-aligned, so a clipped inline box
+   cannot synthesise a baseline of its own and nudge the row. */
+.theme-letter {
+  display: inline-grid;
+  height: 1rem;
+  overflow: clip;
+  vertical-align: top;
+}
+
+.theme-letter > * {
+  grid-area: 1 / 1;
+}
+
+/* The turn sweeps left to right, 25ms a letter, so Nightingale's last slot
+   starts 250ms after its first. Behind no-preference because the global
+   reduced-motion rule collapses durations, not delays: without the gate the
+   letters would still change one at a time. Same specificity as the
+   `.theme-roll` shorthand above and after it, so the delay survives it. */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-letter > [data-roll-in],
+  .theme-letter > [data-roll-out] {
+    transition-delay: calc(var(--letter) * 25ms);
+  }
+}
+
+/* The trigger's chip, turned over in the /lab loader's drive order
+   (lab/PixelGrid.tsx): a `>` front entering from the middle of the left
+   column, 90ms a step, the loader's own drive step. The chip follows the
+   document, so its cells repaint the instant the theme flips; each one
+   instead dips to the loader's resting 20% and lights back up in the new
+   colour, the swap timed to land while it is dim. Four steps of 90ms plus a
+   0.3s dip end at 570ms, level with the name's last letter at 550ms.
+
+   `.is-turning` is what replays the dip; the script drops and re-adds it on
+   every pick. The colour transition needs no class, because a theme flip is
+   itself the change. Behind no-preference for the same reason as the letters:
+   the global rule shortens durations, not delays, so reduced motion gets the
+   plain instant repaint. */
+@keyframes theme-chip-cell {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.2;
+  }
+}
+
+.theme-chip > :nth-child(4) {
+  --cell-step: 0;
+}
+
+.theme-chip > :nth-child(1),
+.theme-chip > :nth-child(5),
+.theme-chip > :nth-child(7) {
+  --cell-step: 1;
+}
+
+.theme-chip > :nth-child(2),
+.theme-chip > :nth-child(6),
+.theme-chip > :nth-child(8) {
+  --cell-step: 2;
+}
+
+.theme-chip > :nth-child(3),
+.theme-chip > :nth-child(9) {
+  --cell-step: 3;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The paper between the cells eases across the whole wave. */
+  .theme-chip {
+    transition: background-color 0.57s ease-in-out;
+  }
+
+  /* 70ms into a 300ms dip whose floor is at 120ms, so the colour changes
+     between 70 and 170ms — while the cell is at its faintest. */
+  .theme-chip > span {
+    transition: background-color 0.1s ease-in-out calc(var(--cell-step) * 90ms + 70ms);
+  }
+
+  .theme-chip.is-turning > span {
+    animation: theme-chip-cell 0.3s ease-in-out calc(var(--cell-step) * 90ms) both;
+  }
 }
 
 /* The current theme, marked on its own chip. An outline costs no layout, so

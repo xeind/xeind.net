@@ -28,25 +28,17 @@ const themes = [
   >
     <span class="sr-only">Theme:</span>
     {
-      /* Chip and name roll as one value: two faces stacked in each masked box,
-        both boxes driven by the same class toggle, so nothing in the button
-        changes on its own timing. The chip has to be pinned to a scheme while
-        it leaves — left to follow the document it would repaint the instant
-        the theme flipped, halfway out of the mask. */
+      /* The chip follows the document, so it repaints itself when the theme
+        flips; `.theme-chip` in global.css turns that repaint into the /lab
+        loader's drive wave. The name beside it rolls one slot per letter,
+        which the script builds for the length of the turn. */
     }
-    <span class="theme-roll inline-grid h-4 w-4 overflow-clip">
-      <span class="col-start-1 row-start-1" data-roll-out aria-hidden="true">
-        <ColorSchemePreview />
-      </span>
-      <span class="col-start-1 row-start-1" data-roll-in>
-        <ColorSchemePreview />
-      </span>
-    </span>
+    <ColorSchemePreview class="theme-chip" />
     {
       /* The invisible four size the box to the longest name, which is what
         keeps the button and the panel the same width. */
     }
-    <span class="theme-roll inline-grid h-4 overflow-clip text-left leading-4">
+    <span class="inline-grid h-4 text-left leading-4">
       {
         themes.map((theme) => (
           <span class="invisible col-start-1 row-start-1" aria-hidden="true">
@@ -54,8 +46,7 @@ const themes = [
           </span>
         ))
       }
-      <span class="col-start-1 row-start-1" data-roll-out aria-hidden="true"></span>
-      <span class="col-start-1 row-start-1" data-roll-in data-theme-label>Manila</span>
+      <span class="col-start-1 row-start-1" data-theme-label data-theme-name="dark">Manila</span>
     </span>
   </button>
 
@@ -103,44 +94,64 @@ const themes = [
     return isThemeName(saved) ? saved : "dark";
   }
 
-  /* Paint the label and the row marks from whatever theme is stored. The head
-     script in Layout.astro owns the document attribute on first paint and
-     across ClientRouter swaps; this only reflects it in the control. */
-  const schemeClasses = {
-    dark: "scheme-dark",
-    light: "scheme-light",
-    nightingale: "scheme-nightingale",
-    blueprint: "scheme-blueprint",
-  } satisfies Record<ThemeName, string>;
-
-  function paintChip(face: HTMLElement, theme: ThemeName) {
-    const chip = face.querySelector<HTMLElement>(".scheme-preview");
-    if (!chip) return;
-    chip.classList.remove(...Object.values(schemeClasses));
-    chip.classList.add(schemeClasses[theme]);
-  }
-
-  /* Move the trigger's faces to the next theme. The one leaving drops out of
-     the mask, the one arriving falls in from above. Both states live in
-     `.theme-roll` in global.css; the script only has to write the faces, hold
-     the start position for one frame without a transition, and let go. */
-  function roll(trigger: HTMLElement, from: ThemeName, to: ThemeName) {
+  /* The head script in Layout.astro owns the document attribute on first
+     paint and across ClientRouter swaps; this only reflects it in the
+     control. */
+  /* Turn the trigger over to the next theme. Each letter slot drops its
+     leaving face out of the mask as the arriving one falls in from above;
+     the chip replays its wave. Both live in global.css (`.theme-roll`,
+     `.theme-chip`); the script only holds the start for one frame without a
+     transition, and lets go. */
+  function roll(trigger: HTMLElement) {
     const boxes = [...trigger.querySelectorAll<HTMLElement>(".theme-roll")];
-    boxes.forEach((box) => {
-      const leaving = box.querySelector<HTMLElement>("[data-roll-out]");
-      const arriving = box.querySelector<HTMLElement>("[data-roll-in]");
-      if (!leaving || !arriving) return;
-      if (arriving.matches("[data-theme-label]")) {
-        leaving.textContent = arriving.textContent;
-        arriving.textContent = labels[to];
-      } else {
-        paintChip(leaving, from);
-        paintChip(arriving, to);
-      }
-    });
+    const chip = trigger.querySelector<HTMLElement>(".theme-chip");
+    chip?.classList.remove("is-turning");
     boxes.forEach((box) => box.classList.add("is-entering", "is-instant"));
     void trigger.offsetWidth;
     boxes.forEach((box) => box.classList.remove("is-entering", "is-instant"));
+    chip?.classList.add("is-turning");
+  }
+
+  /* Spell the name into one masked slot per letter, the leaving letter and
+     the arriving one stacked in each, so roll() turns them over the way it
+     turns the chip — a slot machine rather than a word swap. A letter that
+     does not change gets one face and holds still. The slots are furniture
+     for the turn only: once every one has landed the label is plain text
+     again, and the sr-only copy is what a screen reader hears meanwhile. */
+  function spellSlots(label: HTMLElement, from: string, to: string) {
+    const face = (text: string, side?: "out" | "in") => {
+      const el = document.createElement("span");
+      el.textContent = text;
+      if (side) el.setAttribute(`data-roll-${side}`, "");
+      return el;
+    };
+    const spoken = document.createElement("span");
+    spoken.className = "sr-only";
+    spoken.textContent = to;
+    const slots = Array.from({ length: Math.max(from.length, to.length) }, (_, i) => {
+      const slot = document.createElement("span");
+      slot.className = "theme-letter";
+      slot.setAttribute("aria-hidden", "true");
+      slot.style.setProperty("--letter", String(i));
+      if (from[i] === to[i]) {
+        slot.append(face(to[i]));
+      } else {
+        slot.classList.add("theme-roll");
+        slot.append(face(from[i] ?? "", "out"), face(to[i] ?? "", "in"));
+      }
+      return slot;
+    });
+    label.replaceChildren(spoken, ...slots);
+  }
+
+  /* A later pick rebuilds the slots, which cancels these transitions and
+     settles them early — the name check keeps that stale settle from
+     flattening the newer turn. */
+  function settleLabel(label: HTMLElement, to: ThemeName) {
+    const turns = label.getAnimations({ subtree: true }).map((turn) => turn.finished);
+    void Promise.allSettled(turns).then(() => {
+      if (label.dataset.themeName === to) label.textContent = labels[to];
+    });
   }
 
   /* `animate` is false on first paint and after a ClientRouter swap — the name
@@ -148,17 +159,18 @@ const themes = [
   function syncTheme(animate = false) {
     const theme = savedTheme();
     document.querySelectorAll<HTMLElement>("[data-theme-select]").forEach((trigger) => {
+      /* The shown theme is kept in an attribute, not read back from the text:
+         mid-turn the label holds both names' letters. */
       const label = trigger.querySelector<HTMLElement>("[data-theme-label]");
-      if (!label || label.textContent === labels[theme]) return;
-      const from = (Object.keys(labels) as ThemeName[]).find(
-        (name) => labels[name] === label.textContent,
-      );
-      if (animate && from) {
-        roll(trigger, from, theme);
+      const from = label?.dataset.themeName ?? null;
+      if (!label || from === theme) return;
+      label.dataset.themeName = theme;
+      if (animate && isThemeName(from)) {
+        spellSlots(label, labels[from], labels[theme]);
+        roll(trigger);
+        settleLabel(label, theme);
       } else {
         label.textContent = labels[theme];
-        const arriving = trigger.querySelector<HTMLElement>("[data-roll-in]");
-        if (arriving) paintChip(arriving, theme);
       }
     });
     document.querySelectorAll<HTMLElement>("[data-theme-option]").forEach((el) => {
