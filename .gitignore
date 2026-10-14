@@ -63,6 +63,7 @@ lighthouse-*.html
 .open-code/
 .codex/
 opencode.json
+.pi/
 
 # internal authoring notes, not for the public repo
 src/content/blog/CLAUDE.md
