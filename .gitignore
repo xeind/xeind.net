@@ -52,6 +52,8 @@ lighthouse-*.html
 # tool caches
 .ruff_cache/
 .claude/
+# Playwright MCP console logs and snapshots, written on every browser check
+.playwright-mcp/
 # Vendored agent skills, 1.8MB fetched from the cloudflare/skills repo.
 # skills-lock.json IS committed: it pins every skill by source repo, path and
 # content hash, so a diff there is the only signal that upstream prose changed
