@@ -63,6 +63,22 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
               if (t === "light") e.newDocument.documentElement.removeAttribute("data-theme");
               else e.newDocument.documentElement.setAttribute("data-theme", t);
             });
+
+            /* The browser bar takes the sheet's colour, read from the token
+               so no theme's value is written twice. Not here and now: the
+               stylesheet has not loaded yet, so the token reads empty. Page
+               load covers the first paint and every swapped-in head; the
+               observer covers a pick from the theme menu. */
+            const syncThemeColor = () => {
+              const meta = document.querySelector('meta[name="theme-color"]');
+              const card = getComputedStyle(root).getPropertyValue("--color-card").trim();
+              if (meta && card) meta.setAttribute("content", card);
+            };
+            document.addEventListener("astro:page-load", syncThemeColor);
+            new MutationObserver(syncThemeColor).observe(root, {
+              attributes: true,
+              attributeFilter: ["data-theme"],
+            });
           }
         } catch {
           document.documentElement.style.backgroundColor = "#EBE5D8";
@@ -71,8 +87,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#EBE5D8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e1115" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#EBE5D8" />
     <link
       rel="icon"
       type="image/png"
