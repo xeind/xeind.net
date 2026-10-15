@@ -91,7 +91,13 @@
       isSurface: shell.classList.contains("edge-glow-shell-surface"),
       // Only a shell that owns a wash layer needs a hotspot Y or a gate
       // opacity written — divider shells carry strips and nothing else.
-      hasLayer: Boolean(shell.querySelector(".edge-glow-layer")),
+      // Owned the same way as nodes and lines: the surface shell wraps <main>,
+      // whose wash layer would otherwise count as the surface's own and send
+      // it down the rail gate, lighting the gutter only within one radius of
+      // the window edge.
+      hasLayer: Array.from(shell.querySelectorAll(".edge-glow-layer")).some(
+        (layer) => layer.closest(selector) === shell,
+      ),
       cache: {},
       idle: false,
     });
