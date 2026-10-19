@@ -1684,8 +1684,9 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 }
 
 /* The trigger's chip, turned over in the /lab loader's drive order
-   (lab/PixelGrid.tsx): a `>` front entering from the middle of the left
-   column, 90ms a step, the loader's own drive step. The chip follows the
+   (lab/PixelGrid.tsx), turned a quarter so it falls instead of running: a
+   `v` front entering from the middle of the top row, 90ms a step, the
+   loader's own drive step. The chip follows the
    document, so its cells repaint the instant the theme flips; each one
    instead dips to the loader's resting 20% and lights back up in the new
    colour, the swap timed to land while it is dim. Four steps of 90ms plus a
@@ -1706,23 +1707,23 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   }
 }
 
-.theme-chip > :nth-child(4) {
+.theme-chip > :nth-child(2) {
   --cell-step: 0;
 }
 
 .theme-chip > :nth-child(1),
-.theme-chip > :nth-child(5),
-.theme-chip > :nth-child(7) {
+.theme-chip > :nth-child(3),
+.theme-chip > :nth-child(5) {
   --cell-step: 1;
 }
 
-.theme-chip > :nth-child(2),
+.theme-chip > :nth-child(4),
 .theme-chip > :nth-child(6),
 .theme-chip > :nth-child(8) {
   --cell-step: 2;
 }
 
-.theme-chip > :nth-child(3),
+.theme-chip > :nth-child(7),
 .theme-chip > :nth-child(9) {
   --cell-step: 3;
 }
