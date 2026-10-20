@@ -661,16 +661,32 @@ footer ::selection {
   --selection-stroke-weight: 1;
 }
 
-/* The overlay the box is drawn on. 9998 is the ladder's rung for cursor
-   transients that must clear the modal portal (design-system.md, z-index
-   ladder); the box is one of those, so it takes no new value. */
+/* The overlay the box is drawn on: a 1px svg at the document's origin whose
+   drawing overflows it, in page coordinates. It scrolls with the text on the
+   compositor, so the box never trails a scroll waiting on a redraw, and its
+   overflow is ink, not layout, so it adds nothing to the page's scrollable
+   area. 1px, not 0: an svg with no width or height is not rendered at all,
+   overflow and all. <body> is the
+   containing block; it is position: relative with no margin, so its origin
+   is the document's. A selection inside a fixed ancestor (the footer) does
+   not scroll, so for it the script pins the overlay to the viewport.
+
+   9998 is the ladder's rung for cursor transients that must clear the modal
+   portal (design-system.md, z-index ladder); the box is one of those, so it
+   takes no new value. */
 .selection-dimensions {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
   pointer-events: none;
   z-index: 9998;
+}
+
+.selection-dimensions[data-anchor="viewport"] {
+  position: fixed;
 }
 
 /* ========================================

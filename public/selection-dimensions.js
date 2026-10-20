@@ -128,15 +128,13 @@
   // exactly and the doubled line would read as one.
   const EDGE_ROLES = 12;
   function outline(bands, pass) {
-    const sx = window.scrollX;
-    const sy = window.scrollY;
     const n = bands.length;
-    const L = bands.map((band) => Math.round(band.shown.left - sx) + 0.5);
-    const R = bands.map((band) => Math.round(band.shown.right - sx) - 0.5);
+    const L = bands.map((band) => Math.round(band.shown.left) + 0.5);
+    const R = bands.map((band) => Math.round(band.shown.right) - 0.5);
     const seed = (i, role) => 100 + bands[i].id * EDGE_ROLES + pass * 6 + role;
-    const boundary = (i) => Math.round((bands[i].shown.bottom + bands[i + 1].shown.top) / 2 - sy);
-    const top = Math.round(bands[0].shown.top - sy) + 0.5;
-    const bottom = Math.round(bands[n - 1].shown.bottom - sy) - 0.5;
+    const boundary = (i) => Math.round((bands[i].shown.bottom + bands[i + 1].shown.top) / 2);
+    const top = Math.round(bands[0].shown.top) + 0.5;
+    const bottom = Math.round(bands[n - 1].shown.bottom) - 0.5;
     // Each point carries the seed of the edge that leaves it.
     const points = [
       [L[0], top, seed(0, 0)],
@@ -352,13 +350,33 @@
     return getComputedStyle(document.documentElement).getPropertyValue("--color-background").trim();
   }
 
-  // Whether a viewport box overlaps one of the footer's controls. The footer
-  // sets its buttons beside its text, so a height label to the right of a
-  // footer selection can land on one, in ink that matches the button's fill.
+  // Whether a box in the overlay's coordinates overlaps one of the footer's
+  // controls. The footer sets its buttons beside its text, so a height label
+  // to the right of a footer selection can land on one, in ink that matches
+  // the button's fill.
   function overlapsControl(left, top, right, bottom) {
+    const sx = record.pinned ? 0 : window.scrollX;
+    const sy = record.pinned ? 0 : window.scrollY;
     for (const control of document.querySelectorAll("footer a, footer button")) {
       const r = control.getBoundingClientRect();
-      if (r.width && r.left < right && r.right > left && r.top < bottom && r.bottom > top) {
+      if (
+        r.width &&
+        r.left + sx < right &&
+        r.right + sx > left &&
+        r.top + sy < bottom &&
+        r.bottom + sy > top
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Whether the selected text sits in a fixed ancestor, which holds still
+  // while the page scrolls under it: the footer, set behind the page.
+  function pinnedFor(element) {
+    for (let node = element; node; node = node.parentElement) {
+      if (getComputedStyle(node).position === "fixed") {
         return true;
       }
     }
@@ -412,27 +430,33 @@
   function applyStroke() {
     const clean = stroke.wobble === 0;
     svg.style.color = record.ink;
+    set(svg, "data-anchor", record.pinned ? "viewport" : "page");
     set(parts.text, "stroke", record.surface);
     set(parts.lines, "shape-rendering", clean ? "crispEdges" : "geometricPrecision");
     set(parts.box, "stroke-width", String(stroke.weight));
-    set(parts.ghost, "display", stroke.passes > 1 ? "inline" : "none");
+    // Through the style, as for the overlay itself (see show()).
+    parts.ghost.style.display = stroke.passes > 1 ? "" : "none";
     // A 0.8px rule antialiases to a soft grey row; clean mode rules a full one.
     set(parts.marks, "stroke-width", clean ? "1" : "0.8");
   }
 
-  // The selection's line bands in page coordinates, each but the last
-  // extended down to the next line's top, so the leading between lines is
-  // inside the outline and it is one shape rather than stacked boxes. That
-  // bridges a paragraph margin too, which is the union the outline means. A
-  // scroll moves the text and the outline together, so it must not read as a
-  // reshape and trail behind.
-  function selectionBands() {
+  // The selection's line bands, each but the last extended down to the next
+  // line's top, so the leading between lines is inside the outline and it is
+  // one shape rather than stacked boxes. That bridges a paragraph margin too,
+  // which is the union the outline means.
+  //
+  // In page coordinates, the overlay's own: it sits in the document and
+  // scrolls with the text on the compositor, so a scroll needs no redraw.
+  // A selection inside a fixed ancestor (the footer) does not scroll, so its
+  // bands stay in viewport coordinates and the overlay is pinned to the
+  // viewport for it.
+  function selectionBands(pinned) {
     const lines = selectionLines();
     if (!lines) {
       return null;
     }
-    const sx = window.scrollX;
-    const sy = window.scrollY;
+    const sx = pinned ? 0 : window.scrollX;
+    const sy = pinned ? 0 : window.scrollY;
     return lines.map((line, i) => ({
       left: line.left + sx,
       top: line.top + sy,
@@ -649,8 +673,7 @@
     if (fadeOut <= 0) {
       return { keep: false, busy: false };
     }
-    set(svg, "display", "inline");
-    set(svg, "opacity", String(round(fadeIn * Math.max(0, fadeOut))));
+    show(round(fadeIn * Math.max(0, fadeOut)));
 
     // The outline, then in Blueprint a fainter second pass half a pixel off:
     // the doubled stroke is what reads as pencil rather than as a CSS border.
@@ -666,14 +689,21 @@
     // The rules measure the bounding box of the shown bands, so W and H mean
     // what they meant for one rectangle. Snapped to the half pixel, so a 1px
     // line lands on one device row at 1x.
-    const left = Math.round(Math.min(...bands.map((b) => b.shown.left)) - window.scrollX);
-    const right = Math.round(Math.max(...bands.map((b) => b.shown.right)) - window.scrollX);
-    const top = Math.round(Math.min(...bands.map((b) => b.shown.top)) - window.scrollY);
-    const bottom = Math.round(Math.max(...bands.map((b) => b.shown.bottom)) - window.scrollY);
+    const left = Math.round(Math.min(...bands.map((b) => b.shown.left)));
+    const right = Math.round(Math.max(...bands.map((b) => b.shown.right)));
+    const top = Math.round(Math.min(...bands.map((b) => b.shown.top)));
+    const bottom = Math.round(Math.max(...bands.map((b) => b.shown.bottom)));
     const x = left + 0.5;
     const y = top + 0.5;
     const w = right - left - 1;
     const h = bottom - top - 1;
+    // The viewport's far edges in the overlay's coordinates, for the label
+    // flips that keep a rule on screen. They are judged whenever the outline
+    // is drawn, which in the document is on a selection change, not on a
+    // scroll: a label does not jump under the reader once they stop
+    // scrolling, at the cost of one that was flipped staying flipped.
+    const viewBottom = window.innerHeight + (record.pinned ? 0 : window.scrollY);
+    const viewRight = window.innerWidth + (record.pinned ? 0 : window.scrollX);
 
     // Each axis carries its own rule once the box is big enough along it, so
     // a one-line selection already has a width rule. Decided from the box as
@@ -701,7 +731,7 @@
     // edge).
     set(parts.compact, "opacity", String(round(cv)));
     if (cv > 0) {
-      const below = y + h + 16 < window.innerHeight;
+      const below = y + h + 16 < viewBottom;
       set(parts.compact, "x", String(midX));
       set(parts.compact, "y", String(Math.round(below ? y + h + 12 : y - 12)));
     }
@@ -758,7 +788,7 @@
     set(parts.widthText, "opacity", String(round(wv)));
     set(parts.widthExtra, "opacity", String(round(wv * widthShare)));
     if (wv > 0) {
-      const rowY = y + h + 18 < window.innerHeight ? y + h + 11 : y - 11;
+      const rowY = y + h + 18 < viewBottom ? y + h + 11 : y - 11;
       const count = String(Math.round(wv * (right - left)));
       const span = advance * (count.length + widthShare * widthTail.length);
       const gap = Math.round(span / 2 + 5);
@@ -787,7 +817,7 @@
     if (hv > 0) {
       const count = String(Math.round(hv * (bottom - top)));
       const span = advance * (count.length + heightShare * heightHead.length);
-      let colX = x + w + 18 < window.innerWidth ? x + w + 11 : x - 11;
+      let colX = x + w + 18 < viewRight ? x + w + 11 : x - 11;
       // In the footer, a label over a control moves to the box's other side.
       // Its box is the rotated label: 12px across, its length plus 4px tall.
       const reach = span / 2 + 2;
@@ -817,6 +847,27 @@
     return { keep: true, busy: moving || fadeIn < 1 || record.gone !== null };
   }
 
+  // The overlay is shown and hidden through its style, never the display
+  // attribute: a presentation attribute loses to any stylesheet rule, and
+  // Tailwind's preflight sets svg { display: block }, so display="none" left
+  // the last fade frame painted under every deselected box, a ghost label
+  // that never went. Hiding also takes the opacity to 0, so the content is
+  // invisible even if the hide ever fails.
+  function show(opacity) {
+    if (svg.style.display) {
+      svg.style.display = "";
+    }
+    const value = String(opacity);
+    if (svg.style.opacity !== value) {
+      svg.style.opacity = value;
+    }
+  }
+
+  function hide() {
+    svg.style.opacity = "0";
+    svg.style.display = "none";
+  }
+
   // One frame per event. The loop only keeps itself alive while a fade or a
   // reshape runs; at rest it stops, and the next selectionchange or scroll
   // draws again.
@@ -826,14 +877,14 @@
       return;
     }
     if (!record) {
-      set(svg, "display", "none");
+      hide();
       return;
     }
     const now = performance.now();
     const result = draw(now);
     if (!result.keep) {
       record = null;
-      set(svg, "display", "none");
+      hide();
       return;
     }
     // At rest the clock stops too: the next reshape starts timing from its
@@ -854,7 +905,7 @@
   // place.
   function onResize() {
     if (record && record.gone === null) {
-      retarget(selectionBands());
+      retarget(selectionBands(record.pinned));
     }
     schedule();
   }
@@ -864,11 +915,14 @@
       return;
     }
     const selection = document.getSelection();
-    const targets = selection && !selection.isCollapsed ? selectionBands() : null;
-    if (targets && (!record || record.gone !== null)) {
+    const selected = selection && !selection.isCollapsed && selection.rangeCount;
+    const fresh = !record || record.gone !== null;
+    const element = selected && fresh ? selectedElement(selection) : null;
+    const pinned = fresh ? pinnedFor(element) : record.pinned;
+    const targets = selected ? selectionBands(pinned) : null;
+    if (targets && fresh) {
       // A new outline starts at its full shape, with its rules already drawn,
       // and only fades in.
-      const element = selectedElement(selection);
       const rules = rulesFor(
         Math.round(Math.max(...targets.map((t) => t.right))) -
           Math.round(Math.min(...targets.map((t) => t.left))) -
@@ -893,6 +947,7 @@
         ink: inkFor(element),
         surface: surfaceFor(element),
         footer: Boolean(element?.closest("footer")),
+        pinned,
       };
       stroke = readStroke();
       applyStroke();
@@ -924,7 +979,8 @@
   // and colour come from tokens: the ink is the svg's `color`, and every
   // stroke and fill is currentColor.
   function build() {
-    svg = create("svg", { class: "selection-dimensions", "aria-hidden": "true", display: "none" });
+    svg = create("svg", { class: "selection-dimensions", "aria-hidden": "true" });
+    svg.style.display = "none";
     svg.style.font = "10px var(--font-mono, monospace)";
     // Tabular figures, so a counting number keeps its width digit to digit.
     svg.style.fontVariantNumeric = "tabular-nums";
@@ -982,7 +1038,20 @@
   }
   document.addEventListener("astro:page-load", init);
   document.addEventListener("selectionchange", onSelectionChange);
-  window.addEventListener("scroll", schedule, { passive: true });
+  // The overlay scrolls with the document on the compositor, so a scroll
+  // needs no redraw; a redraw from this listener lands a frame or more after
+  // the compositor has moved the text, and the box swam behind it. Only a
+  // viewport-pinned outline redraws, and its bands do not move on a scroll,
+  // so the draw is the same one.
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (record?.pinned) {
+        schedule();
+      }
+    },
+    { passive: true },
+  );
   window.addEventListener("resize", onResize, { passive: true });
   new MutationObserver(onThemeChange).observe(document.documentElement, {
     attributes: true,
