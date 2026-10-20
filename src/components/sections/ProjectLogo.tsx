@@ -124,13 +124,24 @@ function shuffleIndices(length: number) {
   return arr;
 }
 
-function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
+function AtaxLogo({
+  className,
+  alt,
+  reducedMotion,
+}: {
+  className?: string;
+  alt: string;
+  reducedMotion: boolean;
+}) {
   const [primaryOrder, setPrimaryOrder] = useState<number[]>(() => lastAtaxFrame.primaryOrder);
   const [secondaryOrder, setSecondaryOrder] = useState<number[]>(
     () => lastAtaxFrame.secondaryOrder,
   );
 
+  // Reduced motion holds the tiles on whatever frame is showing. The CSS
+  // clamp in global.css cannot reach this: it is a timer, not a transition.
   useEffect(() => {
+    if (reducedMotion) return;
     const timer = window.setInterval(() => {
       const shuffled = shuffleIndices(ATAX_COORDS.length);
       const nextSecondaryOrder = shuffled.slice(0, 9);
@@ -143,7 +154,7 @@ function AtaxLogo({ className, alt }: { className?: string; alt: string }) {
     }, 500);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <span
@@ -383,7 +394,7 @@ export default function ProjectLogo({ projectId, theme, className, alt }: Projec
   }, [externalLogoSrc, theme]);
 
   if (projectId === "atax") {
-    return <AtaxLogo className={className} alt={alt} />;
+    return <AtaxLogo className={className} alt={alt} reducedMotion={reducedMotion} />;
   }
 
   if (projectId === "pioneerdev-ai") {
