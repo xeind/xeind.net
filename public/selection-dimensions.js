@@ -15,10 +15,22 @@
 
   const SVG = "http://www.w3.org/2000/svg";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  // DURATION.fast and DURATION.normal in src/lib/config/animation.ts. A script
-  // in public/ cannot import it — change one, change both.
+  // The box fades in over DURATION.fast in src/lib/config/animation.ts (a
+  // script in public/ cannot import it; change one, change both). It fades
+  // out faster than any token: deselecting is the reader's own act, and the
+  // response to it should be quicker than the entrance, so 120ms against the
+  // 150ms in, where the nearest token, DURATION.fast, would make the two the
+  // same. Both ramps are ease-out cubic, so the fade-in is mostly inked in
+  // its first half and the fade-out drops at once.
   const FADE_IN_MS = 150;
-  const FADE_OUT_MS = 200;
+  const FADE_OUT_MS = 120;
+  // A hover callout is a lighter thing than a selection, so it arrives in
+  // 100ms. One that follows another seen within HOVER_WARM_MS, as the
+  // pointer runs along a row of controls or crosses a gap between them,
+  // shows at once: fading in again on every control reads as flicker.
+  const HOVER_FADE_IN_MS = 100;
+  const HOVER_WARM_MS = 300;
+  const easeOut = (t) => 1 - (1 - t) ** 3;
   // A reshaped selection moves the box the way the theme picker's name rolls
   // over: `.theme-roll` in global.css, 0.3s (DURATION.slow) on
   // EASING.easeOutExpo, the curve that comment calls "a spring with no
@@ -74,6 +86,8 @@
   // Hover boxes take ids from their own range, so a hover's wobble never
   // repeats the selection's.
   let nextHoverId = 5000;
+  // When a hover callout was last on screen, for the warm switch.
+  let hoverSeen = -Infinity;
 
   // Value noise: a hash per 7px step, smoothstepped between neighbours, so a
   // line bends gently instead of jittering pixel to pixel.
@@ -713,8 +727,12 @@
       moving = true;
     }
 
-    const fadeIn = still ? 1 : Math.min(1, (now - record.start) / FADE_IN_MS);
-    const fadeOut = record.gone === null ? 1 : still ? 0 : 1 - (now - record.gone) / FADE_OUT_MS;
+    // Reduced motion keeps the fades, which are opacity and do not move
+    // anything; what it drops is the travel: the shape snaps, the rules and
+    // rulers stand at full, and nothing stages or dims.
+    const fadeIn = easeOut(Math.min(1, (now - record.start) / FADE_IN_MS));
+    const fadeOut =
+      record.gone === null ? 1 : 1 - easeOut(Math.min(1, (now - record.gone) / FADE_OUT_MS));
     if (fadeOut <= 0) {
       return { keep: false, busy: false };
     }
@@ -1092,7 +1110,9 @@
   // boxes; not while the selection is pinned to the viewport, whose overlay
   // coordinates a page box cannot share; and not on elements in a fixed
   // ancestor (the footer) for the same reason, and because the footer's ink
-  // rules leave a hover there unreadable. Off under reduced motion.
+  // rules leave a hover there unreadable. Under reduced motion it stays, as
+  // opacity only: no box travels between neighbours, the old one fades out
+  // where it is and the new one fades in at its own place.
   function boxOf(element) {
     const r = element.getBoundingClientRect();
     return {
@@ -1123,7 +1143,7 @@
       return;
     }
     let target = null;
-    if (!pointer.pressed && !reduceMotion.matches && !record?.pinned) {
+    if (!pointer.pressed && !record?.pinned) {
       const element = document.elementFromPoint(pointer.x, pointer.y)?.closest(INTERACTIVE);
       if (element && !pinnedFor(element)) {
         target = element;
@@ -1149,15 +1169,18 @@
       return;
     }
     const now = performance.now();
-    if (live && (!element || !HOVER_MORPH)) {
+    const morph = HOVER_MORPH && !reduceMotion.matches;
+    if (live && (!element || !morph)) {
       live.gone = now;
+      // It was on screen until now, however long it has rested undrawn.
+      hoverSeen = now;
     }
     if (element) {
       stroke ??= readStroke();
       if (!record) {
         set(svg, "data-anchor", "page");
       }
-      if (HOVER_MORPH && live) {
+      if (morph && live) {
         // One box travels to the next element on the edges' curve.
         live.element = element;
         live.target = boxOf(element);
@@ -1180,7 +1203,8 @@
           element,
           target,
           shown: { ...target },
-          start: now,
+          // Warm: a callout seen this recently means this one starts shown.
+          start: now - hoverSeen <= HOVER_WARM_MS ? now - HOVER_FADE_IN_MS : now,
           gone: null,
           tick: null,
           parts: free,
@@ -1195,22 +1219,25 @@
   }
 
   function drawHover(hover, now) {
+    const still = reduceMotion.matches;
     const share = 1 - Math.exp(-(now - (hover.tick ?? now)) / SETTLE_TAU_MS);
     let moving = false;
     for (const edge of ["left", "top", "right", "bottom"]) {
       const gap = hover.target[edge] - hover.shown[edge];
-      if (Math.abs(gap) < SETTLE_EPSILON) {
+      if (still || Math.abs(gap) < SETTLE_EPSILON) {
         hover.shown[edge] = hover.target[edge];
       } else {
         hover.shown[edge] += gap * share;
         moving = true;
       }
     }
-    const fadeIn = Math.min(1, (now - hover.start) / FADE_IN_MS);
-    const fadeOut = hover.gone === null ? 1 : 1 - (now - hover.gone) / FADE_OUT_MS;
+    const fadeIn = easeOut(Math.min(1, (now - hover.start) / HOVER_FADE_IN_MS));
+    const fadeOut =
+      hover.gone === null ? 1 : 1 - easeOut(Math.min(1, (now - hover.gone) / FADE_OUT_MS));
     if (fadeOut <= 0) {
       return { keep: false, busy: false };
     }
+    hoverSeen = now;
     const { group, box, ghost, label } = hover.parts;
     show();
     fade(group, round(fadeIn * fadeOut));
