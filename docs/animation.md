@@ -93,6 +93,10 @@ className = "transition-colors motion-reduce:transition-none";
 (edge glow, logo crossfade, lightbox) each restate `transition: none` in a
 reduced-motion block. If you write bespoke CSS motion, add that block too.
 
+The clamp cannot reach a timer. Motion driven by `setInterval` or
+`requestAnimationFrame` checks the setting itself: the ATAX logo's tile shuffle
+(`ProjectLogo.tsx`) holds its frame, and the selection overlay snaps (§6).
+
 Dozens of touchpoints already honour it (`grep -rn "motion-reduce\|useReducedMotion" src`).
 Don't be the first to skip it.
 
@@ -247,6 +251,18 @@ specimen SVG and is the slowest page by design — it is a specimen sheet, not
 a template to copy. A new content page should stay near the ~100KB the blog
 pages weigh.
 
+### Scripts that wait for the paint
+
+A script that does nothing until the reader acts should not compete with the
+largest paint. `selection-dimensions.js` is one: as a `defer` script its 56KB
+went out before the largest paint and cost about 0.5s of LCP under
+Lighthouse's throttled network. `Layout.astro` now loads it with a small inline
+loader: after `load`, then the first `largest-contentful-paint` entry (the first
+`paint` where LCP is not reported, as in Safari), then idle time, with a 1s
+ceiling. `load` alone fired before the first paint on a fast connection, and
+two animation frames ran before the paint in headless Chrome. A window flag
+stops a second copy after a `ClientRouter` swap.
+
 ---
 
 ## 6. The selection outline
@@ -286,6 +302,45 @@ goes draws back in and counts down. A new outline starts with its rules drawn
 and only fades: in over 150ms, out over 200ms (`DURATION.fast`,
 `DURATION.normal`).
 
-**Reduced motion snaps.** Edges, rules and fades land at once, so nothing
-counts or dims. The script runs for fine pointers only, and no frames run at
-rest.
+**Rail rulers form with the box.** On the sheet's side rails, a ruler grows
+from the selection's centre: the band's half-height and its number both follow
+the ruler's visibility on the same curve, and it retracts the same way. Unlike
+the rules, it forms on a new selection too. It appears away from the pointer,
+so growing is how the eye finds it.
+
+**Hover redlines fade and morph.** A redline fades in over 150ms and out over
+200ms. Moving straight to a neighbour (`HOVER_MORPH`) carries the one box to
+the next element on the edges' curve, with no fade between. No redline shows
+while a button is held, while the pointer is outside the window, in the
+footer, or under reduced motion.
+
+**Reduced motion snaps.** Edges, rules, rulers and fades land at once, so
+nothing counts or dims, and hover redlines are off. The script runs for fine
+pointers only. No frames run at rest, and a scroll needs no redraw: the
+overlay scrolls with the page.
+
+---
+
+## 7. Margin notes
+
+`blog/MarginNote.astro` draws a note on as it reaches 60% in view, once:
+`public/margin-notes.js` adds the class and the CSS runs the draw. The
+component writes the timings into custom properties from `animation.ts`, so
+nothing is retyped:
+
+| Step                                     | Timing                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------- |
+| Leader, dashed, through a mask           | `DURATION.slower` on `EASING.easeInOutCubic`                            |
+| Arrowhead, after the leader              | `DURATION.fast` on `EASING.easeOutCubic`                                |
+| Each line of text, after the head starts | `DURATION.slow` on `EASING.easeOutCubic`, half of `DURATION.fast` apart |
+
+The leader is a pen that starts from rest and lands, hence the in-out curve.
+Text writes on left to right through a `clip-path`, from 0.35 opacity so it
+reads as ink while drawn. Below 92rem there is no leader, and the text starts
+at once. The run takes about a second, which §2 allows because the draw is the
+point.
+
+Reduced motion and no JS both render the note fully drawn: the script never
+arms a note under reduced motion, and only an armed note is hidden. A
+reduced-motion block also covers a reader who turns it on after arming. The
+note's stylesheet and `margin-notes.js` load only on pages that render a note.

@@ -147,8 +147,29 @@ hairlines, instead. The footer is filled with the accent, so
 text's rects merge into one band per visual line: rects that overlap vertically
 by more than half the shorter one share a line, so inline code stays in its
 line's band. Each band reaches down to the next line's top, and the outline is
-their contour, one closed orthogonal polygon — a rectangle for one line, a
-stepped shape for more. Width and height rules measure its bounding box.
+their contour, drawn as one closed path with mitred joins — a rectangle for one
+line, a stepped shape for more. Width and height rules measure its bounding box.
+
+While either rule shows, the outer corners carry `CornerDiamond`'s mark: a 1px
+turned square filled with the surface, its side the corner's shorter arm / 4,
+up to 8px. A corner under 3px, or one whose neighbour sits closer than two
+sides, takes none. Inner corners never do.
+
+When both gutters beside the sheet are at least 24px, the side rails also
+carry a ruler: ticks at the selection's top and bottom, a faint 5px band
+between them, and its height mid-band.
+
+The pointer gets the same treatment. `a, button, [role=button], input, select,
+textarea, summary` under a fine pointer draw a redline: the outline style as
+one rectangle on the element's border box, with `W × H` below it. Not while a
+button is held, nor in the footer.
+
+The overlay sits in the document: a 1px absolute svg at the origin, drawing in
+page coordinates, so it scrolls with the text on the compositor. A selection
+inside a fixed ancestor (the footer) pins it to the viewport
+(`data-anchor="viewport"`). The script hides it through `svg.style`, never the
+`display` attribute: Tailwind's preflight `svg { display: block }` beats a
+presentation attribute, and left a ghost label on screen.
 
 Its ink is the accent, or in the footer the selected text's colour. The labels
 carry a 3px halo in the first opaque background behind the selected text (the
@@ -156,13 +177,13 @@ accent in the footer), so a number over words stays readable. Each theme rules
 the outline through five variables in `global.css`, read per new outline and on
 a theme change:
 
-| Variable                       | Kozo | Manila, Nightingale | Blueprint | Meaning                                                                   |
-| ------------------------------ | ---- | ------------------- | --------- | ------------------------------------------------------------------------- |
-| `--selection-stroke-wobble`    | 0    | 0                   | 0.45      | Most a line strays from straight, px. 0 snaps                             |
-| `--selection-stroke-passes`    | 1    | 1                   | 2         | 2 adds a faint second stroke                                              |
-| `--selection-stroke-opacity`   | 1    | 1                   | 0.8       | The outline stroke's opacity at rest                                      |
-| `--selection-stroke-overshoot` | 1.5  | 0                   | 1.5       | How far an edge runs past an outer corner, px. Inner corners meet exactly |
-| `--selection-stroke-weight`    | 1    | 1                   | 1         | The outline stroke's width, px                                            |
+| Variable                       | Kozo | Manila, Nightingale | Blueprint | Meaning                                                            |
+| ------------------------------ | ---- | ------------------- | --------- | ------------------------------------------------------------------ |
+| `--selection-stroke-wobble`    | 0    | 0                   | 0.45      | Most a line strays from straight, px. 0 snaps                      |
+| `--selection-stroke-passes`    | 1    | 1                   | 2         | 2 adds a faint second stroke                                       |
+| `--selection-stroke-opacity`   | 1    | 1                   | 0.8       | The outline stroke's opacity at rest                               |
+| `--selection-stroke-overshoot` | 1.5  | 0                   | 1.5       | Stubs continuing both edges past each outer corner, px. 0 for none |
+| `--selection-stroke-weight`    | 1    | 1                   | 1         | The outline stroke's width, px                                     |
 
 Pencil on Blueprint, a straight pen with overshot corners on Kozo, clean
 hairlines on the two dark themes. A theme sets all five; the script falls back
@@ -501,7 +522,9 @@ plain hairline copy; `.mark-freehand` is inline SVG whose waver is computed at
 build time. Two rules in `global.css` show one copy per theme: freehand under
 Blueprint, ruled everywhere else. A theme switch needs no reload.
 
-The waver is 2D value noise in two octaves — a 16px cell at weight 1 and an 8px
+`src/lib/freehand.ts` is the one source of that waver. `PrecisionMarks` and the
+blog's margin-note leaders (`blog/MarginNote.astro`) both import it. The waver
+is 2D value noise in two octaves — a 16px cell at weight 1 and an 8px
 cell at weight ½, normalised — with a separate seed per axis and one seed per
 mark, sampled every 4px. It bends a line up to ±1.25px, about once per 16px.
 Lines in one mark share a field, so lines that meet still meet.
@@ -514,8 +537,9 @@ The freehand copies are drawn at their 1280px widths, so on a narrow sheet the
 joins at right-anchored ends can drift by up to 1.25px.
 
 **Decorative marks only — never a rail, a Panel rule or the gutter ruling.** The
-freehand copy moves ink off the pixel, which the grid forbids for structure.
-Today only the precision-mark specimens on /design have one.
+freehand waver moves ink off the pixel, which the grid forbids for structure.
+Today only the precision-mark specimens on /design and the margin-note leaders
+use it.
 
 ---
 

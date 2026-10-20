@@ -21,9 +21,10 @@ Most requests are already solved. Reach for the existing primitive.
 | A card's hover frame             | `ui/frame` — `DashedBorders`, `CornerBrackets`, `GradientBackground` | Copy-pasting them again     |
 | A small icon that follows text   | `ui/InlineIcon` + an SVG in `public/`                                | An icon library             |
 | A quote block in a post          | `blog/PullQuoteCard`                                                 | A styled `<blockquote>`     |
+| A note beside a phrase in a post | `blog/MarginNote.astro`                                              | A hand-placed float         |
 | A card that opens a modal        | Copy `sections/ProjectGrid`                                          | A new modal implementation  |
 | The theme picker                 | `ui/ThemeSelector.astro`                                             | A second copy of the button |
-| The ambient sound switch         | `ui/AmbientToggle.astro`                                             | A second copy of the button |
+| Sound switch                     | `ui/AmbientToggle.astro`                                             | A second copy of the button |
 
 There is no icon library. `lucide-react` is not installed and must not be added.
 
@@ -76,6 +77,23 @@ rules and the two literal-color exceptions are in `docs/design-system.md` §3.
 // brightening pattern, see design-system.md §5).
 
 <CtaButton href="…" label="Email me" shortcut="E" />   // .astro only
+
+<MarginNote note={["16px to the cell,", "8px to the half"]}>one grid</MarginNote>
+// .astro only, so a post imports it, and its stylesheet ships only with it:
+//   import MarginNote from "@/components/blog/MarginNote.astro";
+// Marks the phrase with a dotted underline and writes an italic note beside
+// it, joined by a dashed leader that draws on when it scrolls into view. A
+// string is one line; an array breaks the note by hand, each line writing on
+// after the last. Keep a line under ~22 characters, the note's 10rem width.
+// From 92rem (1472px) the note sits in the paper right of the sheet, level
+// with the line the phrase ends on. Below that, public/margin-notes.js moves
+// it under its paragraph as a ruled aside; without the script it sits under
+// the line that holds the phrase. Only a top-level paragraph reaches the
+// margin: in a list item or blockquote the note is that aside at every width,
+// moved to the end of its item or after its paragraph. Two notes close
+// together stack, so the second can sit a line below its phrase. It
+// renders drawn without JavaScript; blog/[slug].astro loads the script only
+// for posts whose body contains `<MarginNote`.
 
 <InlineIcon src="/github.svg" />
 ```
