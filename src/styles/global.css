@@ -614,6 +614,15 @@ body {
   color: inherit;
 }
 
+/* Kozo's accent is its near-black ink, so 18% of it laid a flat grey over
+   the cream that dulled the text. 60% of its border, the sand of the
+   sheet's own hairlines, reads as shading on paper and leaves the ink at
+   full strength. :where() keeps the theme test at zero specificity, so the
+   footer rule below still wins on Kozo's dark footer. */
+:where(:root:not([data-theme])) ::selection {
+  background-color: color-mix(in srgb, var(--color-border) 60%, transparent);
+}
+
 footer ::selection {
   background-color: color-mix(in srgb, currentColor 25%, transparent);
 }

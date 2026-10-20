@@ -138,8 +138,10 @@ generic ones.
 ### Text selection
 
 `::selection` tints each selected line with 18% of the accent and leaves the
-text its own colour. The footer is filled with the accent, so
-`footer ::selection` mixes 25% of `currentColor` instead.
+text its own colour. Kozo's accent is its near-black ink, which turned that
+tint into a flat grey, so Kozo mixes 60% of `--color-border`, the sand of its
+hairlines, instead. The footer is filled with the accent, so
+`footer ::selection` mixes 25% of `currentColor` in every theme.
 
 `public/selection-dimensions.js` also outlines the whole selection. The selected
 text's rects merge into one band per visual line: rects that overlap vertically
