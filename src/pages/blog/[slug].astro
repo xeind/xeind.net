@@ -164,6 +164,11 @@ const breadcrumbStructuredData = {
           and /design — instead of every page via Layout. */
       }
       <script is:inline src="/codeblock-copy.js" defer></script>
+      {
+        /* Only posts with a margin note load its draw-on script. The note
+          renders drawn without it. */
+        post.body?.includes("<MarginNote") && <script is:inline src="/margin-notes.js" defer />
+      }
 
       {/* Series nav */}
       {

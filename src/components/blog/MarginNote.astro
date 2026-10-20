@@ -1,0 +1,353 @@
+---
+/**
+ * A hand-lettered note in the margin beside a phrase, joined to it by a dashed
+ * leader, after the margin notes on imdaryl.com. Usage is in
+ * src/components/AGENTS.md. public/margin-notes.js draws the note on as it
+ * scrolls into view and, below the breakpoint, moves it under its paragraph;
+ * it only adds classes and moves the aside.
+ *
+ * An Astro component, so its stylesheet ships only on pages that render one:
+ * a post that imports it, and /design. Every element is a span or an svg. The
+ * note sits inside an MDX <p>, and any block element there would make the
+ * browser close the paragraph early.
+ *
+ * Without the script the note and its leader render fully drawn. The script
+ * hides them only when it is there to draw them back.
+ */
+import { freehand, type Point } from "@/lib/freehand";
+import { DURATION, EASING } from "@/lib/config/animation";
+
+interface Props {
+  /** The note. Pass an array to break it into lines by hand; each line writes
+   * on after the one before it. A line wider than the 10rem note wraps. */
+  note: string | string[];
+  class?: string;
+}
+
+const { note, class: className } = Astro.props;
+
+// The leader's box, in px at the default font size: 88 wide, 32 tall, drawn
+// at 5.5rem by 2rem. The note floats 6rem (96px) past the column, the Panel's
+// 64px padding plus a 32px gap, so the leader's box spans the gap and most of
+// the padding, and its tip lands 14px past the column, where a full line of
+// text would end. 32 tall is one line of prose (leading-8), so the leader runs
+// level with the line that holds the phrase.
+const LEADER_WIDTH = 88;
+const LEADER_HEIGHT = 32;
+
+// It leaves the note at x 84 and lands at x 6, sagging on the way like a pen
+// pulled across the page, then turns into a two-stroke arrowhead. One seed
+// per note: both paths read the same field, so the head still meets the line
+// it ends.
+const LEADER_START: Point = [84, 15];
+const LEADER_SAG: Point = [46, 21];
+const LEADER_TIP: Point = [6, 16];
+
+function quadratic(from: Point, control: Point, to: Point, steps: number): Point[] {
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const t = i / steps;
+    const u = 1 - t;
+    return [
+      u * u * from[0] + 2 * u * t * control[0] + t * t * to[0],
+      u * u * from[1] + 2 * u * t * control[1] + t * t * to[1],
+    ];
+  });
+}
+
+// FNV-1a over the note's text, so a rebuild draws the same leader and two
+// notes on one page draw different ones. Two notes with the same text share a
+// seed and so a mask id, but then their masks are identical too.
+function seedOf(text: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) {
+    h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  }
+  return (h >>> 0) % 100000;
+}
+
+const lines = Array.isArray(note) ? note : [note];
+const seed = seedOf(lines.join("\n"));
+const maskId = `margin-note-${seed}`;
+const leader = freehand(quadratic(LEADER_START, LEADER_SAG, LEADER_TIP, 20), seed);
+const head = freehand(
+  [[LEADER_TIP[0] + 6, LEADER_TIP[1] - 4.5], LEADER_TIP, [LEADER_TIP[0] + 6, LEADER_TIP[1] + 4.5]],
+  seed,
+);
+
+// The draw-on's timing, read from the owner rather than copied into the CSS.
+// The leader is DURATION.slower on easeInOutCubic, a pen that starts from rest
+// and lands; the head is DURATION.fast and each line DURATION.slow, both on
+// the house easeOutCubic; lines start half of DURATION.fast apart. The draw
+// is the point of the motion, which is why the whole run takes about a second.
+const curve = (points: number[]) => `cubic-bezier(${points.join(",")})`;
+const timing = [
+  `--margin-note-draw: ${DURATION.slower}s ${curve(EASING.easeInOutCubic)}`,
+  `--margin-note-lead: ${DURATION.slower}s`,
+  `--margin-note-head: ${DURATION.fast}s ${curve(EASING.easeOutCubic)}`,
+  `--margin-note-write: ${DURATION.slow}s ${curve(EASING.easeOutCubic)}`,
+  `--margin-note-stagger: ${(DURATION.fast * 1000) / 2}ms`,
+].join(";");
+---
+
+{
+  /* The phrase and the note hug their tags: inside a line, a newline in the
+  markup would render as a space. The timing sits on the aside, not the
+  wrapper, because on a narrow screen the script moves the aside out of it. */
+}
+<span class={className}
+  ><span class="margin-note-phrase"><slot /></span><span
+    class="margin-note-aside"
+    role="note"
+    style={timing}
+    ><svg
+      class="margin-note-leader"
+      viewBox={`0 0 ${LEADER_WIDTH} ${LEADER_HEIGHT}`}
+      fill="none"
+      aria-hidden="true"
+      >{
+        /* Daryl's trick: a dash pattern can't also carry a draw-on, since
+          both need stroke-dasharray. So the dashed line draws normally and a
+          solid copy in this mask draws on over it. An alpha mask reads only
+          the stroke's coverage, so it can take currentColor and no colour is
+          written. */
+      }<mask
+        id={maskId}
+        style="mask-type: alpha"
+        maskUnits="userSpaceOnUse"
+        x="-4"
+        y="-4"
+        width={LEADER_WIDTH + 8}
+        height={LEADER_HEIGHT + 8}
+        ><path
+          class="margin-note-reveal"
+          d={leader}
+          pathLength="1"
+          stroke="currentColor"
+          stroke-width="4"
+          stroke-linecap="round"></path></mask
+      ><path
+        d={leader}
+        mask={`url(#${maskId})`}
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linecap="round"
+        stroke-dasharray="4 3"></path><path
+        class="margin-note-head"
+        d={head}
+        pathLength="1"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path></svg
+    >{
+      /* The brackets keep a screen reader, and a copied paragraph, from
+        running the phrase and the note together. */
+    }<span class="sr-only"> (</span><span class="margin-note-text"
+      >{
+        lines.map((line, i) => (
+          <span class="margin-note-line" style={`--i: ${i}`}>
+            {line}
+          </span>
+        ))
+      }</span
+    ><span class="sr-only">) </span></span
+  ></span
+>
+
+<style is:global>
+  /* Global, not scoped: p:has() below styles the post's own paragraph, which
+     is outside this component and carries none of its scoping attributes.
+     It still ships only on pages that render a note.
+
+     Everything here renders drawn. The script arms a note it can still draw
+     (.margin-note-armed hides it) and lets it draw on when it scrolls into
+     view (.margin-note-in). Without the script, or under reduced motion,
+     nothing is ever hidden. */
+
+  /* Dotted, not the dashed rule a link takes: the phrase is marked, not
+     clickable. 40% is the ladder's emphasis step. */
+  .margin-note-phrase {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+    text-underline-offset: 0.25em;
+  }
+
+  /* Narrow: there is no margin, so the note becomes an aside ruled like a
+     blockquote. The script moves it to just after its paragraph
+     (.margin-note-moved, below). Without the script it drops under the line
+     that holds the phrase instead: a float the full width of the paragraph
+     cannot share a line, so it lands below the current one and the paragraph
+     resumes under it. */
+  .margin-note-aside {
+    float: left;
+    clear: both;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding-left: 1rem;
+    border-left: 1px dashed color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-accent);
+    font-family: var(--font-serif);
+    font-size: var(--text-sm);
+    font-style: italic;
+    line-height: 1.5rem;
+    text-wrap: pretty;
+    --margin-note-text-delay: 0s;
+  }
+
+  /* Moved under its paragraph: a block in the flow, not a float. The -1rem
+     top margin collapses with the paragraph's 24px mb-6 to leave 8px, so the
+     note reads as the paragraph's; the 1.5rem below is the paragraph rhythm
+     the note took. 8 + 24n + 24 keeps the column on 8s. */
+  .margin-note-aside.margin-note-moved {
+    display: block;
+    float: none;
+    margin: -1rem 0 1.5rem;
+  }
+
+  /* The post's <article> drops its last block's margin, and a moved note can
+     become that block. */
+  .margin-note-aside.margin-note-moved:last-child {
+    margin-bottom: 0;
+  }
+
+  /* At the end of a list item there is no paragraph margin to collapse with,
+     so the note keeps the plain 8px above it. */
+  li .margin-note-aside.margin-note-moved {
+    margin: 0.5rem 0 0;
+  }
+
+  .margin-note-line {
+    display: block;
+  }
+
+  .margin-note-leader {
+    display: none;
+  }
+
+  /* A note on the paragraph's last line would hang below it, and the next
+     block's rule would draw through it: a post's --- rule and the Panel edges
+     run 9999px past the sheet, so this holds in the margin too. As a flow
+     root the paragraph grows to hold its float. The aside is 8 + 24n + 8 tall
+     here and 8 + 24n in the margin, so the paragraph still steps in 8s. */
+  p:has(.margin-note-aside) {
+    display: flow-root;
+  }
+
+  /* Wide: the note floats into the paper beside the sheet. The breakpoint is
+     where that gutter holds it: the sheet is 64rem, and each side needs the
+     2rem gap past the rail, the 10rem note and 2rem of paper beyond it, so
+     64 + 2 * 14 = 92rem, 1472px. html keeps a scrollbar gutter, which a media
+     query counts, so at 1472 a 15px scrollbar still leaves 24px of paper past
+     the note. rem, like the sheet, so a reader with a larger font gets the
+     aside until the gutter grows with it. public/margin-notes.js matches the
+     same query.
+
+     The float sits on the right edge of its <p>, which is the content column,
+     and the negative margin carries it out past the Panel's 4rem padding and
+     the gap, so it takes no width from the line. A float's top lands on the
+     line box that holds it, so the note starts level with the phrase without
+     measuring. clear: right stacks two notes instead of overlapping them.
+     A note that ends a wrapped phrase sits level with the line the phrase
+     ends on, where its markup is.
+
+     Only in a top-level paragraph of the column. In a list item or a
+     blockquote the box is narrower, so the float landed inside the sheet,
+     and since it takes no width the item's text ran under it. There the note
+     stays an aside at every width, moved by the script to the end of its
+     item or paragraph. */
+  @media (min-width: 92rem) {
+    .margin-note-aside:not(:is(li, blockquote) *) {
+      position: relative;
+      float: right;
+      clear: right;
+      width: 10rem;
+      margin: 0 -16rem 0 0;
+      /* A 24px note line centred in the 32px prose line beside it, and the
+         same 4px below, so the note is 8 + 24n tall and a paragraph that
+         grows to hold it still steps in 8s. */
+      padding: 0.25rem 0;
+      border-left: 0;
+      --margin-note-text-delay: var(--margin-note-lead);
+    }
+
+    /* Hand-lettered: the note sits a degree off square, as Daryl's do. */
+    .margin-note-aside:not(:is(li, blockquote) *) .margin-note-text {
+      display: block;
+      rotate: -1deg;
+    }
+
+    .margin-note-aside:not(:is(li, blockquote) *) .margin-note-leader {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 100%;
+      width: 5.5rem;
+      height: 2rem;
+      overflow: visible;
+    }
+  }
+
+  /* The draw-on. The dashed leader draws through a mask whose solid copy
+     strokes on (pathLength 1, so the dash is the whole line), then the
+     arrowhead strokes on, then each line of the note writes on after the one
+     above it. The timings are custom properties the component sets from
+     animation.ts. */
+  .margin-note-armed .margin-note-reveal,
+  .margin-note-armed .margin-note-head {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .margin-note-armed .margin-note-line {
+    clip-path: inset(-30% 100% -30% 0);
+    opacity: 0.35;
+  }
+
+  .margin-note-in .margin-note-reveal {
+    animation: margin-note-draw var(--margin-note-draw) both;
+  }
+
+  .margin-note-in .margin-note-head {
+    animation: margin-note-draw var(--margin-note-head) var(--margin-note-lead) both;
+  }
+
+  .margin-note-in .margin-note-line {
+    animation: margin-note-write var(--margin-note-write) both;
+    animation-delay: calc(var(--margin-note-text-delay) + var(--i, 0) * var(--margin-note-stagger));
+  }
+
+  @keyframes margin-note-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* The clip runs 8% past the right edge so an italic's overhang is not cut,
+     and 30% above and below for ascenders and descenders. Opacity starts at
+     .35, not 0, so the stroke already reads as ink while it is drawn. */
+  @keyframes margin-note-write {
+    from {
+      clip-path: inset(-30% 100% -30% 0);
+      opacity: 0.35;
+    }
+    to {
+      clip-path: inset(-30% -8% -30% 0);
+      opacity: 1;
+    }
+  }
+
+  /* The script never arms a note under reduced motion; this covers a reader
+     who turns it on after a note was armed. */
+  @media (prefers-reduced-motion: reduce) {
+    .margin-note-armed .margin-note-reveal,
+    .margin-note-armed .margin-note-head,
+    .margin-note-armed .margin-note-line {
+      animation: none;
+      stroke-dashoffset: 0;
+      clip-path: none;
+      opacity: 1;
+    }
+  }
+</style>

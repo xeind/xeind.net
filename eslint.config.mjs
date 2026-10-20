@@ -49,9 +49,24 @@ export default tseslint.config(
       // `.bg-grid-pattern` is a background-image class in global.css, not a color.
       "shadcn/no-raw-colors": ["error", { allow: ["bg-grid-pattern"] }],
       // JavaScript hooks selected by the scripts in public/, never styled.
+      // The margin-note-* classes are blog/MarginNote.astro's, styled in its
+      // own <style>, which the rule does not read.
       "shadcn/no-unknown-classes": [
         "error",
-        { allow: ["blog-zoom", "link-hint", "edge-glow-shell-surface"] },
+        {
+          allow: [
+            "blog-zoom",
+            "link-hint",
+            "edge-glow-shell-surface",
+            "margin-note-aside",
+            "margin-note-head",
+            "margin-note-leader",
+            "margin-note-line",
+            "margin-note-phrase",
+            "margin-note-reveal",
+            "margin-note-text",
+          ],
+        },
       ],
       "shadcn/require-static-classes": "error",
     },
