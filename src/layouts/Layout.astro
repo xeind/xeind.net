@@ -283,7 +283,62 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
     {import.meta.env.DEV && <script is:inline src="/grid-ruler.js" defer />}
     <script is:inline src="/hero-interactions.js" defer></script>
     <script is:inline src="/edge-glow.js" defer></script>
-    <script is:inline src="/selection-dimensions.js" defer></script>
+    {
+      /* selection-dimensions.js does nothing until a selection or a hover,
+        so it loads once the page has: as a deferred script its 56KB went on
+        the wire before the largest paint and cost about 0.5s of LCP under
+        Lighthouse's throttled network. Load alone is not late enough: on a
+        fast connection it fires before the first paint (41ms against 64ms
+        measured locally), and a request started before the largest paint is
+        still charged to it. Two animation frames were not either: headless
+        Chrome ran both before presenting the paint. So it waits for load,
+        then for the browser to report the largest paint (the first paint
+        where that is not reported, as in Safari), then idle time, with a 1s
+        ceiling so a busy page still gets it promptly. A window flag, not a
+        query for the tag, guards against a second copy: a ClientRouter swap
+        drops the added tag from <head> while the script keeps running, and
+        the script re-inits itself on astro:page-load. */
+    }
+    <script is:inline>
+      (() => {
+        const install = () => {
+          if (window.__selectionDimensions) return;
+          window.__selectionDimensions = true;
+          const script = document.createElement("script");
+          script.src = "/selection-dimensions.js";
+          document.head.append(script);
+        };
+
+        const idle = () => {
+          if ("requestIdleCallback" in window) {
+            window.requestIdleCallback(install, { timeout: 1000 });
+          } else {
+            window.setTimeout(install, 0);
+          }
+        };
+
+        // Buffered, so a paint that came before load is reported at once.
+        const schedule = () => {
+          const types = window.PerformanceObserver?.supportedEntryTypes ?? [];
+          const type = ["largest-contentful-paint", "paint"].find((name) => types.includes(name));
+          if (!type) {
+            idle();
+            return;
+          }
+          const observer = new PerformanceObserver(() => {
+            observer.disconnect();
+            idle();
+          });
+          observer.observe({ type, buffered: true });
+        };
+
+        if (document.readyState === "complete") {
+          schedule();
+        } else {
+          window.addEventListener("load", schedule, { once: true });
+        }
+      })();
+    </script>
     <script is:inline src="/toaster.js" defer></script>
     <script is:inline>
       (() => {
