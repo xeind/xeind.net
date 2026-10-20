@@ -101,7 +101,7 @@ When you do need an island, give it the narrowest directive that works —
 Three patterns already avoid React entirely and are worth copying:
 
 - **A vanilla script in `public/`** — `edge-glow.js`, `hero-interactions.js`,
-  `codeblock-copy.js`, `blog-lightbox.js`. Loaded with
+  `codeblock-copy.js`, `blog-lightbox.js`, `selection-dimensions.js`. Loaded with
   `<script is:inline src="…" defer>`. Note: `public/` is not scanned for Tailwind
   classes, so these scripts write plain CSS class names defined in `global.css`.
 - **An inline `<script>` in the page** — the theme-aware logo swapping in

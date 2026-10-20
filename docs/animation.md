@@ -246,3 +246,46 @@ adding any other global payload, since every page carries it. /design carries ~1
 specimen SVG and is the slowest page by design — it is a specimen sheet, not
 a template to copy. A new content page should stay near the ~100KB the blog
 pages weigh.
+
+---
+
+## 6. The selection outline
+
+`public/selection-dimensions.js` moves the outline around selected text by
+hand, in `requestAnimationFrame`. A script in `public/` cannot import
+`animation.ts`, so it restates the values: change one, change both.
+
+**Curve.** The outline is one band per visual line (`docs/design-system.md` §3).
+When the selection reshapes, each band's four edges close the same share of
+their gap per millisecond, `1 − e^(−dt/τ)`. τ is `300 / (10 ln 2)`, about 43ms,
+which is `EASING.easeOutExpo` over `DURATION.slow`: within 0.1% at 300ms. The
+state is only where an edge is and where it is going, so a new target mid-move
+carries on from the shape in between.
+
+**Why not a spring.** The `.theme-roll` comment in `global.css` records a
+critically damped spring tried there and reverted: it starts at rest, so it
+hangs before it moves. This approach starts at full speed, as easeOutExpo does.
+
+**Bands grow one axis at a time** (`STAGED_GROWTH`, `STAGE_SHARE = 0.6`). An
+arriving band grows its height at its neighbour's width, then widens or narrows
+to its own once it reaches 60% of its height. A leaving band narrows to its
+neighbour first, then collapses, and is dropped once the shape settles. So a
+one-line rectangle grows its step instead of popping one in.
+
+**The stroke dims while it moves.** Past 1px a frame the outline eases toward
+0.4 of its ink (`MOVING_INK`), so an edge sweeping across a line of words does
+not strike them through, and returns to full as it settles. Rules and labels
+keep their own opacity.
+
+**Rules draw per axis.** The rules measure the outline's bounding box. It
+carries a width rule from 44px wide and a height rule from 28px tall. A shown
+rule hides only under 40 and 24, so a drag across the line does not flicker it.
+Below both, one centred `W × H` label stands in. A rule that forms draws out
+from its number on the edges' curve while the number counts up from 0; one that
+goes draws back in and counts down. A new outline starts with its rules drawn
+and only fades: in over 150ms, out over 200ms (`DURATION.fast`,
+`DURATION.normal`).
+
+**Reduced motion snaps.** Edges, rules and fades land at once, so nothing
+counts or dims. The script runs for fine pointers only, and no frames run at
+rest.

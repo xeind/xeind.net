@@ -135,6 +135,38 @@ The same idea drives the shortcut badge: `--badge-ink` at rest,
 brighter to travel, which is why the badge uses its own variables and not the
 generic ones.
 
+### Text selection
+
+`::selection` tints each selected line with 18% of the accent and leaves the
+text its own colour. The footer is filled with the accent, so
+`footer ::selection` mixes 25% of `currentColor` instead.
+
+`public/selection-dimensions.js` also outlines the whole selection. The selected
+text's rects merge into one band per visual line: rects that overlap vertically
+by more than half the shorter one share a line, so inline code stays in its
+line's band. Each band reaches down to the next line's top, and the outline is
+their contour, one closed orthogonal polygon — a rectangle for one line, a
+stepped shape for more. Width and height rules measure its bounding box.
+
+Its ink is the accent, or in the footer the selected text's colour. The labels
+carry a 3px halo in the first opaque background behind the selected text (the
+accent in the footer), so a number over words stays readable. Each theme rules
+the outline through five variables in `global.css`, read per new outline and on
+a theme change:
+
+| Variable                       | Kozo | Manila, Nightingale | Blueprint | Meaning                                                                   |
+| ------------------------------ | ---- | ------------------- | --------- | ------------------------------------------------------------------------- |
+| `--selection-stroke-wobble`    | 0    | 0                   | 0.45      | Most a line strays from straight, px. 0 snaps                             |
+| `--selection-stroke-passes`    | 1    | 1                   | 2         | 2 adds a faint second stroke                                              |
+| `--selection-stroke-opacity`   | 1    | 1                   | 0.8       | The outline stroke's opacity at rest                                      |
+| `--selection-stroke-overshoot` | 1.5  | 0                   | 1.5       | How far an edge runs past an outer corner, px. Inner corners meet exactly |
+| `--selection-stroke-weight`    | 1    | 1                   | 1         | The outline stroke's width, px                                            |
+
+Pencil on Blueprint, a straight pen with overshot corners on Kozo, clean
+hairlines on the two dark themes. A theme sets all five; the script falls back
+to the clean style. The comments beside them record what was tried on Kozo and
+rejected.
+
 ### Opacity ladder
 
 Slash opacities step through a fixed set. Adding a step is a design decision:
@@ -460,6 +492,29 @@ The settled decisions are in `docs/prd-grid-alignment.md`, and the per-element
 ledger — including which hairline is absorbed where — is
 `docs/grid-inventory.md`.
 
+### Pencil marks, a /design trial
+
+Each mark in `design/PrecisionMarks.tsx` renders twice. `.mark-ruled` is the
+plain hairline copy; `.mark-freehand` is inline SVG whose waver is computed at
+build time. Two rules in `global.css` show one copy per theme: freehand under
+Blueprint, ruled everywhere else. A theme switch needs no reload.
+
+The waver is 2D value noise in two octaves — a 16px cell at weight 1 and an 8px
+cell at weight ½, normalised — with a separate seed per axis and one seed per
+mark, sampled every 4px. It bends a line up to ±1.25px, about once per 16px.
+Lines in one mark share a field, so lines that meet still meet.
+
+An SVG filter did this first. WebKit re-ran it on every scroll repaint, taking
+the p95 frame from 41ms to 100ms, and displaced half as far as Chromium. The
+static paths cost nothing to paint and match across engines, for +3.2KB gzip on
+/design. The filter's wear grain, which thinned lines in patches, was dropped.
+The freehand copies are drawn at their 1280px widths, so on a narrow sheet the
+joins at right-anchored ends can drift by up to 1.25px.
+
+**Decorative marks only — never a rail, a Panel rule or the gutter ruling.** The
+freehand copy moves ink off the pixel, which the grid forbids for structure.
+Today only the precision-mark specimens on /design have one.
+
 ---
 
 ## 6. Page architecture
@@ -544,17 +599,17 @@ footer sits behind at `-z-10`. Don't change that without reading `Footer.astro`.
 
 ### z-index ladder
 
-| Layer     | Contents                                                                                                                                                                                                           |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `-10`     | Footer, behind the page                                                                                                                                                                                            |
-| `0`       | Written explicitly (`z-0`, 15 uses) to pin backgrounds under content in a new stacking context                                                                                                                     |
-| `10`      | Content inside a Panel, edge-glow strips                                                                                                                                                                           |
-| `20`      | Corner diamonds and brackets                                                                                                                                                                                       |
-| `30`      | Modal close button                                                                                                                                                                                                 |
-| `40`      | Modal backdrop (`bg-black/30`)                                                                                                                                                                                     |
-| `50`      | Modal content                                                                                                                                                                                                      |
-| `2`       | Lightbox nav/counter, plain CSS inside the 9998/9999 layers                                                                                                                                                        |
-| 9998/9999 | Blog image lightbox (`global.css`) and the link-hint tooltip (`hero-interactions.js`) — cursor-transients that must clear the modal portal, which mounts later in `<body>` and out-paints anything at its own z-50 |
+| Layer     | Contents                                                                                                                                                                                                                                                                     |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-10`     | Footer, behind the page                                                                                                                                                                                                                                                      |
+| `0`       | Written explicitly (`z-0`, 15 uses) to pin backgrounds under content in a new stacking context                                                                                                                                                                               |
+| `10`      | Content inside a Panel, edge-glow strips                                                                                                                                                                                                                                     |
+| `20`      | Corner diamonds and brackets                                                                                                                                                                                                                                                 |
+| `30`      | Modal close button                                                                                                                                                                                                                                                           |
+| `40`      | Modal backdrop (`bg-black/30`)                                                                                                                                                                                                                                               |
+| `50`      | Modal content                                                                                                                                                                                                                                                                |
+| `2`       | Lightbox nav/counter, plain CSS inside the 9998/9999 layers                                                                                                                                                                                                                  |
+| 9998/9999 | Blog image lightbox (`global.css`), the link-hint tooltip (`hero-interactions.js`) and the selection overlay (`.selection-dimensions`, on 9998) — cursor-transients that must clear the modal portal, which mounts later in `<body>` and out-paints anything at its own z-50 |
 
 Stay on this ladder. A new value means a new layer, and there is no room for one.
 
