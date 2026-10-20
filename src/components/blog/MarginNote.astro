@@ -77,8 +77,11 @@ const head = freehand(
 // The draw-on's timing, read from the owner rather than copied into the CSS.
 // The leader is DURATION.slower on easeInOutCubic, a pen that starts from rest
 // and lands; the head is DURATION.fast and each line DURATION.slow, both on
-// the house easeOutCubic; lines start half of DURATION.fast apart. The draw
-// is the point of the motion, which is why the whole run takes about a second.
+// the house easeOutCubic; lines start half of DURATION.fast apart. The text
+// starts at half the leader, not after it, so the words write on while the
+// stroke and the arrowhead finish: the words are the content and the leader
+// is decoration, so the reader should not wait on it. A two-line note is
+// done in about 0.65s, when the arrowhead lands.
 const curve = (points: number[]) => `cubic-bezier(${points.join(",")})`;
 const timing = [
   `--margin-note-draw: ${DURATION.slower}s ${curve(EASING.easeInOutCubic)}`,
@@ -269,7 +272,7 @@ const timing = [
          grows to hold it still steps in 8s. */
       padding: 0.25rem 0;
       border-left: 0;
-      --margin-note-text-delay: var(--margin-note-lead);
+      --margin-note-text-delay: calc(var(--margin-note-lead) / 2);
     }
 
     /* Hand-lettered: the note sits a degree off square, as Daryl's do. */
