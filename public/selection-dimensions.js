@@ -42,6 +42,14 @@
   // Within 1% of shown or hidden, a rule's ends sit within a pixel of their
   // place on any rule under 100px a side; snap and stop.
   const VISIBLE_EPSILON = 0.01;
+  // The outline's share of its ink while it travels: still there to follow,
+  // quiet enough that an edge crossing words does not strike them through.
+  const MOVING_INK = 0.4;
+  // Whether a line arriving or leaving changes one axis at a time (see
+  // aim()), and how far along the first axis it gets before the second
+  // starts.
+  const STAGED_GROWTH = true;
+  const STAGE_SHARE = 0.6;
 
   let svg = null;
   let parts = null;
@@ -73,7 +81,10 @@
   // under a fixed seed per line, so a line that moves or stretches keeps its
   // bends where they were instead of re-rolling them every frame. Seeds sit
   // 1000 cells (7000px) apart, so no two lines share a stretch.
-  function lineData(x0, y0, x1, y1, seed, amplitude) {
+  //
+  // A pinned end takes no wobble: the noise fades in over its first 4px, so
+  // two edges meeting at a pinned corner meet on the point itself.
+  function lineData(x0, y0, x1, y1, seed, amplitude, pinStart = false, pinEnd = false) {
     const length = Math.hypot(x1 - x0, y1 - y0);
     if (length < 1) {
       return "";
@@ -86,7 +97,9 @@
     let data = "";
     for (let d = 0; ; d = Math.min(d + 4, length)) {
       const t = d / length;
-      const offset = noise(d, seed * 1000) * amplitude;
+      const pin =
+        (pinStart ? Math.min(1, d / 4) : 1) * (pinEnd ? Math.min(1, (length - d) / 4) : 1);
+      const offset = noise(d, seed * 1000) * amplitude * pin;
       const x = x0 + (x1 - x0) * t + nx * offset;
       const y = y0 + (y1 - y0) * t + ny * offset;
       data += `${d === 0 ? "M" : "L"}${round(x)} ${round(y)}`;
@@ -96,46 +109,154 @@
     }
   }
 
-  // With no overshoot the box is one closed rectangle, so its corners join
-  // square. With overshoot it is four lines, each running past its corners
-  // like a rectangle ruled by hand. `seed` picks the pass: the second pass
-  // takes its own four, or it would trace the first exactly and the doubled
-  // line would read as one.
-  function boxData(x, y, w, h, seed) {
-    const { wobble, overshoot: o } = stroke;
-    if (o === 0) {
-      return `M${x} ${y}H${x + w}V${y + h}H${x}Z`;
+  // The outline: the contour of the selected line bands as one closed
+  // orthogonal polygon, walked clockwise. Along the top of the first band,
+  // down the right side stepping between successive bands' right edges,
+  // along the bottom of the last band, and up the left side stepping between
+  // their left edges. One band is a rectangle; a selection from mid-line 1
+  // to mid-line 3 is the familiar eight-cornered step.
+  //
+  // Every line sits half a pixel inside its band, so a 1px stroke fills one
+  // device row: verticals at L + 0.5 and R - 0.5, the top at T + 0.5, the
+  // bottom at B - 0.5. A step is a bottom edge when the band below is
+  // narrower on that side and a top edge when it is wider, so it takes
+  // -0.5 or +0.5 to match.
+  //
+  // Each edge carries a seed from its band's id and its role in that band,
+  // so the wobble an edge has survives bands being added above or below it.
+  // The pass offsets the seeds, or the second pass would trace the first
+  // exactly and the doubled line would read as one.
+  const EDGE_ROLES = 12;
+  function outline(bands, pass) {
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    const n = bands.length;
+    const L = bands.map((band) => Math.round(band.shown.left - sx) + 0.5);
+    const R = bands.map((band) => Math.round(band.shown.right - sx) - 0.5);
+    const seed = (i, role) => 100 + bands[i].id * EDGE_ROLES + pass * 6 + role;
+    const boundary = (i) => Math.round((bands[i].shown.bottom + bands[i + 1].shown.top) / 2 - sy);
+    const top = Math.round(bands[0].shown.top - sy) + 0.5;
+    const bottom = Math.round(bands[n - 1].shown.bottom - sy) - 0.5;
+    // Each point carries the seed of the edge that leaves it.
+    const points = [
+      [L[0], top, seed(0, 0)],
+      [R[0], top, seed(0, 1)],
+    ];
+    for (let i = 0; i < n - 1; i += 1) {
+      const y = boundary(i) + (R[i + 1] < R[i] ? -0.5 : 0.5);
+      points.push([R[i], y, seed(i, 2)], [R[i + 1], y, seed(i + 1, 1)]);
     }
-    return (
-      lineData(x - o, y, x + w + o, y, seed, wobble) +
-      lineData(x + w, y - o, x + w, y + h + o, seed + 1, wobble) +
-      lineData(x + w + o, y + h, x - o, y + h, seed + 2, wobble) +
-      lineData(x, y + h + o, x, y - o, seed + 3, wobble)
-    );
+    points.push([R[n - 1], bottom, seed(n - 1, 3)], [L[n - 1], bottom, seed(n - 1, 4)]);
+    for (let i = n - 2; i >= 0; i -= 1) {
+      const y = boundary(i) + (L[i + 1] > L[i] ? -0.5 : 0.5);
+      points.push([L[i + 1], y, seed(i + 1, 5)], [L[i], y, seed(i, 4)]);
+    }
+    return points;
   }
 
-  // The selection's bounding box, from the rects of the text it covers. A
-  // range's own getBoundingClientRect() includes whole elements it merely
-  // touches; walking the text nodes keeps the box on the ink.
-  function selectionRect() {
+  // The outline's path. With no overshoot it is one closed path, so its
+  // corners join square. With overshoot each edge is its own line, running
+  // past its outer corners like a figure ruled by hand. An edge under a
+  // pixel is a band still forming or leaving; it is skipped before the
+  // overshoot, which would otherwise turn it into a 3px dash.
+  function outlineData(points, dx, dy) {
+    const { wobble, overshoot: o } = stroke;
+    if (o === 0) {
+      let data = "";
+      let last = null;
+      for (const [x, y] of points) {
+        if (!last || x !== last[0] || y !== last[1]) {
+          data += `${data ? "L" : "M"}${x + dx} ${y + dy}`;
+          last = [x, y];
+        }
+      }
+      return `${data}Z`;
+    }
+    // At an inner corner the overshoot poked 1.5px into the shape, over the
+    // text; there the two edges meet exactly, their wobble pinned so they
+    // meet on the corner. A corner is outer where the clockwise walk turns
+    // right, judged between the edges either side of it once the ones under
+    // a pixel are set aside.
+    const edges = [];
+    for (let k = 0; k < points.length; k += 1) {
+      const [x0, y0, seed] = points[k];
+      const [x1, y1] = points[(k + 1) % points.length];
+      const length = Math.hypot(x1 - x0, y1 - y0);
+      if (length >= 1) {
+        edges.push({ x0, y0, x1, y1, seed, ux: (x1 - x0) / length, uy: (y1 - y0) / length });
+      }
+    }
+    const outer = (a, b) => a.ux * b.uy - a.uy * b.ux > 0.5;
+    let data = "";
+    edges.forEach((edge, m) => {
+      const before = outer(edges[(m - 1 + edges.length) % edges.length], edge);
+      const after = outer(edge, edges[(m + 1) % edges.length]);
+      const start = before ? o : 0;
+      const end = after ? o : 0;
+      data += lineData(
+        edge.x0 - edge.ux * start + dx,
+        edge.y0 - edge.uy * start + dy,
+        edge.x1 + edge.ux * end + dx,
+        edge.y1 + edge.uy * end + dy,
+        edge.seed,
+        wobble,
+        !before,
+        !after,
+      );
+    });
+    return data;
+  }
+
+  // The outline's outer corners, where the clockwise walk turns right, each
+  // with the length of its shorter arm. Repeated and collinear points are
+  // dropped first, so a band still forming adds no corner until its step is
+  // real.
+  function outerCorners(points) {
+    const ring = [];
+    for (const point of points) {
+      const last = ring[ring.length - 1];
+      if (!last || Math.hypot(point[0] - last[0], point[1] - last[1]) >= 1) {
+        ring.push(point);
+      }
+    }
+    while (
+      ring.length > 1 &&
+      Math.hypot(ring[0][0] - ring[ring.length - 1][0], ring[0][1] - ring[ring.length - 1][1]) < 1
+    ) {
+      ring.pop();
+    }
+    const corners = [];
+    for (let k = 0; k < ring.length; k += 1) {
+      const [px, py] = ring[(k - 1 + ring.length) % ring.length];
+      const [x, y] = ring[k];
+      const [nx, ny] = ring[(k + 1) % ring.length];
+      const cross = (x - px) * (ny - y) - (y - py) * (nx - x);
+      if (cross > 0) {
+        corners.push([x, y, Math.min(Math.hypot(x - px, y - py), Math.hypot(nx - x, ny - y))]);
+      }
+    }
+    return corners;
+  }
+
+  // The selection's visual lines, from the rects of the text it covers, one
+  // rect per line, top to bottom. A range's own getClientRects() includes
+  // whole elements it merely touches; walking the text nodes keeps the
+  // outline on the ink. Rects share a line when they overlap vertically by
+  // more than half the shorter one, not when their tops and bottoms match:
+  // an inline <code> has a taller box than the words beside it, and exact
+  // matching split its line in two and stepped the outline around it.
+  function selectionLines() {
     const selection = document.getSelection();
     if (!selection || selection.isCollapsed || !selection.rangeCount) {
       return null;
     }
     const range = selection.getRangeAt(0);
-    let left = Infinity;
-    let top = Infinity;
-    let right = -Infinity;
-    let bottom = -Infinity;
-    const take = (rects) => {
-      for (const r of rects) {
-        if (!r.width || !r.height) {
-          continue;
+    const rects = [];
+    const take = (list) => {
+      for (const r of list) {
+        if (r.width && r.height) {
+          rects.push(r);
         }
-        left = Math.min(left, r.left);
-        top = Math.min(top, r.top);
-        right = Math.max(right, r.right);
-        bottom = Math.max(bottom, r.bottom);
       }
     };
     const root = range.commonAncestorContainer;
@@ -158,7 +279,25 @@
         take(part.getClientRects());
       }
     }
-    return right > left && bottom > top ? new DOMRect(left, top, right - left, bottom - top) : null;
+    rects.sort((a, b) => a.top - b.top);
+    const lines = [];
+    for (const r of rects) {
+      const line = lines.find(
+        (l) =>
+          Math.min(l.bottom, r.bottom) - Math.max(l.top, r.top) >
+          Math.min(l.bottom - l.top, r.height) / 2,
+      );
+      if (line) {
+        line.left = Math.min(line.left, r.left);
+        line.top = Math.min(line.top, r.top);
+        line.right = Math.max(line.right, r.right);
+        line.bottom = Math.max(line.bottom, r.bottom);
+      } else {
+        lines.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom });
+      }
+    }
+    lines.sort((a, b) => a.top - b.top);
+    return lines.length ? lines : null;
   }
 
   // The accent, read from the theme so no theme's value is written twice. The
@@ -187,6 +326,30 @@
       return getComputedStyle(element).color;
     }
     return getComputedStyle(document.documentElement).getPropertyValue("--color-accent").trim();
+  }
+
+  // The surface the selected text sits on: the first background up its
+  // ancestors that is not transparent. The labels take it as a halo, so a
+  // number that lands on words stays readable. Read from the page, not from
+  // one token: Kozo's sheet (--color-card) and page (--color-background)
+  // differ, so either token alone is wrong on the other, and the footer is
+  // filled with the accent.
+  function surfaceFor(element) {
+    // The footer's fill is not a background colour on any ancestor, so the
+    // walk below fell through to the page's and haloed footer numbers in
+    // the ink's own colour. Its fill is the accent; say so.
+    if (element?.closest("footer")) {
+      return getComputedStyle(document.documentElement).getPropertyValue("--color-accent").trim();
+    }
+    const clear = (colour) =>
+      colour === "transparent" || /,\s*0\)$/.test(colour) || /\/\s*0\)$/.test(colour);
+    for (let node = element; node; node = node.parentElement) {
+      const colour = getComputedStyle(node).backgroundColor;
+      if (colour && !clear(colour)) {
+        return colour;
+      }
+    }
+    return getComputedStyle(document.documentElement).getPropertyValue("--color-background").trim();
   }
 
   // Whether a viewport box overlaps one of the footer's controls. The footer
@@ -249,27 +412,132 @@
   function applyStroke() {
     const clean = stroke.wobble === 0;
     svg.style.color = record.ink;
+    set(parts.text, "stroke", record.surface);
     set(parts.lines, "shape-rendering", clean ? "crispEdges" : "geometricPrecision");
-    set(parts.box, "opacity", String(stroke.opacity));
     set(parts.box, "stroke-width", String(stroke.weight));
     set(parts.ghost, "display", stroke.passes > 1 ? "inline" : "none");
     // A 0.8px rule antialiases to a soft grey row; clean mode rules a full one.
     set(parts.marks, "stroke-width", clean ? "1" : "0.8");
   }
 
-  // The selection's box in page coordinates. A scroll moves the text and the
-  // box together, so it must not read as a reshape and trail behind.
-  function selectionEdges() {
-    const rect = selectionRect();
-    if (!rect) {
+  // The selection's line bands in page coordinates, each but the last
+  // extended down to the next line's top, so the leading between lines is
+  // inside the outline and it is one shape rather than stacked boxes. That
+  // bridges a paragraph margin too, which is the union the outline means. A
+  // scroll moves the text and the outline together, so it must not read as a
+  // reshape and trail behind.
+  function selectionBands() {
+    const lines = selectionLines();
+    if (!lines) {
       return null;
     }
-    return {
-      left: rect.left + window.scrollX,
-      top: rect.top + window.scrollY,
-      right: rect.right + window.scrollX,
-      bottom: rect.bottom + window.scrollY,
-    };
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    return lines.map((line, i) => ({
+      left: line.left + sx,
+      top: line.top + sy,
+      right: line.right + sx,
+      bottom: (i + 1 < lines.length ? lines[i + 1].top : line.bottom) + sy,
+    }));
+  }
+
+  let nextBandId = 0;
+  const band = (shown, target) => ({
+    id: nextBandId++,
+    shown,
+    target,
+    side: null,
+    from: null,
+    span: 0,
+  });
+  const atTop = (t) => ({ left: t.left, right: t.right, top: t.top, bottom: t.top });
+  const atBottom = (t) => ({ left: t.left, right: t.right, top: t.bottom, bottom: t.bottom });
+
+  // Aim the outline at a new set of line bands. The outline is eased band by
+  // band, four edges each, the way the box's four edges were; the polygon is
+  // derived from the bands every frame. When the line count changes, the
+  // band list holds the larger count for the length of the move and the
+  // spare bands are collapsed onto a neighbour, which is collapsing the
+  // polygon's spare vertices onto theirs: a band arriving is born with no
+  // height on the edge it grows from, and one leaving is aimed at no height
+  // on its neighbour's edge and dropped once everything settles. So a
+  // one-line rectangle grows its step instead of popping one in.
+  //
+  // Old and new bands are paired by position, not by index: the pairing is
+  // the offset that best lines up their tops, so a selection growing upward
+  // grows a band above instead of sliding every line up one. Bands with no
+  // partner collapse onto the first band's top or the last band's bottom,
+  // whichever side they are on.
+  function retarget(targets) {
+    if (!targets) {
+      return;
+    }
+    record.tick ??= performance.now();
+    const live = record.bands.filter((b) => b.side === null);
+    if (!live.length) {
+      record.bands = targets.map((target) => band({ ...target }, target));
+      return;
+    }
+    // An unpaired band costs about one line of mismatch.
+    const UNPAIRED = 24;
+    let offset = 0;
+    let best = Infinity;
+    for (let k = 1 - live.length; k < targets.length; k += 1) {
+      let cost = 0;
+      let pairs = 0;
+      live.forEach((b, i) => {
+        const j = i + k;
+        if (j >= 0 && j < targets.length) {
+          cost += Math.abs(b.target.top - targets[j].top);
+          pairs += 1;
+        }
+      });
+      cost += (live.length + targets.length - 2 * pairs) * UNPAIRED;
+      if (cost < best) {
+        best = cost;
+        offset = k;
+      }
+    }
+    const first = targets[0];
+    const last = targets[targets.length - 1];
+    const paired = live.filter((b, i) => i + offset >= 0 && i + offset < targets.length);
+    const above = [];
+    const below = [];
+    for (const b of record.bands) {
+      const i = live.indexOf(b);
+      const leaving = b.side !== null || i + offset < 0 || i + offset >= targets.length;
+      if (!leaving) {
+        continue;
+      }
+      const fresh = b.side === null;
+      if (b.side === "top" || (b.side === null && i + offset < 0)) {
+        b.side = "top";
+        b.target = atTop(first);
+        above.push(b);
+      } else {
+        b.side = "bottom";
+        b.target = atBottom(last);
+        below.push(b);
+      }
+      if (fresh) {
+        b.span = Math.max(
+          Math.abs(b.shown.left - b.target.left),
+          Math.abs(b.shown.right - b.target.right),
+        );
+      }
+    }
+    const bands = targets.map((target, j) => {
+      const b = live[j - offset];
+      if (b) {
+        b.target = target;
+        return b;
+      }
+      const from = j - offset < 0 ? paired[0] : paired[paired.length - 1];
+      const born = band(j - offset < 0 ? atTop(from.shown) : atBottom(from.shown), target);
+      born.from = from;
+      return born;
+    });
+    record.bands = [...above, ...bands, ...below];
   }
 
   // Which rules a box of this drawn size carries, given the last answer.
@@ -294,18 +562,65 @@
     return true;
   }
 
-  // Close each edge on its target. Returns whether any is still travelling.
+  // Close each band's edges on their targets. Returns whether any is still
+  // travelling; once none is, the bands that were leaving are dropped.
+  // Where a band is headed this frame. With STAGED_GROWTH a band changes
+  // along one axis at a time, so a forming step does not stub a line out
+  // past its band. A band arriving keeps the extent of the band it grows
+  // from until its height passes STAGE_SHARE of its target, then widens or
+  // narrows to its own. A band leaving does the reverse: it narrows to its
+  // neighbour's extent first, holding its outer edge (the one it shares
+  // with no band), and only collapses once STAGE_SHARE of that narrowing is
+  // done. Read from the band's state each frame, not from a clock, so a
+  // retarget mid-stage simply aims the stage at the new target.
+  function aim(b) {
+    if (!STAGED_GROWTH) {
+      return b.target;
+    }
+    if (b.from) {
+      const height = b.target.bottom - b.target.top;
+      const grown = b.shown.bottom - b.shown.top >= STAGE_SHARE * height;
+      if (grown || !record.bands.includes(b.from)) {
+        b.from = null;
+        return b.target;
+      }
+      return { ...b.target, left: b.from.shown.left, right: b.from.shown.right };
+    }
+    if (b.side !== null && b.span >= 1) {
+      const left = Math.abs(b.shown.left - b.target.left);
+      const right = Math.abs(b.shown.right - b.target.right);
+      if (Math.max(left, right) > (1 - STAGE_SHARE) * b.span) {
+        return b.side === "top"
+          ? { ...b.target, top: b.shown.top }
+          : { ...b.target, bottom: b.shown.bottom };
+      }
+    }
+    return b.target;
+  }
+
   function settle(share, still) {
-    const { shown, target } = record;
     let moving = false;
-    for (const edge of ["left", "top", "right", "bottom"]) {
-      const gap = target[edge] - shown[edge];
-      if (still || Math.abs(gap) < SETTLE_EPSILON) {
-        shown[edge] = target[edge];
-      } else {
-        shown[edge] += gap * share;
+    record.fastest = 0;
+    for (const b of record.bands) {
+      const { shown } = b;
+      const target = still ? b.target : aim(b);
+      // A band mid-stage is not done even if this stage's edges are home.
+      if (target !== b.target) {
         moving = true;
       }
+      for (const edge of ["left", "top", "right", "bottom"]) {
+        const gap = target[edge] - shown[edge];
+        if (still || Math.abs(gap) < SETTLE_EPSILON) {
+          shown[edge] = target[edge];
+        } else {
+          shown[edge] += gap * share;
+          record.fastest = Math.max(record.fastest, Math.abs(gap * share));
+          moving = true;
+        }
+      }
+    }
+    if (!moving) {
+      record.bands = record.bands.filter((b) => b.side === null);
     }
     return moving;
   }
@@ -314,6 +629,20 @@
     const still = reduceMotion.matches;
     const share = 1 - Math.exp(-(now - (record.tick ?? now)) / SETTLE_TAU_MS);
     let moving = settle(share, still);
+    // A band growing in height sweeps its edge across a line of glyphs, and
+    // nothing short of popping the step in avoids that. So the outline
+    // quietens while it travels: past 1px a frame its stroke eases toward
+    // MOVING_INK of the theme's, and back to full as the shape settles, on
+    // the same curve as the edges, so it rides the motion instead of
+    // flickering. The rules and labels keep their own opacity. Under reduced
+    // motion nothing travels, so nothing dims.
+    const inkGoal = record.fastest > 1 ? MOVING_INK : 1;
+    if (still || Math.abs(inkGoal - record.inkShare) < VISIBLE_EPSILON) {
+      record.inkShare = still ? 1 : inkGoal;
+    } else {
+      record.inkShare += (inkGoal - record.inkShare) * share;
+      moving = true;
+    }
 
     const fadeIn = still ? 1 : Math.min(1, (now - record.start) / FADE_IN_MS);
     const fadeOut = record.gone === null ? 1 : still ? 0 : 1 - (now - record.gone) / FADE_OUT_MS;
@@ -323,22 +652,28 @@
     set(svg, "display", "inline");
     set(svg, "opacity", String(round(fadeIn * Math.max(0, fadeOut))));
 
-    // Snap to the half pixel so a 1px line lands on one device row at 1x.
-    const left = Math.round(record.shown.left - window.scrollX);
-    const top = Math.round(record.shown.top - window.scrollY);
-    const right = Math.round(record.shown.right - window.scrollX);
-    const bottom = Math.round(record.shown.bottom - window.scrollY);
+    // The outline, then in Blueprint a fainter second pass half a pixel off:
+    // the doubled stroke is what reads as pencil rather than as a CSS border.
+    const { bands } = record;
+    const points = outline(bands, 0);
+    set(parts.box, "d", outlineData(points, 0, 0));
+    set(parts.box, "opacity", String(round(stroke.opacity * record.inkShare)));
+    if (stroke.passes > 1) {
+      set(parts.ghost, "d", outlineData(outline(bands, 1), 0.5, -0.3));
+      set(parts.ghost, "opacity", String(round(0.25 * record.inkShare)));
+    }
+
+    // The rules measure the bounding box of the shown bands, so W and H mean
+    // what they meant for one rectangle. Snapped to the half pixel, so a 1px
+    // line lands on one device row at 1x.
+    const left = Math.round(Math.min(...bands.map((b) => b.shown.left)) - window.scrollX);
+    const right = Math.round(Math.max(...bands.map((b) => b.shown.right)) - window.scrollX);
+    const top = Math.round(Math.min(...bands.map((b) => b.shown.top)) - window.scrollY);
+    const bottom = Math.round(Math.max(...bands.map((b) => b.shown.bottom)) - window.scrollY);
     const x = left + 0.5;
     const y = top + 0.5;
     const w = right - left - 1;
     const h = bottom - top - 1;
-
-    // The box, then in Blueprint a fainter second pass half a pixel off: the
-    // doubled stroke is what reads as pencil rather than as a CSS border.
-    set(parts.box, "d", boxData(x, y, w, h, 0));
-    if (stroke.passes > 1) {
-      set(parts.ghost, "d", boxData(x + 0.5, y - 0.3, w, h, 4));
-    }
 
     // Each axis carries its own rule once the box is big enough along it, so
     // a one-line selection already has a width rule. Decided from the box as
@@ -357,7 +692,7 @@
     const height = String(bottom - top);
     const midX = Math.round(x + w / 2);
     const midY = Math.round(y + h / 2);
-    setText(parts.compact, `${width} × ${height}`);
+    setText(parts.compact, `${width} \u00d7 ${height}`);
     // Mono glyphs share one advance; measure it once the box is on screen.
     record.advance ||= parts.compact.getComputedTextLength() / parts.compact.textContent.length;
     const advance = record.advance;
@@ -371,21 +706,20 @@
       set(parts.compact, "y", String(Math.round(below ? y + h + 12 : y - 12)));
     }
 
-    // Corner squares while either rule shows. A clean square is 4px about
-    // the corner, so its sides land on half pixels like the box's; a drawn
-    // one keeps 3.5.
+    // Corner squares while either rule shows, on the outline's outer corners.
+    // Not the bounding box's: on a stepped outline two of those float in
+    // empty space off the line, which reads as a mistake. A square grows with
+    // the shorter arm of its corner up to 8px, so one does not pop in as a
+    // step starts to form. A clean square is 4px about the corner, so its
+    // sides land on half pixels like the outline's; a drawn one keeps 3.5.
     const wobble = stroke.wobble;
     const squares = Math.max(wv, hv);
     set(parts.corners, "opacity", String(round(squares)));
     if (squares > 0) {
-      const side = wobble === 0 ? 4 : 3.5;
+      const full = wobble === 0 ? 4 : 3.5;
       let corners = "";
-      for (const [cx, cy] of [
-        [x, y],
-        [x + w, y],
-        [x, y + h],
-        [x + w, y + h],
-      ]) {
+      for (const [cx, cy, arm] of outerCorners(points)) {
+        const side = arm >= 8 ? full : round((full * arm) / 8);
         corners += `M${cx - side / 2} ${cy - side / 2}h${side}v${side}h${-side}Z`;
       }
       set(parts.corners, "d", corners);
@@ -419,7 +753,7 @@
     // No-break spaces: SVG text drops a leading or trailing plain space, which
     // ran the number into the sign ("300× 19"). Written as escapes:
     // ESLint's no-irregular-whitespace rejects the literal character.
-    const widthTail = `\u00a0×\u00a0${height}`;
+    const widthTail = `\u00a0\u00d7\u00a0${height}`;
     const widthShare = 1 - hv;
     set(parts.widthText, "opacity", String(round(wv)));
     set(parts.widthExtra, "opacity", String(round(wv * widthShare)));
@@ -446,7 +780,7 @@
 
     // The height label is rotated a quarter turn about its centre, so its
     // run along x before the turn is its run up the rule after it.
-    const heightHead = `${width}\u00a0×\u00a0`;
+    const heightHead = `${width}\u00a0\u00d7\u00a0`;
     const heightShare = 1 - wv;
     set(parts.heightText, "opacity", String(round(hv)));
     set(parts.heightExtra, "opacity", String(round(hv * heightShare)));
@@ -520,17 +854,9 @@
   // place.
   function onResize() {
     if (record && record.gone === null) {
-      retarget(selectionEdges());
+      retarget(selectionBands());
     }
     schedule();
-  }
-
-  function retarget(edges) {
-    if (!edges) {
-      return;
-    }
-    record.target = edges;
-    record.tick ??= performance.now();
   }
 
   function onSelectionChange() {
@@ -538,21 +864,22 @@
       return;
     }
     const selection = document.getSelection();
-    const edges = selection && !selection.isCollapsed ? selectionEdges() : null;
-    if (edges && (!record || record.gone !== null)) {
-      // A new box starts at its full shape, with its rules already drawn, and
-      // only fades in.
+    const targets = selection && !selection.isCollapsed ? selectionBands() : null;
+    if (targets && (!record || record.gone !== null)) {
+      // A new outline starts at its full shape, with its rules already drawn,
+      // and only fades in.
       const element = selectedElement(selection);
       const rules = rulesFor(
-        Math.round(edges.right) - Math.round(edges.left) - 1,
-        Math.round(edges.bottom) - Math.round(edges.top) - 1,
+        Math.round(Math.max(...targets.map((t) => t.right))) -
+          Math.round(Math.min(...targets.map((t) => t.left))) -
+          1,
+        Math.round(targets[targets.length - 1].bottom) - Math.round(targets[0].top) - 1,
         null,
       );
       record = {
         start: performance.now(),
         gone: null,
-        target: edges,
-        shown: { ...edges },
+        bands: targets.map((target) => band({ ...target }, target)),
         tick: null,
         rules,
         visible: {
@@ -561,27 +888,32 @@
           compact: rules.width || rules.height ? 0 : 1,
         },
         advance: 0,
+        fastest: 0,
+        inkShare: 1,
         ink: inkFor(element),
+        surface: surfaceFor(element),
         footer: Boolean(element?.closest("footer")),
       };
       stroke = readStroke();
       applyStroke();
-    } else if (edges) {
-      retarget(edges);
+    } else if (targets) {
+      retarget(targets);
     } else if (record && record.gone === null) {
       record.gone = performance.now();
     }
     schedule();
   }
 
-  // A theme pick swaps the stroke and the ink under a live box.
+  // A theme pick swaps the stroke, the ink and the halo under a live box.
   function onThemeChange() {
     if (!record) {
       return;
     }
     const selection = document.getSelection();
     if (record.gone === null && selection?.rangeCount) {
-      record.ink = inkFor(selectedElement(selection));
+      const element = selectedElement(selection);
+      record.ink = inkFor(element);
+      record.surface = surfaceFor(element);
     }
     stroke = readStroke();
     applyStroke();
@@ -603,9 +935,23 @@
     const ghost = create("path", { ...scaled, "stroke-width": "0.6", opacity: "0.25" }, lines);
     // Rule labels are placed from their start, so a label can grow a tail
     // (or, rotated, a head) without its number moving; the compact label is
-    // centred under the box.
-    const text = create("g", { fill: "currentColor", "dominant-baseline": "central" }, svg);
+    // centred under the box. Each label is haloed in the surface colour,
+    // stroked behind its fill (paint-order), so a number over words stays
+    // readable: 3px is 1.5px of surface round every glyph, and round joins
+    // keep the halo off the corners of the digits.
+    const text = create(
+      "g",
+      {
+        fill: "currentColor",
+        "dominant-baseline": "central",
+        "paint-order": "stroke",
+        "stroke-width": "3",
+        "stroke-linejoin": "round",
+      },
+      svg,
+    );
     parts = {
+      text,
       lines,
       box,
       ghost,
