@@ -589,6 +589,15 @@ body {
   }
 }
 
+/* Pencil-drawn marks, a /design trial only. The filter (#graphite-filter,
+   defined in design/PrecisionMarks) moves ink off the pixel by up to 1.25px,
+   which is exactly what the grid rules forbid for structure, so it belongs on
+   decorative marks and never on a rail, a Panel rule or the gutter ruling.
+   Blueprint only: a drafting sheet is where a hand-drawn line makes sense. */
+[data-theme="blueprint"] .graphite-stroke {
+  filter: url(#graphite-filter);
+}
+
 /* ========================================
    GRID TEXTURES
    Drawn tiles, not the spacing system — see the --grid-cell-size comment
