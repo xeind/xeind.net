@@ -589,13 +589,19 @@ body {
   }
 }
 
-/* Pencil-drawn marks, a /design trial only. The filter (#graphite-filter,
-   defined in design/PrecisionMarks) moves ink off the pixel by up to 1.25px,
+/* Pencil-drawn marks, a /design trial only. Each mark in design/PrecisionMarks
+   renders twice, ruled and freehand, and these two rules show one copy per
+   theme. The freehand copy's waver moves ink off the pixel by up to 1.25px,
    which is exactly what the grid rules forbid for structure, so it belongs on
    decorative marks and never on a rail, a Panel rule or the gutter ruling.
-   Blueprint only: a drafting sheet is where a hand-drawn line makes sense. */
-[data-theme="blueprint"] .graphite-stroke {
-  filter: url(#graphite-filter);
+   Blueprint only: a drafting sheet is where a hand-drawn line makes sense.
+   The waver is baked into the path data at build time; an SVG filter did it
+   first, and WebKit re-ran the filter on every scroll repaint. */
+[data-theme="blueprint"] .mark-ruled {
+  display: none;
+}
+:root:not([data-theme="blueprint"]) .mark-freehand {
+  display: none;
 }
 
 /* Text selection, after imdaryl.com: a light tint per line here, and a
