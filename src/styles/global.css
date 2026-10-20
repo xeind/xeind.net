@@ -631,8 +631,9 @@ footer ::selection {
    a theme change. Wobble is the most a line strays from straight, in px; 0
    means clean: straight, pixel-snapped lines on crispEdges. Passes is 2 for a
    faint second stroke beside the first. Opacity is the box stroke's.
-   Overshoot is how far each edge runs past its corners, in px; 0 closes the
-   box into one rectangle. Weight is the box stroke's width, in px.
+   The outline is always one closed path with mitred joins; overshoot is the
+   length of the stubs that continue both edges past each outer corner, in
+   px, and 0 draws none. Weight is the box stroke's width, in px.
 
    Kozo is ink on paper, so a pen, but a straight one. A 0.2px wobble was
    tried: on a 7px period it is under a device pixel, so the line hopped

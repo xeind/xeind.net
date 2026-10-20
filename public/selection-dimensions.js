@@ -50,12 +50,30 @@
   // starts.
   const STAGED_GROWTH = true;
   const STAGE_SHARE = 0.6;
+  // The side-rail rulers need this much gutter beside the sheet on both
+  // sides: a 7px tick and a rotated 10px label on a rail with less room
+  // crowd the viewport edge.
+  const RULER_GUTTER = 24;
+  // What the pointer redlines, and whether moving between two of them morphs
+  // one box into the next (true) or fades one out as the next fades in.
+  const INTERACTIVE = "a, button, [role=button], input, select, textarea, summary";
+  const HOVER_MORPH = true;
+  // The mark on the selection outline's outer corners: the site's turned
+  // square, or an L bracket (see draw()).
+  const CORNER_MARK = "diamond";
 
   let svg = null;
   let parts = null;
   let record = null;
   let stroke = null;
   let frame = 0;
+  // The hover redlines: at most one live, and in crossfade one more leaving.
+  let hovers = [];
+  let pointer = null;
+  let hitFrame = 0;
+  // Hover boxes take ids from their own range, so a hover's wobble never
+  // repeats the selection's.
+  let nextHoverId = 5000;
 
   // Value noise: a hash per 7px step, smoothstepped between neighbours, so a
   // line bends gently instead of jittering pixel to pixel.
@@ -152,29 +170,19 @@
     return points;
   }
 
-  // The outline's path. With no overshoot it is one closed path, so its
-  // corners join square. With overshoot each edge is its own line, running
-  // past its outer corners like a figure ruled by hand. An edge under a
-  // pixel is a band still forming or leaving; it is skipped before the
-  // overshoot, which would otherwise turn it into a 3px dash.
+  // The outline's path: one closed path in every theme, so every corner is
+  // one mitred point. Drawing each edge as its own butt-capped line, as an
+  // earlier version did to let the overshoot run past outer corners, left
+  // the inner corners broken: at one the vertical ran half a pixel past the
+  // horizontal, at the other the join left a notch. With wobble each edge is
+  // walked on its own seed and pinned at both ends, so the path closes on the
+  // corner points exactly. The overshoot is then laid over the closed path
+  // as two short straight stubs at each outer corner, continuing its two
+  // edges past it; inner corners get none, since there it poked into the
+  // shape over the text. An edge under a pixel is a band still forming or
+  // leaving; it is skipped, so it can neither bend the path nor grow stubs.
   function outlineData(points, dx, dy) {
     const { wobble, overshoot: o } = stroke;
-    if (o === 0) {
-      let data = "";
-      let last = null;
-      for (const [x, y] of points) {
-        if (!last || x !== last[0] || y !== last[1]) {
-          data += `${data ? "L" : "M"}${x + dx} ${y + dy}`;
-          last = [x, y];
-        }
-      }
-      return `${data}Z`;
-    }
-    // At an inner corner the overshoot poked 1.5px into the shape, over the
-    // text; there the two edges meet exactly, their wobble pinned so they
-    // meet on the corner. A corner is outer where the clockwise walk turns
-    // right, judged between the edges either side of it once the ones under
-    // a pixel are set aside.
     const edges = [];
     for (let k = 0; k < points.length; k += 1) {
       const [x0, y0, seed] = points[k];
@@ -184,31 +192,45 @@
         edges.push({ x0, y0, x1, y1, seed, ux: (x1 - x0) / length, uy: (y1 - y0) / length });
       }
     }
-    const outer = (a, b) => a.ux * b.uy - a.uy * b.ux > 0.5;
+    if (!edges.length) {
+      return "";
+    }
     let data = "";
-    edges.forEach((edge, m) => {
-      const before = outer(edges[(m - 1 + edges.length) % edges.length], edge);
-      const after = outer(edge, edges[(m + 1) % edges.length]);
-      const start = before ? o : 0;
-      const end = after ? o : 0;
-      data += lineData(
-        edge.x0 - edge.ux * start + dx,
-        edge.y0 - edge.uy * start + dy,
-        edge.x1 + edge.ux * end + dx,
-        edge.y1 + edge.uy * end + dy,
+    for (const edge of edges) {
+      const line = lineData(
+        edge.x0 + dx,
+        edge.y0 + dy,
+        edge.x1 + dx,
+        edge.y1 + dy,
         edge.seed,
         wobble,
-        !before,
-        !after,
+        true,
+        true,
       );
-    });
+      // Each walk opens with a move; past the first, it continues the path.
+      data += data ? `L${line.slice(1)}` : line;
+    }
+    data += "Z";
+    if (o > 0) {
+      // Outer where the clockwise walk turns right.
+      edges.forEach((edge, m) => {
+        const next = edges[(m + 1) % edges.length];
+        if (edge.ux * next.uy - edge.uy * next.ux > 0.5) {
+          const x = edge.x1 + dx;
+          const y = edge.y1 + dy;
+          data +=
+            `M${round(x)} ${round(y)}L${round(x + edge.ux * o)} ${round(y + edge.uy * o)}` +
+            `M${round(x)} ${round(y)}L${round(x - next.ux * o)} ${round(y - next.uy * o)}`;
+        }
+      });
+    }
     return data;
   }
 
   // The outline's outer corners, where the clockwise walk turns right, each
-  // with the length of its shorter arm. Repeated and collinear points are
-  // dropped first, so a band still forming adds no corner until its step is
-  // real.
+  // with the length of its shorter arm and the unit directions of the edges
+  // arriving and leaving. Repeated and collinear points are dropped first, so
+  // a band still forming adds no corner until its step is real.
   function outerCorners(points) {
     const ring = [];
     for (const point of points) {
@@ -223,15 +245,32 @@
     ) {
       ring.pop();
     }
+    const n = ring.length;
+    const outer = ring.map(([x, y], k) => {
+      const [px, py] = ring[(k - 1 + n) % n];
+      const [nx, ny] = ring[(k + 1) % n];
+      return (x - px) * (ny - y) - (y - py) * (nx - x) > 0;
+    });
     const corners = [];
-    for (let k = 0; k < ring.length; k += 1) {
-      const [px, py] = ring[(k - 1 + ring.length) % ring.length];
-      const [x, y] = ring[k];
-      const [nx, ny] = ring[(k + 1) % ring.length];
-      const cross = (x - px) * (ny - y) - (y - py) * (nx - x);
-      if (cross > 0) {
-        corners.push([x, y, Math.min(Math.hypot(x - px, y - py), Math.hypot(nx - x, ny - y))]);
+    for (let k = 0; k < n; k += 1) {
+      if (!outer[k]) {
+        continue;
       }
+      const [px, py] = ring[(k - 1 + n) % n];
+      const [x, y] = ring[k];
+      const [nx, ny] = ring[(k + 1) % n];
+      const into = Math.hypot(x - px, y - py);
+      const out = Math.hypot(nx - x, ny - y);
+      corners.push({
+        x,
+        y,
+        arm: Math.min(into, out),
+        into: [(x - px) / into, (y - py) / into],
+        out: [(nx - x) / out, (ny - y) / out],
+        // The arms to the neighbouring corners, where those are outer too.
+        before: outer[(k - 1 + n) % n] ? into : Infinity,
+        after: outer[(k + 1) % n] ? out : Infinity,
+      });
     }
     return corners;
   }
@@ -429,7 +468,7 @@
   // geometricPrecision: a wobble snapped to the pixel grid turns into stairs.
   function applyStroke() {
     const clean = stroke.wobble === 0;
-    svg.style.color = record.ink;
+    parts.selection.style.color = record.ink;
     set(svg, "data-anchor", record.pinned ? "viewport" : "page");
     set(parts.text, "stroke", record.surface);
     set(parts.lines, "shape-rendering", clean ? "crispEdges" : "geometricPrecision");
@@ -438,6 +477,12 @@
     parts.ghost.style.display = stroke.passes > 1 ? "" : "none";
     // A 0.8px rule antialiases to a soft grey row; clean mode rules a full one.
     set(parts.marks, "stroke-width", clean ? "1" : "0.8");
+    set(parts.rulerTicks, "stroke-width", clean ? "1" : "0.8");
+    // A diamond is filled with the surface, as the halo is, so it covers the
+    // lines crossing under it; a bracket is open.
+    const diamond = CORNER_MARK === "diamond";
+    set(parts.corners, "fill", diamond ? record.surface : "none");
+    set(parts.corners, "shape-rendering", diamond || !clean ? "geometricPrecision" : "crispEdges");
   }
 
   // The selection's line bands, each but the last extended down to the next
@@ -673,7 +718,8 @@
     if (fadeOut <= 0) {
       return { keep: false, busy: false };
     }
-    show(round(fadeIn * Math.max(0, fadeOut)));
+    show();
+    fade(parts.selection, round(fadeIn * Math.max(0, fadeOut)));
 
     // The outline, then in Blueprint a fainter second pass half a pixel off:
     // the doubled stroke is what reads as pencil rather than as a CSS border.
@@ -736,21 +782,58 @@
       set(parts.compact, "y", String(Math.round(below ? y + h + 12 : y - 12)));
     }
 
-    // Corner squares while either rule shows, on the outline's outer corners.
-    // Not the bounding box's: on a stepped outline two of those float in
-    // empty space off the line, which reads as a mistake. A square grows with
-    // the shorter arm of its corner up to 8px, so one does not pop in as a
-    // step starts to form. A clean square is 4px about the corner, so its
-    // sides land on half pixels like the outline's; a drawn one keeps 3.5.
+    // Corner marks while either rule shows, on the outline's outer corners;
+    // inner corners take none. Not the bounding box's: on a stepped outline
+    // two of those float in empty space off the line, which reads as a
+    // mistake. A mark grows with the shorter arm of its corner up to 8px, so
+    // one does not pop in as a step starts to form.
+    //
+    // "diamond" is the site's own corner mark (ui/CornerDiamond): a square
+    // turned 45° on the corner point, a 1px stroke in the ink over an opaque
+    // fill of the surface, which covers the two lines crossing under it so
+    // nothing doubles. Its half-diagonal is its side / √2. Diagonals cannot
+    // land on the pixel grid, so it is drawn geometricPrecision in every
+    // theme, as the CSS mark is. "bracket" is an L of two 6px ticks set 2px
+    // outside the corner, along its two edges, pixel-snapped like the
+    // outline in the clean themes.
     const wobble = stroke.wobble;
-    const squares = Math.max(wv, hv);
-    set(parts.corners, "opacity", String(round(squares)));
-    if (squares > 0) {
-      const full = wobble === 0 ? 4 : 3.5;
+    const marked = Math.max(wv, hv);
+    set(parts.corners, "opacity", String(round(marked)));
+    if (marked > 0) {
       let corners = "";
-      for (const [cx, cy, arm] of outerCorners(points)) {
-        const side = arm >= 8 ? full : round((full * arm) / 8);
-        corners += `M${cx - side / 2} ${cy - side / 2}h${side}v${side}h${-side}Z`;
+      const found = outerCorners(points);
+      // A diamond scales to its box: its side is a quarter of the corner's
+      // shorter arm, up to the Panels' 8px, so a 17px line takes about 4px
+      // and a tall step the full mark, and it grows in with a forming step.
+      // Two outer corners closer than two sides apart along an edge would
+      // crowd it, so neither is marked and the line's own corner shows; under
+      // 3px a diamond is a speck, so none is drawn.
+      const sides = found.map(({ arm }) => Math.min(8, arm / 4, arm));
+      const count = found.length;
+      for (const [k, { x: cx, y: cy, arm, into, out, before, after }] of found.entries()) {
+        const grow = Math.min(1, arm / 8);
+        if (CORNER_MARK === "diamond") {
+          const side = sides[k];
+          const crowded =
+            before < 2 * Math.max(side, sides[(k - 1 + count) % count]) ||
+            after < 2 * Math.max(side, sides[(k + 1) % count]);
+          if (side < 3 || crowded) {
+            continue;
+          }
+          const half = round(side / Math.SQRT2);
+          corners += `M${cx} ${cy - half}L${cx + half} ${cy}L${cx} ${cy + half}L${cx - half} ${cy}Z`;
+        } else {
+          const reach = Math.round(6 * grow);
+          if (reach < 1) {
+            continue;
+          }
+          // Outward is left of each edge on the clockwise walk.
+          const bx = cx + 2 * (into[1] + out[1]);
+          const by = cy - 2 * (into[0] + out[0]);
+          corners +=
+            `M${bx - into[0] * reach} ${by - into[1] * reach}L${bx} ${by}` +
+            `L${bx + out[0] * reach} ${by + out[1] * reach}`;
+        }
       }
       set(parts.corners, "d", corners);
     }
@@ -844,53 +927,150 @@
     }
     set(parts.marks, "d", marks);
 
+    moving = drawRulers(top, bottom, share, still) || moving;
+
     return { keep: true, busy: moving || fadeIn < 1 || record.gone !== null };
+  }
+
+  // The selection's height on the sheet's side rails, after imdaryl.com's
+  // rulers: on each rail a tick at the selection's top and bottom, a faint
+  // band between, and the height at mid-band, in the box's ink and label.
+  // The rails are main's left and right hairlines, read from its rect each
+  // draw: the left on the sheet's first column, the right on the column just
+  // outside its last (Layout.astro). They show only where the gutters can
+  // hold them, and not for a selection pinned to the viewport, which sits in
+  // the footer, off the sheet.
+  //
+  // The rulers form from the selection's centre, the band's half-height and
+  // the count both following their visibility, and retract the same way.
+  // Unlike the box they form on a new selection too: they appear away from
+  // the pointer, so growing is how the eye finds them. Drawn in the overlay's
+  // page coordinates, they scroll with the text and need no redraw.
+  function drawRulers(top, bottom, share, still) {
+    const sheet = record.pinned ? null : document.querySelector(".edge-glow-shell-vertical");
+    const rect = sheet?.getBoundingClientRect();
+    // The right gutter from clientWidth, so a scrollbar is not counted as one.
+    const fits =
+      rect &&
+      rect.left >= RULER_GUTTER &&
+      document.documentElement.clientWidth - rect.right >= RULER_GUTTER;
+    const moving = ease("ruler", fits ? 1 : 0, share, still);
+    const rv = record.visible.ruler;
+    let band = "";
+    let ticks = "";
+    for (const label of parts.rulerLabels) {
+      set(label, "opacity", String(round(rv)));
+    }
+    if (rv > 0 && rect) {
+      const tick = (stroke.wobble * 2) / 3;
+      const mid = (top + bottom) / 2;
+      const reach = (rv * (bottom - top)) / 2;
+      const bandTop = Math.round(mid - reach);
+      const bandBottom = Math.round(mid + reach);
+      const midY = Math.round(mid);
+      const count = String(Math.round(rv * (bottom - top)));
+      const columns = [rect.left, rect.right].map(
+        (edge) => Math.round(edge + window.scrollX) + 0.5,
+      );
+      columns.forEach((cx, i) => {
+        if (bandBottom - bandTop >= 1) {
+          // 5px about the rail, so its sides sit on whole pixels.
+          band += `M${cx - 2.5} ${bandTop}h5V${bandBottom}h-5Z`;
+        }
+        ticks +=
+          lineData(cx - 3.5 * rv, bandTop + 0.5, cx + 3.5 * rv, bandTop + 0.5, 16 + i * 2, tick) +
+          lineData(
+            cx - 3.5 * rv,
+            bandBottom - 0.5,
+            cx + 3.5 * rv,
+            bandBottom - 0.5,
+            17 + i * 2,
+            tick,
+          );
+        const label = parts.rulerLabels[i];
+        setText(label, count);
+        set(label, "x", String(cx));
+        set(label, "y", String(midY));
+        set(label, "transform", `rotate(-90 ${cx} ${midY})`);
+      });
+    }
+    set(parts.rulerBand, "d", band);
+    set(parts.rulerTicks, "d", ticks);
+    return moving;
   }
 
   // The overlay is shown and hidden through its style, never the display
   // attribute: a presentation attribute loses to any stylesheet rule, and
   // Tailwind's preflight sets svg { display: block }, so display="none" left
   // the last fade frame painted under every deselected box, a ghost label
-  // that never went. Hiding also takes the opacity to 0, so the content is
-  // invisible even if the hide ever fails.
-  function show(opacity) {
+  // that never went. Hiding a group also takes its opacity to 0, so the
+  // content is invisible even if the hide ever fails.
+  //
+  // The svg is shown while anything is drawn; the selection and each hover
+  // fade in their own group, so one can come and go under the other.
+  function show() {
     if (svg.style.display) {
       svg.style.display = "";
-    }
-    const value = String(opacity);
-    if (svg.style.opacity !== value) {
-      svg.style.opacity = value;
     }
   }
 
   function hide() {
-    svg.style.opacity = "0";
     svg.style.display = "none";
   }
 
+  function fade(group, opacity) {
+    if (group.style.display) {
+      group.style.display = "";
+    }
+    const value = String(opacity);
+    if (group.style.opacity !== value) {
+      group.style.opacity = value;
+    }
+  }
+
+  function vanish(group) {
+    group.style.opacity = "0";
+    group.style.display = "none";
+  }
+
   // One frame per event. The loop only keeps itself alive while a fade or a
-  // reshape runs; at rest it stops, and the next selectionchange or scroll
-  // draws again.
+  // reshape runs; at rest it stops, and the next selectionchange, pointer
+  // move or pinned scroll draws again.
   function paint() {
     frame = 0;
     if (!svg) {
       return;
     }
-    if (!record) {
-      hide();
-      return;
-    }
     const now = performance.now();
-    const result = draw(now);
-    if (!result.keep) {
-      record = null;
+    let busy = false;
+    if (record) {
+      const result = draw(now);
+      if (result.keep) {
+        // At rest the clock stops too: the next reshape starts timing from
+        // its own event, not from the last frame seconds ago, which would
+        // jump it.
+        record.tick = result.busy ? now : null;
+        busy = result.busy;
+      } else {
+        record = null;
+        vanish(parts.selection);
+      }
+    }
+    hovers = hovers.filter((hover) => {
+      const result = drawHover(hover, now);
+      if (!result.keep) {
+        vanish(hover.parts.group);
+        return false;
+      }
+      hover.tick = result.busy ? now : null;
+      busy = busy || result.busy;
+      return true;
+    });
+    if (!record && !hovers.length) {
       hide();
       return;
     }
-    // At rest the clock stops too: the next reshape starts timing from its
-    // own event, not from the last frame seconds ago, which would jump it.
-    record.tick = result.busy ? now : null;
-    if (result.busy) {
+    if (busy) {
       frame = window.requestAnimationFrame(paint);
     }
   }
@@ -899,6 +1079,156 @@
     if (!frame) {
       frame = window.requestAnimationFrame(paint);
     }
+  }
+
+  // Hover redlines, after imdaryl.com's cursor callouts: the outline style
+  // of the selection box, as one rectangle on the element's border box, with
+  // its W × H under it. Each hover keeps its own record and group, so a
+  // selection and a hover show at once. The box is in page coordinates, so
+  // a scroll carries it with the element; the hit test reruns only when the
+  // pointer moves, once a frame.
+  //
+  // Not while a button is held, or a drag-select across links would spray
+  // boxes; not while the selection is pinned to the viewport, whose overlay
+  // coordinates a page box cannot share; and not on elements in a fixed
+  // ancestor (the footer) for the same reason, and because the footer's ink
+  // rules leave a hover there unreadable. Off under reduced motion.
+  function boxOf(element) {
+    const r = element.getBoundingClientRect();
+    return {
+      left: r.left + window.scrollX,
+      top: r.top + window.scrollY,
+      right: r.right + window.scrollX,
+      bottom: r.bottom + window.scrollY,
+    };
+  }
+
+  function onPointerMove(event) {
+    pointer = { x: event.clientX, y: event.clientY, pressed: event.buttons !== 0 };
+    if (!hitFrame) {
+      hitFrame = window.requestAnimationFrame(hitTest);
+    }
+  }
+
+  function onPointerOut(event) {
+    if (!event.relatedTarget) {
+      pointer = null;
+      hoverOn(null);
+    }
+  }
+
+  function hitTest() {
+    hitFrame = 0;
+    if (!svg || !pointer) {
+      return;
+    }
+    let target = null;
+    if (!pointer.pressed && !reduceMotion.matches && !record?.pinned) {
+      const element = document.elementFromPoint(pointer.x, pointer.y)?.closest(INTERACTIVE);
+      if (element && !pinnedFor(element)) {
+        target = element;
+      }
+    }
+    hoverOn(target);
+  }
+
+  function applyHoverStroke(hover) {
+    const { group, lines, box, ghost, text } = hover.parts;
+    const clean = stroke.wobble === 0;
+    group.style.color = hover.ink;
+    set(text, "stroke", hover.surface);
+    set(lines, "shape-rendering", clean ? "crispEdges" : "geometricPrecision");
+    set(box, "stroke-width", String(stroke.weight));
+    set(box, "opacity", String(stroke.opacity));
+    ghost.style.display = stroke.passes > 1 ? "" : "none";
+  }
+
+  function hoverOn(element) {
+    const live = hovers.find((hover) => hover.gone === null);
+    if ((live?.element ?? null) === element) {
+      return;
+    }
+    const now = performance.now();
+    if (live && (!element || !HOVER_MORPH)) {
+      live.gone = now;
+    }
+    if (element) {
+      stroke ??= readStroke();
+      if (!record) {
+        set(svg, "data-anchor", "page");
+      }
+      if (HOVER_MORPH && live) {
+        // One box travels to the next element on the edges' curve.
+        live.element = element;
+        live.target = boxOf(element);
+        live.tick ??= now;
+        live.ink = inkFor(element);
+        live.surface = surfaceFor(element);
+        applyHoverStroke(live);
+      } else {
+        // The parts no other hover holds; with two already leaving, the
+        // older one gives its parts up.
+        let free = parts.hovers.find((slot) => !hovers.some((hover) => hover.parts === slot));
+        if (!free) {
+          const oldest = hovers.shift();
+          vanish(oldest.parts.group);
+          free = oldest.parts;
+        }
+        const target = boxOf(element);
+        const hover = {
+          id: nextHoverId++,
+          element,
+          target,
+          shown: { ...target },
+          start: now,
+          gone: null,
+          tick: null,
+          parts: free,
+          ink: inkFor(element),
+          surface: surfaceFor(element),
+        };
+        applyHoverStroke(hover);
+        hovers.push(hover);
+      }
+    }
+    schedule();
+  }
+
+  function drawHover(hover, now) {
+    const share = 1 - Math.exp(-(now - (hover.tick ?? now)) / SETTLE_TAU_MS);
+    let moving = false;
+    for (const edge of ["left", "top", "right", "bottom"]) {
+      const gap = hover.target[edge] - hover.shown[edge];
+      if (Math.abs(gap) < SETTLE_EPSILON) {
+        hover.shown[edge] = hover.target[edge];
+      } else {
+        hover.shown[edge] += gap * share;
+        moving = true;
+      }
+    }
+    const fadeIn = Math.min(1, (now - hover.start) / FADE_IN_MS);
+    const fadeOut = hover.gone === null ? 1 : 1 - (now - hover.gone) / FADE_OUT_MS;
+    if (fadeOut <= 0) {
+      return { keep: false, busy: false };
+    }
+    const { group, box, ghost, label } = hover.parts;
+    show();
+    fade(group, round(fadeIn * fadeOut));
+    const bands = [{ id: hover.id, shown: hover.shown }];
+    set(box, "d", outlineData(outline(bands, 0), 0, 0));
+    if (stroke.passes > 1) {
+      set(ghost, "d", outlineData(outline(bands, 1), 0.5, -0.3));
+    }
+    const left = Math.round(hover.shown.left);
+    const right = Math.round(hover.shown.right);
+    const top = Math.round(hover.shown.top);
+    const bottom = Math.round(hover.shown.bottom);
+    // Below the box, or above it near the viewport's bottom edge.
+    const below = bottom + 16 < window.innerHeight + window.scrollY;
+    setText(label, `${right - left} \u00d7 ${bottom - top}`);
+    set(label, "x", String(Math.round((left + right) / 2)));
+    set(label, "y", String(below ? bottom + 11 : top - 11));
+    return { keep: true, busy: moving || fadeIn < 1 || hover.gone !== null };
   }
 
   // A reflow moves the text under a live box; a box fading out keeps its last
@@ -940,6 +1270,7 @@
           width: rules.width ? 1 : 0,
           height: rules.height ? 1 : 0,
           compact: rules.width || rules.height ? 0 : 1,
+          ruler: 0,
         },
         advance: 0,
         fastest: 0,
@@ -951,6 +1282,12 @@
       };
       stroke = readStroke();
       applyStroke();
+      // A pinned selection puts the overlay in viewport coordinates, which a
+      // hover box in page coordinates cannot share; it goes at once.
+      if (pinned) {
+        hovers.forEach((hover) => vanish(hover.parts.group));
+        hovers = [];
+      }
     } else if (targets) {
       retarget(targets);
     } else if (record && record.gone === null) {
@@ -959,24 +1296,62 @@
     schedule();
   }
 
-  // A theme pick swaps the stroke, the ink and the halo under a live box.
+  // A theme pick swaps the stroke, the ink and the halo under a live box and
+  // a live hover.
   function onThemeChange() {
-    if (!record) {
+    if (!record && !hovers.length) {
       return;
     }
-    const selection = document.getSelection();
-    if (record.gone === null && selection?.rangeCount) {
-      const element = selectedElement(selection);
-      record.ink = inkFor(element);
-      record.surface = surfaceFor(element);
-    }
     stroke = readStroke();
-    applyStroke();
+    if (record) {
+      const selection = document.getSelection();
+      if (record.gone === null && selection?.rangeCount) {
+        const element = selectedElement(selection);
+        record.ink = inkFor(element);
+        record.surface = surfaceFor(element);
+      }
+      applyStroke();
+    }
+    for (const hover of hovers) {
+      hover.ink = inkFor(hover.element);
+      hover.surface = surfaceFor(hover.element);
+      applyHoverStroke(hover);
+    }
     schedule();
   }
 
+  // Each label is haloed in the surface colour, stroked behind its fill
+  // (paint-order), so a number over words stays readable: 3px is 1.5px of
+  // surface round every glyph, and round joins keep the halo off the corners
+  // of the digits.
+  const LABELS = {
+    fill: "currentColor",
+    "dominant-baseline": "central",
+    "paint-order": "stroke",
+    "stroke-width": "3",
+    "stroke-linejoin": "round",
+  };
+  const SCALED = { "vector-effect": "non-scaling-stroke" };
+
+  // One hover's parts: its own group, so it fades and takes its ink apart
+  // from the selection.
+  function hoverParts() {
+    const group = create("g", {}, svg);
+    group.style.display = "none";
+    const lines = create("g", { fill: "none", stroke: "currentColor" }, group);
+    const text = create("g", LABELS, group);
+    return {
+      group,
+      lines,
+      text,
+      box: create("path", { ...SCALED, "stroke-width": "1" }, lines),
+      ghost: create("path", { ...SCALED, "stroke-width": "0.6", opacity: "0.25" }, lines),
+      label: create("text", { "text-anchor": "middle" }, text),
+    };
+  }
+
   // The overlay's parts, built once and only re-attributed per frame. Font
-  // and colour come from tokens: the ink is the svg's `color`, and every
+  // and colour come from tokens: each group's ink is its `color`, and every
   // stroke and fill is currentColor.
   function build() {
     svg = create("svg", { class: "selection-dimensions", "aria-hidden": "true" });
@@ -984,47 +1359,57 @@
     svg.style.font = "10px var(--font-mono, monospace)";
     // Tabular figures, so a counting number keeps its width digit to digit.
     svg.style.fontVariantNumeric = "tabular-nums";
-    const lines = create("g", { fill: "none", stroke: "currentColor" }, svg);
-    const scaled = { "vector-effect": "non-scaling-stroke" };
+    const selection = create("g", {}, svg);
+    selection.style.display = "none";
+    const lines = create("g", { fill: "none", stroke: "currentColor" }, selection);
     // In paint order: the box, its second pass, then the marks over them.
-    const box = create("path", { ...scaled, "stroke-width": "1" }, lines);
-    const ghost = create("path", { ...scaled, "stroke-width": "0.6", opacity: "0.25" }, lines);
+    const box = create("path", { ...SCALED, "stroke-width": "1" }, lines);
+    const ghost = create("path", { ...SCALED, "stroke-width": "0.6", opacity: "0.25" }, lines);
     // Rule labels are placed from their start, so a label can grow a tail
     // (or, rotated, a head) without its number moving; the compact label is
-    // centred under the box. Each label is haloed in the surface colour,
-    // stroked behind its fill (paint-order), so a number over words stays
-    // readable: 3px is 1.5px of surface round every glyph, and round joins
-    // keep the halo off the corners of the digits.
-    const text = create(
-      "g",
-      {
-        fill: "currentColor",
-        "dominant-baseline": "central",
-        "paint-order": "stroke",
-        "stroke-width": "3",
-        "stroke-linejoin": "round",
-      },
-      svg,
-    );
+    // centred under the box.
+    const text = create("g", LABELS, selection);
     parts = {
+      selection,
       text,
       lines,
       box,
       ghost,
-      corners: create("path", { ...scaled, "stroke-width": "1" }, lines),
-      marks: create("path", { ...scaled, opacity: "0.7" }, lines),
+      // Round joins give the diamond CornerDiamond's 1px rounding.
+      corners: create(
+        "path",
+        { ...SCALED, "stroke-width": "1", "stroke-linejoin": "round" },
+        lines,
+      ),
+      marks: create("path", { ...SCALED, opacity: "0.7" }, lines),
+      // The rail band is a wash, Daryl's 16% of the ink; its ticks are marks,
+      // at the rules' 0.7 rather than his 55%, so they read as the same ink
+      // as the rules beside the box.
+      rulerBand: create(
+        "path",
+        { fill: "currentColor", stroke: "none", "fill-opacity": "0.16" },
+        lines,
+      ),
+      rulerTicks: create("path", { ...SCALED, opacity: "0.7" }, lines),
       compact: create("text", { "text-anchor": "middle" }, text),
       widthText: create("text", {}, text),
       widthExtra: create("text", {}, text),
       heightText: create("text", {}, text),
       heightExtra: create("text", { "text-anchor": "end" }, text),
+      rulerLabels: [
+        create("text", { "text-anchor": "middle" }, text),
+        create("text", { "text-anchor": "middle" }, text),
+      ],
     };
+    // Two hover groups, so in crossfade one can leave as the next arrives.
+    parts.hovers = [hoverParts(), hoverParts()];
     document.body.append(svg);
   }
 
   // ClientRouter swaps <body> on navigation, which takes the overlay with it.
   function init() {
     record = null;
+    hovers = [];
     if (svg?.isConnected) {
       return;
     }
@@ -1053,6 +1438,8 @@
     { passive: true },
   );
   window.addEventListener("resize", onResize, { passive: true });
+  document.addEventListener("pointermove", onPointerMove, { passive: true });
+  document.addEventListener("mouseout", onPointerOut, { passive: true });
   new MutationObserver(onThemeChange).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"],
