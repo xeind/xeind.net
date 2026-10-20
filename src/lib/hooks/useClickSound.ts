@@ -3,17 +3,31 @@ import { useEffect } from "react";
 let audioContext: AudioContext | null = null;
 let audioPrimed = false;
 
+/* Every gain starts and ends here, never at 0: an exponential ramp cannot
+   leave or reach 0, and a step from silence to full is the pop the ramp is
+   there to remove. 1e-4 is -80 dB, below anything a speaker resolves. */
+const SILENT_GAIN = 1e-4;
+/* The rise to a tap's peak. Long enough that no sample jumps further than
+   the ramp allows, short enough that the tap still reads as a tap. */
+const TAP_ATTACK_S = 0.002;
+
+/** The shared context, or null when no sound may play: before the first
+ * gesture has made it, or while the footer's sound switch is off. The switch
+ * lives in public/hero-interactions.js, which writes `data-sound` on <html>;
+ * it is read at play time because the islands hydrate at different moments. */
 function getAudioContext(): AudioContext | null {
-  if (typeof window === "undefined") return null;
-  if (!audioContext) {
-    audioContext = new AudioContext();
+  if (typeof document === "undefined" || !audioContext) return null;
+  if (document.documentElement.dataset.sound !== "on") return null;
+  if (audioContext.state === "suspended") {
+    void audioContext.resume();
   }
   return audioContext;
 }
 
 async function primeAudioContext() {
-  const ctx = getAudioContext();
-  if (!ctx || audioPrimed) return;
+  if (audioPrimed) return;
+  audioPrimed = true;
+  const ctx = (audioContext ??= new AudioContext());
 
   if (ctx.state === "suspended") {
     await ctx.resume();
@@ -24,17 +38,18 @@ async function primeAudioContext() {
   const gain = ctx.createGain();
 
   source.buffer = buffer;
-  gain.gain.value = 0.0001;
+  gain.gain.value = SILENT_GAIN;
 
   source.connect(gain);
   gain.connect(ctx.destination);
   source.start(ctx.currentTime);
-
-  audioPrimed = true;
 }
 
-/** Wires up the one-time listeners that unlock the shared AudioContext on
- * first interaction (autoplay policy). */
+/** Wires up the one-time listeners that make the shared AudioContext on the
+ * first pointerdown or keydown. Those are user activations under the autoplay
+ * policy; a context made on hover starts suspended and Chrome warns about it.
+ * Sounds asked for before then are skipped. Capture phase, so the context
+ * exists before a card's own onPointerDown asks for the thump. */
 export function useAudioUnlock() {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -43,34 +58,29 @@ export function useAudioUnlock() {
       void primeAudioContext();
     };
 
-    window.addEventListener("pointerenter", unlockAudio, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("pointermove", unlockAudio, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("pointerdown", unlockAudio, { once: true });
-    window.addEventListener("keydown", unlockAudio, { once: true });
+    window.addEventListener("pointerdown", unlockAudio, { once: true, capture: true });
+    window.addEventListener("keydown", unlockAudio, { once: true, capture: true });
 
     return () => {
-      window.removeEventListener("pointerenter", unlockAudio);
-      window.removeEventListener("pointermove", unlockAudio);
-      window.removeEventListener("pointerdown", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("pointerdown", unlockAudio, { capture: true });
+      window.removeEventListener("keydown", unlockAudio, { capture: true });
     };
   }, []);
 }
 
 /**
  * One synth for every click: a filtered noise burst. The three sounds are the
- * same instrument with different settings — length and decay set how hard the
- * tap is, frequency and Q where it sits, gain how close. Jitter keeps repeats
- * from sounding sampled.
+ * same instrument with different settings — decay sets how hard the tap is,
+ * frequency and Q where it sits, gain how close. Jitter keeps repeats from
+ * sounding sampled. The envelope is on the gain, not baked into the noise:
+ * a 2ms rise from silence, then the same fall the noise used to carry,
+ * e^(-i/decay) per sample, down to silence. The burst ends where the fall
+ * does, so nothing is cut off mid-ring. The rise moved each peak to where
+ * the filter has rung up, which made the taps louder; the gains below are
+ * the old ones trimmed until each tap's mean energy measured within 1 dB of
+ * what it had with the instant onset.
  */
 function playTap(opts: {
-  lengthS: number;
   decay: number;
   freq: number;
   freqJitter: number;
@@ -81,15 +91,16 @@ function playTap(opts: {
   const ctx = getAudioContext();
   if (!ctx) return;
 
-  if (ctx.state === "suspended") {
-    ctx.resume();
-  }
+  const t0 = ctx.currentTime;
+  const peak = opts.gain + Math.random() * opts.gainJitter;
+  const fallS = (opts.decay / ctx.sampleRate) * Math.log(peak / SILENT_GAIN);
+  const endS = TAP_ATTACK_S + fallS;
 
   const noise = ctx.createBufferSource();
-  const buf = ctx.createBuffer(1, ctx.sampleRate * opts.lengthS, ctx.sampleRate);
+  const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * endS), ctx.sampleRate);
   const data = buf.getChannelData(0);
   for (let i = 0; i < data.length; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / opts.decay);
+    data[i] = Math.random() * 2 - 1;
   }
   noise.buffer = buf;
 
@@ -99,35 +110,35 @@ function playTap(opts: {
   filter.Q.value = opts.q;
 
   const gain = ctx.createGain();
-  gain.gain.value = opts.gain + Math.random() * opts.gainJitter;
+  gain.gain.setValueAtTime(SILENT_GAIN, t0);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + TAP_ATTACK_S);
+  gain.gain.exponentialRampToValueAtTime(SILENT_GAIN, t0 + endS);
 
   noise.connect(filter);
   filter.connect(gain);
   gain.connect(ctx.destination);
-  noise.start(ctx.currentTime);
+  noise.start(t0);
 }
 
 export function playClickLow() {
   playTap({
-    lengthS: 0.01,
     decay: 60,
     freq: 2200,
     freqJitter: 300,
     q: 2.5,
-    gain: 0.36,
-    gainJitter: 0.08,
+    gain: 0.334,
+    gainJitter: 0.075,
   });
 }
 
 export function playClickSharp() {
   playTap({
-    lengthS: 0.004,
     decay: 20,
     freq: 4000,
     freqJitter: 500,
     q: 5,
-    gain: 0.3,
-    gainJitter: 0.06,
+    gain: 0.24,
+    gainJitter: 0.048,
   });
 }
 
@@ -138,10 +149,6 @@ export function playClickSharp() {
 export function playThump() {
   const ctx = getAudioContext();
   if (!ctx) return;
-
-  if (ctx.state === "suspended") {
-    ctx.resume();
-  }
 
   const t0 = ctx.currentTime;
   const osc = ctx.createOscillator();
@@ -154,25 +161,27 @@ export function playThump() {
   osc.frequency.setValueAtTime(110 + Math.random() * 10, t0);
   osc.frequency.exponentialRampToValueAtTime(55, t0 + 0.1);
 
-  gain.gain.setValueAtTime(0.001, t0);
+  // The fall reaches 0.001 at 110ms, as it always has, then carries on at
+  // the same slope to silence (43ms more), so the stop cuts nothing.
+  gain.gain.setValueAtTime(SILENT_GAIN, t0);
   gain.gain.exponentialRampToValueAtTime(0.18, t0 + 0.012);
   gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.11);
+  gain.gain.exponentialRampToValueAtTime(SILENT_GAIN, t0 + 0.153);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start(t0);
-  osc.stop(t0 + 0.11);
+  osc.stop(t0 + 0.153);
 }
 
 /** Soft tactile brush — very quiet, wide-band, ultra-short */
 export function playBrush() {
   playTap({
-    lengthS: 0.007,
     decay: 25,
     freq: 2000,
     freqJitter: 500,
     q: 1.2,
-    gain: 0.06,
-    gainJitter: 0.02,
+    gain: 0.046,
+    gainJitter: 0.015,
   });
 }

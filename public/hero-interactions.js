@@ -10,10 +10,43 @@
     return ctx;
   };
 
-  /* Ambient track — one recording per colour theme, off on every load and
-     switched by the footer's speaker button (ui/AmbientToggle.astro). The
-     choice is not stored: it lasts the visit, across ClientRouter swaps, and
-     a new load starts silent. Nothing here plays without a press.
+  /* Every click is one filtered noise burst. Its gain rises from 1e-4 to the
+     peak in 2ms, then falls the way the noise itself used to, e^(-i/decay)
+     per sample, back to 1e-4, and the burst ends there. A step from silence
+     to full is a pop, and an exponential ramp cannot leave or reach 0. Same
+     envelope as src/lib/hooks/useClickSound, and the same rule for the
+     peaks: a gain that came out louder with the rise is trimmed until the
+     tap's mean energy measures within 1 dB of the instant-onset version
+     (only the fidget needed it). */
+  const SILENT_GAIN = 1e-4;
+  const TAP_ATTACK = 0.002;
+
+  const noiseTap = (audio, at, freq, q, peak, decay) => {
+    const end = TAP_ATTACK + (decay / audio.sampleRate) * Math.log(peak / SILENT_GAIN);
+    const noise = audio.createBufferSource();
+    const buf = audio.createBuffer(1, Math.ceil(audio.sampleRate * end), audio.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    noise.buffer = buf;
+    const filter = audio.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = freq;
+    filter.Q.value = q;
+    const gain = audio.createGain();
+    gain.gain.setValueAtTime(SILENT_GAIN, at);
+    gain.gain.exponentialRampToValueAtTime(peak, at + TAP_ATTACK);
+    gain.gain.exponentialRampToValueAtTime(SILENT_GAIN, at + end);
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audio.destination);
+    noise.start(at);
+  };
+
+  /* Ambient track — one recording per colour theme, silent on every load and
+     started by the footer's sound switch (ui/AmbientToggle.astro; the model
+     is written above `soundOn`). The choice is not stored: it lasts the
+     visit, across ClientRouter swaps, and a new load starts the track
+     silent. Nothing here plays without a press.
 
      The files are licensed loops (Epidemic Sound), so they never enter git:
      they live in the R2 bucket `xeind-media` behind media.xeind.net, and
@@ -49,15 +82,36 @@
   const currentTheme = () => document.documentElement.dataset.theme || "light";
   let ambient = null;
 
+  /* The speaker is the site's one sound switch, and it shows `soundOn`.
+     Every load starts on: the clicks play, the track does not, since it
+     never starts without a press. A press turns everything off; the next
+     turns everything on and starts the track, and so on. `ambientOn` is
+     whether the track should be playing. A track that fails to load or is
+     interrupted only clears `ambientOn` and warns: the switch and the
+     clicks stay as they were. The clicks here and in the React islands
+     (src/lib/hooks/useClickSound) read one signal, `data-sound` on <html>,
+     carried across ClientRouter swaps the way the theme is. */
+  let soundOn = true;
   let ambientOn = false;
   const ambientWanted = () => ambientOn;
+  const soundAttribute = () => (soundOn ? "on" : "off");
+
+  const stopAmbientOnly = (reason) => {
+    ambientOn = false;
+    console.warn(`Ambient sound stopped: ${reason}`);
+  };
 
   const syncAmbient = () => {
-    const pressed = String(ambientWanted());
+    const pressed = String(soundOn);
     document.querySelectorAll("[data-ambient-toggle]").forEach((button) => {
       button.setAttribute("aria-pressed", pressed);
     });
+    document.documentElement.dataset.sound = soundAttribute();
   };
+
+  document.addEventListener("astro:before-swap", (event) => {
+    event.newDocument.documentElement.dataset.sound = soundAttribute();
+  });
 
   /* Opus in Ogg where it plays, AAC where it does not (Safari before 17.4). */
   const ambientSrc = (name) => {
@@ -156,9 +210,9 @@
   };
 
   /* A call, an alarm or Siri suspends the context under the track
-     ("interrupted" on iOS). The switch would then read on over silence, so
-     it turns off and the next press starts it again. A hidden page is
-     handled below. */
+     ("interrupted" on iOS). The track stops and stays stopped; the switch
+     stays on for the clicks, and an off-then-on press starts the track
+     again. A hidden page is handled below. */
   let watchingState = false;
 
   const watchState = (audio) => {
@@ -167,8 +221,7 @@
     audio.addEventListener("statechange", () => {
       if (!ambient || document.hidden || audio.state === "running") return;
       stopAmbient();
-      ambientOn = false;
-      syncAmbient();
+      stopAmbientOnly(`audio context ${audio.state}`);
     });
   };
 
@@ -185,9 +238,8 @@
     if (!ambientWanted()) return;
     if (audio.state !== "running") {
       /* Refused without a tap, as iOS may on return from the background:
-         leave the switch honest. */
-      ambientOn = false;
-      syncAmbient();
+         the track gives up, the switch stays on for the clicks. */
+      stopAmbientOnly("audio context would not resume");
       setAudioSession("auto");
       return;
     }
@@ -198,13 +250,14 @@
     let buffer;
     try {
       buffer = await bufferFor(key);
-    } catch {
-      /* The file is missing or would not decode: leave the switch honest
-         and let the next press try again. */
+    } catch (error) {
+      /* The file is missing or would not decode: the track gives up, the
+         switch stays on for the clicks, and an off-then-on press tries
+         again. */
       if (ambient && ambient.theme === theme) {
         ambient = null;
-        ambientOn = false;
-        syncAmbient();
+        stopAmbientOnly(`${AMBIENT_FILES[key]} track did not load (${error})`);
+        setAudioSession("auto");
       }
       return;
     }
@@ -264,7 +317,8 @@
     const target =
       event.target instanceof Element ? event.target.closest("[data-ambient-toggle]") : null;
     if (!target) return;
-    ambientOn = !ambientOn;
+    soundOn = !soundOn;
+    ambientOn = soundOn;
     syncAmbient();
     if (ambientOn) {
       for (const track of tracks.values()) if (!track.source) track.offset = 0;
@@ -302,43 +356,31 @@
   };
 
   const playClickSoft = async () => {
+    if (!soundOn) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
-    const noise = audio.createBufferSource();
-    const buf = audio.createBuffer(1, audio.sampleRate * 0.012, audio.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 80);
-    noise.buffer = buf;
-    const filter = audio.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = 3000 + Math.random() * 400;
-    filter.Q.value = 2;
-    const gain = audio.createGain();
-    gain.gain.value = 0.2 + Math.random() * 0.04;
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(audio.destination);
-    noise.start(audio.currentTime);
+    noiseTap(
+      audio,
+      audio.currentTime,
+      3000 + Math.random() * 400,
+      2,
+      0.2 + Math.random() * 0.04,
+      80,
+    );
   };
 
   const playFidget = async () => {
+    if (!soundOn) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
-    const noise = audio.createBufferSource();
-    const buf = audio.createBuffer(1, audio.sampleRate * 0.005, audio.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / 15);
-    noise.buffer = buf;
-    const filter = audio.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = 2200 + Math.random() * 400;
-    filter.Q.value = 3;
-    const gain = audio.createGain();
-    gain.gain.value = 0.12 + Math.random() * 0.03;
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(audio.destination);
-    noise.start(audio.currentTime);
+    noiseTap(
+      audio,
+      audio.currentTime,
+      2200 + Math.random() * 400,
+      3,
+      0.086 + Math.random() * 0.022,
+      15,
+    );
   };
 
   /* Copy-confirm: two taps, the second brighter and a touch louder — the
@@ -348,31 +390,12 @@
      email button via the hero:copy-confirm event once the clipboard write
      has actually resolved, so the sound lands with the checkmark swap. */
   const playConfirm = async () => {
+    if (!soundOn) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
-
-    const tap = (at, freq, gainValue, decay) => {
-      const noise = audio.createBufferSource();
-      const buf = audio.createBuffer(1, audio.sampleRate * 0.014, audio.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++)
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / decay);
-      noise.buffer = buf;
-      const filter = audio.createBiquadFilter();
-      filter.type = "bandpass";
-      filter.frequency.value = freq;
-      filter.Q.value = 2.5;
-      const gain = audio.createGain();
-      gain.gain.value = gainValue;
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(audio.destination);
-      noise.start(at);
-    };
-
     const now = audio.currentTime;
-    tap(now, 2600, 0.16, 70);
-    tap(now + 0.07, 4200, 0.22, 90);
+    noiseTap(audio, now, 2600, 2.5, 0.16, 70);
+    noiseTap(audio, now + 0.07, 4200, 2.5, 0.22, 90);
   };
 
   window.addEventListener("hero:copy-confirm", () => {
