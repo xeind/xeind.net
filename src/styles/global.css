@@ -598,6 +598,75 @@ body {
   filter: url(#graphite-filter);
 }
 
+/* Text selection, after imdaryl.com: a light tint per line here, and a
+   hand-ruled box with its dimensions around the whole selection, drawn by
+   public/selection-dimensions.js. 18% of the accent reads as a wash in every
+   theme without hiding the ink under it. The footer is filled with the
+   accent, so there the tint comes from the text's own colour instead. */
+::selection {
+  background-color: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  color: inherit;
+}
+
+footer ::selection {
+  background-color: color-mix(in srgb, currentColor 25%, transparent);
+}
+
+/* How each theme rules that box. The script reads these per new box and on
+   a theme change. Wobble is the most a line strays from straight, in px; 0
+   means clean: straight, pixel-snapped lines on crispEdges. Passes is 2 for a
+   faint second stroke beside the first. Opacity is the box stroke's.
+   Overshoot is how far each edge runs past its corners, in px; 0 closes the
+   box into one rectangle. Weight is the box stroke's width, in px.
+
+   Kozo is ink on paper, so a pen, but a straight one. A 0.2px wobble was
+   tried: on a 7px period it is under a device pixel, so the line hopped
+   between rows in small stairs and read as aliasing. The pen is in the 1.5px
+   overshoot instead, the hand-ruled corner the pencil box has. Weight stays
+   1 at full ink: 1.25 was tried and left a half-tone row on each side of the
+   line at 2x and 3x, a soft edge. :root is Kozo, as for every other token
+   here; the script's fallback is the clean style. */
+:root {
+  --selection-stroke-wobble: 0;
+  --selection-stroke-passes: 1;
+  --selection-stroke-opacity: 1;
+  --selection-stroke-overshoot: 1.5;
+  --selection-stroke-weight: 1;
+}
+
+/* Manila and Nightingale are screens, not paper: light ink on a dark ground
+   shows every antialiased sub-pixel as grit, so their lines are clean. */
+[data-theme="dark"],
+[data-theme="nightingale"] {
+  --selection-stroke-wobble: 0;
+  --selection-stroke-passes: 1;
+  --selection-stroke-opacity: 1;
+  --selection-stroke-overshoot: 0;
+  --selection-stroke-weight: 1;
+}
+
+/* Blueprint is a drafting sheet, where the pencil belongs: the 0.45 wobble,
+   1.5px overshoot and doubled, 80% stroke it was first tuned with. */
+[data-theme="blueprint"] {
+  --selection-stroke-wobble: 0.45;
+  --selection-stroke-passes: 2;
+  --selection-stroke-opacity: 0.8;
+  --selection-stroke-overshoot: 1.5;
+  --selection-stroke-weight: 1;
+}
+
+/* The overlay the box is drawn on. 9998 is the ladder's rung for cursor
+   transients that must clear the modal portal (design-system.md, z-index
+   ladder); the box is one of those, so it takes no new value. */
+.selection-dimensions {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+}
+
 /* ========================================
    GRID TEXTURES
    Drawn tiles, not the spacing system — see the --grid-cell-size comment
