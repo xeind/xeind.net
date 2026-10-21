@@ -65,12 +65,28 @@
     el.style.setProperty(prop, value);
   };
 
+  // The lamp's position and gate are written on the elements that paint
+  // them, never on the shell. Custom properties inherit, and the surface shell
+  // wraps the whole page: one write there restyled every element on it, each
+  // frame.
+  const writeAll = (els, cache, key, prop, value) => {
+    if (cache[key] === value) {
+      return;
+    }
+    cache[key] = value;
+    for (const el of els) {
+      el.style.setProperty(prop, value);
+    }
+  };
+
   function bind(shell) {
     if (shell.dataset.edgeGlowBound === "true") {
       return;
     }
 
     shell.dataset.edgeGlowBound = "true";
+    const owned = (el) => el.closest(selector) === shell;
+    const layers = Array.from(shell.querySelectorAll(".edge-glow-layer")).filter(owned);
     // Shells nest (divider shells live inside the page-frame <main> shell).
     // Each node/line must have exactly ONE writer — its nearest shell —
     // or the two entries fight over the same CSS variable with different
@@ -95,8 +111,11 @@
       // whose wash layer would otherwise count as the surface's own and send
       // it down the rail gate, lighting the gutter only within one radius of
       // the window edge.
-      hasLayer: Array.from(shell.querySelectorAll(".edge-glow-layer")).some(
-        (layer) => layer.closest(selector) === shell,
+      hasLayer: layers.length > 0,
+      // What paints the wash: the shell's layers, or for the surface shell
+      // blueprint's gutter ruling.
+      washes: layers.concat(
+        Array.from(shell.querySelectorAll(".blueprint-grid-glow")).filter(owned),
       ),
       cache: {},
       idle: false,
@@ -104,7 +123,7 @@
   }
 
   function updateEntry(entry) {
-    const { shell, nodes, lines, isHorizontal, isSurface, hasLayer, cache } = entry;
+    const { shell, nodes, lines, isHorizontal, isSurface, hasLayer, washes, cache } = entry;
 
     const rect = shell.getBoundingClientRect();
 
@@ -136,10 +155,8 @@
 
     // Hotspot position only matters while something is visible.
     if (inside) {
-      write(shell, cache, "x", "--edge-glow-x", `${relX}px`);
-      if (hasLayer || isSurface) {
-        write(shell, cache, "y", "--edge-glow-y", `${relY}px`);
-      }
+      writeAll(washes, cache, "x", "--edge-glow-x", `${relX}px`);
+      writeAll(washes, cache, "y", "--edge-glow-y", `${relY}px`);
     }
 
     // No strength term: the layer's gradient is the same ellipse centred on the
@@ -151,12 +168,12 @@
     if (hasLayer) {
       const toNearerRail = Math.min(Math.abs(relX), Math.abs(relX - rect.width));
       const washLit = inside && toNearerRail <= GLOW_RADIUS;
-      write(shell, cache, "wash", "--edge-glow-opacity", washLit ? "1" : "0");
+      writeAll(washes, cache, "wash", "--edge-glow-opacity", washLit ? "1" : "0");
     } else if (isSurface) {
       // No rail to measure to — the lamp is lit wherever the cursor is over
       // the surface, and the mask does the rest. Gating on rail distance here
       // would light the far gutters and leave the near ones dark.
-      write(shell, cache, "wash", "--edge-glow-opacity", inside ? "1" : "0");
+      writeAll(washes, cache, "wash", "--edge-glow-opacity", inside ? "1" : "0");
     }
 
     // Diamonds are points, so the distance is scored here rather than painted.
@@ -198,6 +215,7 @@
         const local = clamp(1 - Math.abs(dy) / LINE_EMPHASIS_RADIUS, 0, 1);
         strength = LINE_AMBIENT + (1 - LINE_AMBIENT) * local * local;
         write(line, cache, `d${i}`, "--edge-line-dy", `${dy.toFixed(1)}px`);
+        write(line, cache, `x${i}`, "--edge-glow-x", `${relX}px`);
       }
       write(line, cache, `l${i}`, "--edge-line-strength", strength.toFixed(3));
     }
@@ -268,7 +286,9 @@
         if (!entry.shell.isConnected) {
           continue;
         }
-        entry.shell.style.setProperty("--edge-glow-opacity", "0");
+        for (const wash of entry.washes) {
+          wash.style.setProperty("--edge-glow-opacity", "0");
+        }
         for (const node of entry.nodes) {
           node.style.setProperty("--edge-node-strength", "0");
         }

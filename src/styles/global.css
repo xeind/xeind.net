@@ -530,6 +530,9 @@ body {
    they ever drift, the lit line lands beside the drawn one instead of on it,
    which is the whole effect wrong. */
 .blueprint-grid-glow {
+  --edge-glow-opacity: 0;
+  --edge-glow-x: 50%;
+  --edge-glow-y: 50%;
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -1477,9 +1480,6 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 }
 
 .edge-glow-shell {
-  --edge-glow-opacity: 0;
-  --edge-glow-x: 50%;
-  --edge-glow-y: 50%;
   --edge-glow-ink: color-mix(in srgb, var(--color-accent) 68%, var(--color-foreground) 32%);
   /* The curve, written once. The stop offsets are the sample points and the
      mix percentages are smoothstep at those points (1, .844, .5, .156, 0).
@@ -1515,8 +1515,16 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
    span the rails exactly: the left rail is the shell's first column, the right
    rail is the column just outside it (every hairline on this site sits on the
    pixel after its boundary), which makes the span one pixel wider than the
-   box. --edge-glow-x is measured from the shell's border box and lines up. */
+   box. --edge-glow-x is measured from the shell's border box and lines up.
+
+   edge-glow.js writes the lamp's position and gate on this layer, not on the
+   shell: the shell has the whole column under it, and a custom property
+   written there restyles all of it every frame. The strips and the blueprint
+   ruling carry their own copies for the same reason. */
 .edge-glow-layer {
+  --edge-glow-opacity: 0;
+  --edge-glow-x: 50%;
+  --edge-glow-y: 50%;
   position: absolute;
   top: 0;
   right: -1px;
@@ -1577,6 +1585,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 .edge-glow-line {
   --edge-line-strength: 0;
   --edge-line-dy: 0px;
+  --edge-glow-x: 50%;
   pointer-events: none;
   opacity: calc(var(--edge-line-strength) * var(--edge-glow-cap));
   /* Same duration as the wash layer — a strip and a rail settle together. */
