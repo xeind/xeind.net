@@ -322,7 +322,9 @@ box after the pointer. No hover redline shows while a button is held, while the
 pointer is outside the window, or in the footer. Keyboard focus draws its own
 redline on the same elements when the browser shows its focus ring
 (`:focus-visible`), so a mouse click on a link draws none, and the ring stays.
-Hover and focus are separate boxes, so
+It draws only after a Tab, and the next pointer move clears it: Chrome also
+counts focus restored by script as `:focus-visible`, which left a focus box on
+a project tile after its modal closed. Hover and focus are separate boxes, so
 both can show; an element under both gets one, kept by whichever arrived first.
 
 **Reduced motion keeps the fades and drops the travel.** Edges, rules and

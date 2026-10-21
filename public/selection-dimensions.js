@@ -102,6 +102,10 @@
   let candidateSince = 0;
   let leftAt = null;
   let dwellTimer = 0;
+  // Whether focus is the reader's: set by Tab, cleared by the pointer. The
+  // browser also calls focus restored by script :focus-visible, which drew a
+  // focus box on a project tile after its modal closed.
+  let tabbing = false;
 
   // Value noise: a hash per 7px step, smoothstepped between neighbours, so a
   // line bends gently instead of jittering pixel to pixel.
@@ -1146,7 +1150,13 @@
   }
 
   function onPointerMove(event) {
+    const moved = !pointer || pointer.x !== event.clientX || pointer.y !== event.clientY;
     pointer = { x: event.clientX, y: event.clientY, pressed: event.buttons !== 0 };
+    // The reader has gone back to the pointer: the focus box goes, or a tile
+    // focused by a closing modal keeps a second box beside the hover's.
+    if (moved || pointer.pressed) {
+      tabbing = false;
+    }
     if (!hitFrame) {
       hitFrame = window.requestAnimationFrame(hitTest);
     }
@@ -1207,6 +1217,12 @@
     return now - leftAt >= HOVER_DWELL_MS ? null : current;
   }
 
+  function onKeyDown(event) {
+    if (event.key === "Tab") {
+      tabbing = true;
+    }
+  }
+
   // A Tab fires focusout and then focusin; reading the focus once a frame,
   // after both, lets the box travel to the next element instead of leaving
   // and fading in again.
@@ -1235,7 +1251,7 @@
     }
     let focused = null;
     const active = document.activeElement;
-    if (free && active?.matches(":focus-visible")) {
+    if (free && tabbing && active?.matches(":focus-visible")) {
       const element = active.closest(INTERACTIVE);
       if (element && !pinnedFor(element)) {
         focused = element;
@@ -1571,6 +1587,7 @@
   window.addEventListener("resize", onResize, { passive: true });
   document.addEventListener("pointermove", onPointerMove, { passive: true });
   document.addEventListener("mouseout", onPointerOut, { passive: true });
+  document.addEventListener("keydown", onKeyDown, { passive: true });
   document.addEventListener("focusin", onFocusChange);
   document.addEventListener("focusout", onFocusChange);
   new MutationObserver(onThemeChange).observe(document.documentElement, {
