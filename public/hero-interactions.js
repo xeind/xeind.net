@@ -54,16 +54,17 @@
      loudness-matched to -20 LUFS, Opus with an AAC twin for Safari, about
      500 KB.
 
-     A press has to sound at once. A media element fetched on the press took
-     about 3 s to start, and iOS ignores preload. So the current theme's file
-     is fetched and decoded once the page has loaded, and again after each
-     theme change; the press only resumes the AudioContext and starts a
-     buffer. Decoded, a track is 11–15 MB of PCM, and at most four are held.
-     The decode runs on an OfflineAudioContext, since an AudioContext made
-     before a gesture warns in the console and a buffer plays in any
-     context. With Save-Data on, nothing preloads and the press fetches. The
-     fades run on the same AudioContext as the clicks. Sits above the pointer
-     guard because the button has to work on a phone. */
+     Nothing is fetched until the reader asks for the track: fetching the
+     current theme's file after every load cost 450-540 KB a visit. The
+     fetch starts when a pointer reaches the switch while it is off (see
+     `fetchAhead`), so it overlaps the press, and the track starts once it
+     has arrived and decoded. A theme change fetches the new theme's file
+     only while the track plays. Decoded, a track is 11-15 MB of PCM, and
+     at most four are held. The decode runs on an OfflineAudioContext,
+     since an AudioContext made before a gesture warns in the console and a
+     buffer plays in any context. The fades run on the same AudioContext as
+     the clicks. Sits above the pointer guard because the button has to work
+     on a phone. */
   const AMBIENT_BASE = "https://media.xeind.net/ambient";
   const AMBIENT_FILES = {
     dark: "manila",
@@ -139,14 +140,6 @@
     buffers.set(key, pending);
     return pending;
   };
-
-  const preloadAmbient = () => {
-    if (navigator.connection && navigator.connection.saveData) return;
-    bufferFor(trackKey(currentTheme())).catch(() => {});
-  };
-
-  if (document.readyState === "complete") preloadAmbient();
-  else window.addEventListener("load", preloadAmbient, { once: true });
 
   /* One track per theme, made on first need and kept for the visit. A
      theme switch crosses the gains, then stops the track that left and
@@ -294,20 +287,41 @@
   };
 
   /* Each theme has its own track: when the reader changes theme while the
-     sound is on, the gains cross — nothing restarts. While it is off, the
-     new theme's track preloads so the next press is as quick as the first. */
+     sound is on, the gains cross — nothing restarts. While it is off, nothing
+     is fetched. */
   new MutationObserver(() => {
-    if (!ambient) preloadAmbient();
-    else if (ambient.theme !== currentTheme()) void startAmbient();
+    if (ambient && ambient.theme !== currentTheme()) void startAmbient();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* The track takes 0.4 s from click to start on a fast line and about
+     0.7 s on 4G, most of it R2's first byte. So once the switch is off, a
+     pointer on it starts the fetch: the next press there turns the track
+     on. While the switch is on, a press only turns it off, and nothing is
+     fetched. With Save-Data on, a hover fetches nothing and the press does. */
+  const onToggle = (event) =>
+    event.target instanceof Element && event.target.closest("[data-ambient-toggle]");
+
+  const fetchAhead = () => {
+    if (!soundOn) bufferFor(trackKey(currentTheme())).catch(() => {});
+  };
+
+  document.addEventListener(
+    "pointerover",
+    (event) => {
+      if (navigator.connection && navigator.connection.saveData) return;
+      if (onToggle(event)) fetchAhead();
+    },
+    { passive: true },
+  );
 
   /* Opening the audio device blocks for about 150 ms the first time. Start
      it on pointerdown, so it overlaps the press instead of following it. */
   document.addEventListener(
     "pointerdown",
     (event) => {
-      if (event.target instanceof Element && event.target.closest("[data-ambient-toggle]")) {
+      if (onToggle(event)) {
         getCtx();
+        fetchAhead();
       }
     },
     { passive: true },
