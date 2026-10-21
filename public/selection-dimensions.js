@@ -79,7 +79,8 @@
   let record = null;
   let stroke = null;
   let frame = 0;
-  // The hover redlines: at most one live, and in crossfade one more leaving.
+  // The hover and focus redlines: at most one live of each kind, and in
+  // crossfade one more leaving.
   let hovers = [];
   let pointer = null;
   let hitFrame = 0;
@@ -1113,6 +1114,14 @@
   // rules leave a hover there unreadable. Under reduced motion it stays, as
   // opacity only: no box travels between neighbours, the old one fades out
   // where it is and the new one fades in at its own place.
+  //
+  // Keyboard focus draws the same callout, on the same elements, when the
+  // browser would show its focus ring (:focus-visible), so a click on a link
+  // draws none; a click in a text field does, as the ring does. The ring
+  // stays: the box is drawn over the page and takes nothing from it. Focus
+  // and hover are separate callouts, so a reader can tab with the pointer
+  // resting elsewhere and see both. An element under both gets one box,
+  // kept by whichever callout held it first.
   function boxOf(element) {
     const r = element.getBoundingClientRect();
     return {
@@ -1133,23 +1142,51 @@
   function onPointerOut(event) {
     if (!event.relatedTarget) {
       pointer = null;
-      hoverOn(null);
+      hoverOn("pointer", null);
+    }
+  }
+
+  // A Tab fires focusout and then focusin; reading the focus once a frame,
+  // after both, lets the box travel to the next element instead of leaving
+  // and fading in again.
+  function onFocusChange() {
+    if (!hitFrame) {
+      hitFrame = window.requestAnimationFrame(hitTest);
     }
   }
 
   function hitTest() {
     hitFrame = 0;
-    if (!svg || !pointer) {
+    if (!svg) {
       return;
     }
-    let target = null;
-    if (!pointer.pressed && !record?.pinned) {
+    const free = !record?.pinned;
+    let pointed = null;
+    if (pointer && !pointer.pressed && free) {
       const element = document.elementFromPoint(pointer.x, pointer.y)?.closest(INTERACTIVE);
       if (element && !pinnedFor(element)) {
-        target = element;
+        pointed = element;
       }
     }
-    hoverOn(target);
+    let focused = null;
+    const active = document.activeElement;
+    if (free && active?.matches(":focus-visible")) {
+      const element = active.closest(INTERACTIVE);
+      if (element && !pinnedFor(element)) {
+        focused = element;
+      }
+    }
+    // Two boxes on one element are one box to the eye on a clean stroke and
+    // a smear on Blueprint's pencil; the callout already on it keeps it.
+    if (focused && focused === pointed) {
+      if (hovers.some((h) => h.gone === null && h.kind === "focus" && h.element === focused)) {
+        pointed = null;
+      } else {
+        focused = null;
+      }
+    }
+    hoverOn("pointer", pointed);
+    hoverOn("focus", focused);
   }
 
   function applyHoverStroke(hover) {
@@ -1163,8 +1200,8 @@
     ghost.style.display = stroke.passes > 1 ? "" : "none";
   }
 
-  function hoverOn(element) {
-    const live = hovers.find((hover) => hover.gone === null);
+  function hoverOn(kind, element) {
+    const live = hovers.find((hover) => hover.gone === null && hover.kind === kind);
     if ((live?.element ?? null) === element) {
       return;
     }
@@ -1200,6 +1237,7 @@
         const target = boxOf(element);
         const hover = {
           id: nextHoverId++,
+          kind,
           element,
           target,
           shown: { ...target },
@@ -1428,8 +1466,9 @@
         create("text", { "text-anchor": "middle" }, text),
       ],
     };
-    // Two hover groups, so in crossfade one can leave as the next arrives.
-    parts.hovers = [hoverParts(), hoverParts()];
+    // Three hover groups: a live hover and a live focus, and in crossfade one
+    // more leaving as the next arrives.
+    parts.hovers = [hoverParts(), hoverParts(), hoverParts()];
     document.body.append(svg);
   }
 
@@ -1467,6 +1506,8 @@
   window.addEventListener("resize", onResize, { passive: true });
   document.addEventListener("pointermove", onPointerMove, { passive: true });
   document.addEventListener("mouseout", onPointerOut, { passive: true });
+  document.addEventListener("focusin", onFocusChange);
+  document.addEventListener("focusout", onFocusChange);
   new MutationObserver(onThemeChange).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"],
