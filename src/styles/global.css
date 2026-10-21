@@ -1804,12 +1804,19 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 
 /* The trigger's chip, turned over in the /lab loader's drive order
    (lab/PixelGrid.tsx), turned a quarter so it falls instead of running: a
-   `v` front entering from the middle of the top row, 90ms a step, the
-   loader's own drive step. The chip follows the
+   `v` front entering from the middle of the top row. The chip follows the
    document, so its cells repaint the instant the theme flips; each one
    instead dips to the loader's resting 20% and lights back up in the new
-   colour, the swap timed to land while it is dim. Four steps of 90ms plus a
-   0.3s dip end at 570ms, level with the name's last letter at 550ms.
+   colour, the swap timed to land while it is dim.
+
+   The wave keeps the name's clock. Its four steps share the span over which
+   the letters start (--turn-span, set by the script: 25ms a letter up to the
+   last that changes), and each dip lasts a letter's 0.3s roll, so the chip
+   starts with the first letter and lands with the last: at 425ms for Kozo to
+   Manila, 550ms for Nightingale. It used to take a fixed 570ms, 145ms past the
+   short names. The dip bottoms out at 75ms, while a letter on easeOutExpo is
+   still travelling, so a cell changes colour as its letters move rather than
+   after they have landed.
 
    `.is-turning` is what replays the dip; the script drops and re-adds it on
    every pick. The colour transition needs no class, because a theme flip is
@@ -1821,7 +1828,7 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
   100% {
     opacity: 1;
   }
-  40% {
+  25% {
     opacity: 0.2;
   }
 }
@@ -1850,17 +1857,18 @@ pre.astro-code code > .line:last-child:not(:has(span:not(:empty))) {
 @media (prefers-reduced-motion: no-preference) {
   /* The paper between the cells eases across the whole wave. */
   .theme-chip {
-    transition: background-color 0.57s ease-in-out;
+    --chip-step: calc(var(--turn-span, 250ms) / 3);
+    transition: background-color calc(var(--turn-span, 250ms) + 0.3s) ease-in-out;
   }
 
-  /* 70ms into a 300ms dip whose floor is at 120ms, so the colour changes
-     between 70 and 170ms — while the cell is at its faintest. */
+  /* 25ms into a 300ms dip whose floor is at 75ms, so the colour changes
+     between 25 and 125ms — around the cell's faintest. */
   .theme-chip > span {
-    transition: background-color 0.1s ease-in-out calc(var(--cell-step) * 90ms + 70ms);
+    transition: background-color 0.1s ease-in-out calc(var(--cell-step) * var(--chip-step) + 25ms);
   }
 
   .theme-chip.is-turning > span {
-    animation: theme-chip-cell 0.3s ease-in-out calc(var(--cell-step) * 90ms) both;
+    animation: theme-chip-cell 0.3s ease-in-out calc(var(--cell-step) * var(--chip-step)) both;
   }
 }
 

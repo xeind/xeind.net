@@ -106,6 +106,11 @@ const themes = [
     const boxes = [...trigger.querySelectorAll<HTMLElement>(".theme-roll")];
     const chip = trigger.querySelector<HTMLElement>(".theme-chip");
     chip?.classList.remove("is-turning");
+    /* The chip's wave spans the letters' starts, 25ms a letter up to the last
+       one that changes, so a short name turns a quick chip and both land
+       together. */
+    const last = Math.max(0, ...boxes.map((box) => Number(box.style.getPropertyValue("--letter"))));
+    chip?.style.setProperty("--turn-span", `${last * 25}ms`);
     boxes.forEach((box) => box.classList.add("is-entering", "is-instant"));
     void trigger.offsetWidth;
     boxes.forEach((box) => box.classList.remove("is-entering", "is-instant"));
