@@ -30,6 +30,12 @@
   // shows at once: fading in again on every control reads as flicker.
   const HOVER_FADE_IN_MS = 100;
   const HOVER_WARM_MS = 300;
+  // Hover intent. While a callout is on screen, or was within HOVER_WARM_MS,
+  // the pointer has to rest on the next element this long before the box
+  // goes there. A fast pass over the project grid crosses a 288 × 144 tile
+  // in about 50ms and used to drag one tile-sized box after it at 1600px/s;
+  // a reader settling on a control stays far longer than this.
+  const HOVER_DWELL_MS = 100;
   const easeOut = (t) => 1 - (1 - t) ** 3;
   // A reshaped selection moves the box the way the theme picker's name rolls
   // over: `.theme-roll` in global.css, 0.3s (DURATION.slow) on
@@ -89,6 +95,13 @@
   let nextHoverId = 5000;
   // When a hover callout was last on screen, for the warm switch.
   let hoverSeen = -Infinity;
+  // Hover intent: the element the pointer is on but the box is not yet, since
+  // when, and since when the pointer has been off the box's element. Undefined
+  // and null when the pointer is where the box is.
+  let candidate;
+  let candidateSince = 0;
+  let leftAt = null;
+  let dwellTimer = 0;
 
   // Value noise: a hash per 7px step, smoothstepped between neighbours, so a
   // line bends gently instead of jittering pixel to pixel.
@@ -1142,8 +1155,56 @@
   function onPointerOut(event) {
     if (!event.relatedTarget) {
       pointer = null;
+      clearHoverIntent();
       hoverOn("pointer", null);
     }
+  }
+
+  function clearHoverIntent() {
+    window.clearTimeout(dwellTimer);
+    dwellTimer = 0;
+    candidate = undefined;
+    leftAt = null;
+  }
+
+  function onDwell() {
+    dwellTimer = 0;
+    if (!hitFrame) {
+      hitFrame = window.requestAnimationFrame(hitTest);
+    }
+  }
+
+  // Where the pointer box should be, given the element under the pointer. A
+  // cold hover lands at once. In a run of hovers the box holds until the
+  // pointer has rested on one element for HOVER_DWELL_MS, and fades out if the
+  // pointer has been off its element that long without resting anywhere. A
+  // pointer that stops sends no more moves, so a timer rechecks when the
+  // dwell is due.
+  function intended(pointed) {
+    const live = hovers.find((hover) => hover.gone === null && hover.kind === "pointer");
+    const current = live?.element ?? null;
+    window.clearTimeout(dwellTimer);
+    dwellTimer = 0;
+    if (pointed === current) {
+      clearHoverIntent();
+      return pointed;
+    }
+    const now = performance.now();
+    if (!live && leftAt === null && now - hoverSeen > HOVER_WARM_MS) {
+      return pointed;
+    }
+    if (pointed !== candidate) {
+      candidate = pointed;
+      candidateSince = now;
+    }
+    leftAt ??= now;
+    const waited = now - candidateSince;
+    if (waited >= HOVER_DWELL_MS) {
+      clearHoverIntent();
+      return pointed;
+    }
+    dwellTimer = window.setTimeout(onDwell, HOVER_DWELL_MS - waited);
+    return now - leftAt >= HOVER_DWELL_MS ? null : current;
   }
 
   // A Tab fires focusout and then focusin; reading the focus once a frame,
@@ -1167,6 +1228,10 @@
       if (element && !pinnedFor(element)) {
         pointed = element;
       }
+      pointed = intended(pointed);
+    } else {
+      // A press, a pinned selection or no pointer clears the box at once.
+      clearHoverIntent();
     }
     let focused = null;
     const active = document.activeElement;

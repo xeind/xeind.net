@@ -314,12 +314,16 @@ out over 120ms, on the same ease-out cubic. One that starts within 300ms of the
 last on screen (`HOVER_WARM_MS`) shows at full at once: hovers and Tabs come in
 runs, and a fade on every control reads as flicker. Moving straight to a
 neighbour (`HOVER_MORPH`), by pointer or by Tab, carries the one box to the
-next element on the edges' curve, with no fade between. No hover redline shows
-while a button is held, while the pointer is outside the window, or in the
-footer. Keyboard focus draws its own redline on the same elements when the
-browser shows its focus ring (`:focus-visible`), so a mouse click on a link
-draws none, and the ring stays. Hover and focus are separate boxes, so both can
-show; an element under both gets one, kept by whichever arrived first.
+next element on the edges' curve, with no fade between. In a run, the pointer
+has to rest 100ms on the next element (`HOVER_DWELL_MS`) before the box goes
+there, and the box fades out if the pointer has been off its element that long
+without resting: a fast pass over the project grid used to drag one tile-sized
+box after the pointer. No hover redline shows while a button is held, while the
+pointer is outside the window, or in the footer. Keyboard focus draws its own
+redline on the same elements when the browser shows its focus ring
+(`:focus-visible`), so a mouse click on a link draws none, and the ring stays.
+Hover and focus are separate boxes, so
+both can show; an element under both gets one, kept by whichever arrived first.
 
 **Reduced motion keeps the fades and drops the travel.** Edges, rules and
 rulers land at once, so nothing counts, stages or dims, but the fades run:
