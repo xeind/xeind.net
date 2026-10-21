@@ -299,8 +299,9 @@ rule hides only under 40 and 24, so a drag across the line does not flicker it.
 Below both, one centred `W × H` label stands in. A rule that forms draws out
 from its number on the edges' curve while the number counts up from 0; one that
 goes draws back in and counts down. A new outline starts with its rules drawn
-and only fades: in over 150ms, out over 200ms (`DURATION.fast`,
-`DURATION.normal`).
+and only fades: in over 150ms (`DURATION.fast`), out over 120ms, both on an
+ease-out cubic. The exit is shorter than the entrance and than any token:
+deselecting is the reader's own act, so the answer to it should come quicker.
 
 **Rail rulers form with the box.** On the sheet's side rails, a ruler grows
 from the selection's centre: the band's half-height and its number both follow
@@ -308,16 +309,25 @@ the ruler's visibility on the same curve, and it retracts the same way. Unlike
 the rules, it forms on a new selection too. It appears away from the pointer,
 so growing is how the eye finds it.
 
-**Hover redlines fade and morph.** A redline fades in over 150ms and out over
-200ms. Moving straight to a neighbour (`HOVER_MORPH`) carries the one box to
-the next element on the edges' curve, with no fade between. No redline shows
-while a button is held, while the pointer is outside the window, in the
-footer, or under reduced motion.
+**Hover and focus redlines fade and morph.** A redline fades in over 100ms and
+out over 120ms, on the same ease-out cubic. One that starts within 300ms of the
+last on screen (`HOVER_WARM_MS`) shows at full at once: hovers and Tabs come in
+runs, and a fade on every control reads as flicker. Moving straight to a
+neighbour (`HOVER_MORPH`), by pointer or by Tab, carries the one box to the
+next element on the edges' curve, with no fade between. No hover redline shows
+while a button is held, while the pointer is outside the window, or in the
+footer. Keyboard focus draws its own redline on the same elements when the
+browser shows its focus ring (`:focus-visible`), so a mouse click on a link
+draws none, and the ring stays. Hover and focus are separate boxes, so both can
+show; an element under both gets one, kept by whichever arrived first.
 
-**Reduced motion snaps.** Edges, rules, rulers and fades land at once, so
-nothing counts or dims, and hover redlines are off. The script runs for fine
-pointers only. No frames run at rest, and a scroll needs no redraw: the
-overlay scrolls with the page.
+**Reduced motion keeps the fades and drops the travel.** Edges, rules and
+rulers land at once, so nothing counts, stages or dims, but the fades run:
+they change opacity and move nothing. Hover and focus redlines stay, as
+opacity only: the old box fades out where it is and the new one fades in at
+its own place. The script runs for fine pointers only, which gates the focus
+redline too. No frames run at rest, and a scroll needs no redraw: the overlay
+scrolls with the page.
 
 ---
 
