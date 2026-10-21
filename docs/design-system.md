@@ -155,9 +155,9 @@ turned square filled with the surface, its side the corner's shorter arm / 4,
 up to 8px. A corner under 3px, or one whose neighbour sits closer than two
 sides, takes none. Inner corners never do.
 
-When both gutters beside the sheet are at least 24px, the side rails also
-carry a ruler: ticks at the selection's top and bottom, a faint 5px band
-between them, and its height mid-band.
+The side rails carry no ruler. imdaryl.com marks a selection on both rails,
+but there the box has no labels; here the box already shows its height, so
+rail rulers printed it three times.
 
 The pointer gets the same treatment. `a, button, [role=button], input, select,
 textarea, summary` under a fine pointer draw a redline: the outline style as

@@ -68,10 +68,6 @@
   // starts.
   const STAGED_GROWTH = true;
   const STAGE_SHARE = 0.6;
-  // The side-rail rulers need this much gutter beside the sheet on both
-  // sides: a 7px tick and a rotated 10px label on a rail with less room
-  // crowd the viewport edge.
-  const RULER_GUTTER = 24;
   // What the pointer redlines, and whether moving between two of them morphs
   // one box into the next (true) or fades one out as the next fades in.
   const INTERACTIVE = "a, button, [role=button], input, select, textarea, summary";
@@ -509,7 +505,6 @@
     parts.ghost.style.display = stroke.passes > 1 ? "" : "none";
     // A 0.8px rule antialiases to a soft grey row; clean mode rules a full one.
     set(parts.marks, "stroke-width", clean ? "1" : "0.8");
-    set(parts.rulerTicks, "stroke-width", clean ? "1" : "0.8");
     // A diamond is filled with the surface, as the halo is, so it covers the
     // lines crossing under it; a bracket is open.
     const diamond = CORNER_MARK === "diamond";
@@ -746,8 +741,8 @@
     }
 
     // Reduced motion keeps the fades, which are opacity and do not move
-    // anything; what it drops is the travel: the shape snaps, the rules and
-    // rulers stand at full, and nothing stages or dims.
+    // anything; what it drops is the travel: the shape snaps, the rules stand
+    // at full, and nothing stages or dims.
     const fadeIn = easeOut(Math.min(1, (now - record.start) / FADE_IN_MS));
     const fadeOut =
       record.gone === null ? 1 : 1 - easeOut(Math.min(1, (now - record.gone) / FADE_OUT_MS));
@@ -963,76 +958,7 @@
     }
     set(parts.marks, "d", marks);
 
-    moving = drawRulers(top, bottom, share, still) || moving;
-
     return { keep: true, busy: moving || fadeIn < 1 || record.gone !== null };
-  }
-
-  // The selection's height on the sheet's side rails, after imdaryl.com's
-  // rulers: on each rail a tick at the selection's top and bottom, a faint
-  // band between, and the height at mid-band, in the box's ink and label.
-  // The rails are main's left and right hairlines, read from its rect each
-  // draw: the left on the sheet's first column, the right on the column just
-  // outside its last (Layout.astro). They show only where the gutters can
-  // hold them, and not for a selection pinned to the viewport, which sits in
-  // the footer, off the sheet.
-  //
-  // The rulers form from the selection's centre, the band's half-height and
-  // the count both following their visibility, and retract the same way.
-  // Unlike the box they form on a new selection too: they appear away from
-  // the pointer, so growing is how the eye finds them. Drawn in the overlay's
-  // page coordinates, they scroll with the text and need no redraw.
-  function drawRulers(top, bottom, share, still) {
-    const sheet = record.pinned ? null : document.querySelector(".edge-glow-shell-vertical");
-    const rect = sheet?.getBoundingClientRect();
-    // The right gutter from clientWidth, so a scrollbar is not counted as one.
-    const fits =
-      rect &&
-      rect.left >= RULER_GUTTER &&
-      document.documentElement.clientWidth - rect.right >= RULER_GUTTER;
-    const moving = ease("ruler", fits ? 1 : 0, share, still);
-    const rv = record.visible.ruler;
-    let band = "";
-    let ticks = "";
-    for (const label of parts.rulerLabels) {
-      set(label, "opacity", String(round(rv)));
-    }
-    if (rv > 0 && rect) {
-      const tick = (stroke.wobble * 2) / 3;
-      const mid = (top + bottom) / 2;
-      const reach = (rv * (bottom - top)) / 2;
-      const bandTop = Math.round(mid - reach);
-      const bandBottom = Math.round(mid + reach);
-      const midY = Math.round(mid);
-      const count = String(Math.round(rv * (bottom - top)));
-      const columns = [rect.left, rect.right].map(
-        (edge) => Math.round(edge + window.scrollX) + 0.5,
-      );
-      columns.forEach((cx, i) => {
-        if (bandBottom - bandTop >= 1) {
-          // 5px about the rail, so its sides sit on whole pixels.
-          band += `M${cx - 2.5} ${bandTop}h5V${bandBottom}h-5Z`;
-        }
-        ticks +=
-          lineData(cx - 3.5 * rv, bandTop + 0.5, cx + 3.5 * rv, bandTop + 0.5, 16 + i * 2, tick) +
-          lineData(
-            cx - 3.5 * rv,
-            bandBottom - 0.5,
-            cx + 3.5 * rv,
-            bandBottom - 0.5,
-            17 + i * 2,
-            tick,
-          );
-        const label = parts.rulerLabels[i];
-        setText(label, count);
-        set(label, "x", String(cx));
-        set(label, "y", String(midY));
-        set(label, "transform", `rotate(-90 ${cx} ${midY})`);
-      });
-    }
-    set(parts.rulerBand, "d", band);
-    set(parts.rulerTicks, "d", ticks);
-    return moving;
   }
 
   // The overlay is shown and hidden through its style, never the display
@@ -1416,7 +1342,6 @@
           width: rules.width ? 1 : 0,
           height: rules.height ? 1 : 0,
           compact: rules.width || rules.height ? 0 : 1,
-          ruler: 0,
         },
         advance: 0,
         fastest: 0,
@@ -1528,24 +1453,11 @@
         lines,
       ),
       marks: create("path", { ...SCALED, opacity: "0.7" }, lines),
-      // The rail band is a wash, Daryl's 16% of the ink; its ticks are marks,
-      // at the rules' 0.7 rather than his 55%, so they read as the same ink
-      // as the rules beside the box.
-      rulerBand: create(
-        "path",
-        { fill: "currentColor", stroke: "none", "fill-opacity": "0.16" },
-        lines,
-      ),
-      rulerTicks: create("path", { ...SCALED, opacity: "0.7" }, lines),
       compact: create("text", { "text-anchor": "middle" }, text),
       widthText: create("text", {}, text),
       widthExtra: create("text", {}, text),
       heightText: create("text", {}, text),
       heightExtra: create("text", { "text-anchor": "end" }, text),
-      rulerLabels: [
-        create("text", { "text-anchor": "middle" }, text),
-        create("text", { "text-anchor": "middle" }, text),
-      ],
     };
     // Three hover groups: a live hover and a live focus, and in crossfade one
     // more leaving as the next arrives.
