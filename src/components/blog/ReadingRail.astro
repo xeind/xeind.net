@@ -1,0 +1,171 @@
+---
+/**
+ * Reading progress on the sheet's left rail of a post, after the sheet rail on
+ * imdaryl.com: one mark per section heading and a tick that travels down the
+ * marks as the reader moves through the post.
+ *
+ * No JavaScript. Each heading carries a named view timeline, and the tick and
+ * the marks animate on those timelines, so the browser drives both from the
+ * scroll position on the compositor. A browser without scroll-driven
+ * animations renders nothing at all.
+ *
+ * Wrap the post's Panel in it: timeline-scope only reaches elements inside the
+ * box that declares it, and the rail measures its x from that box's left edge,
+ * which is the sheet's left rail.
+ */
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+
+// h2 only. A mark is a slot of the viewport-tall rail, so h3s would crowd it
+// (nextjs-to-astro has six h2s and four h3s) and give a subsection the same
+// weight as its section.
+const sections = headings.filter((heading) => heading.depth === 2);
+const names = sections.map((_, i) => `--reading-rail-${i + 1}`);
+
+// MDX headings take no style attribute, so each one gets its timeline by id.
+// The inset puts the reading line 30% down the viewport: a heading's
+// timeline exits when its top crosses it, which is when its section counts
+// as reached. An attribute selector, since a slug may start with a digit.
+const timelineRules = sections
+  .map(
+    (heading, i) =>
+      `[id=${JSON.stringify(heading.slug)}]{view-timeline:${names[i]} block;view-timeline-inset:30% 0%}`,
+  )
+  .join("");
+
+// The tick runs one animation per section, each adding one slot of travel
+// while that section's heading moves from the bottom of the viewport to the
+// reading line. The steps add, so the tick lands on mark k at the moment the
+// mark lights, and rests there while a long section scrolls by.
+const tickStyle = [
+  `animation-name:${sections.map(() => "reading-rail-step").join(",")}`,
+  `animation-timeline:${names.join(",")}`,
+].join(";");
+---
+
+{
+  sections.length > 0 ? (
+    <div class="relative" style={`timeline-scope:${names.join(",")}`}>
+      <slot />
+      <div
+        data-reading-rail="rail"
+        class="pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-px"
+        style={`--reading-rail-slots:${sections.length}`}
+        aria-hidden="true"
+      >
+        <div data-reading-rail="track">
+          <span data-reading-rail="mark start" />
+          {names.map((name, i) => (
+            <span
+              data-reading-rail="mark"
+              style={`--reading-rail-slot:${i + 1};animation-timeline:${name}`}
+            />
+          ))}
+          <span data-reading-rail="tick" style={tickStyle} />
+        </div>
+      </div>
+      <style is:inline set:html={timelineRules} />
+    </div>
+  ) : (
+    <slot />
+  )
+}
+
+<style>
+  /* Hidden unless the browser can drive it. timeline-scope is in the test too:
+     a browser with scroll timelines but without it would resolve none of the
+     names, and the tick would sit at the top of the rail forever. So is
+     round(), which sets the slot pitch below. From 80rem there is paper left
+     of the sheet for the marks to cross the rail into. */
+  [data-reading-rail="rail"] {
+    display: none;
+  }
+
+  @supports (animation-timeline: view()) and (timeline-scope: none) and (top: round(1px, 1px)) {
+    @media (min-width: 80rem) {
+      [data-reading-rail="rail"] {
+        display: block;
+      }
+    }
+  }
+
+  /* Slots are spread evenly down the viewport, 4rem clear of either end, so
+     slot 0 (the title) is the top and the last section is the bottom. The
+     pitch rounds to whole pixels: an even split of 772px into five put every
+     mark on y.4, where a 1px line paints as two half-tone rows. */
+  [data-reading-rail="track"] {
+    /* Written here, not as Tailwind utilities: no other page used those two,
+       so their classes would have joined every page's stylesheet. */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    --reading-rail-inset: 4rem;
+    --reading-rail-pitch: round(
+      down,
+      (100dvh - 2 * var(--reading-rail-inset)) / var(--reading-rail-slots),
+      1px
+    );
+  }
+
+  /* An 8px mark centred on the 1px rail. The rest tone is accent/30 mixed onto
+     the card, the colour the rail itself composites to, so where the mark
+     crosses the rail it reads as one line instead of doubling the ink. */
+  [data-reading-rail~="mark"] {
+    position: absolute;
+    top: calc(var(--reading-rail-inset) + var(--reading-rail-slot, 0) * var(--reading-rail-pitch));
+    left: -4px;
+    width: 9px;
+    height: 1px;
+    background: color-mix(in srgb, var(--color-accent) 30%, var(--color-card));
+  }
+
+  /* The lit mark is a layer of full accent over the rest tone, so lighting
+     it animates opacity alone. */
+  [data-reading-rail~="mark"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-accent);
+    opacity: 0;
+    animation: reading-rail-light linear both;
+    animation-timeline: inherit;
+    animation-range: exit -2rem exit 0%;
+  }
+
+  [data-reading-rail~="start"]::after {
+    animation: none;
+    opacity: 1;
+  }
+
+  [data-reading-rail="tick"] {
+    position: absolute;
+    top: var(--reading-rail-inset);
+    left: -8px;
+    width: 17px;
+    height: 1px;
+    background: var(--color-accent);
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-composition: add;
+    animation-range: entry 0% exit 0%;
+  }
+
+  @keyframes reading-rail-step {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(var(--reading-rail-pitch));
+    }
+  }
+
+  @keyframes reading-rail-light {
+    to {
+      opacity: 1;
+    }
+  }
+</style>

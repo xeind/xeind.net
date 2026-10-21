@@ -7,6 +7,7 @@ import Badge from "@/components/ui/Badge";
 import { mdxComponents } from "@/components/blog/MDXComponents";
 import FullBleedRule from "@/components/blog/FullBleedRule";
 import MdxImage from "@/components/blog/MdxImage.astro";
+import ReadingRail from "@/components/blog/ReadingRail.astro";
 import { SITE, absoluteUrl } from "@/lib/config/site";
 
 export async function getStaticPaths() {
@@ -20,7 +21,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 const formattedDate = post.data.date.toLocaleDateString("en-US", {
   year: "numeric",
@@ -109,98 +110,100 @@ const breadcrumbStructuredData = {
   structuredData={[articleStructuredData, breadcrumbStructuredData]}
 >
   <div class="flex flex-col">
-    <Panel edges="bottom" ornaments="bottom">
-      {/* Post header */}
-      <div class="mb-6">
-        {
-          /* h-6: the flexed link is blockified, so its pb-px + underline
+    <ReadingRail headings={headings}>
+      <Panel edges="bottom" ornaments="bottom">
+        {/* Post header */}
+        <div class="mb-6">
+          {
+            /* h-6: the flexed link is blockified, so its pb-px + underline
             border would grow the row to 26px without a fixed height. */
-        }
-        <div class="mb-2 flex h-6 items-center justify-between">
-          <a
-            href="/blog"
-            class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm leading-6 transition-colors hover:border-solid"
-          >
-            ← Blogs
-          </a>
-          <time
-            datetime={post.data.date.toISOString()}
-            class="text-accent/50 font-mono text-xs leading-4 tracking-wide tabular-nums"
-          >
-            {formattedDate}
-          </time>
+          }
+          <div class="mb-2 flex h-6 items-center justify-between">
+            <a
+              href="/blog"
+              class="text-accent hover:text-tertiary border-accent/30 inline border-b border-dashed pb-px text-sm leading-6 transition-colors hover:border-solid"
+            >
+              ← Blogs
+            </a>
+            <time
+              datetime={post.data.date.toISOString()}
+              class="text-accent/50 font-mono text-xs leading-4 tracking-wide tabular-nums"
+            >
+              {formattedDate}
+            </time>
+          </div>
+          <h1 class="text-foreground mb-4 font-serif text-2xl leading-8 [text-wrap:balance]">
+            {post.data.title}
+          </h1>
+          {
+            post.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <Badge>{tag}</Badge>
+                ))}
+              </div>
+            )
+          }
         </div>
-        <h1 class="text-foreground mb-4 font-serif text-2xl leading-8 [text-wrap:balance]">
-          {post.data.title}
-        </h1>
+
         {
-          post.data.tags.length > 0 && (
-            <div class="flex flex-wrap gap-2">
-              {post.data.tags.map((tag) => (
-                <Badge>{tag}</Badge>
-              ))}
+          /* Same rule the body's <hr> draws — a post used to show a
+        content-width separator here and full-bleed ones below it. */
+        }
+        <FullBleedRule className="mb-[calc(1.5rem-1px)]" />
+
+        {
+          /* The last block's own mb-6 has nothing to collapse against inside the
+          panel's padding, so a post closed on 56px of air where it opened on
+          32. */
+        }
+        <article class="[&>*:last-child]:mb-0">
+          <Content components={{ ...mdxComponents, img: MdxImage }} />
+        </article>
+        <script is:inline src="/blog-lightbox.js" defer></script>
+        {
+          /* Only pages with code blocks load the copy-button script — posts
+          and /design — instead of every page via Layout. */
+        }
+        <script is:inline src="/codeblock-copy.js" defer></script>
+        {
+          /* Only posts with a margin note load its draw-on script. The note
+          renders drawn without it. */
+          post.body?.includes("<MarginNote") && <script is:inline src="/margin-notes.js" defer />
+        }
+
+        {/* Series nav */}
+        {
+          seriesPosts.length > 1 && (
+            <div class="border-accent/15 mt-[calc(2rem-1px)] -mb-px border border-dashed p-6">
+              <div class="mb-4 flex items-center gap-2">
+                {seriesIcon === "star" && <span class="text-accent text-sm">✦</span>}
+                <span class="text-secondary font-mono text-xs tracking-wide uppercase">Series</span>
+              </div>
+              <ol class="list-none space-y-2 pl-0">
+                {seriesPosts.map((sp) => (
+                  <li class="flex items-start gap-2 text-sm leading-6">
+                    <span class="text-accent/40 shrink-0 font-mono text-xs leading-6">
+                      {sp.data.seriesOrder}.
+                    </span>
+                    {sp.id === post.id ? (
+                      <span class="text-foreground font-serif">{sp.data.title}</span>
+                    ) : (
+                      <a
+                        href={`/blog/${sp.id}`}
+                        class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px font-serif transition-colors hover:border-solid"
+                      >
+                        {sp.data.title}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ol>
             </div>
           )
         }
-      </div>
-
-      {
-        /* Same rule the body's <hr> draws — a post used to show a
-        content-width separator here and full-bleed ones below it. */
-      }
-      <FullBleedRule className="mb-[calc(1.5rem-1px)]" />
-
-      {
-        /* The last block's own mb-6 has nothing to collapse against inside the
-          panel's padding, so a post closed on 56px of air where it opened on
-          32. */
-      }
-      <article class="[&>*:last-child]:mb-0">
-        <Content components={{ ...mdxComponents, img: MdxImage }} />
-      </article>
-      <script is:inline src="/blog-lightbox.js" defer></script>
-      {
-        /* Only pages with code blocks load the copy-button script — posts
-          and /design — instead of every page via Layout. */
-      }
-      <script is:inline src="/codeblock-copy.js" defer></script>
-      {
-        /* Only posts with a margin note load its draw-on script. The note
-          renders drawn without it. */
-        post.body?.includes("<MarginNote") && <script is:inline src="/margin-notes.js" defer />
-      }
-
-      {/* Series nav */}
-      {
-        seriesPosts.length > 1 && (
-          <div class="border-accent/15 mt-[calc(2rem-1px)] -mb-px border border-dashed p-6">
-            <div class="mb-4 flex items-center gap-2">
-              {seriesIcon === "star" && <span class="text-accent text-sm">✦</span>}
-              <span class="text-secondary font-mono text-xs tracking-wide uppercase">Series</span>
-            </div>
-            <ol class="list-none space-y-2 pl-0">
-              {seriesPosts.map((sp) => (
-                <li class="flex items-start gap-2 text-sm leading-6">
-                  <span class="text-accent/40 shrink-0 font-mono text-xs leading-6">
-                    {sp.data.seriesOrder}.
-                  </span>
-                  {sp.id === post.id ? (
-                    <span class="text-foreground font-serif">{sp.data.title}</span>
-                  ) : (
-                    <a
-                      href={`/blog/${sp.id}`}
-                      class="text-accent hover:text-tertiary border-accent/30 border-b border-dashed pb-px font-serif transition-colors hover:border-solid"
-                    >
-                      {sp.data.title}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </div>
-        )
-      }
-    </Panel>
+      </Panel>
+    </ReadingRail>
     <SectionDivider variant="grid" />
 
     {/* Navigation */}
