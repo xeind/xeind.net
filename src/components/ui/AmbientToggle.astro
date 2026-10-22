@@ -5,7 +5,7 @@ import { CSS_TRANSITIONS } from "@/lib/config/animation";
    follow it. A speaker that shows waves while sound is on and a cross while
    it is off. Same quiet-button pattern as the theme picker's trigger,
    squared to one 32px control so the two sit level in the footer. The state
-   lives in `aria-pressed`, on at every load; public/hero-interactions.js
+   lives in `aria-pressed`, off at every load; public/hero-interactions.js
    owns the sound and the attribute — this file only draws.
 
    The hero-sfx hooks give it the site's click and hover fidget, and the hint
@@ -22,7 +22,7 @@ const faceTransition = `transition-duration:${CSS_TRANSITIONS.fade.transitionDur
     type="button"
     data-ambient-toggle
     data-hero-sfx="click"
-    aria-pressed="true"
+    aria-pressed="false"
     class="group border-accent/30 bg-card text-foreground hover:bg-muted hover:border-accent/50 focus-visible:ring-accent inline-flex h-8 w-8 shrink-0 items-center justify-center border border-dashed transition-colors select-none focus-visible:ring-2 focus-visible:outline-none"
     style={houseTransition}
   >

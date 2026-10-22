@@ -84,15 +84,15 @@
   let ambient = null;
 
   /* The speaker is the site's one sound switch, and it shows `soundOn`.
-     Every load starts on: the clicks play, the track does not, since it
-     never starts without a press. A press turns everything off; the next
-     turns everything on and starts the track, and so on. `ambientOn` is
+     Every load starts off: no clicks, no track. A press turns everything
+     on and starts the track; the next turns everything off, and so on.
+     `ambientOn` is
      whether the track should be playing. A track that fails to load or is
      interrupted only clears `ambientOn` and warns: the switch and the
      clicks stay as they were. The clicks here and in the React islands
      (src/lib/hooks/useClickSound) read one signal, `data-sound` on <html>,
      carried across ClientRouter swaps the way the theme is. */
-  let soundOn = true;
+  let soundOn = false;
   let ambientOn = false;
   const ambientWanted = () => ambientOn;
   const soundAttribute = () => (soundOn ? "on" : "off");
