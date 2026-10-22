@@ -312,6 +312,11 @@
   // more than half the shorter one, not when their tops and bottoms match:
   // an inline <code> has a taller box than the words beside it, and exact
   // matching split its line in two and stepped the outline around it.
+  //
+  // Every line but the last also takes one space on its right. Chrome paints
+  // the selected space a line wraps at, or the newline that ends a block, a
+  // space wide past the last glyph, but its client rect is zero wide, so the
+  // outline stopped short and the fill spilled 4-5px past its right edge.
   function selectionLines() {
     const selection = document.getSelection();
     if (!selection || selection.isCollapsed || !selection.rangeCount) {
@@ -319,16 +324,16 @@
     }
     const range = selection.getRangeAt(0);
     const rects = [];
-    const take = (list) => {
+    const take = (list, node) => {
       for (const r of list) {
         if (r.width && r.height) {
-          rects.push(r);
+          rects.push({ r, node });
         }
       }
     };
     const root = range.commonAncestorContainer;
     if (root.nodeType === Node.TEXT_NODE) {
-      take(range.getClientRects());
+      take(range.getClientRects(), root);
     } else {
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
       const part = document.createRange();
@@ -343,12 +348,12 @@
         if (node === range.endContainer) {
           part.setEnd(node, range.endOffset);
         }
-        take(part.getClientRects());
+        take(part.getClientRects(), node);
       }
     }
-    rects.sort((a, b) => a.top - b.top);
+    rects.sort((a, b) => a.r.top - b.r.top);
     const lines = [];
-    for (const r of rects) {
+    for (const { r, node } of rects) {
       const line = lines.find(
         (l) =>
           Math.min(l.bottom, r.bottom) - Math.max(l.top, r.top) >
@@ -357,14 +362,29 @@
       if (line) {
         line.left = Math.min(line.left, r.left);
         line.top = Math.min(line.top, r.top);
-        line.right = Math.max(line.right, r.right);
+        if (r.right >= line.right) {
+          line.right = r.right;
+          line.node = node;
+        }
         line.bottom = Math.max(line.bottom, r.bottom);
       } else {
-        lines.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom });
+        lines.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom, node });
       }
     }
     lines.sort((a, b) => a.top - b.top);
+    for (const line of lines.slice(0, -1)) {
+      line.right += spaceWidth(line.node.parentElement);
+    }
     return lines.length ? lines : null;
+  }
+
+  // The width of a space in an element's font, with its spacing.
+  const measure = document.createElement("canvas").getContext("2d");
+  function spaceWidth(element) {
+    const style = getComputedStyle(element);
+    measure.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const spacing = (parseFloat(style.wordSpacing) || 0) + (parseFloat(style.letterSpacing) || 0);
+    return measure.measureText(" ").width + spacing;
   }
 
   // The accent, read from the theme so no theme's value is written twice. The
