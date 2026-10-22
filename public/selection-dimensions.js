@@ -69,9 +69,11 @@
   const STAGED_GROWTH = true;
   const STAGE_SHARE = 0.6;
   // What the pointer redlines, and whether moving between two of them morphs
-  // one box into the next (true) or fades one out as the next fades in.
+  // one box into the next (true) or fades one out as the next fades in. Off:
+  // a tile-sized box gliding across the project grid drew the eye from the
+  // cards to the box.
   const INTERACTIVE = "a, button, [role=button], input, select, textarea, summary";
-  const HOVER_MORPH = true;
+  const HOVER_MORPH = false;
   // The mark on the selection outline's outer corners: the site's turned
   // square, or an L bracket (see draw()).
   const CORNER_MARK = "diamond";
@@ -1150,8 +1152,8 @@
   }
 
   // A Tab fires focusout and then focusin; reading the focus once a frame,
-  // after both, lets the box travel to the next element instead of leaving
-  // and fading in again.
+  // after both, moves the box straight to the next element instead of
+  // dropping it for a frame between.
   function onFocusChange() {
     if (!hitFrame) {
       hitFrame = window.requestAnimationFrame(hitTest);

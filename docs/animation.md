@@ -303,12 +303,14 @@ and only fades: in over 150ms (`DURATION.fast`), out over 120ms, both on an
 ease-out cubic. The exit is shorter than the entrance and than any token:
 deselecting is the reader's own act, so the answer to it should come quicker.
 
-**Hover and focus redlines fade and morph.** A redline fades in over 100ms and
-out over 120ms, on the same ease-out cubic. One that starts within 300ms of the
-last on screen (`HOVER_WARM_MS`) shows at full at once: hovers and Tabs come in
-runs, and a fade on every control reads as flicker. Moving straight to a
-neighbour (`HOVER_MORPH`), by pointer or by Tab, carries the one box to the
-next element on the edges' curve, with no fade between. In a run, the pointer
+**Hover and focus redlines fade; they do not travel.** A redline fades in over
+100ms and out over 120ms, on the same ease-out cubic. One that starts within
+300ms of the last on screen (`HOVER_WARM_MS`) shows at full at once: hovers and
+Tabs come in runs, and a fade on every control reads as flicker. Moving to a
+neighbour, by pointer or by Tab, fades the old box out where it is as the new
+one shows at its own place. `HOVER_MORPH` once carried one box to the next
+element on the edges' curve; a tile-sized box gliding across the project grid
+drew the eye from the cards, so it is off. In a run, the pointer
 has to rest 100ms on the next element (`HOVER_DWELL_MS`) before the box goes
 there, and the box fades out if the pointer has been off its element that long
 without resting: a fast pass over the project grid used to drag one tile-sized
@@ -323,9 +325,8 @@ both can show; an element under both gets one, kept by whichever arrived first.
 
 **Reduced motion keeps the fades and drops the travel.** Edges and rules
 land at once, so nothing counts, stages or dims, but the fades run:
-they change opacity and move nothing. Hover and focus redlines stay, as
-opacity only: the old box fades out where it is and the new one fades in at
-its own place. The script runs for fine pointers only, which gates the focus
+they change opacity and move nothing. Hover and focus redlines stay as they
+are, since they are opacity only in every mode. The script runs for fine pointers only, which gates the focus
 redline too. No frames run at rest, and a scroll needs no redraw: the overlay
 scrolls with the page.
 
