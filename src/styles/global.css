@@ -664,15 +664,9 @@ footer ::selection {
   --selection-stroke-weight: 1;
 }
 
-/* Blueprint is a drafting sheet, where the pencil belongs: the 0.45 wobble,
-   1.5px overshoot and doubled, 80% stroke it was first tuned with. */
-[data-theme="blueprint"] {
-  --selection-stroke-wobble: 0.45;
-  --selection-stroke-passes: 2;
-  --selection-stroke-opacity: 0.8;
-  --selection-stroke-overshoot: 1.5;
-  --selection-stroke-weight: 1;
-}
+/* Blueprint takes Kozo's straight pen from :root. It had a pencil (a 0.45px
+   wobble, a doubled 80% stroke), but beside the site's ruled hairlines and
+   the corner diamonds the wavering box read as wonky, not drawn. */
 
 /* The overlay the box is drawn on: a 1px svg at the document's origin whose
    drawing overflows it, in page coordinates. It scrolls with the text on the

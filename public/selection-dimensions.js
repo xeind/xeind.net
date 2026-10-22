@@ -503,16 +503,12 @@
     set(parts.box, "stroke-width", String(stroke.weight));
     // Through the style, as for the overlay itself (see show()).
     parts.ghost.style.display = stroke.passes > 1 ? "" : "none";
-    parts.cornerGhost.style.display = stroke.passes > 1 ? "" : "none";
     // A 0.8px rule antialiases to a soft grey row; clean mode rules a full one.
     set(parts.marks, "stroke-width", clean ? "1" : "0.8");
     // A diamond is filled with the surface, as the halo is, so it covers the
     // lines crossing under it; a bracket is open.
     const diamond = CORNER_MARK === "diamond";
     set(parts.corners, "fill", diamond ? record.surface : "none");
-    // The outline's ink on the stroke only: the fill stays opaque to cover
-    // the lines under it.
-    set(parts.corners, "stroke-opacity", String(stroke.opacity));
     set(parts.corners, "shape-rendering", diamond || !clean ? "geometricPrecision" : "crispEdges");
   }
 
@@ -834,10 +830,8 @@
     const wobble = stroke.wobble;
     const marked = Math.max(wv, hv);
     set(parts.corners, "opacity", String(round(marked)));
-    set(parts.cornerGhost, "opacity", String(round(0.25 * marked)));
     if (marked > 0) {
       let corners = "";
-      let ghosts = "";
       const found = outerCorners(points);
       // A diamond scales to its box: its side is a quarter of the corner's
       // shorter arm, up to the Panels' 8px, so a 17px line takes about 4px
@@ -858,41 +852,7 @@
             continue;
           }
           const half = round(side / Math.SQRT2);
-          const tips = [
-            [cx, cy - half],
-            [cx + half, cy],
-            [cx, cy + half],
-            [cx - half, cy],
-          ];
-          // In a pencil theme the diamond is drawn by hand, as the outline is.
-          // Each side wobbles at half again the outline's amplitude, since
-          // an 8px side has room for one bend, with its ends left free so the
-          // tips do not quite meet; each side runs on past its far tip by the
-          // outline's overshoot; and a second, fainter pass runs half a pixel
-          // off, as the box's does. Pinned at the outline's amplitude it still
-          // read as a ruled square beside a hand-drawn line.
-          const sketch = wobble * 1.5;
-          const trace = (dx, dy, seed) => {
-            let data = "";
-            let stubs = "";
-            tips.forEach(([x0, y0], s) => {
-              const [x1, y1] = tips[(s + 1) % 4];
-              const edge = lineData(x0 + dx, y0 + dy, x1 + dx, y1 + dy, seed + s, sketch);
-              data += s === 0 ? edge : `L${edge.slice(1)}`;
-              if (sketch > 0 && stroke.overshoot > 0) {
-                const run = stroke.overshoot / Math.hypot(x1 - x0, y1 - y0);
-                const ex = x1 + dx;
-                const ey = y1 + dy;
-                stubs += `M${round(ex)} ${round(ey)}L${round(ex + (x1 - x0) * run)} ${round(ey + (y1 - y0) * run)}`;
-              }
-            });
-            // The stubs after the close, so the fill is the diamond's alone.
-            return `${data}Z${stubs}`;
-          };
-          corners += trace(0, 0, 100 + k * 8);
-          if (stroke.passes > 1) {
-            ghosts += trace(0.5, -0.3, 104 + k * 8);
-          }
+          corners += `M${cx} ${cy - half}L${cx + half} ${cy}L${cx} ${cy + half}L${cx - half} ${cy}Z`;
         } else {
           const reach = Math.round(6 * grow);
           if (reach < 1) {
@@ -907,7 +867,6 @@
         }
       }
       set(parts.corners, "d", corners);
-      set(parts.cornerGhost, "d", ghosts);
     }
 
     // The rules: width below the box (above, near the bottom edge), height to
@@ -1491,12 +1450,6 @@
       corners: create(
         "path",
         { ...SCALED, "stroke-width": "1", "stroke-linejoin": "round" },
-        lines,
-      ),
-      // The diamonds' second pass, over their fill, as the box's is over it.
-      cornerGhost: create(
-        "path",
-        { ...SCALED, "stroke-width": "0.6", "stroke-linejoin": "round" },
         lines,
       ),
       marks: create("path", { ...SCALED, opacity: "0.7" }, lines),

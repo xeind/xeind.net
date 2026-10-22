@@ -180,18 +180,20 @@ accent in the footer), so a number over words stays readable. Each theme rules
 the outline through five variables in `global.css`, read per new outline and on
 a theme change:
 
-| Variable                       | Kozo | Manila, Nightingale | Blueprint | Meaning                                                            |
-| ------------------------------ | ---- | ------------------- | --------- | ------------------------------------------------------------------ |
-| `--selection-stroke-wobble`    | 0    | 0                   | 0.45      | Most a line strays from straight, px. 0 snaps                      |
-| `--selection-stroke-passes`    | 1    | 1                   | 2         | 2 adds a faint second stroke                                       |
-| `--selection-stroke-opacity`   | 1    | 1                   | 0.8       | The outline stroke's opacity at rest                               |
-| `--selection-stroke-overshoot` | 1.5  | 0                   | 1.5       | Stubs continuing both edges past each outer corner, px. 0 for none |
-| `--selection-stroke-weight`    | 1    | 1                   | 1         | The outline stroke's width, px                                     |
+| Variable                       | Kozo, Blueprint | Manila, Nightingale | Meaning                                                            |
+| ------------------------------ | --------------- | ------------------- | ------------------------------------------------------------------ |
+| `--selection-stroke-wobble`    | 0               | 0                   | Most a line strays from straight, px. 0 snaps                      |
+| `--selection-stroke-passes`    | 1               | 1                   | 2 adds a faint second stroke                                       |
+| `--selection-stroke-opacity`   | 1               | 1                   | The outline stroke's opacity at rest                               |
+| `--selection-stroke-overshoot` | 1.5             | 0                   | Stubs continuing both edges past each outer corner, px. 0 for none |
+| `--selection-stroke-weight`    | 1               | 1                   | The outline stroke's width, px                                     |
 
-Pencil on Blueprint, a straight pen with overshot corners on Kozo, clean
-hairlines on the two dark themes. A theme sets all five; the script falls back
-to the clean style. The comments beside them record what was tried on Kozo and
-rejected.
+A straight pen with overshot corners on Kozo and Blueprint, clean hairlines on
+the two dark themes. Blueprint once had a pencil (a 0.45px wobble and a
+doubled 80% stroke); beside the ruled hairlines and corner diamonds it read as
+wonky, so it takes Kozo's pen from `:root`. The script still draws wobble and
+a second pass for any theme that sets them, and falls back to the clean style.
+The comments beside the variables record what was tried on Kozo and rejected.
 
 ### Opacity ladder
 
