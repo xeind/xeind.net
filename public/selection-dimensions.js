@@ -864,27 +864,30 @@
             [cx, cy + half],
             [cx - half, cy],
           ];
-          // In a pencil theme each side wobbles as the outline's edges do,
-          // its ends pinned so the four sides still meet at the tips, and a
-          // second, fainter pass runs half a pixel off, as the box's does; a
-          // ruled square beside a hand-drawn line read as a second pen.
+          // In a pencil theme the diamond is drawn by hand, as the outline is.
+          // Each side wobbles at half again the outline's amplitude, since
+          // an 8px side has room for one bend, with its ends left free so the
+          // tips do not quite meet; each side runs on past its far tip by the
+          // outline's overshoot; and a second, fainter pass runs half a pixel
+          // off, as the box's does. Pinned at the outline's amplitude it still
+          // read as a ruled square beside a hand-drawn line.
+          const sketch = wobble * 1.5;
           const trace = (dx, dy, seed) => {
             let data = "";
+            let stubs = "";
             tips.forEach(([x0, y0], s) => {
               const [x1, y1] = tips[(s + 1) % 4];
-              const edge = lineData(
-                x0 + dx,
-                y0 + dy,
-                x1 + dx,
-                y1 + dy,
-                seed + s,
-                wobble,
-                true,
-                true,
-              );
+              const edge = lineData(x0 + dx, y0 + dy, x1 + dx, y1 + dy, seed + s, sketch);
               data += s === 0 ? edge : `L${edge.slice(1)}`;
+              if (sketch > 0 && stroke.overshoot > 0) {
+                const run = stroke.overshoot / Math.hypot(x1 - x0, y1 - y0);
+                const ex = x1 + dx;
+                const ey = y1 + dy;
+                stubs += `M${round(ex)} ${round(ey)}L${round(ex + (x1 - x0) * run)} ${round(ey + (y1 - y0) * run)}`;
+              }
             });
-            return `${data}Z`;
+            // The stubs after the close, so the fill is the diamond's alone.
+            return `${data}Z${stubs}`;
           };
           corners += trace(0, 0, 100 + k * 8);
           if (stroke.passes > 1) {
