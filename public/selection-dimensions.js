@@ -71,8 +71,10 @@
   // What the pointer redlines, and whether moving between two of them morphs
   // one box into the next (true) or fades one out as the next fades in. Off:
   // a tile-sized box gliding across the project grid drew the eye from the
-  // cards to the box.
-  const INTERACTIVE = "a, button, [role=button], input, select, textarea, summary";
+  // cards to the box. The timeline's earlier-roles toggle is left out: its
+  // corner brackets open 4px past it on hover, and a 16 × 24 box drawn
+  // inside them crossed every bracket.
+  const INTERACTIVE = "a, button, [role=button], input, select, textarea, summary:not(.ca-trigger)";
   const HOVER_MORPH = false;
   // The mark on the selection outline's outer corners: the site's turned
   // square, or an L bracket (see draw()).
