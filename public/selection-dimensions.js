@@ -236,6 +236,21 @@
     ) {
       ring.pop();
     }
+    // Where two bands' edges line up, the junction sits on a straight edge.
+    // Left in, it cut its neighbours' arms to one band's height, so the
+    // diamond on a line's bottom corner went out for the frames a new line
+    // took to pass 12px. Points are on the half-pixel grid, so a straight
+    // run turns by exactly zero; dropping one point can straighten the next.
+    const straight = (point, k) => {
+      const [px, py] = ring[(k - 1 + ring.length) % ring.length];
+      const [nx, ny] = ring[(k + 1) % ring.length];
+      return (point[0] - px) * (ny - point[1]) - (point[1] - py) * (nx - point[0]) === 0;
+    };
+    let k = ring.findIndex(straight);
+    while (k >= 0 && ring.length > 3) {
+      ring.splice(k, 1);
+      k = ring.findIndex(straight);
+    }
     const n = ring.length;
     const outer = ring.map(([x, y], k) => {
       const [px, py] = ring[(k - 1 + n) % n];
