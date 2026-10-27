@@ -24,7 +24,7 @@ Most requests are already solved. Reach for the existing primitive.
 | A note beside a phrase in a post | `blog/MarginNote.astro`                                              | A hand-placed float         |
 | A card that opens a modal        | Copy `sections/ProjectGrid`                                          | A new modal implementation  |
 | The theme picker                 | `ui/ThemeSelector.astro`                                             | A second copy of the button |
-| Sound switch                     | `ui/AmbientToggle.astro`                                             | A second copy of the button |
+| Music switch                     | `ui/AmbientToggle.astro`                                             | A second copy of the button |
 
 There is no icon library. `lucide-react` is not installed and must not be added.
 
