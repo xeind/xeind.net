@@ -24,18 +24,6 @@
   // its first half and the fade-out drops at once.
   const FADE_IN_MS = 150;
   const FADE_OUT_MS = 120;
-  // A hover callout is a lighter thing than a selection, so it arrives in
-  // 100ms. One that follows another seen within HOVER_WARM_MS, as the
-  // pointer runs along a row of controls or crosses a gap between them,
-  // shows at once: fading in again on every control reads as flicker.
-  const HOVER_FADE_IN_MS = 100;
-  const HOVER_WARM_MS = 300;
-  // Hover intent. While a callout is on screen, or was within HOVER_WARM_MS,
-  // the pointer has to rest on the next element this long before the box
-  // goes there. A fast pass over the project grid crosses a 288 × 144 tile
-  // in about 50ms and used to drag one tile-sized box after it at 1600px/s;
-  // a reader settling on a control stays far longer than this.
-  const HOVER_DWELL_MS = 100;
   const easeOut = (t) => 1 - (1 - t) ** 3;
   // A reshaped selection moves the box the way the theme picker's name rolls
   // over: `.theme-roll` in global.css, 0.3s (DURATION.slow) on
@@ -68,14 +56,6 @@
   // starts.
   const STAGED_GROWTH = true;
   const STAGE_SHARE = 0.6;
-  // What the pointer redlines, and whether moving between two of them morphs
-  // one box into the next (true) or fades one out as the next fades in. Off:
-  // a tile-sized box gliding across the project grid drew the eye from the
-  // cards to the box. The timeline's earlier-roles toggle is left out: its
-  // corner brackets open 4px past it on hover, and a 16 × 24 box drawn
-  // inside them crossed every bracket.
-  const INTERACTIVE = "a, button, [role=button], input, select, textarea, summary:not(.ca-trigger)";
-  const HOVER_MORPH = false;
   // The mark on the selection outline's outer corners: the site's turned
   // square, or an L bracket (see draw()).
   const CORNER_MARK = "diamond";
@@ -85,27 +65,6 @@
   let record = null;
   let stroke = null;
   let frame = 0;
-  // The hover and focus redlines: at most one live of each kind, and in
-  // crossfade one more leaving.
-  let hovers = [];
-  let pointer = null;
-  let hitFrame = 0;
-  // Hover boxes take ids from their own range, so a hover's wobble never
-  // repeats the selection's.
-  let nextHoverId = 5000;
-  // When a hover callout was last on screen, for the warm switch.
-  let hoverSeen = -Infinity;
-  // Hover intent: the element the pointer is on but the box is not yet, since
-  // when, and since when the pointer has been off the box's element. Undefined
-  // and null when the pointer is where the box is.
-  let candidate;
-  let candidateSince = 0;
-  let leftAt = null;
-  let dwellTimer = 0;
-  // Whether focus is the reader's: set by Tab, cleared by the pointer. The
-  // browser also calls focus restored by script :focus-visible, which drew a
-  // focus box on a project tile after its modal closed.
-  let tabbing = false;
 
   // Value noise: a hash per 7px step, smoothstepped between neighbours, so a
   // line bends gently instead of jittering pixel to pixel.
@@ -991,9 +950,6 @@
   // the last fade frame painted under every deselected box, a ghost label
   // that never went. Hiding a group also takes its opacity to 0, so the
   // content is invisible even if the hide ever fails.
-  //
-  // The svg is shown while anything is drawn; the selection and each hover
-  // fade in their own group, so one can come and go under the other.
   function show() {
     if (svg.style.display) {
       svg.style.display = "";
@@ -1020,8 +976,8 @@
   }
 
   // One frame per event. The loop only keeps itself alive while a fade or a
-  // reshape runs; at rest it stops, and the next selectionchange, pointer
-  // move or pinned scroll draws again.
+  // reshape runs; at rest it stops, and the next selectionchange or pinned
+  // scroll draws again.
   function paint() {
     frame = 0;
     if (!svg) {
@@ -1042,17 +998,7 @@
         vanish(parts.selection);
       }
     }
-    hovers = hovers.filter((hover) => {
-      const result = drawHover(hover, now);
-      if (!result.keep) {
-        vanish(hover.parts.group);
-        return false;
-      }
-      hover.tick = result.busy ? now : null;
-      busy = busy || result.busy;
-      return true;
-    });
-    if (!record && !hovers.length) {
+    if (!record) {
       hide();
       return;
     }
@@ -1065,266 +1011,6 @@
     if (!frame) {
       frame = window.requestAnimationFrame(paint);
     }
-  }
-
-  // Hover redlines, after imdaryl.com's cursor callouts: the outline style
-  // of the selection box, as one rectangle on the element's border box, with
-  // its W × H under it. Each hover keeps its own record and group, so a
-  // selection and a hover show at once. The box is in page coordinates, so
-  // a scroll carries it with the element; the hit test reruns only when the
-  // pointer moves, once a frame.
-  //
-  // Not while a button is held, or a drag-select across links would spray
-  // boxes; not while the selection is pinned to the viewport, whose overlay
-  // coordinates a page box cannot share; and not on elements in a fixed
-  // ancestor (the footer) for the same reason, and because the footer's ink
-  // rules leave a hover there unreadable. Under reduced motion it stays, as
-  // opacity only: no box travels between neighbours, the old one fades out
-  // where it is and the new one fades in at its own place.
-  //
-  // Keyboard focus draws the same callout, on the same elements, when the
-  // browser would show its focus ring (:focus-visible), so a click on a link
-  // draws none; a click in a text field does, as the ring does. The ring
-  // stays: the box is drawn over the page and takes nothing from it. Focus
-  // and hover are separate callouts, so a reader can tab with the pointer
-  // resting elsewhere and see both. An element under both gets one box,
-  // kept by whichever callout held it first.
-  function boxOf(element) {
-    const r = element.getBoundingClientRect();
-    return {
-      left: r.left + window.scrollX,
-      top: r.top + window.scrollY,
-      right: r.right + window.scrollX,
-      bottom: r.bottom + window.scrollY,
-    };
-  }
-
-  function onPointerMove(event) {
-    const moved = !pointer || pointer.x !== event.clientX || pointer.y !== event.clientY;
-    pointer = { x: event.clientX, y: event.clientY, pressed: event.buttons !== 0 };
-    // The reader has gone back to the pointer: the focus box goes, or a tile
-    // focused by a closing modal keeps a second box beside the hover's.
-    if (moved || pointer.pressed) {
-      tabbing = false;
-    }
-    if (!hitFrame) {
-      hitFrame = window.requestAnimationFrame(hitTest);
-    }
-  }
-
-  function onPointerOut(event) {
-    if (!event.relatedTarget) {
-      pointer = null;
-      clearHoverIntent();
-      hoverOn("pointer", null);
-    }
-  }
-
-  function clearHoverIntent() {
-    window.clearTimeout(dwellTimer);
-    dwellTimer = 0;
-    candidate = undefined;
-    leftAt = null;
-  }
-
-  function onDwell() {
-    dwellTimer = 0;
-    if (!hitFrame) {
-      hitFrame = window.requestAnimationFrame(hitTest);
-    }
-  }
-
-  // Where the pointer box should be, given the element under the pointer. A
-  // cold hover lands at once. In a run of hovers the box holds until the
-  // pointer has rested on one element for HOVER_DWELL_MS, and fades out if the
-  // pointer has been off its element that long without resting anywhere. A
-  // pointer that stops sends no more moves, so a timer rechecks when the
-  // dwell is due.
-  function intended(pointed) {
-    const live = hovers.find((hover) => hover.gone === null && hover.kind === "pointer");
-    const current = live?.element ?? null;
-    window.clearTimeout(dwellTimer);
-    dwellTimer = 0;
-    if (pointed === current) {
-      clearHoverIntent();
-      return pointed;
-    }
-    const now = performance.now();
-    if (!live && leftAt === null && now - hoverSeen > HOVER_WARM_MS) {
-      return pointed;
-    }
-    if (pointed !== candidate) {
-      candidate = pointed;
-      candidateSince = now;
-    }
-    leftAt ??= now;
-    const waited = now - candidateSince;
-    if (waited >= HOVER_DWELL_MS) {
-      clearHoverIntent();
-      return pointed;
-    }
-    dwellTimer = window.setTimeout(onDwell, HOVER_DWELL_MS - waited);
-    return now - leftAt >= HOVER_DWELL_MS ? null : current;
-  }
-
-  function onKeyDown(event) {
-    if (event.key === "Tab") {
-      tabbing = true;
-    }
-  }
-
-  // A Tab fires focusout and then focusin; reading the focus once a frame,
-  // after both, moves the box straight to the next element instead of
-  // dropping it for a frame between.
-  function onFocusChange() {
-    if (!hitFrame) {
-      hitFrame = window.requestAnimationFrame(hitTest);
-    }
-  }
-
-  function hitTest() {
-    hitFrame = 0;
-    if (!svg) {
-      return;
-    }
-    const free = !record?.pinned;
-    let pointed = null;
-    if (pointer && !pointer.pressed && free) {
-      const element = document.elementFromPoint(pointer.x, pointer.y)?.closest(INTERACTIVE);
-      if (element && !pinnedFor(element)) {
-        pointed = element;
-      }
-      pointed = intended(pointed);
-    } else {
-      // A press, a pinned selection or no pointer clears the box at once.
-      clearHoverIntent();
-    }
-    let focused = null;
-    const active = document.activeElement;
-    if (free && tabbing && active?.matches(":focus-visible")) {
-      const element = active.closest(INTERACTIVE);
-      if (element && !pinnedFor(element)) {
-        focused = element;
-      }
-    }
-    // Two boxes on one element are one box to the eye on a clean stroke and
-    // a smear on Blueprint's pencil; the callout already on it keeps it.
-    if (focused && focused === pointed) {
-      if (hovers.some((h) => h.gone === null && h.kind === "focus" && h.element === focused)) {
-        pointed = null;
-      } else {
-        focused = null;
-      }
-    }
-    hoverOn("pointer", pointed);
-    hoverOn("focus", focused);
-  }
-
-  function applyHoverStroke(hover) {
-    const { group, lines, box, ghost, text } = hover.parts;
-    const clean = stroke.wobble === 0;
-    group.style.color = hover.ink;
-    set(text, "stroke", hover.surface);
-    set(lines, "shape-rendering", clean ? "crispEdges" : "geometricPrecision");
-    set(box, "stroke-width", String(stroke.weight));
-    set(box, "opacity", String(stroke.opacity));
-    ghost.style.display = stroke.passes > 1 ? "" : "none";
-  }
-
-  function hoverOn(kind, element) {
-    const live = hovers.find((hover) => hover.gone === null && hover.kind === kind);
-    if ((live?.element ?? null) === element) {
-      return;
-    }
-    const now = performance.now();
-    const morph = HOVER_MORPH && !reduceMotion.matches;
-    if (live && (!element || !morph)) {
-      live.gone = now;
-      // It was on screen until now, however long it has rested undrawn.
-      hoverSeen = now;
-    }
-    if (element) {
-      stroke ??= readStroke();
-      if (!record) {
-        set(svg, "data-anchor", "page");
-      }
-      if (morph && live) {
-        // One box travels to the next element on the edges' curve.
-        live.element = element;
-        live.target = boxOf(element);
-        live.tick ??= now;
-        live.ink = inkFor(element);
-        live.surface = surfaceFor(element);
-        applyHoverStroke(live);
-      } else {
-        // The parts no other hover holds; with two already leaving, the
-        // older one gives its parts up.
-        let free = parts.hovers.find((slot) => !hovers.some((hover) => hover.parts === slot));
-        if (!free) {
-          const oldest = hovers.shift();
-          vanish(oldest.parts.group);
-          free = oldest.parts;
-        }
-        const target = boxOf(element);
-        const hover = {
-          id: nextHoverId++,
-          kind,
-          element,
-          target,
-          shown: { ...target },
-          // Warm: a callout seen this recently means this one starts shown.
-          start: now - hoverSeen <= HOVER_WARM_MS ? now - HOVER_FADE_IN_MS : now,
-          gone: null,
-          tick: null,
-          parts: free,
-          ink: inkFor(element),
-          surface: surfaceFor(element),
-        };
-        applyHoverStroke(hover);
-        hovers.push(hover);
-      }
-    }
-    schedule();
-  }
-
-  function drawHover(hover, now) {
-    const still = reduceMotion.matches;
-    const share = 1 - Math.exp(-(now - (hover.tick ?? now)) / SETTLE_TAU_MS);
-    let moving = false;
-    for (const edge of ["left", "top", "right", "bottom"]) {
-      const gap = hover.target[edge] - hover.shown[edge];
-      if (still || Math.abs(gap) < SETTLE_EPSILON) {
-        hover.shown[edge] = hover.target[edge];
-      } else {
-        hover.shown[edge] += gap * share;
-        moving = true;
-      }
-    }
-    const fadeIn = easeOut(Math.min(1, (now - hover.start) / HOVER_FADE_IN_MS));
-    const fadeOut =
-      hover.gone === null ? 1 : 1 - easeOut(Math.min(1, (now - hover.gone) / FADE_OUT_MS));
-    if (fadeOut <= 0) {
-      return { keep: false, busy: false };
-    }
-    hoverSeen = now;
-    const { group, box, ghost, label } = hover.parts;
-    show();
-    fade(group, round(fadeIn * fadeOut));
-    const bands = [{ id: hover.id, shown: hover.shown }];
-    set(box, "d", outlineData(outline(bands, 0), 0, 0));
-    if (stroke.passes > 1) {
-      set(ghost, "d", outlineData(outline(bands, 1), 0.5, -0.3));
-    }
-    const left = Math.round(hover.shown.left);
-    const right = Math.round(hover.shown.right);
-    const top = Math.round(hover.shown.top);
-    const bottom = Math.round(hover.shown.bottom);
-    // Below the box, or above it near the viewport's bottom edge.
-    const below = bottom + 16 < window.innerHeight + window.scrollY;
-    setText(label, `${right - left} \u00d7 ${bottom - top}`);
-    set(label, "x", String(Math.round((left + right) / 2)));
-    set(label, "y", String(below ? bottom + 11 : top - 11));
-    return { keep: true, busy: moving || fadeIn < 1 || hover.gone !== null };
   }
 
   // A reflow moves the text under a live box; a box fading out keeps its last
@@ -1377,12 +1063,6 @@
       };
       stroke = readStroke();
       applyStroke();
-      // A pinned selection puts the overlay in viewport coordinates, which a
-      // hover box in page coordinates cannot share; it goes at once.
-      if (pinned) {
-        hovers.forEach((hover) => vanish(hover.parts.group));
-        hovers = [];
-      }
     } else if (targets) {
       retarget(targets);
     } else if (record && record.gone === null) {
@@ -1391,27 +1071,19 @@
     schedule();
   }
 
-  // A theme pick swaps the stroke, the ink and the halo under a live box and
-  // a live hover.
+  // A theme pick swaps the stroke, the ink and the halo under a live box.
   function onThemeChange() {
-    if (!record && !hovers.length) {
+    if (!record) {
       return;
     }
     stroke = readStroke();
-    if (record) {
-      const selection = document.getSelection();
-      if (record.gone === null && selection?.rangeCount) {
-        const element = selectedElement(selection);
-        record.ink = inkFor(element);
-        record.surface = surfaceFor(element);
-      }
-      applyStroke();
+    const selection = document.getSelection();
+    if (record.gone === null && selection?.rangeCount) {
+      const element = selectedElement(selection);
+      record.ink = inkFor(element);
+      record.surface = surfaceFor(element);
     }
-    for (const hover of hovers) {
-      hover.ink = inkFor(hover.element);
-      hover.surface = surfaceFor(hover.element);
-      applyHoverStroke(hover);
-    }
+    applyStroke();
     schedule();
   }
 
@@ -1427,23 +1099,6 @@
     "stroke-linejoin": "round",
   };
   const SCALED = { "vector-effect": "non-scaling-stroke" };
-
-  // One hover's parts: its own group, so it fades and takes its ink apart
-  // from the selection.
-  function hoverParts() {
-    const group = create("g", {}, svg);
-    group.style.display = "none";
-    const lines = create("g", { fill: "none", stroke: "currentColor" }, group);
-    const text = create("g", LABELS, group);
-    return {
-      group,
-      lines,
-      text,
-      box: create("path", { ...SCALED, "stroke-width": "1" }, lines),
-      ghost: create("path", { ...SCALED, "stroke-width": "0.6", opacity: "0.25" }, lines),
-      label: create("text", { "text-anchor": "middle" }, text),
-    };
-  }
 
   // The overlay's parts, built once and only re-attributed per frame. Font
   // and colour come from tokens: each group's ink is its `color`, and every
@@ -1483,16 +1138,12 @@
       heightText: create("text", {}, text),
       heightExtra: create("text", { "text-anchor": "end" }, text),
     };
-    // Three hover groups: a live hover and a live focus, and in crossfade one
-    // more leaving as the next arrives.
-    parts.hovers = [hoverParts(), hoverParts(), hoverParts()];
     document.body.append(svg);
   }
 
   // ClientRouter swaps <body> on navigation, which takes the overlay with it.
   function init() {
     record = null;
-    hovers = [];
     if (svg?.isConnected) {
       return;
     }
@@ -1521,11 +1172,6 @@
     { passive: true },
   );
   window.addEventListener("resize", onResize, { passive: true });
-  document.addEventListener("pointermove", onPointerMove, { passive: true });
-  document.addEventListener("mouseout", onPointerOut, { passive: true });
-  document.addEventListener("keydown", onKeyDown, { passive: true });
-  document.addEventListener("focusin", onFocusChange);
-  document.addEventListener("focusout", onFocusChange);
   new MutationObserver(onThemeChange).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"],

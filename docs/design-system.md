@@ -159,13 +159,9 @@ The side rails carry no ruler. imdaryl.com marks a selection on both rails,
 but there the box has no labels; here the box already shows its height, so
 rail rulers printed it three times.
 
-The pointer gets the same treatment. `a, button, [role=button], input, select,
-textarea, summary` under a fine pointer draw a redline: the outline style as
-one rectangle on the element's border box, with `W × H` below it. Not while a
-button is held, nor in the footer. Keyboard focus draws the same redline on the
-same elements when the element matches `:focus-visible`, so a mouse click on a
-link draws none. It sits inside the focus ring, which stays. Timings and
-reduced motion are in `docs/animation.md` §6.
+Only selected text gets a redline. Hover and keyboard-focus redlines on links
+and controls shipped and were removed by design call; don't bring them back
+without a new one.
 
 The overlay sits in the document: a 1px absolute svg at the origin, drawing in
 page coordinates, so it scrolls with the text on the compositor. A selection

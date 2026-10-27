@@ -303,32 +303,14 @@ and only fades: in over 150ms (`DURATION.fast`), out over 120ms, both on an
 ease-out cubic. The exit is shorter than the entrance and than any token:
 deselecting is the reader's own act, so the answer to it should come quicker.
 
-**Hover and focus redlines fade; they do not travel.** A redline fades in over
-100ms and out over 120ms, on the same ease-out cubic. One that starts within
-300ms of the last on screen (`HOVER_WARM_MS`) shows at full at once: hovers and
-Tabs come in runs, and a fade on every control reads as flicker. Moving to a
-neighbour, by pointer or by Tab, fades the old box out where it is as the new
-one shows at its own place. `HOVER_MORPH` once carried one box to the next
-element on the edges' curve; a tile-sized box gliding across the project grid
-drew the eye from the cards, so it is off. In a run, the pointer
-has to rest 100ms on the next element (`HOVER_DWELL_MS`) before the box goes
-there, and the box fades out if the pointer has been off its element that long
-without resting: a fast pass over the project grid used to drag one tile-sized
-box after the pointer. No hover redline shows while a button is held, while the
-pointer is outside the window, or in the footer. Keyboard focus draws its own
-redline on the same elements when the browser shows its focus ring
-(`:focus-visible`), so a mouse click on a link draws none, and the ring stays.
-It draws only after a Tab, and the next pointer move clears it: Chrome also
-counts focus restored by script as `:focus-visible`, which left a focus box on
-a project tile after its modal closed. Hover and focus are separate boxes, so
-both can show; an element under both gets one, kept by whichever arrived first.
+**Only a selection draws a redline.** Hover and keyboard-focus redlines on
+links and controls were removed by design call (`docs/design-system.md`).
 
 **Reduced motion keeps the fades and drops the travel.** Edges and rules
 land at once, so nothing counts, stages or dims, but the fades run:
-they change opacity and move nothing. Hover and focus redlines stay as they
-are, since they are opacity only in every mode. The script runs for fine pointers only, which gates the focus
-redline too. No frames run at rest, and a scroll needs no redraw: the overlay
-scrolls with the page.
+they change opacity and move nothing. The script runs for fine pointers only.
+No frames run at rest, and a scroll needs no redraw: the overlay scrolls with
+the page.
 
 ---
 
