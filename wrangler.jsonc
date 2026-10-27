@@ -1,9 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "xeind-net",
-  // The account that owns the xeind-net Pages project. Pinned so a deploy
-  // under another account's login fails instead of shipping there.
-  "account_id": "d87030cf8e81f9320e482d2b0efc9613",
+  // No account_id: a Pages config rejects the key and the Git build fails.
+  // The deploy script in package.json pins the account instead.
   "compatibility_date": "2026-07-15",
   "pages_build_output_dir": "./dist",
 }

@@ -146,7 +146,10 @@ so the pre-push gate is active from the first clone.
 
 Push to `main` and Cloudflare Pages builds and ships it, about two minutes
 end to end, which is why the pre-push gate exists. `npm run deploy` is the
-manual wrangler fallback. Every build stamps the short commit hash and build
+manual wrangler fallback; it sets `CLOUDFLARE_ACCOUNT_ID` to the account that
+owns `xeind-net`, so a login that cannot reach that account fails instead of
+deploying elsewhere. The account cannot go in `wrangler.jsonc`: a Pages config
+rejects `account_id` and the Git build fails. Every build stamps the short commit hash and build
 date into the page.
 
 SEO plumbing: metadata in `src/components/Seo.astro`, canonical config in

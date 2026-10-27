@@ -13,7 +13,7 @@
     "claude:frames": "node scripts/extract-claude-frames.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "deploy": "PUBLIC_GIT_COMMIT_HASH=$(git rev-parse --short HEAD) PUBLIC_BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') npm run build && wrangler pages deploy dist --project-name xeind-net --branch main",
+    "deploy": "PUBLIC_GIT_COMMIT_HASH=$(git rev-parse --short HEAD) PUBLIC_BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') npm run build && CLOUDFLARE_ACCOUNT_ID=d87030cf8e81f9320e482d2b0efc9613 wrangler pages deploy dist --project-name xeind-net --branch main",
     "deploy:dry": "npm run build",
     "lighthouse": "lighthouse http://localhost:3181 --view --chrome-flags=\"--headless\"",
     "lighthouse:mobile": "lighthouse http://localhost:3181 --preset=mobile --view --chrome-flags=\"--headless\"",
