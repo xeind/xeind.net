@@ -11,13 +11,11 @@ const SILENT_GAIN = 1e-4;
    the ramp allows, short enough that the tap still reads as a tap. */
 const TAP_ATTACK_S = 0.002;
 
-/** The shared context, or null when no sound may play: before the first
- * gesture has made it, or while the footer's sound switch is off. The switch
- * lives in public/hero-interactions.js, which writes `data-sound` on <html>;
- * it is read at play time because the islands hydrate at different moments. */
+/** The shared context, or null before the first gesture has made it. The
+ * footer's speaker switches only the ambient track, so the clicks do not
+ * read it. */
 function getAudioContext(): AudioContext | null {
   if (typeof document === "undefined" || !audioContext) return null;
-  if (document.documentElement.dataset.sound !== "on") return null;
   if (audioContext.state === "suspended") {
     void audioContext.resume();
   }

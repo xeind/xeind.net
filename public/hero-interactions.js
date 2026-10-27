@@ -83,19 +83,16 @@
   const currentTheme = () => document.documentElement.dataset.theme || "light";
   let ambient = null;
 
-  /* The speaker is the site's one sound switch, and it shows `soundOn`.
-     Every load starts off: no clicks, no track. A press turns everything
-     on and starts the track; the next turns everything off, and so on.
-     `ambientOn` is
-     whether the track should be playing. A track that fails to load or is
-     interrupted only clears `ambientOn` and warns: the switch and the
-     clicks stay as they were. The clicks here and in the React islands
-     (src/lib/hooks/useClickSound) read one signal, `data-sound` on <html>,
-     carried across ClientRouter swaps the way the theme is. */
+  /* The speaker switches the track and nothing else, and it shows
+     `soundOn`. Every load starts off. A press starts the track; the next
+     stops it, and so on. The clicks are not on the switch: they play on
+     every load, here and in the React islands (src/lib/hooks/useClickSound).
+     `ambientOn` is whether the track should be playing. A track that fails
+     to load or is interrupted only clears `ambientOn` and warns: the switch
+     stays as it was. */
   let soundOn = false;
   let ambientOn = false;
   const ambientWanted = () => ambientOn;
-  const soundAttribute = () => (soundOn ? "on" : "off");
 
   const stopAmbientOnly = (reason) => {
     ambientOn = false;
@@ -107,12 +104,7 @@
     document.querySelectorAll("[data-ambient-toggle]").forEach((button) => {
       button.setAttribute("aria-pressed", pressed);
     });
-    document.documentElement.dataset.sound = soundAttribute();
   };
-
-  document.addEventListener("astro:before-swap", (event) => {
-    event.newDocument.documentElement.dataset.sound = soundAttribute();
-  });
 
   /* Opus in Ogg where it plays, AAC where it does not (Safari before 17.4). */
   const ambientSrc = (name) => {
@@ -370,7 +362,6 @@
   };
 
   const playClickSoft = async () => {
-    if (!soundOn) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
     noiseTap(
@@ -384,7 +375,6 @@
   };
 
   const playFidget = async () => {
-    if (!soundOn) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
     noiseTap(
@@ -404,7 +394,6 @@
      email button via the hero:copy-confirm event once the clipboard write
      has actually resolved, so the sound lands with the checkmark swap. */
   const playConfirm = async () => {
-    if (!soundOn) return;
     const audio = getCtx();
     if (audio.state === "suspended") await audio.resume();
     const now = audio.currentTime;

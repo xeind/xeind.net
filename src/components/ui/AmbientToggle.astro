@@ -1,9 +1,9 @@
 ---
 import { CSS_TRANSITIONS } from "@/lib/config/animation";
 
-/* The site's one sound switch: the ambient track and the UI clicks both
-   follow it. A speaker that shows waves while sound is on and a cross while
-   it is off. Same quiet-button pattern as the theme picker's trigger,
+/* The ambient track's switch; the UI clicks play whatever it shows. A
+   speaker that shows waves while the track is on and a cross while it is
+   off. Same quiet-button pattern as the theme picker's trigger,
    squared to one 32px control so the two sit level in the footer. The state
    lives in `aria-pressed`, off at every load; public/hero-interactions.js
    owns the sound and the attribute — this file only draws.
