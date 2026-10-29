@@ -86,22 +86,24 @@ const structuredData = {
     <SectionDivider variant="grid" />
 
     {
-      /* Last section on purpose: the grid is the page's only React island
-        (~100KB with the runtime), so it sits below Experience where its
+      /* The two grids are the page's React islands (~100KB with the
+        runtime), so they sit below Experience, where the first one's
         client:visible fetch happens while the reader scrolls — out of the
-        initial load's critical window. rootMargin pre-fetches ~a third of
-        a viewport early so it's hydrated on arrival; it must stay smaller
-        than the grid's ~600px gap below the mobile fold or the fetch
-        fires at load and defeats the deferral. */
+        initial load's critical window. Recognitions comes first, so it is
+        read before the project list. rootMargin pre-fetches ~a
+        third of a viewport early so the island is hydrated on arrival; it
+        must stay smaller than the ~600px gap between the mobile fold and
+        the first island, or the fetch fires at load and defeats the
+        deferral. */
     }
     <Panel>
-      <ProjectGrid client:visible={{ rootMargin: "300px" }} />
+      <AwardsGrid client:visible={{ rootMargin: "300px" }} />
     </Panel>
 
     <SectionDivider variant="grid" />
 
     <Panel edges="top" ornaments="top">
-      <AwardsGrid client:visible={{ rootMargin: "300px" }} />
+      <ProjectGrid client:visible={{ rootMargin: "300px" }} />
     </Panel>
   </div>
 

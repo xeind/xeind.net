@@ -68,13 +68,13 @@ Contact: ${SITE.email}
 
 ${experienceLines}
 
-## Projects
-
-${projectLines}
-
 ## Recognition
 
 ${awardLines}
+
+## Projects
+
+${projectLines}
 
 ## Writing
 
