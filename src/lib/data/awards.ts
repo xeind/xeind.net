@@ -18,6 +18,7 @@ export const awards: Award[] = [
       { key: "year", value: "2026" },
     ],
     year: 2026,
+    date: "Jul 18, 2026",
     url: "https://claude.com/contact-sales/claude-for-oss",
   },
   {
@@ -33,6 +34,7 @@ export const awards: Award[] = [
       { key: "year", value: "2026" },
     ],
     year: 2026,
+    date: "Jun–Nov 2026",
     url: "https://dataengineeringpilipinas.github.io/dep-data-engineering-open-track/",
   },
   {
@@ -43,6 +45,7 @@ export const awards: Award[] = [
     description:
       "XERJ is a search engine for AI agents, one Rust binary that runs locally. vallow.nvim sits in its Corpus Hub, open code agents can search.",
     year: 2026,
+    date: "Oct 16, 2026",
     url: "https://hub.xerj.org/contributors/xeind",
   },
 ];

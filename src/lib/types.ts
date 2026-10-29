@@ -50,6 +50,9 @@ export interface Award {
     value: string;
   }>;
   year?: number;
+  // Printed in the stage's corner exactly as written: a day for a one-off
+  // ("Jul 18, 2026"), a span for a cohort ("Jun–Nov 2026").
+  date?: string;
   url?: string;
   // Local logo: `import logo from "./logos/foo.png"` in awards.ts, then pass
   // the import here — Astro resolves it through astro:assets (optimized

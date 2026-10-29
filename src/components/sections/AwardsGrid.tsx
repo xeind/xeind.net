@@ -286,6 +286,14 @@ export default function AwardsGrid() {
                 ) : (
                   <StageFigure />
                 )}
+                {/* The project plate's type tag, moved to the stage: same
+                    corner, same mono ink. The issuer row can't take it —
+                    "Data Engineering Pilipinas" alone fills a 2-up caption. */}
+                {award.date && (
+                  <p className="text-foreground/40 absolute right-3 bottom-3 z-10 font-mono text-[0.625rem] tracking-wide">
+                    {award.date}
+                  </p>
+                )}
               </div>
 
               {/* The same rule the footer draws, so the stage, the caption and

@@ -66,6 +66,7 @@ two bullets or write the one-line description — one of the two is mandatory.
 | `title`       | ≤ 32 chars, serif, 3-up card.                             | max 28   |
 | `issuer`      | ≤ 28 chars, mono eyebrow above the title.                 | max 26   |
 | `description` | **120–170 chars.** Full sentences, ending in a full stop. | 137, 152 |
+| `date`        | ≤ 14 chars, mono tag in the stage's bottom-right corner.  | max 12   |
 
 The band matters more than the cap. Because the row stretches, two cards at 140
 and one at 260 gives you one full card and two half-empty ones. Keep entries
