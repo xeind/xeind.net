@@ -49,8 +49,19 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
         try {
           const themes = ["dark", "light", "nightingale", "blueprint"];
           const root = document.documentElement;
-          const saved = localStorage.getItem("theme");
-          const theme = themes.includes(saved) ? saved : "dark";
+          /* Storage throws for a visitor who blocks all site data. Read it
+             as "nothing saved" then, so the page still opens on the default
+             and a pick from the menu still carries across navigations, from
+             the live attribute, for the rest of the session. */
+          const saved = () => {
+            try {
+              const s = localStorage.getItem("theme");
+              return themes.includes(s) ? s : null;
+            } catch {
+              return null;
+            }
+          };
+          const theme = saved() ?? "dark";
 
           if (theme === "light") root.removeAttribute("data-theme");
           else root.setAttribute("data-theme", theme);
@@ -58,8 +69,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
           if (!window.__themeSwapBound) {
             window.__themeSwapBound = true;
             document.addEventListener("astro:before-swap", function (e) {
-              const s = localStorage.getItem("theme");
-              const t = themes.includes(s) ? s : "dark";
+              const t = saved() ?? root.getAttribute("data-theme") ?? "light";
               if (t === "light") e.newDocument.documentElement.removeAttribute("data-theme");
               else e.newDocument.documentElement.setAttribute("data-theme", t);
             });
@@ -209,9 +219,17 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
          scripts/scroll-restoration-probe.mjs holds every page to native. */
       (() => {
         const key = "scroll-on-leave";
-        const left = sessionStorage.getItem(key);
+        // Without storage (all site data blocked) the router's own restore
+        // stands, gap and all.
+        let store;
+        try {
+          store = sessionStorage;
+        } catch {
+          return;
+        }
+        const left = store.getItem(key);
         if (left) {
-          sessionStorage.removeItem(key);
+          store.removeItem(key);
           const { href, index, x, y } = JSON.parse(left);
           const [nav] = performance.getEntriesByType("navigation");
           const returning = nav?.type === "reload" || nav?.type === "back_forward";
@@ -222,7 +240,7 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
         addEventListener("pagehide", () => {
           if (!history.state) return;
           const at = { href: location.href, index: history.state.index, x: scrollX, y: scrollY };
-          sessionStorage.setItem(key, JSON.stringify(at));
+          store.setItem(key, JSON.stringify(at));
         });
       })();
     </script>

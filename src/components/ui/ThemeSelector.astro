@@ -89,9 +89,15 @@ const themes = [
     return value !== null && themes.includes(value as ThemeName);
   }
 
-  function savedTheme(): ThemeName {
-    const saved = localStorage.getItem("theme");
-    return isThemeName(saved) ? saved : "dark";
+  /* Read from the document, not storage. The head script in Layout.astro
+     sets the attribute from storage when it can and from the live page when
+     storage throws (a visitor blocking all site data), so the attribute is
+     right either way. Kozo is the theme with no attribute. Reading storage
+     here threw before any handler was bound, and the picker went dead. */
+  function currentTheme(): ThemeName {
+    const attr = document.documentElement.getAttribute("data-theme");
+    if (attr === null) return "light";
+    return isThemeName(attr) ? attr : "dark";
   }
 
   /* The head script in Layout.astro owns the document attribute on first
@@ -162,7 +168,7 @@ const themes = [
   /* `animate` is false on first paint and after a ClientRouter swap — the name
      has not changed there, it is only being written into a fresh document. */
   function syncTheme(animate = false) {
-    const theme = savedTheme();
+    const theme = currentTheme();
     document.querySelectorAll<HTMLElement>("[data-theme-select]").forEach((trigger) => {
       /* The shown theme is kept in an attribute, not read back from the text:
          mid-turn the label holds both names' letters. */
@@ -187,7 +193,11 @@ const themes = [
   function applyTheme(theme: ThemeName) {
     if (theme === "light") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // Storage blocked: the pick lasts the session instead of being kept.
+    }
     syncTheme(true);
   }
 
