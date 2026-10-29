@@ -187,3 +187,9 @@ guessed in advance.
 - **Visual calls need a rendered comparison before deciding.** The serif
   choice took five commits because each look was judged from description
   instead of side by side.
+- **A refresh lands where the reader left, as the browser's own would.**
+  `node scripts/scroll-restoration-probe.mjs <route>` checks a route against
+  a router-free control. Run it after touching the scroll script in
+  `Layout.astro`, or anything a script adds after first paint: late height
+  clamps the restore, as `codeblock-copy.js`'s wrapper margin did at 16px a
+  block. A reset-to-top for `/` was built and reverted.
