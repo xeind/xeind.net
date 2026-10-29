@@ -1263,8 +1263,14 @@ pre.astro-code {
   border: 1px dashed color-mix(in srgb, var(--color-accent) 15%, transparent);
   /* The two border hairlines overlap the neighbouring blocks' pixels instead
      of adding height, so the prose after a code block stays on the 8px
-     baseline grid (same pattern as the blog figure mats). */
-  margin-block: -1px;
+     baseline grid (same pattern as the blog figure mats). Below, one cell of
+     air less that hairline: the prose above brings its own margin, the prose
+     below brings none. This used to come from codeblock-copy.js's wrapper
+     (`my-4`), which arrived ~45ms after first paint, so every block shoved
+     the rest of the post down 16px and a reload at the bottom of a post
+     restored to a page still 16px a block short. */
+  margin-top: -1px;
+  margin-bottom: calc(1rem - 1px);
   font-family: var(--font-mono) !important;
   font-size: 0.8125rem;
   /* 24px — 13px mono on the 8px baseline grid (was 1.75 ≈ 22.75px). */

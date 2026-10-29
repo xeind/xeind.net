@@ -106,8 +106,10 @@ anchors excluded).
   above supplies the gap, or `mt-[calc(…−1px)]` when they own it (margin
   collapse eats a plain calc next to a larger neighbour — the pixel must be
   a true negative or come off the un-collapsed side). Bordered blocks:
-  `pre.astro-code` `margin-block:-1px` (`[data-has-header]` keeps
-  `margin-top:0` — its top hairline lives on the header row), `DiffBlock`
+  `pre.astro-code` `margin-top:-1px`, `margin-bottom:calc(1rem−1px)` —
+  the cell below it used to arrive late, from `codeblock-copy.js`'s
+  wrapper (`[data-has-header]` keeps `margin-top:0` — its top hairline
+  lives on the header row), `DiffBlock`
   `-my-px` + run edges carry `margin:-1px`, tables `-mt-px` + cells
   `pt-2 pb-[7px]` (row pitch 40 with the collapsed border), `PullQuoteCard`
   `py-[23px]`, series box `-mb-px mt-[calc(2rem−1px)]`, `ApprovalCard`

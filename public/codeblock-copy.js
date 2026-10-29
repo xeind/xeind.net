@@ -1,5 +1,7 @@
 (() => {
-  const WRAPPER_CLASS = "group relative my-4";
+  /* No margin: the block's spacing is pre.astro-code's own (global.css), so
+     wrapping it after first paint moves nothing. */
+  const WRAPPER_CLASS = "group relative";
 
   var pending = false;
   function scheduleEnhance() {
