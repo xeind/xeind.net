@@ -129,6 +129,97 @@ function XerjWordmark({ playing }: { playing: boolean }) {
   );
 }
 
+/* Data Engineering Pilipinas' mark: a database cylinder with the Philippine
+   sun as a cog. DEP publishes it only as a PNG (dep-logo.png on the open-track
+   site), so this is a geometric redraw fitted to it: banded cylinder, an
+   eight-tooth gear, a disc with kite rays, five-point stars. Its blue, red and
+   yellow take three steps of the tone ladder. The cog sits on the faintest,
+   35, against the sun's 100: the original reads as a bright sun in a darker
+   ring, and at 75 the two ran together. */
+const DEP_PATHS = {
+  cylinder:
+    "M7.1 111.5C7.1 166.6 265.5 222.9 518.7 222.9C771.9 222.9 1030.3 166.6 1030.3 111.5C1030.3 56.3 771.9 0 518.7 0C265.5 0 7.1 56.3 7.1 111.5ZM0 184.3C0 244.6 248.4 300 518.7 300C788.9 300 1037.4 244.6 1037.4 184.3L1037.4 404.5C1037.4 464.8 788.9 520.2 518.7 520.2C248.4 520.2 0 464.8 0 404.5ZM0 482.6C0 542.9 248.4 598.3 518.7 598.3C788.9 598.3 1037.4 542.9 1037.4 482.6L1037.4 703.1C1037.4 763.4 788.9 818.8 518.7 818.8C248.4 818.8 0 763.4 0 703.1ZM0 781.1C0 841.4 248.4 896.8 518.7 896.8C788.9 896.8 1037.4 841.4 1037.4 781.1L1037.4 1002.1C1037.4 1062.3 788.9 1117.8 518.7 1117.8C248.4 1117.8 0 1062.3 0 1002.1Z",
+  cog: "M1272.7 573A59.3 59.3 0 0 1 1318.1 509.3L1327.6 507.1A38.3 38.3 0 0 0 1355.3 458A504.6 504.6 0 0 0 1318.8 372.8A38.3 38.3 0 0 0 1264.1 359L1256 364.3A59.3 59.3 0 0 1 1178.5 353.3A399.5 399.5 0 0 0 1127.8 303.8A59.3 59.3 0 0 1 1114.8 226.6L1120 218.3A38.3 38.3 0 0 0 1104.8 164A504.6 504.6 0 0 0 1018.8 129.6A38.3 38.3 0 0 0 970.4 158.5L968.4 168A59.3 59.3 0 0 1 905.8 215A399.5 399.5 0 0 0 834.9 215.9A59.3 59.3 0 0 1 771.2 170.4L769 161A38.3 38.3 0 0 0 719.8 133.3A504.6 504.6 0 0 0 634.7 169.8A38.3 38.3 0 0 0 620.9 224.4L626.2 232.6A59.3 59.3 0 0 1 615.2 310.1A399.5 399.5 0 0 0 565.7 360.8A59.3 59.3 0 0 1 488.5 373.7L480.2 368.6A38.3 38.3 0 0 0 425.9 383.8A504.6 504.6 0 0 0 391.5 469.8A38.3 38.3 0 0 0 420.4 518.2L429.9 520.2A59.3 59.3 0 0 1 476.9 582.8A399.5 399.5 0 0 0 477.8 653.7A59.3 59.3 0 0 1 432.3 717.4L422.9 719.6A38.3 38.3 0 0 0 395.2 768.7A504.6 504.6 0 0 0 431.7 853.9A38.3 38.3 0 0 0 486.3 867.7L494.5 862.4A59.3 59.3 0 0 1 572 873.4A399.5 399.5 0 0 0 622.7 922.9A59.3 59.3 0 0 1 635.6 1000.1L630.5 1008.4A38.3 38.3 0 0 0 645.6 1062.7A504.6 504.6 0 0 0 731.7 1097.1A38.3 38.3 0 0 0 780.1 1068.2L782.1 1058.7A59.3 59.3 0 0 1 844.7 1011.7A399.5 399.5 0 0 0 915.5 1010.8A59.3 59.3 0 0 1 979.3 1056.2L981.5 1065.7A38.3 38.3 0 0 0 1030.6 1093.4A504.6 504.6 0 0 0 1115.8 1056.9A38.3 38.3 0 0 0 1129.6 1002.2L1124.2 994.1A59.3 59.3 0 0 1 1135.3 916.6A399.5 399.5 0 0 0 1184.8 865.9A59.3 59.3 0 0 1 1262 852.9L1270.3 858.1A38.3 38.3 0 0 0 1324.6 842.9A504.6 504.6 0 0 0 1359 756.9A38.3 38.3 0 0 0 1330.1 708.5L1320.5 706.5A59.3 59.3 0 0 1 1273.6 643.9A399.5 399.5 0 0 0 1272.7 573Z",
+  stars:
+    "M131.7 351.5L95.4 331.7L94.1 290.3L64 318.8L24.3 307.2L42.1 344.6L18.8 378.8L59.8 373.4L85.2 406.1L92.8 365.5ZM131.7 643.3L95.4 623.6L94.1 582.2L64 610.7L24.3 599.1L42.1 636.5L18.8 670.7L59.8 665.3L85.2 698L92.8 657.3ZM131.7 934.7L95.4 914.9L94.1 873.5L64 902L24.3 890.4L42.1 927.8L18.8 962L59.8 956.7L85.2 989.4L92.8 948.7Z",
+  rays: "M1054.3 631L1297.5 653.2L1349 605.8L1295.8 560.2L1053.6 591.3ZM1052.6 644.1L1274.6 681L1242 708.4L1049.5 658.9ZM1051.4 578.2L1271.9 533.3L1238.3 507.1L1047.8 563.6ZM1013.7 499.7L1201.4 343.5L1204.2 273.6L1134.4 279L985.2 472.2ZM1021.8 510.2L1204.8 379.4L1201.1 421.8L1030 522.9ZM974.4 464.5L1098.5 276.8L1056.2 282L961.4 456.7ZM892.2 435.7L914.4 192.5L867 141L821.4 194.2L852.5 436.4ZM905.3 437.4L942.2 215.4L969.6 248L920.1 440.5ZM839.4 438.6L794.5 218.1L768.3 251.7L824.8 442.2ZM760.9 476.3L604.7 288.6L534.8 285.8L540.2 355.6L733.4 504.8ZM771.4 468.2L640.6 285.2L683 288.8L784.1 460ZM725.7 515.6L538 391.5L543.2 433.8L717.9 528.6ZM696.8 597.8L453.7 575.6L402.2 623L455.4 668.6L697.6 637.5ZM698.6 584.7L476.6 547.8L509.2 520.4L701.7 569.9ZM699.8 650.6L479.3 695.5L512.9 721.7L703.4 665.2ZM737.5 729.1L549.8 885.3L547 955.2L616.8 949.8L766 756.6ZM729.4 718.6L546.4 849.4L550 807L721.2 705.9ZM776.8 764.3L652.7 952L695 946.8L789.8 772.1ZM859 793.1L836.8 1036.3L884.2 1087.8L929.8 1034.6L898.7 792.4ZM845.9 791.4L809 1013.4L781.6 980.8L831.1 788.3ZM911.8 790.2L956.7 1010.7L982.9 977.1L926.4 786.6ZM990.3 752.5L1146.5 940.2L1216.4 943L1211 873.2L1017.8 724ZM979.8 760.6L1110.6 943.6L1068.2 939.9L967.1 768.8ZM1025.5 713.2L1213.2 837.3L1208 795L1033.3 700.2Z",
+  disc: "M1100 614.4A224.4 224.4 0 0 0 651.2 614.4A224.4 224.4 0 0 0 1100 614.4Z",
+};
+
+// The sun's centre in the viewBox, the point the gear turns about.
+const DEP_SUN_ORIGIN = "875.6px 614.4px";
+
+// The Pioneer sparkle's pace (`.pioneer-sparkle-cutout`): one turn in 4s.
+const DEP_TURN_MS = 4000;
+
+// The rotation a running turn has reached, read back from the element.
+function currentAngle(el: SVGGElement) {
+  const { a, b } = new DOMMatrix(getComputedStyle(el).transform);
+  return ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360;
+}
+
+/**
+ * The sun and its cog turn as one gear while the card is hovered, linear,
+ * like the Pioneer sparkle. On leave they ease on to the next 45° and stop
+ * there: teeth and rays both repeat every 45°, so the mark always comes to
+ * rest as drawn. A re-hover mid-settle picks the turn up from wherever the
+ * gear is. The cylinder is drawn whole behind the cog, so a tooth moving off
+ * it uncovers band, never a gap.
+ */
+// h-12, 59x48. By raw ink h-10 sat nearest the Claude mark, but the shape is
+// compact and its cylinder sits in a mid tone, so it read smallest in the row.
+function DepMark({ playing }: { playing: boolean }) {
+  const gear = useRef<SVGGElement>(null);
+  const turn = useRef<Animation | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const el = gear.current;
+    if (!el || prefersReducedMotion) return;
+    // Read the angle before cancelling: a cancelled turn drops back to 0.
+    const angle = currentAngle(el);
+    turn.current?.cancel();
+    if (playing) {
+      turn.current = el.animate(
+        { transform: [`rotate(${angle}deg)`, `rotate(${angle + 360}deg)`] },
+        { duration: DEP_TURN_MS, iterations: Infinity },
+      );
+      return;
+    }
+    const target = Math.ceil(angle / 45 - 0.001) * 45;
+    if (target - angle < 0.01) return;
+    // easeOutCubic starts at three times its average speed, so three times
+    // the linear time for the remaining angle leaves the gear at the speed it
+    // was turning.
+    turn.current = el.animate(
+      { transform: [`rotate(${angle}deg)`, `rotate(${target}deg)`] },
+      {
+        duration: ((target - angle) / 360) * DEP_TURN_MS * 3,
+        easing: `cubic-bezier(${EASING.easeOutCubic.join(",")})`,
+        fill: "forwards",
+      },
+    );
+  }, [playing, prefersReducedMotion]);
+
+  useEffect(() => () => turn.current?.cancel(), []);
+
+  return (
+    <svg viewBox="0 0 1360.5 1117.8" className="relative z-10 h-12 w-auto" aria-hidden="true">
+      <path d={DEP_PATHS.cylinder} fill="var(--logo-ink-55)" />
+      <path d={DEP_PATHS.stars} fill="var(--logo-ink-100)" />
+      {/* The cog's centre sits ~1 unit off the sun's, so turning both about
+          the sun's wobbles the cog by ~0.03px at h-12. One group is enough. */}
+      <g ref={gear} style={{ transformBox: "view-box", transformOrigin: DEP_SUN_ORIGIN }}>
+        <path d={DEP_PATHS.cog} fill="var(--logo-ink-35)" />
+        <path d={DEP_PATHS.rays} fill="var(--logo-ink-100)" />
+        {/* Its own path, over the rays: in one path a ray wound against the
+            disc cancels it under the nonzero rule and opens a hole. */}
+        <path d={DEP_PATHS.disc} fill="var(--logo-ink-100)" />
+      </g>
+    </svg>
+  );
+}
+
 export default function AwardsGrid() {
   // Which plate the pointer is on, and a counter that ticks each entry so the
   // Claude mark restarts its frame set rather than resuming mid-orbit.
@@ -182,6 +273,8 @@ export default function AwardsGrid() {
                   />
                 ) : award.id === "xerj-corpus-hub" ? (
                   <XerjWordmark playing={hoveredId === award.id} />
+                ) : award.id === "dep-builder" ? (
+                  <DepMark playing={hoveredId === award.id} />
                 ) : logo ? (
                   <img
                     src={logo.url}
