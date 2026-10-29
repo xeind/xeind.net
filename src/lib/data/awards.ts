@@ -34,7 +34,7 @@ export const awards: Award[] = [
       { key: "year", value: "2026" },
     ],
     year: 2026,
-    date: "Jun–Nov 2026",
+    date: "Jun–Dec 2026",
     url: "https://dataengineeringpilipinas.github.io/dep-data-engineering-open-track/",
   },
   {
