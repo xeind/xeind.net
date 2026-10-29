@@ -186,6 +186,39 @@ const buildDate = import.meta.env.PUBLIC_BUILD_DATE || new Date().toISOString();
       structuredData={structuredData}
     />
     <ClientRouter />
+    <script is:inline>
+      /* ClientRouter turns the browser's scroll restoration off and replays a
+         position it saves on scrollend. A wheel that runs into the end of a
+         page holds scrollend back ~300ms (293 on /blog, 378 on /tools), and a
+         reload inside that window came back to the last saved spot, often the
+         top. The browser saves its own as the page goes away; so does this.
+
+         Not history.replaceState in pagehide: Chrome drops it. Not
+         beforeunload: in Firefox that listener costs every page the
+         back/forward cache. The position goes to sessionStorage on pagehide,
+         and this script, which runs before the router's module, hands it back
+         through history.state for the router to restore. Keyed by URL and
+         history index so it only ever lands on the entry that left it.
+         scripts/scroll-restoration-probe.mjs holds every page to native. */
+      (() => {
+        const key = "scroll-on-leave";
+        const left = sessionStorage.getItem(key);
+        if (left) {
+          sessionStorage.removeItem(key);
+          const { href, index, x, y } = JSON.parse(left);
+          const [nav] = performance.getEntriesByType("navigation");
+          const returning = nav?.type === "reload" || nav?.type === "back_forward";
+          if (returning && href === location.href && history.state?.index === index) {
+            history.replaceState({ ...history.state, scrollX: x, scrollY: y }, "");
+          }
+        }
+        addEventListener("pagehide", () => {
+          if (!history.state) return;
+          const at = { href: location.href, index: history.state.index, x: scrollX, y: scrollY };
+          sessionStorage.setItem(key, JSON.stringify(at));
+        });
+      })();
+    </script>
   </head>
   <body class="font-sans antialiased">
     <div
