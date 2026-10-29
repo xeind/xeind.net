@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { awards } from "@/lib/data/awards";
 import { useAudioUnlock, playBrush } from "@/lib/hooks/useClickSound";
 import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
@@ -6,7 +6,7 @@ import ClaudeSpinner from "@/components/ui/ClaudeSpinner";
 import { DashedBorders, GradientBackground } from "@/components/ui/frame";
 import ArrowUpRight from "@/components/ui/ArrowUpRight";
 import { ICON_CONFIG } from "@/lib/config/design";
-import { CSS_TRANSITIONS } from "@/lib/config/animation";
+import { CSS_TRANSITIONS, DURATION, EASING } from "@/lib/config/animation";
 import type { Award } from "@/lib/types";
 
 // Local logo imports resolve to an ImageMetadata object (astro:assets);
@@ -52,6 +52,80 @@ function StageFigure() {
         className={`${square} group-keyboard:translate-x-[18px] group-keyboard:translate-y-[18px] translate-x-2 translate-y-2 delay-[120ms] group-hover:translate-x-[18px] group-hover:translate-y-[18px]`}
       />
     </div>
+  );
+}
+
+/* XERJ's wordmark as the xerj.org header sets it: Big Shoulders Display 900
+   at 0.24em tracking, traced to paths so it renders without the font. One
+   path per letter, so each letter can turn over on its own. */
+const XERJ_LETTERS = [
+  "M0 1600 250 768 6 0H300L404 374L430 648H470L496 374L596 0H890L658 778L896 1600H602L496 1206L470 912H430L404 1206L294 1600Z",
+  "M1479 1600V0H2171V264H1779V654H2151V918H1779V1336H2171V1600Z",
+  "M2775 1600V0H3161Q3385 0 3484.5 90.5Q3584 181 3591 390Q3593 446 3593.5 488Q3594 530 3593.5 572Q3593 614 3591 670Q3587 800 3547.5 883Q3508 966 3425 1010L3613 1600H3295L3143 1060H3075V1600ZM3075 796H3161Q3224 796 3256 767Q3288 738 3291 686Q3294 637 3295 583.5Q3296 530 3295 476.5Q3294 423 3291 374Q3288 321 3256 292.5Q3224 264 3161 264H3075Z",
+  "M4532 1620Q4385 1620 4299.5 1579.5Q4214 1539 4176 1450.5Q4138 1362 4134 1218Q4133 1170 4133 1109Q4133 1048 4134 1000H4416Q4415 1036 4414.5 1086.5Q4414 1137 4414.5 1187.5Q4415 1238 4416 1274Q4418 1323 4446 1349.5Q4474 1376 4532 1376Q4591 1376 4616.5 1349.5Q4642 1323 4642 1274V0H4942V1218Q4942 1434 4850.5 1527Q4759 1620 4532 1620Z",
+];
+
+/* The viewBox pads the 1620-unit ink by 100 above and below, the 2px of
+   grace `.theme-roll` gives a glyph at this size, so a letter is not cut the
+   instant it crosses the edge. The track is the padded height: a twin parked
+   one track up sits wholly outside the box. */
+const XERJ_PAD = 100;
+const XERJ_TRACK = 1620 + 2 * XERJ_PAD;
+
+/**
+ * The theme switcher's letter roll (`.theme-roll` in global.css), turning the
+ * word over to itself: each letter drops out of the box as its twin falls in
+ * from above, 25ms apart. A roll always runs to the end. Leaving the card
+ * does not stop it and entering again mid-roll does not restart it, so the
+ * word only ever comes to rest whole.
+ */
+function XerjWordmark({ playing }: { playing: boolean }) {
+  const letters = useRef<(SVGGElement | null)[]>([]);
+  const rolling = useRef(false);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!playing || rolling.current || prefersReducedMotion) return;
+    rolling.current = true;
+    const turns = letters.current.map(
+      (letter, i) =>
+        letter?.animate(
+          { translate: ["0 0", `0 ${XERJ_TRACK}px`] },
+          {
+            duration: DURATION.slow * 1000,
+            delay: i * 25,
+            easing: `cubic-bezier(${EASING.easeOutExpo.join(",")})`,
+          },
+        ).finished,
+    );
+    void Promise.allSettled(turns).then(() => {
+      rolling.current = false;
+    });
+  }, [playing, prefersReducedMotion]);
+
+  // Sized by ink, not by box: a 3:1 word cannot match a square mark on both
+  // sides. h-10 puts down about the ink of the Claude mark beside it (~1430px
+  // at 1x). At h-6, matching that mark's width, the word weighed a third as
+  // much and read small.
+  return (
+    <svg
+      viewBox={`0 ${-XERJ_PAD} 4942 ${XERJ_TRACK}`}
+      className="text-foreground relative z-10 h-10 w-auto"
+      aria-hidden="true"
+    >
+      {XERJ_LETTERS.map((d, i) => (
+        <g
+          key={d}
+          ref={(el) => {
+            letters.current[i] = el;
+          }}
+          fill="currentColor"
+        >
+          <path d={d} />
+          <path d={d} transform={`translate(0 ${-XERJ_TRACK})`} />
+        </g>
+      ))}
+    </svg>
   );
 }
 
@@ -106,6 +180,8 @@ export default function AwardsGrid() {
                     activation={activation}
                     color="var(--color-foreground)"
                   />
+                ) : award.id === "xerj-corpus-hub" ? (
+                  <XerjWordmark playing={hoveredId === award.id} />
                 ) : logo ? (
                   <img
                     src={logo.url}

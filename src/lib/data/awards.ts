@@ -35,4 +35,14 @@ export const awards: Award[] = [
     year: 2026,
     url: "https://dataengineeringpilipinas.github.io/dep-data-engineering-open-track/",
   },
+  {
+    id: "xerj-corpus-hub",
+    title: "Corpus Hub",
+    issuer: "XERJ",
+    type: "Corpus",
+    description:
+      "XERJ is a search engine for AI agents, one Rust binary that runs locally. vallow.nvim sits in its Corpus Hub, open code agents can search.",
+    year: 2026,
+    url: "https://hub.xerj.org/contributors/xeind",
+  },
 ];
