@@ -58,6 +58,13 @@ const themes = [
     class="theme-menu border-accent/30 bg-card border border-dashed"
   >
     {
+      /* The current theme reads at full ink, the others at 60, so the pick
+        stands out without a column for a tick (the chip's ring in global.css
+        marks it too). A fill was tried: in Manila bg-muted all but matches
+        the card, and it doubled up with the hover fill. Hover and focus lift
+        a dim row back to full ink. */
+    }
+    {
       themes.map((theme) => (
         <button
           type="button"
@@ -65,7 +72,7 @@ const themes = [
           aria-checked="false"
           data-theme-option={theme.value}
           data-hero-sfx="click"
-          class="text-foreground hover:bg-muted focus-visible:bg-muted focus-visible:ring-accent flex min-h-8 w-full items-center gap-2 px-4 text-left font-mono text-xs transition-colors select-none focus-visible:ring-1 focus-visible:outline-none focus-visible:ring-inset"
+          class="text-foreground not-aria-checked:text-foreground/60 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:ring-accent focus-visible:text-foreground flex min-h-8 w-full items-center gap-2 px-4 text-left font-mono text-xs transition-colors select-none focus-visible:ring-1 focus-visible:outline-none focus-visible:ring-inset"
         >
           <ColorSchemePreview theme={theme.value} />
           <span>{theme.label}</span>
