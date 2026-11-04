@@ -55,10 +55,10 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap({
-      // Only indexable routes belong here. /design is noindex, so listing it
-      // asks crawlers to fetch a page that then tells them to drop it.
-      filter: (page) =>
-        !page.endsWith("/badges/") && !page.endsWith("/design/") && !page.endsWith("/lab/"),
+      // Only indexable routes belong here. /badges and /lab are noindex, so
+      // listing them asks crawlers to fetch a page that then tells them to
+      // drop it.
+      filter: (page) => !page.endsWith("/badges/") && !page.endsWith("/lab/"),
       serialize(item) {
         const path = new URL(item.url).pathname;
         if (path === "/blog/") item.lastmod = blogLastmod;

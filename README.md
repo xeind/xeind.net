@@ -154,7 +154,6 @@ date into the page.
 
 SEO plumbing: metadata in `src/components/Seo.astro`, canonical config in
 `src/lib/config/site.ts`, sitemap filter in `astro.config.mjs`. Only
-indexable routes belong in the sitemap; `/design`, `/lab` and `/badges` stay
-`noindex`. `public/_headers` sets the security headers and CSP and scopes
+indexable routes belong in the sitemap; `/lab` and `/badges` stay `noindex`. `public/_headers` sets the security headers and CSP and scopes
 cache rules so hashed build output stays immutable; `public/_redirects`
 keeps canonical URLs extensionless.
