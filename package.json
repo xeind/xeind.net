@@ -60,6 +60,7 @@
     "@astrojs/mdx": "^8.0.0",
     "@chenglou/pretext": "^0.0.8",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
     "motion": "^13.2.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

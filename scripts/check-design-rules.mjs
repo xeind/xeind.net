@@ -30,6 +30,13 @@ const COLOR_SOURCES = new Set(["src/styles/global.css"]);
 const isSpecimen = (file) =>
   file.startsWith("src/components/design/") || file.startsWith("src/components/lab/");
 
+// Third-party code copied in verbatim, skipped by every rule. The Stageshow kit
+// (benjitaylor/skills, MIT) draws its own radii, shadows, z-layers and colors,
+// and keeping it byte-for-byte lets an upstream update land as a clean diff.
+// The house look is applied from outside, by the look file beside the kit;
+// the demos that use the kit are still checked as specimens.
+const VENDORED = "src/components/design/stageshow/kit/";
+
 // THE closed sets — this block is the owner (design-system.md §0). The doc's
 // tables describe these values for humans; when they disagree, these win.
 // Extending a set is a design decision: change it here, then update the doc's
@@ -114,6 +121,14 @@ const RULES = [
       for (const m of line.matchAll(/\b(?:drop-)?shadow-[a-z0-9[\]/]+/g)) hits.push(m[0]);
       if (/box-shadow\s*:/.test(line) && !/none/.test(line)) hits.push("box-shadow");
       return hits;
+    },
+  },
+  {
+    id: "icon-library",
+    message: "icon library — icons are SVGs in public/ via InlineIcon (lucide is Stageshow-only)",
+    test(line, file) {
+      if (file.startsWith("src/components/design/stageshow/")) return [];
+      return /from\s+["']lucide-react["']/.test(line) ? ["lucide-react"] : [];
     },
   },
   {
@@ -360,6 +375,7 @@ function scan() {
 
   for (const path of walk(SRC)) {
     const file = relative(ROOT, path);
+    if (file.startsWith(VENDORED)) continue;
     const lines = readFileSync(path, "utf8").split("\n");
     let inSvgMask = 0;
 
@@ -399,6 +415,13 @@ const FIXTURES = [
   ["radius", 'className="rounded-md"', "src/x.tsx", true],
   ["radius", 'className="rounded-[1px]"', "src/x.tsx", false],
   ["shadow", 'className="shadow-lg"', "src/x.tsx", true],
+  ["icon-library", 'import { X } from "lucide-react";', "src/x.tsx", true],
+  [
+    "icon-library",
+    'import { X } from "lucide-react";',
+    "src/components/design/stageshow/A.tsx",
+    false,
+  ],
   ["dark-variant", 'className="dark:opacity-50"', "src/x.tsx", true],
   ["z-index", 'className="z-[60]"', "src/x.tsx", true],
   ["z-index", 'className="z-20"', "src/x.tsx", false],

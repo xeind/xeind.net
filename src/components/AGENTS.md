@@ -26,7 +26,9 @@ Most requests are already solved. Reach for the existing primitive.
 | The theme picker                 | `ui/ThemeSelector.astro`                                             | A second copy of the button |
 | Music switch                     | `ui/AmbientToggle.astro`                                             | A second copy of the button |
 
-There is no icon library. `lucide-react` is not installed and must not be added.
+There is no icon library. Do not import `lucide-react`. It is installed for one
+scoped exception, the vendored Stageshow kit in `design/stageshow/kit/` (root
+`AGENTS.md`, Scoped exceptions), and nothing outside that folder may use it.
 
 **Coloring an SVG:** an inline icon uses `fill="currentColor"` /
 `stroke="currentColor"` and takes its color from the parent's `text-*` — never

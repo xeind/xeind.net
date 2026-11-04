@@ -91,6 +91,20 @@ decisions are settled in `docs/prd-grid-alignment.md`; the per-element ledger is
   line the same way, with `round(50%, 1px)`.
 - **Never turn static content into a React island.**
 
+## Scoped exceptions
+
+The Never rules above hold everywhere except here. Each exception is one
+directory; it does not spread.
+
+- **Stageshow demos on `/design`.** `src/components/design/stageshow/` holds a
+  vendored copy of the Stageshow kit (benjitaylor/skills, MIT) in `kit/`, and
+  the demos built on it. The kit imports `lucide-react` for its `Icon` part.
+  That package is installed for this folder alone: nothing outside it may
+  import `lucide-react`. Every rule checker skips `kit/`, which stays
+  byte-for-byte upstream; the demos beside it are still checked as
+  specimens. The house look reaches the kit through `look.css`, never by
+  editing `kit/`.
+
 ## Ask first
 
 - `npm run deploy` — ships to production. Needs an explicit yes, every time.

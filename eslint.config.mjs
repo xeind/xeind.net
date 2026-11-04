@@ -8,7 +8,14 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist/**", ".astro/**", ".next/**", "node_modules/**"],
+    ignores: [
+      "dist/**",
+      ".astro/**",
+      ".next/**",
+      "node_modules/**",
+      // Vendored verbatim (benjitaylor/skills, MIT); see scripts/check-design-rules.mjs.
+      "src/components/design/stageshow/kit/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
