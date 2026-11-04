@@ -1,0 +1,603 @@
+/* The component bento: a ruled grid in the site's own ink. Every colour is a
+   site token; the rules are accent at 30%, the workhorse border strength. */
+
+.bento {
+  --rule: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  --rule-soft: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  --ink-60: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+  --ink-50: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+  --ink-40: color-mix(in srgb, var(--color-foreground) 40%, transparent);
+  --fill: color-mix(in srgb, var(--color-foreground) 14%, transparent);
+  --ease: cubic-bezier(0.215, 0.61, 0.355, 1);
+  container-type: inline-size;
+}
+
+/* The gap and the padding are the rules: the grid's own ground shows through
+   1px between opaque tiles, and around them as the outer frame. At 896 the
+   columns land on whole pixels (1 + 300 + 1 + 292 + 1 + 300 + 1). */
+.grid {
+  position: relative;
+  display: grid;
+  gap: 1px;
+  padding: 1px;
+  background: var(--rule);
+  grid-template-columns: 300fr 292fr 300fr;
+  grid-auto-rows: 288px;
+  grid-template-areas:
+    "cards cards themes"
+    "corners count tags"
+    "awards awards voices";
+}
+
+@container (max-width: 831px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: round(down, calc((100% - 3px) / 2), 1px) minmax(0, 1fr);
+    grid-template-areas:
+      "cards cards"
+      "themes tags"
+      "count corners"
+      "awards awards"
+      "voices voices";
+  }
+}
+
+@container (max-width: 519px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "cards"
+      "themes"
+      "tags"
+      "count"
+      "awards"
+      "corners"
+      "voices";
+  }
+}
+
+/* A diamond on each outer corner. The frame rule is the grid's first and last
+   pixel, so the box stops 1px short on the trailing sides, as CornerDiamond's
+   offsets expect. */
+.frameMarks {
+  position: absolute;
+  inset: 0 1px 1px 0;
+  pointer-events: none;
+}
+
+.tile {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--color-card);
+}
+
+.tile[data-tone="muted"] {
+  background: var(--color-muted);
+}
+
+.areaCards {
+  grid-area: cards;
+}
+.areaThemes {
+  grid-area: themes;
+}
+.areaCorners {
+  grid-area: corners;
+}
+.areaCount {
+  grid-area: count;
+}
+.areaTags {
+  grid-area: tags;
+}
+.areaAwards {
+  grid-area: awards;
+}
+.areaVoices {
+  grid-area: voices;
+}
+
+/* Page copy: serif, the reading voice, run-in. The lead is full ink, the rest
+   the 60% secondary step. */
+.copy {
+  position: relative;
+  z-index: 10;
+  max-width: 28rem;
+  margin: 0;
+  padding: 24px 24px 0;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--ink-60);
+  text-wrap: pretty;
+}
+
+.lead {
+  color: var(--color-foreground);
+}
+
+.slot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 192px;
+}
+
+.slot :global(.ss-stage) {
+  overflow: hidden;
+  background: transparent;
+}
+
+.picture {
+  position: relative;
+  width: 100%;
+  height: 192px;
+}
+
+/* ---------------- Cards ---------------- */
+
+.cards {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  width: max-content;
+  display: flex;
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 320px;
+  height: 168px;
+  padding: 16px;
+  background: var(--color-card);
+}
+
+/* The hover look, driven by the cursor's data-hover. frame.tsx writes it with
+   group-hover:, which only a real pointer reaches. */
+.card[data-hover] div[class~="border-dashed"] {
+  border-style: solid;
+}
+
+.card[data-hover] div[class~="bg-accent"] {
+  background: var(--color-tertiary);
+}
+
+.card[data-hover] div[class~="bg-tertiary/10"] {
+  opacity: 0.3;
+}
+
+.cardMeta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+.cardTitle {
+  margin: 8px 0 0;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+  color: var(--color-foreground);
+}
+
+.cardDesc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--ink-60);
+}
+
+.cardOpens {
+  position: absolute;
+  top: 16px;
+  right: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  text-align: right;
+  color: var(--ink-60);
+}
+
+.cardOpensLabel {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+.cardTags {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  overflow: hidden;
+}
+
+/* ---------------- Themes ---------------- */
+
+/* The site's own palette chips (global.css .scheme-*), nine syntax tokens on
+   each theme's paper, drawn large. The scheme class sets the variables. */
+.kozo {
+  composes: scheme-light from global;
+}
+.manila {
+  composes: scheme-dark from global;
+}
+.nightingale {
+  composes: scheme-nightingale from global;
+}
+.blueprint {
+  composes: scheme-blueprint from global;
+}
+
+.chips {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  background: var(--scheme-paper);
+}
+
+.chipName {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--astro-code-foreground);
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: repeat(3, 10px);
+  gap: 4px;
+}
+
+.cell {
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  scale: 0.5;
+  transition:
+    opacity 0.2s var(--ease),
+    scale 0.2s var(--ease);
+  transition-delay: calc(var(--i) * 24ms);
+}
+
+.chips[data-on] .cell {
+  opacity: 1;
+  scale: 1;
+}
+
+.cell:nth-child(1) {
+  background: var(--astro-code-token-keyword);
+}
+.cell:nth-child(2) {
+  background: var(--astro-code-token-function);
+}
+.cell:nth-child(3) {
+  background: var(--astro-code-token-string);
+}
+.cell:nth-child(4) {
+  background: var(--astro-code-token-constant);
+}
+.cell:nth-child(5) {
+  background: var(--astro-code-token-parameter);
+}
+.cell:nth-child(6) {
+  background: var(--astro-code-token-comment);
+}
+.cell:nth-child(7) {
+  background: var(--astro-code-token-punctuation);
+}
+.cell:nth-child(8) {
+  background: var(--astro-code-token-link);
+}
+.cell:nth-child(9) {
+  background: var(--astro-code-foreground);
+}
+
+/* ---------------- Corners ---------------- */
+
+.panel {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  left: 24px;
+  height: 144px;
+}
+
+/* The frame rule sits on the pixel after the box on its trailing sides. */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 -1px -1px 0;
+  border: 1px solid var(--rule);
+}
+
+.panelLabel {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+
+.divider {
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  left: 0;
+  border-top: 1px dashed var(--rule);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.6s var(--ease) 0.15s;
+}
+
+.panel[data-on] .divider {
+  clip-path: inset(0);
+}
+
+.panel :global(.edge-glow-node) {
+  scale: 0;
+  transition: scale 0.25s var(--ease);
+  transition-delay: calc(var(--d) * 1ms);
+}
+
+.panel[data-on] :global(.edge-glow-node) {
+  scale: 1;
+}
+
+/* ---------------- Count ---------------- */
+
+.stat {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+/* 48px, the bento floor for a stat: an owner call, see the report. */
+.statNumber {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  line-height: 3rem;
+  color: var(--color-foreground);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tally {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 40px);
+  gap: 8px;
+}
+
+.tallyCell {
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1rem;
+  color: var(--ink-50);
+  background: transparent;
+  transition: background-color 0.2s var(--ease);
+  transition-delay: calc(var(--i) * 70ms);
+}
+
+.stat[data-on] .tallyCell {
+  background: var(--fill);
+}
+
+/* ---------------- Tags ---------------- */
+
+.tags {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  transform: scale(var(--scale));
+  transform-origin: 0 0;
+}
+
+.tag {
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 0.25s var(--ease),
+    translate 0.25s var(--ease);
+  transition-delay: calc(var(--i) * 70ms);
+  will-change: transform, opacity;
+}
+
+.tags[data-on] .tag {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* ---------------- Awards ---------------- */
+
+.ledger {
+  position: absolute;
+  top: 0;
+  right: 24px;
+  left: 24px;
+}
+
+.award {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 24px;
+  align-items: center;
+  height: 56px;
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 0.25s var(--ease),
+    translate 0.25s var(--ease);
+  transition-delay: calc(var(--i) * 90ms);
+  will-change: transform, opacity;
+}
+
+.award + .award {
+  border-top: 1px dashed var(--rule-soft);
+}
+
+.ledger[data-on] .award {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.awardHead {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.awardTitle {
+  overflow: hidden;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.awardIssuer {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+.awardStats {
+  display: flex;
+  gap: 16px;
+}
+
+.awardStat,
+.awardDate {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  color: var(--color-foreground);
+  white-space: nowrap;
+}
+
+.awardKey {
+  color: var(--ink-50);
+}
+
+.awardDate {
+  grid-column: 3;
+  min-width: 6rem;
+  text-align: right;
+  color: var(--ink-60);
+}
+
+/* ---------------- Voices ---------------- */
+
+.voices {
+  position: absolute;
+  top: 0;
+  right: 24px;
+  left: 24px;
+}
+
+.voice {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 0;
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 0.25s var(--ease),
+    translate 0.25s var(--ease);
+  transition-delay: calc(var(--i) * 110ms);
+  will-change: transform, opacity;
+}
+
+.voice + .voice {
+  border-top: 1px dashed var(--rule-soft);
+}
+
+.voices[data-on] .voice {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.voiceTag {
+  padding-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+
+.voiceSerif {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  color: var(--color-foreground);
+}
+
+.voiceSans {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--ink-60);
+}
+
+.voiceMono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-foreground);
+}

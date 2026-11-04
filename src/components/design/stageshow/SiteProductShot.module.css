@@ -1,0 +1,257 @@
+/* Product shot: the home page, framed as a product.
+
+   Every color is a token. The wrapper (.scope) carries a data-theme attribute
+   the script sets, so --color-* re-resolves for the whole stage, ground
+   included. Pinned lines use the same alpha the site's rules do (accent/30);
+   nothing here draws a corner or a shadow. */
+
+.scope {
+  display: block;
+}
+
+.stage :global(.ss-stage) {
+  overflow: hidden;
+  background: var(--ss-well);
+  --gutter: 32px;
+}
+
+/* ---- The window: corner bleed, off the right and the bottom ---- */
+
+.window {
+  position: absolute;
+  top: var(--gutter);
+  left: 112px;
+  width: 912px;
+  height: 560px;
+}
+
+/* The page is the window's canvas; the sheet is the card on it, its left rail
+   drawn the pixel after its edge as the site draws it, its right rail off the
+   crop. */
+.page {
+  height: 100%;
+  overflow: hidden;
+  background: var(--ss-canvas);
+}
+
+.rails {
+  margin-left: 39px;
+  width: 896px;
+  height: 100%;
+  background: var(--ss-surface);
+  border-left: 1px solid var(--ss-line);
+}
+
+.callout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border-bottom: 1px dashed var(--ss-line);
+  background: var(--ss-well);
+}
+
+.hero {
+  padding: 32px 64px 60px;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 640px;
+  color: var(--ss-text-strong);
+}
+
+.logo {
+  flex: none;
+}
+
+.name {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nameText {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--ss-text-strong);
+}
+
+.tagline {
+  display: block;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--ss-text);
+}
+
+.socials {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.ctas {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 224px;
+  height: 40px;
+  border: 1px dashed var(--ss-line);
+  background: var(--ss-surface);
+}
+
+/* One cell of hatch between two hairlines: the site's SectionDivider */
+.band {
+  position: relative;
+  height: 16px;
+  border-top: 1px solid var(--ss-line);
+  border-bottom: 1px solid var(--ss-line);
+  background: repeating-linear-gradient(45deg, var(--ss-line-faint) 0 1px, transparent 1px 4px);
+}
+
+.about {
+  padding: 32px 64px;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--ss-text-strong);
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 520px;
+  margin-top: 16px;
+}
+
+/* ---- The picker: a satellite straddling the window's left edge ---- */
+
+.trigger {
+  position: absolute;
+  top: 142px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 152px;
+  height: 32px;
+  padding: 0 16px;
+  border: 1px dashed var(--ss-line);
+  background: var(--ss-surface);
+  color: var(--ss-text-strong);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+}
+
+.trigger[data-hover],
+.trigger[data-open] {
+  background: var(--ss-well);
+  border-style: solid;
+}
+
+.label {
+  display: inline-flex;
+}
+
+.popover {
+  position: absolute;
+  border: 1px dashed var(--ss-line);
+  background: var(--ss-surface);
+}
+
+.menu :global(.ss-menu__item) {
+  height: 32px;
+  padding: 0 8px;
+  font-family: var(--font-mono);
+}
+
+/* The current theme at full ink, the rest at 60: the site's own rule */
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.6;
+}
+
+.option[data-current],
+.menu :global(.ss-menu__item)[data-hover] .option {
+  opacity: 1;
+}
+
+.rest {
+  position: absolute;
+  left: 780px;
+  top: 250px;
+  width: 1px;
+  height: 1px;
+}
+
+/* ---- Compact: the phone column, a second design ---- */
+
+.stage :global(.ss-stage)[data-layout="compact"] {
+  --gutter: 24px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .window {
+  left: 56px;
+  width: 400px;
+  height: 520px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .rails {
+  margin-left: 15px;
+  width: 380px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .hero {
+  padding: 24px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .identity {
+  width: auto;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .tagline {
+  width: 232px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .about {
+  padding: 24px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .heading {
+  display: none;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .lines {
+  width: 240px;
+  margin-top: 0;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .trigger {
+  top: 72px;
+  left: 24px;
+  width: 136px;
+}
+
+.stage :global(.ss-stage)[data-layout="compact"] .rest {
+  left: 290px;
+  top: 286px;
+}

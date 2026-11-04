@@ -1,0 +1,285 @@
+/* Design directions: one page redrawn in place. Geometry and type sizes come
+   from the component's tables as inline styles; this file owns what the
+   browser cannot tween (dashed borders, fonts) and every border and rule.
+   Colors are tokens only. */
+
+/* The window is the whole stage; the control that switches directions sits
+   in its bar, where a view switcher lives. */
+.window {
+  position: absolute;
+  inset: 0;
+}
+
+.seg {
+  width: 460px;
+}
+
+.seg[data-layout="compact"] {
+  width: 292px;
+}
+
+.seg :global(.ss-seg__option) {
+  padding: 0 2px;
+}
+
+.seg[data-layout="compact"] :global(.ss-seg__option) {
+  font-size: 10px;
+}
+
+/* ---------- The page ---------- */
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--ss-surface);
+  transition: background-color 0.9s var(--ease);
+}
+
+.page[data-dir="2"] {
+  background-color: var(--ss-canvas);
+}
+
+.page[data-dir="4"] {
+  background-color: var(--ss-well);
+}
+
+/* Every element: moves and restyles on one curve, fades faster than it
+   moves, and arrives after its neighbours have settled. */
+.el {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+  will-change: transform;
+  pointer-events: none;
+  transition:
+    transform 0.9s var(--ease),
+    width 0.9s var(--ease),
+    height 0.9s var(--ease),
+    font-size 0.9s var(--ease),
+    line-height 0.9s var(--ease),
+    letter-spacing 0.9s var(--ease),
+    font-weight 0.9s var(--ease),
+    font-family 0.9s linear allow-discrete,
+    color 0.9s var(--ease),
+    background-color 0.9s var(--ease),
+    opacity 0.3s ease-out 0s;
+}
+
+.el[data-o="1"] {
+  transition:
+    transform 0.9s var(--ease),
+    width 0.9s var(--ease),
+    height 0.9s var(--ease),
+    font-size 0.9s var(--ease),
+    line-height 0.9s var(--ease),
+    letter-spacing 0.9s var(--ease),
+    font-weight 0.9s var(--ease),
+    font-family 0.9s linear allow-discrete,
+    color 0.9s var(--ease),
+    background-color 0.9s var(--ease),
+    opacity 0.4s ease-out 0.5s;
+}
+
+.text {
+  line-height: inherit;
+}
+
+.bar {
+  background: var(--ss-ink-3);
+}
+
+/* ---------- Boxes: dashed layer fades, solid layer recolors ---------- */
+
+.box::before,
+.box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  transition:
+    border-color 0.4s ease-out,
+    opacity 0.25s ease-out;
+}
+
+.box::before {
+  border-style: dashed;
+  border-color: var(--ss-line);
+  opacity: 0;
+}
+
+/* The dashed edge never resizes in view: it leaves at once and returns
+   after the card has settled. */
+.box[data-box="dashed"]::before {
+  opacity: 1;
+  transition-delay: 0s, 1s;
+}
+
+.box[data-box="solid"]::after,
+.box[data-box="full"]::after {
+  border-color: var(--ss-line);
+}
+
+.box[data-box="bottom"]::after {
+  border-bottom-color: var(--ss-line-faint);
+}
+
+.row[data-sel]::after {
+  border-color: var(--ss-text-strong);
+}
+
+.cell {
+  background-color: var(--ss-surface);
+}
+
+/* ---------- Sheet ---------- */
+
+.paper {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-accent) 7%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-accent) 7%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 16px 16px;
+  transition: opacity 0.4s ease-out;
+}
+
+.page[data-dir="1"] .paper {
+  opacity: 1;
+  transition-delay: 0.5s;
+}
+
+.frame {
+  border: 1px solid var(--ss-line);
+}
+
+.rule {
+  background: var(--ss-line);
+}
+
+.dim,
+.leader {
+  color: var(--ss-text-faint);
+  font-family: var(--ss-mono);
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.dim::before,
+.leader::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 0;
+  bottom: 4px;
+  left: 0;
+  border-right: 1px solid var(--ss-line);
+  border-left: 1px solid var(--ss-line);
+}
+
+.dim::after,
+.leader::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--ss-line);
+}
+
+.dim span {
+  position: relative;
+  z-index: 10;
+  padding: 0 8px;
+  background: var(--ss-surface);
+}
+
+.page[data-dir="1"] .year {
+  z-index: 10;
+  padding: 0 4px;
+  background: var(--ss-surface);
+}
+
+.titleBlock {
+  display: flex;
+  border: 1px solid var(--ss-line);
+  font-family: var(--ss-mono);
+  color: var(--ss-text-strong);
+}
+
+.tbName {
+  flex: 1;
+  padding: 0 8px;
+  font-size: 11px;
+  line-height: 22px;
+}
+
+.tbMeta {
+  padding: 0 8px;
+  border-left: 1px solid var(--ss-line);
+  font-size: 10px;
+  line-height: 22px;
+  color: var(--ss-text-faint);
+}
+
+/* ---------- Keycaps and the live value ---------- */
+
+.kbd {
+  display: inline-block;
+  min-width: 16px;
+  padding: 0 4px;
+  border: 1px solid var(--ss-line);
+  background: var(--ss-canvas);
+  color: var(--ss-text);
+  font-family: var(--ss-mono);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 14px;
+  text-align: center;
+}
+
+.keyslot {
+  line-height: 0;
+}
+
+.hints {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--ss-mono);
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--ss-text-faint);
+}
+
+.live {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Arriving from hidden: take the new place at once, unseen, then fade in. */
+.el[data-new] {
+  transition:
+    transform 0s,
+    width 0s,
+    height 0s,
+    font-size 0s,
+    line-height 0s,
+    letter-spacing 0s,
+    font-weight 0s,
+    color 0s,
+    background-color 0s,
+    opacity 0.4s ease-out 0.5s;
+}

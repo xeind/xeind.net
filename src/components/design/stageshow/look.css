@@ -1,0 +1,102 @@
+/* The xeind.net look for the Stageshow kit.
+
+   The kit declares its tokens inside `@layer stageshow`; this file is
+   unlayered, so it wins without editing kit/ (kept verbatim upstream).
+
+   Every value reads a site token, and the site's tokens switch on
+   html[data-theme], so one look follows all four themes. A stage must pass
+   theme="light": the kit writes data-theme on its own .ss-stage, and
+   global.css's [data-theme="dark"] blocks would match that element and paint
+   Manila inside a Kozo page.
+
+   Shape is the house shape: every radius 0, no blur. The kit draws a
+   window's edge with a box-shadow ring, so the depth tokens keep only that
+   1px ring at hairline ink — a border by another name, not a cast shadow. */
+
+[data-look="xeind"] .ss-stage {
+  /* Surfaces: page, plate, well */
+  --ss-canvas: var(--color-background);
+  --ss-surface: var(--color-card);
+  --ss-chrome: var(--color-card);
+  --ss-raised: var(--color-card);
+  --ss-well: var(--color-muted);
+
+  /* Placeholder ink, foreground at five strengths over whatever sits below */
+  --ss-ink-1: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+  --ss-ink-2: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+  --ss-ink-3: color-mix(in srgb, var(--color-foreground) 11%, transparent);
+  --ss-fill: color-mix(in srgb, var(--color-foreground) 11%, var(--color-card));
+  --ss-ink-4: color-mix(in srgb, var(--color-foreground) 14%, transparent);
+  --ss-ink-5: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+
+  /* Lines at the site's rule strength (border-accent/30). Kozo is
+     light-on-light; anything fainter than /15 vanishes there. */
+  --ss-line: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  --ss-line-faint: color-mix(in srgb, var(--color-accent) 15%, transparent);
+
+  /* Text. Not --color-tertiary for faint: in the dark themes tertiary is the
+     hover ink and sits brighter than the foreground. Mixed onto the card so
+     the result is opaque, as the kit asks of text and icon tokens. */
+  --ss-text-strong: var(--color-foreground);
+  --ss-text: color-mix(in srgb, var(--color-foreground) 72%, var(--color-card));
+  --ss-text-faint: color-mix(in srgb, var(--color-foreground) 52%, var(--color-card));
+  --ss-icon: color-mix(in srgb, var(--color-foreground) 68%, var(--color-card));
+  --ss-icon-faint: color-mix(in srgb, var(--color-foreground) 32%, var(--color-card));
+
+  /* The accent is the ink itself; the themes own hue, the stage owns none */
+  --ss-accent: var(--color-accent);
+  --ss-accent-2: var(--color-secondary);
+  --ss-accent-soft: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  --ss-accent-text: var(--color-accent);
+
+  --ss-success: var(--color-success);
+  --ss-success-soft: color-mix(in srgb, var(--color-success) 12%, transparent);
+  --ss-success-text: var(--color-success);
+  --ss-danger: var(--color-destructive);
+  --ss-danger-soft: color-mix(in srgb, var(--color-destructive) 12%, transparent);
+  --ss-danger-text: var(--color-destructive);
+  --ss-warning: var(--color-warning);
+  --ss-warning-soft: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  --ss-warning-text: var(--color-warning);
+
+  /* Depth: the ring only (see the header) */
+  --ss-shadow-window: 0 0 0 1px var(--ss-line);
+  --ss-shadow-float: 0 0 0 1px var(--ss-line);
+  --ss-shadow-hero: 0 0 0 1px var(--ss-line);
+  --ss-shadow-satellite: 0 0 0 1px var(--ss-line);
+  --ss-shadow-ground: 0 0 0 1px var(--ss-line);
+  --ss-shadow-lift: 0 0 0 1px var(--color-accent);
+  --ss-shadow-card: none;
+
+  --ss-font: var(--font-sans);
+  --ss-mono: var(--font-mono);
+
+  --ss-radius-sm: 0;
+  --ss-radius-md: 0;
+  --ss-radius-lg: 0;
+  --ss-radius-window: 0;
+  --ss-radius-pill: 0;
+
+  color: var(--color-foreground);
+}
+
+/* The kit inks its cursor dark and flips it only for its own dark stage
+   themes, which never fire here (theme="light", see the header). Follow the
+   page's ink so the arrow shows on Manila, Nightingale and Blueprint. */
+[data-look="xeind"] .ss-cursor {
+  --ss-cursor-ink: var(--color-foreground);
+  --ss-cursor-line: var(--color-foreground);
+}
+
+/* window.css writes some radii as literals (the address bar's 6px, its pill
+   shape, tabs, the favicon, each chrome variant) instead of reading the
+   shape tokens, so zeroing the tokens above leaves them round. Square them
+   here. The traffic-light dots stay circles: they are marks, not corners. */
+[data-look="xeind"] .ss-window,
+[data-look="xeind"] .ss-window__url,
+[data-look="xeind"] .ss-window__tab,
+[data-look="xeind"] .ss-window__favicon,
+[data-look="xeind"] .ss-window__side,
+[data-look="xeind"] .ss-window__body {
+  border-radius: 0;
+}

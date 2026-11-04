@@ -1,5 +1,11 @@
 [
   {
+    "file": "src/components/design/stageshow/look.css",
+    "rule": "shadow",
+    "match": "*",
+    "reason": "Overrides the vendored Stageshow kit's --ss-shadow-* tokens to strip its shadows: none, or a 1px no-blur ring at hairline ink where the kit draws a window edge with box-shadow"
+  },
+  {
     "file": "src/components/blog/MDXComponents.tsx",
     "rule": "text-size",
     "match": "*",
